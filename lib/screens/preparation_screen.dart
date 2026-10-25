@@ -2,15 +2,18 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 
+import '../logic/job_store.dart';
 import '../logic/quality.dart';
+import '../models/prep_job.dart';
 import '../models/prescription.dart';
 import '../theme/tokens.dart';
 import '../widgets/back_pill.dart';
+import '../widgets/job_status.dart';
 
 /// Hazırlama ekranı (tasarım belgesi, bölüm 5): oyuncu reçeteye bakıp raftan
 /// kimyasalları seçer, adımlara sırayla dokunarak hazırlama sırasını kurar ve
-/// "Başlat"a basar. Sonuç 1–3 yıldız ve hatayı anlatan kısa açıklamalar.
-/// Gerçek zamanlı bekleme henüz yok; süre sistemi ayrı bir adımda eklenecek.
+/// "Başlat"a basar. İş gerçek zamanda sürer (bölüm 7); hazır olunca teslimde
+/// 1–3 yıldız ve hatayı anlatan kısa açıklamalar gösterilir.
 class PreparationScreen extends StatefulWidget {
   const PreparationScreen({super.key, required this.order});
 
@@ -25,7 +28,6 @@ class _PreparationScreenState extends State<PreparationScreen> {
   late final List<String> _stepPool;
   final Set<String> _selected = {};
   final List<String> _sequence = [];
-  PreparationResult? _result;
 
   @override
   void initState() {
@@ -63,29 +65,20 @@ class _PreparationScreenState extends State<PreparationScreen> {
     });
   }
 
-  void _start() {
-    setState(() {
-      _result = evaluatePreparation(
-        order: widget.order,
-        selectedChemicals: _selected,
-        stepOrder: _sequence,
-      );
-    });
-  }
-
-  void _retry() {
-    setState(() {
-      _selected.clear();
-      _sequence.clear();
-      _result = null;
-    });
+  Future<void> _start() async {
+    final result = evaluatePreparation(
+      order: widget.order,
+      selectedChemicals: _selected,
+      stepOrder: _sequence,
+    );
+    await JobScope.of(context).start(widget.order, result);
   }
 
   bool get _canStart => _selected.isNotEmpty && _sequence.length == _stepPool.length;
 
   @override
   Widget build(BuildContext context) {
-    final result = _result;
+    final job = JobScope.of(context).jobFor(widget.order.magistralName);
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -97,7 +90,7 @@ class _PreparationScreenState extends State<PreparationScreen> {
                 children: [
                   _RecipeSummary(order: widget.order),
                   const SizedBox(height: AppSpace.lg),
-                  if (result == null) ...[
+                  if (job == null) ...[
                     _sectionTitle('1. Kimyasalları seç'),
                     Wrap(
                       spacing: AppSpace.sm,
@@ -138,11 +131,7 @@ class _PreparationScreenState extends State<PreparationScreen> {
                       ),
                     ),
                   ] else
-                    _ResultCard(
-                      result: result,
-                      onRetry: _retry,
-                      onBack: () => Navigator.of(context).pop(),
-                    ),
+                    _RunningPanel(job: job, onBack: () => Navigator.of(context).pop()),
                 ],
               ),
             ),
@@ -262,11 +251,10 @@ class _StepChip extends StatelessWidget {
   }
 }
 
-class _ResultCard extends StatelessWidget {
-  const _ResultCard({required this.result, required this.onRetry, required this.onBack});
+class _RunningPanel extends StatelessWidget {
+  const _RunningPanel({required this.job, required this.onBack});
 
-  final PreparationResult result;
-  final VoidCallback onRetry;
+  final PrepJob job;
   final VoidCallback onBack;
 
   @override
@@ -286,52 +274,24 @@ class _ResultCard extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              for (var i = 1; i <= 3; i++)
-                Icon(
-                  i <= result.stars ? Icons.star_rounded : Icons.star_outline_rounded,
-                  color: const Color(0xFFF2A900),
-                  size: 44,
-                ),
-            ],
-          ),
+          JobStatus(job: job),
           const SizedBox(height: AppSpace.md),
           Text(
-            result.notes.isEmpty ? 'Kusursuz hazırlandı!' : '${result.stars} yıldızlı ürün',
-            style: const TextStyle(
-              fontSize: AppFont.heading,
-              fontWeight: FontWeight.w800,
-              color: AppColors.ink,
-            ),
+            'Uygulamayı kapatsan da hazırlık sürer. Hazır olunca Reçeteler ekranından teslim et.',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: AppFont.body, color: Colors.black.withValues(alpha: 0.65)),
           ),
-          for (final note in result.notes) ...[
-            const SizedBox(height: AppSpace.sm),
-            Text(
-              note,
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: AppFont.body, color: Colors.black.withValues(alpha: 0.7)),
-            ),
-          ],
           const SizedBox(height: AppSpace.xl),
-          Row(
-            children: [
-              Expanded(
-                child: OutlinedButton(onPressed: onRetry, child: const Text('Tekrar Dene')),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.kiremit,
+                foregroundColor: Colors.white,
               ),
-              const SizedBox(width: AppSpace.md),
-              Expanded(
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.kiremit,
-                    foregroundColor: Colors.white,
-                  ),
-                  onPressed: onBack,
-                  child: const Text('Reçetelere Dön'),
-                ),
-              ),
-            ],
+              onPressed: onBack,
+              child: const Text('Reçetelere Dön'),
+            ),
           ),
         ],
       ),

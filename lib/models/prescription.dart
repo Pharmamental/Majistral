@@ -19,7 +19,12 @@ class PrescriptionOrder {
     required this.distractors,
     required this.steps,
     required this.sequenceHint,
+    required this.prepTime,
   });
+
+  /// Başlat'tan teslime kadar gerçek zamanda geçen süre (tasarım belgesi,
+  /// bölüm 7: küçük 5–15 dk, krem 20–45 dk). Kapalı testte ayarlanacak.
+  final Duration prepTime;
 
   final String doctorName;
   final String doctorBranch;

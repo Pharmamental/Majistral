@@ -22,6 +22,7 @@ const List<PrescriptionOrder> prescriptionOrders = [
     ],
     sequenceHint:
         'Salisilik asidi önce sıvı parafinle macun yapmadan vazeline kattığın için merhem kumlu oldu.',
+    prepTime: Duration(minutes: 10),
   ),
   PrescriptionOrder(
     doctorName: 'Dr. Kerem Öz',
@@ -38,6 +39,7 @@ const List<PrescriptionOrder> prescriptionOrders = [
       PrescriptionStep('Etiket', icon: Icons.label_outline),
     ],
     sequenceHint: 'Çinko oksidi önce sıvı parafinle macun yapmadığın için merhem kumlu oldu.',
+    prepTime: Duration(minutes: 15),
   ),
   PrescriptionOrder(
     doctorName: 'Dr. Deniz Kaya',
@@ -54,5 +56,6 @@ const List<PrescriptionOrder> prescriptionOrders = [
       PrescriptionStep('Soğuma', imagePath: 'assets/images/Sogutma_ikon.webp'),
     ],
     sequenceHint: 'Yağ ve su fazı ısıtılmadan karıştırıldığı için krem ayrıştı.',
+    prepTime: Duration(minutes: 30),
   ),
 ];

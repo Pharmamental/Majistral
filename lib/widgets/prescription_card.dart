@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
+import '../logic/job_store.dart';
 import '../models/prescription.dart';
 import '../screens/preparation_screen.dart';
 import '../theme/tokens.dart';
+import 'job_status.dart';
 
 class PrescriptionCard extends StatelessWidget {
   const PrescriptionCard({super.key, required this.order});
@@ -11,6 +13,7 @@ class PrescriptionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final job = JobScope.of(context).jobFor(order.magistralName);
     final muted = Colors.black.withValues(alpha: 0.6);
     return Container(
       margin: const EdgeInsets.only(bottom: AppSpace.lg),
@@ -139,19 +142,22 @@ class PrescriptionCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: AppSpace.lg),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.kiremit,
-                foregroundColor: Colors.white,
+          if (job != null)
+            JobStatus(job: job)
+          else
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.kiremit,
+                  foregroundColor: Colors.white,
+                ),
+                onPressed: () => Navigator.of(context).push(
+                  MaterialPageRoute<void>(builder: (context) => PreparationScreen(order: order)),
+                ),
+                child: const Text('Hazırla'),
               ),
-              onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute<void>(builder: (context) => PreparationScreen(order: order)),
-              ),
-              child: const Text('Hazırla'),
             ),
-          ),
         ],
       ),
     );

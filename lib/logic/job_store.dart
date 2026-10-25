@@ -1,0 +1,101 @@
+import 'dart:convert';
+
+import 'package:flutter/widgets.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../models/prep_job.dart';
+import '../models/prescription.dart';
+import 'quality.dart';
+
+/// Süren hazırlıkları tutar ve telefona kaydeder.
+///
+/// Saat şimdilik cihaz saatinden okunur ([now]). Tasarım belgesi saat hilesine
+/// karşı sunucu saatini istiyor; sunucu gelince yalnız [now] değişecek.
+class JobStore extends ChangeNotifier {
+  JobStore._(this._prefs, this.now, this._jobs);
+
+  static const _key = 'prep_jobs_v1';
+
+  final SharedPreferences _prefs;
+  final DateTime Function() now;
+  final List<PrepJob> _jobs;
+
+  static Future<JobStore> load({DateTime Function()? now}) async {
+    final prefs = await SharedPreferences.getInstance();
+    final raw = prefs.getString(_key);
+    final jobs = <PrepJob>[];
+    if (raw != null) {
+      try {
+        for (final item in jsonDecode(raw) as List) {
+          jobs.add(PrepJob.fromJson(item as Map<String, dynamic>));
+        }
+      } on FormatException {
+        // Bozuk kayıt oyunu açılmaz hâle getirmesin; boş başla.
+      }
+    }
+    return JobStore._(prefs, now ?? DateTime.now, jobs);
+  }
+
+  List<PrepJob> get jobs => List.unmodifiable(_jobs);
+
+  PrepJob? jobFor(String magistralName) {
+    for (final job in _jobs) {
+      if (job.magistralName == magistralName) return job;
+    }
+    return null;
+  }
+
+  Duration remaining(PrepJob job) {
+    final left = job.readyAt.difference(now());
+    return left.isNegative ? Duration.zero : left;
+  }
+
+  bool isReady(PrepJob job) => remaining(job) == Duration.zero;
+
+  /// 0–1 arası ilerleme.
+  double progress(PrepJob job) {
+    final total = job.duration.inMilliseconds;
+    if (total == 0) return 1;
+    final done = total - remaining(job).inMilliseconds;
+    return (done / total).clamp(0.0, 1.0);
+  }
+
+  Future<PrepJob> start(PrescriptionOrder order, PreparationResult result) async {
+    final job = PrepJob(
+      magistralName: order.magistralName,
+      startedAt: now(),
+      duration: order.prepTime,
+      stars: result.stars,
+      notes: result.notes,
+    );
+    _jobs
+      ..removeWhere((j) => j.magistralName == order.magistralName)
+      ..add(job);
+    await _save();
+    notifyListeners();
+    return job;
+  }
+
+  /// Hazır işi teslim eder ve listeden çıkarır. Hazır değilse hiçbir şey yapmaz.
+  Future<PrepJob?> deliver(String magistralName) async {
+    final job = jobFor(magistralName);
+    if (job == null || !isReady(job)) return null;
+    _jobs.remove(job);
+    await _save();
+    notifyListeners();
+    return job;
+  }
+
+  Future<void> _save() =>
+      _prefs.setString(_key, jsonEncode([for (final j in _jobs) j.toJson()]));
+}
+
+/// Ağaçtaki her ekranın [JobStore]'a ulaşmasını sağlar; depo değişince
+/// ona bağlı ekranlar yeniden çizilir.
+class JobScope extends InheritedNotifier<JobStore> {
+  const JobScope({super.key, required JobStore store, required super.child})
+      : super(notifier: store);
+
+  static JobStore of(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<JobScope>()!.notifier!;
+}

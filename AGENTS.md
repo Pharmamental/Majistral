@@ -42,14 +42,17 @@ asistan yönetir.
 lib/
 ├── main.dart          Uygulama girişi (MajistralApp)
 ├── theme/             tokens (renk, boşluk, köşe, yazı), bevel (3B kenar), app_theme
-├── models/            shop_item (ShopItem, Station), prescription
+├── models/            shop_item (ShopItem, Station), prescription, prep_job
 ├── data/              stations, market_items, orders (taslak içerik, doğrulanmadı)
-├── logic/             quality (hazırlığın 1–3 yıldız hesabı; testi test/quality_test.dart)
+├── logic/             quality (1–3 yıldız hesabı), job_store (süren işler, telefona kayıt,
+│                      JobScope ile ekranlara verilir)
 ├── screens/           home, orders (Reçeteler), preparation (Hazırlama), lab, market
 └── widgets/           back_pill, home_circle_button, prescription_card, market_widgets,
                        thermometer_panel, thermometer_painter
 ```
-- Ekonomi, kayıt ve reklam henüz yok; satın alma düğmeleri bilerek boş.
+- Süren işler `shared_preferences` ile telefona kaydedilir; saat şimdilik cihaz saati
+  (`JobStore.now`). Sunucu saati gelene kadar saat hilesi mümkün; kapanmamış bir açık.
+- Ekonomi, reklam ve bildirim henüz yok; satın alma düğmeleri bilerek boş.
 - Eski deneme (Temmuz 2026, tek dosya) git geçmişinde: ilk commit `0bd231c`. 2026-10-25'te market
   düzeni, istasyon kademeleri, reçete kartı, termometre ve görseller oradan seçilerek taşındı.
   Taşınmayan görseller (`Capsule`, `Kalıp_ikon`, `Maserasyon_ikon`, `Oyun_tick`, `Carpi`)
