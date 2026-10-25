@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Majistral Oyuncak Blok İkonları</title>
+<style>
+body{margin:0;background:#F2EFE9;font-family:Rubik,system-ui,sans-serif;color:#1E1B18}
+main{max-width:980px;margin:0 auto;padding:24px 16px}
+h2{font-size:15px;margin:24px 0 10px}
+.izgara{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.kutu{aspect-ratio:1.32;border-radius:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
+.kutu svg{width:64px;height:64px;overflow:visible}
+.kutu span{font-size:13px;font-weight:500;text-align:center}
+.kucuk{margin-top:16px;display:flex;gap:12px;flex-wrap:wrap}
+.kucuk svg{width:28px;height:28px;overflow:visible}
+body.tek{background:transparent}
+body.tek div.tek svg{width:100%;height:100%;overflow:visible}
+</style>
+</head>
+<body>
+<script>
+// Majistral oyunu oyuncak blok ikonları. Stil ve ölçüler Pharmamental'ın üreticisiyle aynı
+// (C:/YZ/800-Arsenal 🛠️/Tasarim-Rehberi/Ikon-Stili-Oyuncak-Blok.md); ölçülere dokunma.
+// Yeni ikon: IKONLAR'a bir kayıt ekle, sayfayı aç, sonra `py -3 export.py` ile PNG al.
+
+// ---- renk
+const hex2=h=>{h=h.replace('#','');return[0,2,4].map(i=>parseInt(h.substr(i,2),16))};
+const toHex=a=>'#'+a.map(v=>Math.round(Math.max(0,Math.min(255,v))).toString(16).padStart(2,'0')).join('');
+const mix=(h,t,a)=>{const x=hex2(h),y=hex2(t);return toHex(x.map((v,i)=>v+(y[i]-v)*a))};
+const L=(h,a)=>mix(h,'#ffffff',a), D=(h,a)=>mix(h,'#2a1a10',a);
+
+// ---- şekil (çizim alanı 0..100)
+const f=v=>(+v).toFixed(2);
+const rr=(x,y,w,h,r)=>`M${x+r},${y}H${x+w-r}A${r},${r} 0 0 1 ${x+w},${y+r}V${y+h-r}A${r},${r} 0 0 1 ${x+w-r},${y+h}H${x+r}A${r},${r} 0 0 1 ${x},${y+h-r}V${y+r}A${r},${r} 0 0 1 ${x+r},${y}Z`;
+const circ=(cx,cy,r)=>`M${cx-r},${cy}A${r},${r} 0 1 0 ${cx+r},${cy}A${r},${r} 0 1 0 ${cx-r},${cy}Z`;
+// iki ucu yuvarlak çubuk
+function cap(x1,y1,x2,y2,w){const r=w/2,dx=x2-x1,dy=y2-y1,l=Math.hypot(dx,dy),nx=-dy/l*r,ny=dx/l*r;
+ return `M${f(x1+nx)},${f(y1+ny)}L${f(x2+nx)},${f(y2+ny)}A${r},${r} 0 0 0 ${f(x2-nx)},${f(y2-ny)}L${f(x1-nx)},${f(y1-ny)}A${r},${r} 0 0 0 ${f(x1+nx)},${f(y1+ny)}Z`}
+
+// ---- palet (Pharmamental oyuncak blok paleti + ek palet)
+const R={mercan:'#E8553D',krem:'#FFF3E4',mor:'#7C5CE6',altin:'#F7BE38',altinKoyu:'#E9A21E',kahve:'#8A5A3B',kirmizi:'#FF6B5B',sari:'#FFC93C',kremKoyu:'#E9DCC8',mavi:'#4C9BE8',
+ kan:'#E03A33',yesil:'#3DBE7A',metal:'#B8C2CC',cam:'#D6ECF5',ten:'#F2B48C',amber:'#E08A2E',turuncu:'#F7931E',
+ ekran:'#33415C',bisküvi:'#D8C3A0',buz:'#A9D4EE'};
+
+// ---- ikonlar: dosya adı -> ikon_<dosya>.png. kutu: önizlemedeki pastel kutu rengi.
+const IKONLAR=[
+ // ===== Terazi basamakları
+ {grup:'Terazi',dosya:'terazi_kefeli',ad:'Kefeli eczane terazisi',kutu:'#FFE3A6',parts:[
+  {d:'M26,31L13,58M26,31L39,58M74,31L61,58M74,31L87,58',c:R.kahve,line:1},
+  {d:rr(46,27,8,52,3),c:R.metal},
+  {d:rr(10,25,80,7,3.5),c:R.altin},
+  {d:circ(50,24,6),c:R.altinKoyu},
+  {d:'M8,58H44C44,67 37,72 26,72C15,72 8,67 8,58Z',c:R.altin},
+  {d:'M56,58H92C92,67 85,72 74,72C63,72 56,67 56,58Z',c:R.altin},
+  {d:rr(28,76,44,9,4),c:R.kahve}]},
+ {grup:'Terazi',dosya:'terazi_elektronik',ad:'Elektronik hassas terazi',kutu:'#CFE4F7',parts:[
+  {d:rr(44,36,12,10,2),c:R.metal},                  // kefe ayağı
+  {d:rr(20,28,60,10,5),c:R.metal},                  // kefe
+  {d:rr(12,44,76,40,10),c:R.kremKoyu},              // gövde
+  {d:rr(20,56,36,16,4),c:R.ekran,flat:1},           // ekran
+  {d:'M26,64H34M38,64H50',c:R.yesil,line:1},        // rakamlar
+  {d:circ(70,64,6),c:R.mercan,flat:1}]},            // düğme
+ {grup:'Terazi',dosya:'terazi_analitik',ad:'Analitik terazi',kutu:'#D9D2FA',parts:[
+  {d:rr(16,20,68,50,9),c:R.cam},                    // cam kabin
+  {d:rr(46,50,8,14,2),c:R.metal},                   // kefe ayağı
+  {d:rr(32,44,36,8,4),c:R.metal},                   // kefe
+  {d:rr(72,32,5,22,2.5),c:R.metal},                 // kapı kolu
+  {d:rr(10,64,80,20,8),c:R.mor},                    // taban
+  {d:rr(20,69,26,10,3),c:R.ekran,flat:1},
+  {d:'M25,74H32M35,74H41',c:R.yesil,line:1}]},
+ // ===== Havanlar
+ {grup:'Havan',dosya:'havan_porselen',ad:'Porselen havan',kutu:'#CFE4F7',parts:[
+  {d:cap(72,12,53,46,11),c:R.kremKoyu},
+  {d:'M17,46H83C83,66 68,80 50,80C32,80 17,66 17,46Z',c:R.krem},
+  {d:rr(13,40,74,9,4.5),c:R.krem},
+  {d:rr(35,76,30,9,3.5),c:R.kremKoyu},
+  {d:'M26,58C38,62 62,62 74,58',c:R.mavi,line:1}]},
+ {grup:'Havan',dosya:'havan_cam',ad:'Cam havan',kutu:'#C9EFE6',parts:[
+  {d:cap(72,12,53,46,11),c:R.buz},
+  {d:'M17,46H83C83,66 68,80 50,80C32,80 17,66 17,46Z',c:R.cam},
+  {d:rr(13,40,74,9,4.5),c:R.cam},
+  {d:rr(35,76,30,9,3.5),c:R.buz},
+  {d:'M28,54C30,63 35,69 41,72',c:'#FFFFFF',line:1}]},
+ {grup:'Havan',dosya:'havan_wedgwood',ad:'Wedgwood havan',kutu:'#FFD6C2',parts:[
+  {d:cap(72,12,53,46,11),c:R.bisküvi},
+  {d:'M17,46H83C83,66 68,80 50,80C32,80 17,66 17,46Z',c:R.bisküvi},
+  {d:rr(13,40,74,9,4.5),c:R.bisküvi},
+  {d:rr(35,76,30,9,3.5),c:D(R.bisküvi,.12)},
+  {d:circ(34,60,1.6),c:D(R.bisküvi,.3),flat:1},{d:circ(50,66,1.6),c:D(R.bisküvi,.3),flat:1},{d:circ(64,58,1.6),c:D(R.bisküvi,.3),flat:1},{d:circ(44,56,1.4),c:D(R.bisküvi,.3),flat:1}]},
+ // ===== Spatüller
+ {grup:'Spatül',dosya:'spatul_celik',ad:'Çelik spatül',kutu:'#E4E8EE',parts:[
+  {d:'M14,80C10,76 11,70 16,65L50,36L60,46L31,79C26,84 18,84 14,80Z',c:R.metal},
+  {d:cap(54,42,62,34,14),c:R.altin},
+  {d:cap(60,36,84,13,13),c:R.kahve},
+  {d:circ(68,28,2.4),c:R.krem,flat:1},{d:circ(76,20.5,2.4),c:R.krem,flat:1},
+  {d:'M21,72L46,47',c:'#FFFFFF',line:1}]},
+ {grup:'Spatül',dosya:'spatul_plastik',ad:'Plastik spatül',kutu:'#CFE4F7',parts:[
+  {d:'M14,80C10,76 11,70 16,65L50,36L60,46L31,79C26,84 18,84 14,80Z',c:R.mavi},
+  {d:cap(54,42,84,13,12),c:R.mavi},
+  {d:circ(78,19,3),c:D(R.mavi,.3),flat:1}]},          // asma deliği
+ // ===== Merhem karıştırma
+ {grup:'Merhem karıştırma',dosya:'merhem_tasi',ad:'Merhem taşı',kutu:'#C9EFE6',parts:[
+  {d:'M18,46H86L82,76H14Z',c:R.cam},                 // cam levha (perspektif)
+  {d:'M32,56C38,50 52,50 58,55C62,59 58,66 50,66C40,67 28,63 32,56Z',c:R.krem}, // merhem
+  {d:cap(46,62,80,30,8),c:R.metal},                 // spatül ağzı
+  {d:cap(78,32,90,20,8),c:R.kahve}]},               // sap
+ {grup:'Merhem karıştırma',dosya:'unguator',ad:'Unguator',kutu:'#D9D2FA',parts:[
+  {d:rr(66,22,12,52,5),c:R.metal},                  // kolon
+  {d:rr(22,14,58,20,8),c:R.krem},                   // motor başı
+  {d:rr(46,32,8,14,3),c:R.metal},                   // mil
+  {d:rr(28,42,40,34,9),c:R.cam},                    // kavanoz
+  {d:rr(33,56,30,16,6),c:R.krem},                   // içindeki krem
+  {d:rr(16,72,70,13,6),c:R.mor},                    // taban
+  {d:circ(30,24,3.5),c:R.yesil,flat:1}]},           // çalışıyor ışığı
+ {grup:'Merhem karıştırma',dosya:'merhem_degirmeni',ad:'Merhem değirmeni',kutu:'#FFD6C2',parts:[
+  {d:rr(12,32,72,38,9),c:R.mercan},                 // gövde
+  {d:circ(29,47,10),c:R.metal},{d:circ(48,47,10),c:R.metal},{d:circ(67,47,10),c:R.metal}, // merdaneler
+  {d:rr(16,70,64,15,6),c:R.kahve},                  // taban
+  {d:cap(82,50,90,30,6),c:R.kahve},                 // kol
+  {d:circ(90,28,5),c:R.altin}]},                    // tutamak
+ // ===== Isıtma
+ {grup:'Isıtma',dosya:'ocak_su_banyosu',ad:'Ocak ve su banyosu',kutu:'#FFD6C2',parts:[
+  {d:rr(38,18,20,30,5),c:R.cam},                    // beher
+  {d:rr(9,46,14,7,3.5),c:R.metal},{d:rr(77,46,14,7,3.5),c:R.metal}, // kulplar
+  {d:'M18,40H82V64C82,70 77,74 71,74H29C23,74 18,70 18,64Z',c:R.metal}, // tencere
+  {d:rr(20,38,60,8,4),c:R.mavi},                    // su yüzeyi
+  {d:rr(14,72,72,13,5),c:R.ekran},                  // ocak
+  {d:circ(74,78.5,3.2),c:R.mercan,flat:1}]},
+ {grup:'Isıtma',dosya:'su_banyosu_termostat',ad:'Termostatlı su banyosu',kutu:'#CFE4F7',parts:[
+  {d:cap(34,20,34,34,11),c:R.cam},{d:cap(58,20,58,34,11),c:R.cam}, // beherler
+  {d:rr(10,30,80,12,6),c:R.metal},                  // kapak
+  {d:rr(14,40,72,45,9),c:R.metal},                  // gövde
+  {d:rr(20,58,60,20,5),c:R.ekran,flat:1},           // panel
+  {d:'M26,68H40',c:R.yesil,line:1},
+  {d:circ(66,68,6),c:R.mercan,flat:1}]},            // ayar düğmesi
+ // ===== Ambalaj
+ {grup:'Ambalaj',dosya:'kavanoz',ad:'Kavanoz',kutu:'#FFD6C2',parts:[
+  {d:rr(20,33,60,52,12),c:R.mercan},
+  {d:rr(24,18,52,17,6),c:R.kahve},
+  {d:rr(29,46,42,27,5),c:R.krem,flat:1},
+  {d:'M36,56H64M40,64H60',c:R.kremKoyu,line:1}]},
+ {grup:'Ambalaj',dosya:'tup',ad:'Tüp doldurma ve kıvırma aleti',kutu:'#FFE3A6',rot:-18,parts:[
+  {d:rr(26,10,48,9,3),c:R.metal},                   // kıvrık uç
+  {d:'M28,17H72L66,66H34Z',c:R.krem},               // tüp
+  {d:'M30,34H70L68,48H32Z',c:R.mercan},             // bant
+  {d:rr(43,64,14,8,2),c:R.metal},                   // boyun
+  {d:rr(38,70,24,15,5),c:R.mercan}]},               // kapak
+ // ===== Kimyasallar
+ {grup:'Kimyasal',dosya:'vazelin',ad:'Beyaz Vazelin',kutu:'#CFE4F7',parts:[
+  {d:rr(16,46,68,38,12),c:R.mavi},                  // kap
+  {d:'M20,48C27,30 73,30 80,48Z',c:R.krem},         // vazelin
+  {d:rr(28,58,44,16,4),c:R.krem,flat:1}]},          // etiket
+ {grup:'Kimyasal',dosya:'sivi_parafin',ad:'Sıvı Parafin',kutu:'#FFF0B8',parts:[
+  {d:rr(37,12,26,12,4),c:R.kahve},                  // kapak
+  {d:rr(40,22,20,16,4),c:R.cam},                    // boyun
+  {d:rr(26,34,48,50,13),c:R.cam},                   // şişe
+  {d:rr(30,54,40,26,10),c:'#F6E7B0'}]},             // sıvı
+ {grup:'Kimyasal',dosya:'gliserin',ad:'Gliserin',kutu:'#FFE3A6',parts:[
+  {d:rr(36,12,28,12,4),c:R.kahve},
+  {d:rr(40,22,20,16,4),c:R.amber},
+  {d:rr(26,34,48,50,13),c:R.amber},
+  {d:rr(32,52,36,20,4),c:R.krem,flat:1},
+  {d:'M38,62H62',c:R.kremKoyu,line:1}]},
+ {grup:'Kimyasal',dosya:'distile_su',ad:'Distile Su',kutu:'#C9EFE6',parts:[
+  {d:'M51,30V17C51,12 54,10 59,10H67C72,10 75,13 75,18V24',c:R.mavi,w:5}, // piset borusu (ucu aşağı kıvrık)
+  {d:rr(38,24,26,12,4),c:R.mavi},                   // kapak
+  {d:rr(28,34,46,50,15),c:R.cam},                   // şişe
+  {d:rr(32,56,38,24,11),c:R.buz}]},                 // su
+ {grup:'Kimyasal',dosya:'cinko_oksit',ad:'Çinko Oksit',kutu:'#E4E8EE',parts:[
+  {d:'M10,60H90C84,74 68,80 50,80C32,80 16,74 10,60Z',c:R.cam},   // saat camı
+  {d:'M22,62C28,38 72,38 78,62Z',c:R.krem}]},                      // toz yığını
+ {grup:'Kimyasal',dosya:'salisilik_asit',ad:'Salisilik Asit',kutu:'#D9D2FA',parts:[
+  {d:'M10,60H90C84,74 68,80 50,80C32,80 16,74 10,60Z',c:R.cam},
+  // iğne biçimli kristaller: iki ucu sivri altıgen prizma, saat camına oturur
+  {d:'M29,62L27,42L32,33L37,42L35,62Z',c:R.krem},
+  {d:'M41,62L40,30L47,19L54,30L53,62Z',c:R.krem},
+  {d:'M57,62L59,38L65,30L69,40L64,62Z',c:R.krem},
+  {d:'M66,62L71,48L76,46L77,53L73,62Z',c:R.krem}]}
+];
+
+// ---- çizim (Pharmamental üreticisinden aynen)
+const KALINLIK=7, YAN_KOYU=.32, UST_ACIK=.18, KENAR_ACIK=.35;
+const P=(p,ex='')=>`<path d="${p.d}" fill-rule="evenodd" ${ex}/>`;
+const wrap=(ik,s)=>ik.rot?`<g transform="rotate(${ik.rot} 50 50)">${s}</g>`:s;
+let uid=0;
+function svgIkon(ik){
+ const id='b'+(uid++),defs=[];let n=0;
+ const lin=(a,b)=>{const i=id+'_'+(n++);defs.push(`<linearGradient id="${i}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${a}"/><stop offset="1" stop-color="${b}"/></linearGradient>`);return`url(#${i})`};
+ const blur=id+'_z';defs.push(`<filter id="${blur}" x="-50%" y="-200%" width="200%" height="500%"><feGaussianBlur stdDeviation="2"/></filter>`);
+ let yan='';
+ const boru=(p,c)=>P(p,`fill="none" stroke="${c}" stroke-width="${p.w}" stroke-linecap="round" stroke-linejoin="round"`);
+ for(let k=KALINLIK;k>=1;k--)yan+=`<g transform="translate(0 ${k-3})">${wrap(ik,ik.parts.map(p=>p.flat?'':p.w?boru(p,D(p.c,YAN_KOYU)):p.line?'':P(p,`fill="${D(p.c,YAN_KOYU)}" stroke="${D(p.c,YAN_KOYU)}" stroke-width=".8"`)).join(''))}</g>`;
+ const ust=ik.parts.map(p=>p.w?boru(p,p.c):p.line
+   ?P(p,`fill="none" stroke="${p.c}" stroke-width="3" stroke-linecap="round"`)
+   :P(p,`fill="${lin(L(p.c,UST_ACIK),p.c)}" stroke="${L(p.c,KENAR_ACIK)}" stroke-width=".8"`)).join('');
+ const zemin=`<ellipse cx="50" cy="92" rx="28" ry="4.5" fill="#3a2418" opacity=".16" filter="url(#${blur})"/>`;
+ return`<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><defs>${defs.join('')}</defs>${zemin}${yan}<g transform="translate(0 -3)">${wrap(ik,ust)}</g></svg>`;
+}
+
+// ?tek&px=<boy>#<sıra> : yalnız o ikonu şeffaf çizer (export.py kullanır)
+if(location.search.includes('tek')){
+ const px=+(new URLSearchParams(location.search).get('px')||288);
+ document.body.className='tek';
+ document.body.innerHTML=`<div class="tek" style="width:${px}px;height:${px}px">${svgIkon(IKONLAR[+location.hash.slice(1)])}</div>`;
+}else{
+ const gruplar=[...new Set(IKONLAR.map(i=>i.grup))];
+ document.body.innerHTML=`<main><h1>Majistral Oyuncak Blok İkonları</h1>${gruplar.map(g=>`<h2>${g}</h2><div class="izgara">${IKONLAR.filter(i=>i.grup==g).map(ik=>`<div class="kutu" style="background:${ik.kutu}">${svgIkon(ik)}<span>${ik.ad}</span></div>`).join('')}</div>`).join('')}
+ <h2>28 px</h2><div class="kucuk">${IKONLAR.map(ik=>svgIkon(ik)).join('')}</div></main>`;
+}
+</script>
+</body>
+</html>

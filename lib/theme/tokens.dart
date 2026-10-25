@@ -9,17 +9,21 @@ import 'package:flutter/material.dart';
 class AppColors {
   AppColors._();
 
-  static const Color background = Color(0xFFF6ECD9); // krem zemin
-  static const Color surface = Colors.white; // kartlar
-  static const Color surfaceMuted = Color(0xFFFBF6EC); // kart içi ikinci yüzey
-  static const Color line = Color(0xFFE7D9BF);
+  // Pharmamental paleti (2026-10-25, "oyuncak blok şimdilik" kararı): kırık beyaz + yanık mercan.
+  static const Color background = Color(0xFFF2EFE9); // kırık beyaz zemin
+  static const Color surface = Color(0xFFFBFAF7); // kartlar
+  static const Color surfaceMuted = Color(0xFFF6F3EE); // kart içi ikinci yüzey
+  static const Color line = Color(0xFFDCD6CC);
 
-  static const Color ink = Color(0xFF2B211B); // sıcak koyu kahve, saf siyah değil
-  static const Color inkMuted = Color(0xFF6E5F55);
+  static const Color ink = Color(0xFF1E1B18);
+  static const Color inkMuted = Color(0xFF5E5750);
 
-  static const Color kiremit = Color(0xFFB7410E); // birincil aksiyon
-  static const Color kiremitDark = Color(0xFF8A300A); // 3B düğmenin alt kenarı
-  static const Color kiremitSoft = Color(0xFFF7E1D3);
+  // Yanık mercan üzerinde beyaz 3,79:1 (ölçüldü): yalnız büyük kalın yazıya yeter.
+  // Küçük vurgu yazısı [accentText] (5,21:1) kullanır.
+  static const Color kiremit = Color(0xFFD4603F); // birincil aksiyon
+  static const Color kiremitDark = Color(0xFFA9452A); // 3B düğmenin alt kenarı
+  static const Color kiremitSoft = Color(0xFFFADBD0);
+  static const Color accentText = Color(0xFFB04A2E);
 
   static const Color success = Color(0xFF2E7D32); // hazır / teslim
   static const Color successDark = Color(0xFF1F5A23);
@@ -87,7 +91,7 @@ class AppText {
       _style('Rubik', size, FontWeight.w600, color, height: 1.3);
 
   /// Sayaç: rakamlar sabit genişlikte, saniye değişince yazı titremesin.
-  static TextStyle timer({double size = 16, Color color = AppColors.kiremit}) =>
+  static TextStyle timer({double size = 16, Color color = AppColors.accentText}) =>
       _style('Rubik', size, FontWeight.w700, color).copyWith(
         fontFeatures: const [FontFeature.tabularFigures()],
       );
