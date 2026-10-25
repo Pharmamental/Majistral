@@ -37,11 +37,22 @@ asistan yönetir.
 - Yeni dal açma, force push yapma, geçmişi değiştirme (`reset --hard`, `rebase -i`,
   `commit --amend`); riskli ya da geri alınamaz bir işlemde önce Tuğrul'a sor.
 
-## Klasörün durumu (2026-10-25)
-Temmuz 2026'dan kalma bir Flutter projesi var (`lib/main.dart`, iki test). `assets/images/`'ta
-havan, kalıp, soğutma, maserasyon, kapsül ikonları var; yani önceki bir majistral oyunu denemesi
-olabilir. Bu kodun korunup korunmayacağına henüz karar verilmedi; Tuğrul'a sormadan silinmez.
-İlk commit (`0bd231c`) bu hâli olduğu gibi saklıyor.
+## Proje yapısı
+```
+lib/
+├── main.dart          Uygulama girişi (MajistralApp)
+├── theme/             tokens (renk, boşluk, köşe, yazı), bevel (3B kenar), app_theme
+├── models/            shop_item (ShopItem, Station), prescription
+├── data/              stations, market_items, orders (taslak içerik, doğrulanmadı)
+├── screens/           home, orders (Reçeteler), lab (Laboratuvar), market
+└── widgets/           back_pill, home_circle_button, prescription_card, market_widgets,
+                       thermometer_panel, thermometer_painter
+```
+- Ekonomi, kayıt ve reklam henüz yok; satın alma düğmeleri bilerek boş.
+- Eski deneme (Temmuz 2026, tek dosya) git geçmişinde: ilk commit `0bd231c`. 2026-10-25'te market
+  düzeni, istasyon kademeleri, reçete kartı, termometre ve görseller oradan seçilerek taşındı.
+  Taşınmayan görseller (`Capsule`, `Kalıp_ikon`, `Maserasyon_ikon`, `Oyun_tick`, `Carpi`)
+  `assets/images/`'ta duruyor.
 
 ## Beyne iz bırak
 Bu proje Tuğrul'un ikinci beyninin (`C:\YZ`) parçası; proje kartı
