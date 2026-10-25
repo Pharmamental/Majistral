@@ -155,16 +155,24 @@ class ThermometerPainter extends CustomPainter {
         ..strokeWidth = 2,
     );
 
-    // degree labels for the ideal band
-    _drawLabel(canvas, idealMaxLabel, Offset(glassRect.right + 10, bandTop));
-    _drawLabel(canvas, idealMinLabel, Offset(glassRect.right + 10, bandBottom));
+    // Dar bir bantta iki etiket üst üste biner; bandın ortasına tek etiket yazılır.
+    final label = idealMinLabel == idealMaxLabel
+        ? idealMinLabel
+        : '${idealMinLabel.replaceAll('°', '')}–$idealMaxLabel';
+    _drawLabel(canvas, label, Offset(glassRect.right + 10, (bandTop + bandBottom) / 2));
   }
 
   void _drawLabel(Canvas canvas, String text, Offset anchor) {
     final painter = TextPainter(
       text: TextSpan(
         text: text,
-        style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: Colors.black54),
+        style: const TextStyle(
+          fontFamily: 'Rubik',
+          fontSize: 11,
+          fontWeight: FontWeight.w700,
+          fontVariations: [FontVariation.weight(700)],
+          color: Color(0xFF2E7D32),
+        ),
       ),
       textDirection: TextDirection.ltr,
     )..layout();

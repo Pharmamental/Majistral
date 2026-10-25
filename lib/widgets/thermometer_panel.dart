@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 
 import '../theme/tokens.dart';
+import 'chunky_button.dart';
 import 'thermometer_painter.dart';
 
 /// Hold the flame button to heat the thermometer up, release to let it cool.
@@ -102,134 +103,112 @@ class _ThermometerPanelState extends State<ThermometerPanel> with SingleTickerPr
     return 'İdeal aralıkta! Sabit tut...';
   }
 
+  // Düzen: üstte başlık ve hedef aralık, ortada termometre ve büyük sıcaklık,
+  // altta (başparmak bölgesinde) durum, sabitlik çubuğu ve alev düğmesi.
   @override
   Widget build(BuildContext context) {
     const range = _maxTemp - _minTemp;
     final tempFrac = ((_temperature - _minTemp) / range).clamp(0.0, 1.0);
     final steadyFrac = (_steadyElapsed.inMilliseconds / _requiredSteady.inMilliseconds).clamp(0.0, 1.0);
-    final muted = Colors.black.withValues(alpha: 0.65);
+    final target = '${widget.idealMin.round()}–${widget.idealMax.round()}°';
 
     return Container(
-      width: 260,
       padding: const EdgeInsets.all(AppSpace.xl),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.94),
-        borderRadius: BorderRadius.circular(AppRadius.lg),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.18),
-            blurRadius: 24,
-            offset: const Offset(0, 10),
-          ),
-        ],
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(AppRadius.card),
+        border: Border.all(color: AppColors.line),
       ),
       child: Column(
-        mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-            widget.title,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: AppFont.heading,
-              fontWeight: FontWeight.w800,
-              color: AppColors.ink,
-            ),
-          ),
-          const SizedBox(height: AppSpace.md),
-          Text(
-            '${_temperature.round()}°',
-            style: TextStyle(
-              fontSize: AppFont.heading,
-              fontWeight: FontWeight.w800,
-              color: _mercuryColor(),
-            ),
-          ),
-          const SizedBox(height: AppSpace.sm),
-          SizedBox(
-            width: 96,
-            height: 210,
-            child: CustomPaint(
-              painter: ThermometerPainter(
-                value: tempFrac,
-                idealMinFrac: (widget.idealMin - _minTemp) / range,
-                idealMaxFrac: (widget.idealMax - _minTemp) / range,
-                idealMinLabel: '${widget.idealMin.round()}°',
-                idealMaxLabel: '${widget.idealMax.round()}°',
-                color: _mercuryColor(),
+          Row(
+            children: [
+              Expanded(child: Text(widget.title, style: AppText.title(size: 22))),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: AppSpace.md, vertical: AppSpace.xs),
+                decoration: BoxDecoration(
+                  color: AppColors.successSoft,
+                  borderRadius: BorderRadius.circular(AppRadius.pill),
+                ),
+                child: Text('Hedef $target', style: AppText.label(color: AppColors.success)),
               ),
-            ),
+            ],
           ),
           const SizedBox(height: AppSpace.lg),
-          if (!_success) ...[
-            Text(
-              _statusText(),
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: AppFont.body, color: muted),
-            ),
-            const SizedBox(height: AppSpace.md),
-            SizedBox(
-              height: 10,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(5),
-                child: LinearProgressIndicator(
-                  value: steadyFrac,
-                  backgroundColor: Colors.black12,
-                  valueColor: const AlwaysStoppedAnimation(Colors.green),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                width: 96,
+                height: 210,
+                child: CustomPaint(
+                  painter: ThermometerPainter(
+                    value: tempFrac,
+                    idealMinFrac: (widget.idealMin - _minTemp) / range,
+                    idealMaxFrac: (widget.idealMax - _minTemp) / range,
+                    idealMinLabel: '${widget.idealMin.round()}°',
+                    idealMaxLabel: '${widget.idealMax.round()}°',
+                    color: _mercuryColor(),
+                  ),
                 ),
               ),
+              const SizedBox(width: AppSpace.xxl),
+              SizedBox(
+                width: 110,
+                child: Text(
+                  '${_temperature.round()}°',
+                  style: AppText.timer(size: 56, color: _mercuryColor()),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppSpace.lg),
+          Text(_statusText(), textAlign: TextAlign.center, style: AppText.body(weight: FontWeight.w600)),
+          const SizedBox(height: AppSpace.md),
+          if (!_success) ...[
+            ClipRRect(
+              borderRadius: BorderRadius.circular(AppRadius.pill),
+              child: LinearProgressIndicator(
+                minHeight: 10,
+                value: steadyFrac,
+                backgroundColor: AppColors.successSoft,
+                valueColor: const AlwaysStoppedAnimation(AppColors.success),
+              ),
             ),
-            const SizedBox(height: AppSpace.lg),
+            const SizedBox(height: AppSpace.xl),
             Listener(
               onPointerDown: (_) => setState(() => _isHolding = true),
               onPointerUp: (_) => setState(() => _isHolding = false),
               onPointerCancel: (_) => setState(() => _isHolding = false),
-              child: Container(
-                key: const Key('flame-button'),
-                width: 100,
-                height: 100,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: Colors.red,
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.red.withValues(alpha: _isHolding ? 0.6 : 0.35),
-                      blurRadius: _isHolding ? 26 : 14,
-                      spreadRadius: _isHolding ? 2 : 0,
-                    ),
-                  ],
+              child: Semantics(
+                button: true,
+                label: 'Isıt: basılı tut',
+                child: Container(
+                  key: const Key('flame-button'),
+                  width: 96,
+                  height: 96,
+                  alignment: Alignment.center,
+                  // Tıknaz düğme gibi: altta koyu gölge, basılı tutunca kaybolur.
+                  transform: Matrix4.translationValues(0, _isHolding ? 5 : 0, 0),
+                  decoration: BoxDecoration(
+                    color: AppColors.kiremit,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      if (!_isHolding) const BoxShadow(color: AppColors.kiremitDark, offset: Offset(0, 5)),
+                    ],
+                  ),
+                  child: const Icon(Icons.local_fire_department_rounded, color: Colors.white, size: 44),
                 ),
-                child: const Icon(Icons.local_fire_department, color: Colors.white, size: 40),
               ),
             ),
             const SizedBox(height: AppSpace.sm),
-            Text(
-              'Basılı tut: ısıt · bırak: soğut',
-              style: TextStyle(fontSize: AppFont.caption, color: Colors.black.withValues(alpha: 0.5)),
-            ),
+            Text('Basılı tut: ısıt · bırak: soğut', style: AppText.label(size: 12)),
           ] else ...[
-            const Icon(Icons.check_circle, color: Colors.green, size: 40),
-            const SizedBox(height: AppSpace.sm),
-            Text(
-              _statusText(),
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: AppFont.title,
-                fontWeight: FontWeight.w700,
-                color: AppColors.ink,
-              ),
-            ),
-            const SizedBox(height: AppSpace.md),
+            const Icon(Icons.check_circle_rounded, color: AppColors.success, size: 44),
+            const SizedBox(height: AppSpace.lg),
             SizedBox(
               width: double.infinity,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.kiremit,
-                  foregroundColor: Colors.white,
-                ),
-                onPressed: _retry,
-                child: const Text('Tekrar Dene'),
-              ),
+              child: ChunkyButton.secondary(label: 'Tekrar Dene', onPressed: _retry),
             ),
           ],
         ],

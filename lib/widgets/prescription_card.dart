@@ -4,8 +4,12 @@ import '../logic/job_store.dart';
 import '../models/prescription.dart';
 import '../screens/preparation_screen.dart';
 import '../theme/tokens.dart';
+import 'chunky_button.dart';
 import 'job_status.dart';
 
+/// Reçete kartı: üstte hekim, ortada "Rp." ile majistral ve içeriği, altta
+/// kartın tek aksiyonu (Hazırla / süren iş / Teslim Et). Aksiyon kartın en
+/// altında, başparmağın rahat ulaştığı yerde.
 class PrescriptionCard extends StatelessWidget {
   const PrescriptionCard({super.key, required this.order});
 
@@ -14,195 +18,140 @@ class PrescriptionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final job = JobScope.of(context).jobFor(order.magistralName);
-    final muted = Colors.black.withValues(alpha: 0.6);
     return Container(
-      margin: const EdgeInsets.only(bottom: AppSpace.lg),
-      padding: const EdgeInsets.all(AppSpace.lg),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(AppRadius.lg),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.08),
-            blurRadius: 16,
-            offset: const Offset(0, 6),
-          ),
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(AppRadius.card),
+        border: Border.all(color: AppColors.line),
+        boxShadow: const [
+          BoxShadow(color: Color(0x14000000), blurRadius: 12, offset: Offset(0, 4)),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Container(
-                width: 44,
-                height: 44,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: AppColors.kiremit.withValues(alpha: 0.15),
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(Icons.medical_services_outlined, color: AppColors.kiremit),
-              ),
-              const SizedBox(width: AppSpace.md),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+          _DoctorStrip(order: order),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(AppSpace.xl, AppSpace.lg, AppSpace.xl, AppSpace.xl),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.baseline,
+                  textBaseline: TextBaseline.alphabetic,
                   children: [
+                    Text('Rp.', style: AppText.display(size: 24, color: AppColors.kiremit)),
+                    const SizedBox(width: AppSpace.sm),
+                    Expanded(child: Text(order.magistralName, style: AppText.title(size: 20))),
+                  ],
+                ),
+                const SizedBox(height: AppSpace.xs),
+                Text(order.purpose, style: AppText.body(size: 14, color: AppColors.inkMuted)),
+                const SizedBox(height: AppSpace.lg),
+                Wrap(
+                  spacing: AppSpace.sm,
+                  runSpacing: AppSpace.sm,
+                  children: [for (final c in order.chemicals) _ChemicalChip(name: c)],
+                ),
+                const SizedBox(height: AppSpace.md),
+                // Adımların sırası burada gösterilmez: hazırlama ekranında oyuncu
+                // o sırayı kendisi kuruyor. Yalnız iş ne kadar sürer, o yazar.
+                Row(
+                  children: [
+                    const Icon(Icons.schedule_rounded, size: 16, color: AppColors.inkMuted),
+                    const SizedBox(width: AppSpace.xs),
                     Text(
-                      order.doctorName,
-                      style: const TextStyle(
-                        fontSize: AppFont.title,
-                        fontWeight: FontWeight.w800,
-                        color: AppColors.ink,
-                      ),
-                    ),
-                    Text(
-                      '${order.doctorBranch} · Hasta: ${order.patientName}',
-                      style: TextStyle(fontSize: AppFont.caption, color: muted),
+                      '${order.steps.length} adım · ${order.prepTime.inMinutes} dk',
+                      style: AppText.label(),
                     ),
                   ],
                 ),
-              ),
-            ],
-          ),
-          const Divider(height: AppSpace.xxl),
-          Text(
-            'Rp.',
-            style: TextStyle(
-              fontSize: AppFont.caption,
-              fontWeight: FontWeight.w800,
-              color: AppColors.kiremit.withValues(alpha: 0.85),
-            ),
-          ),
-          Text(
-            order.magistralName,
-            style: const TextStyle(
-              fontSize: AppFont.title,
-              fontWeight: FontWeight.w700,
-              color: AppColors.ink,
-            ),
-          ),
-          const SizedBox(height: AppSpace.xs),
-          Text(
-            order.purpose,
-            style: TextStyle(fontSize: AppFont.body, color: Colors.black.withValues(alpha: 0.65)),
-          ),
-          const SizedBox(height: AppSpace.md),
-          Text(
-            'Gerekli kimyasallar',
-            style: TextStyle(fontSize: AppFont.caption, fontWeight: FontWeight.w700, color: muted),
-          ),
-          const SizedBox(height: AppSpace.sm),
-          Wrap(
-            spacing: AppSpace.sm,
-            runSpacing: AppSpace.sm,
-            children: [
-              for (final chemical in order.chemicals)
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: AppSpace.sm, vertical: AppSpace.xs),
-                  decoration: BoxDecoration(
-                    color: AppColors.cream,
-                    borderRadius: BorderRadius.circular(AppRadius.lg),
-                  ),
-                  child: Text(
-                    chemical,
-                    style: const TextStyle(
-                      fontSize: AppFont.caption,
-                      color: AppColors.ink,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-            ],
-          ),
-          const SizedBox(height: AppSpace.md),
-          Text(
-            'Adımlar',
-            style: TextStyle(fontSize: AppFont.caption, fontWeight: FontWeight.w700, color: muted),
-          ),
-          const SizedBox(height: AppSpace.sm),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: [
-                for (var i = 0; i < order.steps.length; i++) ...[
-                  _StepIcon(step: order.steps[i]),
-                  if (i != order.steps.length - 1)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: AppSpace.sm),
-                      child: Icon(
-                        Icons.arrow_forward_rounded,
-                        size: 18,
-                        color: Colors.black.withValues(alpha: 0.35),
+                const SizedBox(height: AppSpace.lg),
+                if (job != null)
+                  JobStatus(job: job)
+                else
+                  SizedBox(
+                    width: double.infinity,
+                    child: ChunkyButton(
+                      label: 'Hazırla',
+                      icon: Icons.science_rounded,
+                      onPressed: () => Navigator.of(context).push(
+                        MaterialPageRoute<void>(builder: (context) => PreparationScreen(order: order)),
                       ),
                     ),
-                ],
+                  ),
               ],
             ),
           ),
-          const SizedBox(height: AppSpace.lg),
-          if (job != null)
-            JobStatus(job: job)
-          else
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.kiremit,
-                  foregroundColor: Colors.white,
-                ),
-                onPressed: () => Navigator.of(context).push(
-                  MaterialPageRoute<void>(builder: (context) => PreparationScreen(order: order)),
-                ),
-                child: const Text('Hazırla'),
-              ),
-            ),
         ],
       ),
     );
   }
 }
 
-class _StepIcon extends StatelessWidget {
-  const _StepIcon({required this.step});
+class _DoctorStrip extends StatelessWidget {
+  const _DoctorStrip({required this.order});
 
-  final PrescriptionStep step;
+  final PrescriptionOrder order;
+
+  String get _initials {
+    final parts = order.doctorName.replaceFirst('Dr. ', '').split(' ');
+    return parts.map((p) => p.isEmpty ? '' : p[0]).take(2).join();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        ClipOval(
-          child: SizedBox(
-            width: 64,
-            height: 64,
-            child: step.imagePath != null
-                ? Image.asset(step.imagePath!, fit: BoxFit.cover)
-                : Container(
-                    color: AppColors.kiremit.withValues(alpha: 0.12),
-                    alignment: Alignment.center,
-                    child: Icon(step.icon, color: AppColors.kiremit, size: 32),
-                  ),
+    return Container(
+      padding: const EdgeInsets.fromLTRB(AppSpace.xl, AppSpace.md, AppSpace.xl, AppSpace.md),
+      decoration: const BoxDecoration(
+        color: AppColors.surfaceMuted,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.card)),
+        border: Border(bottom: BorderSide(color: AppColors.line)),
+      ),
+      child: Row(
+        children: [
+          CircleAvatar(
+            radius: 20,
+            backgroundColor: AppColors.kiremitSoft,
+            child: Text(_initials, style: AppText.title(size: 16, color: AppColors.kiremit)),
           ),
-        ),
-        const SizedBox(height: AppSpace.xs),
-        SizedBox(
-          width: 80,
-          child: Text(
-            step.label,
-            textAlign: TextAlign.center,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
-              fontSize: AppFont.caption,
-              fontWeight: FontWeight.w600,
-              color: AppColors.ink,
+          const SizedBox(width: AppSpace.md),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(order.doctorName, style: AppText.body(size: 15, weight: FontWeight.w600)),
+                Text(order.doctorBranch, style: AppText.label(size: 12)),
+              ],
             ),
           ),
-        ),
-      ],
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text('Hasta', style: AppText.label(size: 12)),
+              Text(order.patientName, style: AppText.body(size: 14, weight: FontWeight.w600)),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ChemicalChip extends StatelessWidget {
+  const _ChemicalChip({required this.name});
+
+  final String name;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: AppSpace.md, vertical: AppSpace.xs),
+      decoration: BoxDecoration(
+        color: AppColors.background,
+        borderRadius: BorderRadius.circular(AppRadius.pill),
+      ),
+      child: Text(name, style: AppText.body(size: 13, weight: FontWeight.w500)),
     );
   }
 }

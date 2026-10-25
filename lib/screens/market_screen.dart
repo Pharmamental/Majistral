@@ -8,48 +8,13 @@ import '../widgets/market_widgets.dart';
 
 enum MarketTab { hizlandirma, istasyonlar, kimyasallar }
 
-extension on MarketTab {
-  String get label {
-    switch (this) {
-      case MarketTab.hizlandirma:
-        return 'Hızlandırma';
-      case MarketTab.istasyonlar:
-        return 'İstasyonlar';
-      case MarketTab.kimyasallar:
-        return 'Kimyasallar';
-    }
-  }
+String _label(MarketTab tab) => switch (tab) {
+      MarketTab.hizlandirma => 'Hızlandırma',
+      MarketTab.istasyonlar => 'İstasyonlar',
+      MarketTab.kimyasallar => 'Kimyasallar',
+    };
 
-  Color get color {
-    switch (this) {
-      case MarketTab.hizlandirma:
-        return const Color(0xFF14555A); // Derin Deniz Mavisi/Teal
-      case MarketTab.istasyonlar:
-        return const Color(0xFF96682E); // Bronz/Ocra
-      case MarketTab.kimyasallar:
-        return const Color(0xFF355E3B); // Av Yeşili
-    }
-  }
-}
-
-Route<void> marketScreenRoute() {
-  return PageRouteBuilder<void>(
-    transitionDuration: const Duration(milliseconds: 550),
-    reverseTransitionDuration: const Duration(milliseconds: 350),
-    pageBuilder: (context, animation, secondaryAnimation) => const MarketScreen(),
-    transitionsBuilder: (context, animation, secondaryAnimation, child) {
-      final curved = CurvedAnimation(parent: animation, curve: Curves.easeOutCubic);
-      return FadeTransition(
-        opacity: curved,
-        child: ScaleTransition(
-          scale: Tween<double>(begin: 0.55, end: 1.0).animate(curved),
-          child: child,
-        ),
-      );
-    },
-  );
-}
-
+/// Market sekmesi. Hızlandırma yalnız ödüllü reklamla (tasarım belgesi, bölüm 10).
 class MarketScreen extends StatefulWidget {
   const MarketScreen({super.key});
 
@@ -58,77 +23,56 @@ class MarketScreen extends StatefulWidget {
 }
 
 class _MarketScreenState extends State<MarketScreen> {
-  MarketTab _selectedTab = MarketTab.hizlandirma;
+  MarketTab _tab = MarketTab.istasyonlar;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(AppSpace.sm),
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.black,
-              borderRadius: BorderRadius.circular(AppRadius.lg),
-              border: Border.all(color: const Color(0xFF3A3A3A), width: 7),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.7),
-                  blurRadius: 30,
-                  spreadRadius: 2,
-                ),
-              ],
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(13.0),
-              child: ColoredBox(
-                color: AppColors.cream,
-                child: Column(
-                  children: [
-                    const ScreenHeader(title: 'Market'),
-                    const SizedBox(height: AppSpace.md),
-                    Row(
-                      children: [
-                        for (final tab in MarketTab.values)
-                          Expanded(
-                            child: MarketTabButton(
-                              label: tab.label,
-                              color: tab.color,
-                              selected: _selectedTab == tab,
-                              onTap: () => setState(() => _selectedTab = tab),
-                            ),
-                          ),
-                      ],
-                    ),
-                    Expanded(child: _buildTabContent()),
-                  ],
-                ),
-              ),
-            ),
+    return Column(
+      children: [
+        const TabHeader(title: 'Market', subtitle: 'İstasyonunu yükselt, kimyasal al'),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: AppSpace.lg),
+          child: PillTabs<MarketTab>(
+            values: MarketTab.values,
+            selected: _tab,
+            labelOf: _label,
+            onChanged: (t) => setState(() => _tab = t),
           ),
         ),
-      ),
+        const SizedBox(height: AppSpace.lg),
+        Expanded(child: _content()),
+      ],
     );
   }
 
-  Widget _buildTabContent() {
-    const padding = EdgeInsets.fromLTRB(AppSpace.xl, AppSpace.md, AppSpace.xl, AppSpace.xl);
-    switch (_selectedTab) {
+  Widget _content() {
+    const listPadding = EdgeInsets.fromLTRB(AppSpace.lg, 0, AppSpace.lg, AppSpace.x3);
+    switch (_tab) {
       case MarketTab.hizlandirma:
         return ListView(
-          padding: padding,
-          children: const [ShopItemTile(item: adSpeedUp)],
+          padding: listPadding,
+          children: [
+            const ShopItemTile(item: adSpeedUp, highlight: true),
+            const SizedBox(height: AppSpace.md),
+            Text(
+              'Günde en çok 5 kez. Hızlandırma yalnız bekleme süresini kısaltır, '
+              'hazırlama adımlarını atlatmaz.',
+              style: AppText.body(size: 13, color: AppColors.inkMuted),
+            ),
+          ],
         );
       case MarketTab.istasyonlar:
-        return ListView.builder(
-          padding: padding,
+        return ListView.separated(
+          padding: const EdgeInsets.only(bottom: AppSpace.x3),
           itemCount: stations.length,
+          separatorBuilder: (context, index) => const SizedBox(height: AppSpace.xxl),
           itemBuilder: (context, index) => StationSection(station: stations[index]),
         );
       case MarketTab.kimyasallar:
-        return ListView.builder(
-          padding: padding,
+        return ListView.separated(
+          padding: listPadding,
           itemCount: chemicals.length,
+          separatorBuilder: (context, index) => const SizedBox(height: AppSpace.md),
           itemBuilder: (context, index) => ShopItemTile(item: chemicals[index]),
         );
     }

@@ -35,7 +35,7 @@ PreparationResult evaluatePreparation({
   if (!_sameOrder(stepOrder, correctOrder)) {
     stars--;
     notes.add(order.sequenceHint);
-    notes.add('Doğru sıra: ${correctOrder.join(' → ')}.');
+    notes.add('Doğru sıra: ${correctOrder.join(' › ')}.');
   }
 
   return PreparationResult(stars: stars < 1 ? 1 : stars, notes: notes);

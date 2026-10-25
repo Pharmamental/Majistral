@@ -8,79 +8,74 @@ import 'package:game/logic/job_store.dart';
 import 'package:game/main.dart';
 import 'package:game/widgets/prescription_card.dart';
 
-Future<void> _openAndReturn(WidgetTester tester, String label, String title) async {
-  await tester.tap(find.text(label));
-  await tester.pumpAndSettle();
-  expect(find.text(title), findsOneWidget);
-  await tester.tap(find.text('Geri'));
-  await tester.pumpAndSettle();
-  expect(find.text(label), findsOneWidget);
-}
+import 'test_fonts.dart';
 
 Future<JobStore> _store({DateTime Function()? now}) async {
   SharedPreferences.setMockInitialValues({});
   return JobStore.load(now: now);
 }
 
-void main() {
-  testWidgets('ana ekrandan her bölüme gidip geri dönülür', (tester) async {
-    await tester.pumpWidget(MajistralApp(store: await _store()));
-    await _openAndReturn(tester, 'Reçeteler', 'Reçeteler');
-    await _openAndReturn(tester, 'Market', 'Market');
+Future<void> _tallScreen(WidgetTester tester) async {
+  tester.view.physicalSize = const Size(1080, 4800);
+  tester.view.devicePixelRatio = 3;
+  addTearDown(tester.view.reset);
+}
 
-    // Laboratuvarın termometresi sürekli çalıştığı için pumpAndSettle bitmez.
+void main() {
+  setUpAll(loadAppFonts);
+
+  testWidgets('alt çubukla üç bölüm arasında geçilir', (tester) async {
+    await tester.pumpWidget(MajistralApp(store: await _store()));
+    expect(find.text('3 reçete'), findsOneWidget);
+
     await tester.tap(find.text('Laboratuvar'));
     await tester.pump();
-    await tester.pump(const Duration(seconds: 1));
-    expect(find.text('Fazları Isıt'), findsOneWidget);
-    await tester.tap(find.text('Geri'));
-    await tester.pump();
-    await tester.pump(const Duration(seconds: 1));
-    expect(find.text('Laboratuvar'), findsOneWidget);
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.text('Fazları ısıt'), findsOneWidget);
+
+    await tester.tap(find.text('Market'));
+    await tester.pumpAndSettle();
+    expect(find.text(stations.first.name), findsOneWidget);
   });
 
   testWidgets('reçete ekranı her reçete için bir kart gösterir', (tester) async {
-    tester.view.physicalSize = const Size(1080, 4000);
-    addTearDown(tester.view.reset);
+    await _tallScreen(tester);
     await tester.pumpWidget(MajistralApp(store: await _store()));
-    await tester.tap(find.text('Reçeteler'));
-    await tester.pumpAndSettle();
     expect(find.byType(PrescriptionCard), findsNWidgets(prescriptionOrders.length));
     expect(find.text('Dr. Selin Arı'), findsOneWidget);
   });
 
   testWidgets('hazırlık gerçek zamanda sürer, hazır olunca teslim edilir', (tester) async {
-    tester.view.physicalSize = const Size(1080, 4000);
-    addTearDown(tester.view.reset);
+    await _tallScreen(tester);
     final order = prescriptionOrders.first;
     var clock = DateTime(2026, 10, 25, 12);
     final store = await _store(now: () => clock);
     await tester.pumpWidget(MajistralApp(store: store));
-    await tester.tap(find.text('Reçeteler'));
-    await tester.pumpAndSettle();
+
     await tester.tap(find.text('Hazırla').first);
     await tester.pumpAndSettle();
     expect(find.text('Hazırlama'), findsOneWidget);
+    expect(find.text('Önce raftan kimyasal seç'), findsOneWidget);
 
     for (final chemical in order.chemicals) {
-      await tester.tap(find.widgetWithText(FilterChip, chemical));
+      await tester.tap(find.descendant(of: find.byType(Wrap), matching: find.text(chemical)).first);
       await tester.pump();
     }
     for (final step in order.steps) {
       await tester.tap(find.text(step.label));
       await tester.pump();
     }
+    expect(find.text('Hazırsın'), findsOneWidget);
     await tester.tap(find.text('Başlat'));
     await tester.pump();
     expect(find.text('Hazırlanıyor'), findsOneWidget);
     expect(find.text('10:00'), findsOneWidget);
 
-    // Reçetelere dönünce kartta "Hazırla" yerine süren iş görünür.
     await tester.tap(find.text('Reçetelere Dön'));
     await tester.pumpAndSettle();
     expect(find.text('Hazırlanıyor'), findsOneWidget);
+    expect(find.text('3 reçete · 1 hazırlanıyor'), findsOneWidget);
 
-    // Süre dolunca kart "Teslim Et" olur; teslimde yıldızlar gösterilir.
     clock = clock.add(order.prepTime);
     await tester.pump(const Duration(seconds: 1));
     await tester.tap(find.text('Hazır · Teslim Et'));
@@ -94,15 +89,14 @@ void main() {
     expect(find.text('Hazırla'), findsNWidgets(prescriptionOrders.length));
   });
 
-  testWidgets('market sekmeleri istasyonları ve kimyasalları gösterir', (tester) async {
+  testWidgets('market sekmeleri istasyonları, reklamı ve kimyasalları gösterir', (tester) async {
     await tester.pumpWidget(MajistralApp(store: await _store()));
     await tester.tap(find.text('Market'));
     await tester.pumpAndSettle();
-    expect(find.text('Reklam İzle'), findsOneWidget);
 
-    await tester.tap(find.text('İstasyonlar'));
+    await tester.tap(find.text('Hızlandırma'));
     await tester.pumpAndSettle();
-    expect(find.text(stations.first.name), findsOneWidget);
+    expect(find.text('Reklam İzle'), findsOneWidget);
 
     await tester.tap(find.text('Kimyasallar'));
     await tester.pumpAndSettle();
@@ -110,10 +104,11 @@ void main() {
   });
 
   testWidgets('termometre ideal aralıkta tutulunca başarı gösterir', (tester) async {
+    await _tallScreen(tester);
     await tester.pumpWidget(MajistralApp(store: await _store()));
     await tester.tap(find.text('Laboratuvar'));
     await tester.pump();
-    await tester.pump(const Duration(milliseconds: 600));
+    await tester.pump(const Duration(milliseconds: 300));
     expect(find.text('Soğuk, basılı tutarak ısıt'), findsOneWidget);
 
     final gesture = await tester.startGesture(tester.getCenter(find.byKey(const Key('flame-button'))));

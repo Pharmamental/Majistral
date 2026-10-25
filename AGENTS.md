@@ -41,15 +41,28 @@ asistan yönetir.
 ```
 lib/
 ├── main.dart          Uygulama girişi (MajistralApp)
-├── theme/             tokens (renk, boşluk, köşe, yazı), bevel (3B kenar), app_theme
+├── theme/             tokens (renk, boşluk, köşe, AppText yazı stilleri), app_theme
 ├── models/            shop_item (ShopItem, Station), prescription, prep_job
 ├── data/              stations, market_items, orders (taslak içerik, doğrulanmadı)
 ├── logic/             quality (1–3 yıldız hesabı), job_store (süren işler, telefona kayıt,
 │                      JobScope ile ekranlara verilir)
-├── screens/           home, orders (Reçeteler), preparation (Hazırlama), lab, market
-└── widgets/           back_pill, home_circle_button, prescription_card, market_widgets,
-                       thermometer_panel, thermometer_painter
+├── screens/           home (alt çubuklu kabuk), orders (Reçeteler), preparation (Hazırlama),
+│                      lab (Laboratuvar), market
+└── widgets/           chunky_button (3B düğme), back_pill (başlıklar), prescription_card,
+                       job_status, result_view, market_widgets, thermometer_panel/painter
 ```
+
+## Arayüz kuralları (2026-10-25, Tasarım Rehberi'nden)
+- Renk 60-30-10: krem zemin, beyaz kart, kiremit yalnız birincil aksiyon. Hazır/teslim yeşil.
+- Yazı: başlık ve düğme Baloo 2, gövde Rubik; ikisi `assets/fonts/`'ta gömülü (OFL). Değişken
+  font olduğu için kalınlık `AppText` ile verilir (`fontVariations`); düz `TextStyle(fontWeight)`
+  bazı cihazlarda kalın çizmez. Rubik'te `→` yok; `›` kullan.
+- Boşluk 4-8-12-16-20-24-32-40-48, köşe 20, çip tam yuvarlak, dokunma alanı en az 44.
+- Birincil aksiyon altta (başparmak bölgesi): kartın en altı ya da ekranın sabit alt çubuğu.
+- Öğrenme ekranı (Hazırlama) sade; kutlama (yıldız animasyonu) yalnız teslimde.
+- Durum yalnız renkle anlatılmaz: seçimde onay işareti, sayaçta ikon + metin.
+- Reçete kartında adım sırası gösterilmez (hazırlamadaki bulmacanın cevabını verir).
+- Testler gerçek fontu `test/test_fonts.dart` ile yükler; taşma testleri böyle gerçeği yansıtır.
 - Süren işler `shared_preferences` ile telefona kaydedilir; saat şimdilik cihaz saati
   (`JobStore.now`). Sunucu saati gelene kadar saat hilesi mümkün; kapanmamış bir açık.
 - Ekonomi, reklam ve bildirim henüz yok; satın alma düğmeleri bilerek boş.
