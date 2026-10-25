@@ -8,6 +8,29 @@ class PrescriptionStep {
   final String? imagePath;
 }
 
+/// Hazırlamada seçilen alet türleri ve her türün raftaki seçenekleri.
+/// Kaynak: ASHP nonsteril majistral bülteni (beyin: majistral-alet-ve-makineler).
+enum ToolKind {
+  spatula('Spatül', ['Çelik spatül', 'Plastik spatül']),
+  mortar('Havan', ['Cam havan', 'Porselen havan', 'Wedgwood havan']),
+  surface('Çalışma yüzeyi', ['Merhem taşı', 'Parşömen blok']);
+
+  const ToolKind(this.label, this.options);
+
+  final String label;
+  final List<String> options;
+}
+
+/// Bir reçetede bir alet türü için uygun seçenekler; yanlış seçilirse [hint]
+/// neden yanlış olduğunu anlatır.
+class ToolRequirement {
+  const ToolRequirement(this.kind, this.allowed, {this.hint});
+
+  final ToolKind kind;
+  final Set<String> allowed;
+  final String? hint;
+}
+
 class PrescriptionOrder {
   const PrescriptionOrder({
     required this.doctorName,
@@ -20,7 +43,11 @@ class PrescriptionOrder {
     required this.steps,
     required this.sequenceHint,
     required this.prepTime,
+    this.tools = const [],
   });
+
+  /// Bu reçetede seçilecek aletler; listede olmayan tür bu reçetede sorulmaz.
+  final List<ToolRequirement> tools;
 
   /// Başlat'tan teslime kadar gerçek zamanda geçen süre (tasarım belgesi,
   /// bölüm 7: küçük 5–15 dk, krem 20–45 dk). Kapalı testte ayarlanacak.

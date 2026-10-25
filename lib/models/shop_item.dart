@@ -23,10 +23,13 @@ class ShopItem {
   final int price;
 }
 
-/// Bir istasyon ve onun kademeleri (paslı → iyi durumda → en gelişmiş).
+/// Bir alet grubu. [upgradePath] doğruysa kartlar basit → gelişmiş sırasıyla
+/// bir yükseltme yoludur; yanlışsa (havanlar, spatüller) aynı işin değil,
+/// farklı işlerin aletleridir ve kademe gösterilmez.
 class Station {
-  const Station({required this.name, required this.tiers});
+  const Station({required this.name, required this.tiers, this.upgradePath = true});
 
   final String name;
   final List<ShopItem> tiers;
+  final bool upgradePath;
 }

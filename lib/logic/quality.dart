@@ -10,14 +10,27 @@ class PreparationResult {
 
 /// Tasarım belgesi bölüm 5: her hata türü bir yıldız götürür, en düşük kalite
 /// 1 yıldızdır ve ürün her zaman satılır. Hata türleri: eksik kimyasal,
-/// reçetede olmayan kimyasal, yanlış adım sırası.
+/// reçetede olmayan kimyasal, yanlış alet (kaç alet yanlış olursa olsun tek
+/// yıldız), yanlış adım sırası.
 PreparationResult evaluatePreparation({
   required PrescriptionOrder order,
   required Set<String> selectedChemicals,
   required List<String> stepOrder,
+  Map<ToolKind, String> selectedTools = const {},
 }) {
   final notes = <String>[];
   var stars = 3;
+
+  final wrongTools = [
+    for (final req in order.tools)
+      if (!req.allowed.contains(selectedTools[req.kind])) req,
+  ];
+  if (wrongTools.isNotEmpty) {
+    stars--;
+    for (final req in wrongTools) {
+      notes.add(req.hint ?? '${req.kind.label}: ${req.allowed.join(' ya da ')} kullanılmalıydı.');
+    }
+  }
 
   final missing = order.chemicals.where((c) => !selectedChemicals.contains(c)).toList();
   if (missing.isNotEmpty) {

@@ -20,20 +20,39 @@ class StationSection extends StatelessWidget {
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppSpace.xl),
-          child: Text(station.name, style: AppText.title(size: 20)),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(station.name, style: AppText.title(size: 20)),
+              Text(
+                station.upgradePath
+                    ? 'Basitten gelişmişe'
+                    : 'Her işin ayrı aleti',
+                style: AppText.label(size: 12),
+              ),
+            ],
+          ),
         ),
         const SizedBox(height: AppSpace.md),
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           padding: const EdgeInsets.symmetric(horizontal: AppSpace.lg),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              for (var i = 0; i < station.tiers.length; i++) ...[
-                StationTierCard(tier: station.tiers[i], level: i + 1),
-                if (i != station.tiers.length - 1) const SizedBox(width: AppSpace.md),
+          // Kartlar en uzun açıklamaya göre eşit boyda; düğmeler aynı hizada.
+          child: IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                for (var i = 0; i < station.tiers.length; i++) ...[
+                  StationTierCard(
+                    tier: station.tiers[i],
+                    level: station.upgradePath ? i + 1 : null,
+                    levels: station.tiers.length,
+                  ),
+                  if (i != station.tiers.length - 1)
+                    const SizedBox(width: AppSpace.md),
+                ],
               ],
-            ],
+            ),
           ),
         ),
       ],
@@ -42,22 +61,32 @@ class StationSection extends StatelessWidget {
 }
 
 class StationTierCard extends StatelessWidget {
-  const StationTierCard({super.key, required this.tier, required this.level});
+  const StationTierCard({
+    super.key,
+    required this.tier,
+    this.level,
+    this.levels = 3,
+  });
 
   final ShopItem tier;
-  final int level;
+
+  /// Yükseltme yolundaki yeri; farklı işlerin aletlerinde (havanlar) yok.
+  final int? level;
+  final int levels;
 
   @override
   Widget build(BuildContext context) {
     final owned = tier.price == 0;
     return Container(
       width: 184,
-      height: 244,
       padding: const EdgeInsets.all(AppSpace.lg),
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(AppRadius.card),
-        border: Border.all(color: owned ? tier.color : AppColors.line, width: owned ? 2 : 1),
+        border: Border.all(
+          color: owned ? tier.color : AppColors.line,
+          width: owned ? 2 : 1,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -66,21 +95,19 @@ class StationTierCard extends StatelessWidget {
             children: [
               _Thumb(item: tier, size: 56),
               const Spacer(),
-              _LevelPips(level: level, color: tier.color),
+              if (level != null)
+                _LevelPips(level: level!, levels: levels, color: tier.color),
             ],
           ),
           const SizedBox(height: AppSpace.md),
           Text(tier.name, style: AppText.title(size: 18)),
           const SizedBox(height: AppSpace.xs),
-          Expanded(
-            child: Text(
-              tier.description,
-              maxLines: 4,
-              overflow: TextOverflow.ellipsis,
-              style: AppText.body(size: 13, color: AppColors.inkMuted),
-            ),
+          Text(
+            tier.description,
+            style: AppText.body(size: 13, color: AppColors.inkMuted),
           ),
-          const SizedBox(height: AppSpace.sm),
+          const SizedBox(height: AppSpace.md),
+          const Spacer(),
           SizedBox(
             width: double.infinity,
             child: owned
@@ -94,13 +121,22 @@ class StationTierCard extends StatelessWidget {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.check_rounded, size: 18, color: AppColors.inkMuted),
+                        const Icon(
+                          Icons.check_rounded,
+                          size: 18,
+                          color: AppColors.inkMuted,
+                        ),
                         const SizedBox(width: AppSpace.xs),
                         Text('Elinde', style: AppText.label()),
                       ],
                     ),
                   )
-                : ChunkyButton(compact: true, label: '${tier.price}', icon: Icons.toll_rounded, onPressed: () {}),
+                : ChunkyButton(
+                    compact: true,
+                    label: '${tier.price}',
+                    icon: Icons.toll_rounded,
+                    onPressed: () {},
+                  ),
           ),
         ],
       ),
@@ -110,9 +146,14 @@ class StationTierCard extends StatelessWidget {
 
 /// Kademe göstergesi: dolu nokta sayısı = kademe.
 class _LevelPips extends StatelessWidget {
-  const _LevelPips({required this.level, required this.color});
+  const _LevelPips({
+    required this.level,
+    required this.levels,
+    required this.color,
+  });
 
   final int level;
+  final int levels;
   final Color color;
 
   @override
@@ -121,7 +162,7 @@ class _LevelPips extends StatelessWidget {
       label: 'Kademe $level',
       child: Row(
         children: [
-          for (var i = 1; i <= 3; i++)
+          for (var i = 1; i <= levels; i++)
             Container(
               width: 8,
               height: 8,
@@ -176,7 +217,10 @@ class ShopItemTile extends StatelessWidget {
       decoration: BoxDecoration(
         color: highlight ? AppColors.successSoft : AppColors.surface,
         borderRadius: BorderRadius.circular(AppRadius.card),
-        border: Border.all(color: highlight ? AppColors.success : AppColors.line, width: highlight ? 2 : 1),
+        border: Border.all(
+          color: highlight ? AppColors.success : AppColors.line,
+          width: highlight ? 2 : 1,
+        ),
       ),
       child: Row(
         children: [
@@ -188,7 +232,10 @@ class ShopItemTile extends StatelessWidget {
               children: [
                 Text(item.name, style: AppText.title(size: 17)),
                 const SizedBox(height: AppSpace.xs),
-                Text(item.description, style: AppText.body(size: 13, color: AppColors.inkMuted)),
+                Text(
+                  item.description,
+                  style: AppText.body(size: 13, color: AppColors.inkMuted),
+                ),
               ],
             ),
           ),
@@ -196,7 +243,11 @@ class ShopItemTile extends StatelessWidget {
           SizedBox(
             width: 104,
             child: highlight
-                ? ChunkyButton.success(compact: true, label: item.buttonLabel, onPressed: () {})
+                ? ChunkyButton.success(
+                    compact: true,
+                    label: item.buttonLabel,
+                    onPressed: () {},
+                  )
                 : ChunkyButton(
                     compact: true,
                     label: '${item.price}',
@@ -247,14 +298,18 @@ class PillTabs<T> extends StatelessWidget {
                     height: 44,
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
-                      color: value == selected ? AppColors.kiremit : Colors.transparent,
+                      color: value == selected
+                          ? AppColors.kiremit
+                          : Colors.transparent,
                       borderRadius: BorderRadius.circular(AppRadius.pill),
                     ),
                     child: Text(
                       labelOf(value),
                       style: AppText.label(
                         size: 14,
-                        color: value == selected ? Colors.white : AppColors.inkMuted,
+                        color: value == selected
+                            ? Colors.white
+                            : AppColors.inkMuted,
                       ),
                     ),
                   ),

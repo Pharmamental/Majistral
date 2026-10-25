@@ -61,6 +61,12 @@ void main() {
       await tester.tap(find.descendant(of: find.byType(Wrap), matching: find.text(chemical)).first);
       await tester.pump();
     }
+    expect(find.text('Aletlerini seç'), findsOneWidget);
+    // Salisilik asit: çelik değil plastik spatül; toz için porselen havan.
+    for (final tool in ['Plastik spatül', 'Porselen havan', 'Merhem taşı']) {
+      await tester.tap(find.text(tool));
+      await tester.pump();
+    }
     for (final step in order.steps) {
       await tester.tap(find.text(step.label));
       await tester.pump();

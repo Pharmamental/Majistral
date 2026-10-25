@@ -29,6 +29,7 @@ class _PreparationScreenState extends State<PreparationScreen> {
   late final List<String> _stepPool;
   final Set<String> _selected = {};
   final List<String> _sequence = [];
+  final Map<ToolKind, String> _tools = {};
 
   @override
   void initState() {
@@ -66,19 +67,27 @@ class _PreparationScreenState extends State<PreparationScreen> {
     });
   }
 
+  void _pickTool(ToolKind kind, String option) {
+    setState(() => _tools[kind] = option);
+  }
+
+  bool get _toolsDone => widget.order.tools.every((req) => _tools.containsKey(req.kind));
+
   Future<void> _start() async {
     final result = evaluatePreparation(
       order: widget.order,
       selectedChemicals: _selected,
       stepOrder: _sequence,
+      selectedTools: _tools,
     );
     await JobScope.of(context).start(widget.order, result);
   }
 
-  bool get _canStart => _selected.isNotEmpty && _sequence.length == _stepPool.length;
+  bool get _canStart => _selected.isNotEmpty && _toolsDone && _sequence.length == _stepPool.length;
 
   String get _startHint {
     if (_selected.isEmpty) return 'Önce raftan kimyasal seç';
+    if (!_toolsDone) return 'Aletlerini seç';
     final left = _stepPool.length - _sequence.length;
     if (left > 0) return 'Sıraya $left adım daha koy';
     return 'Hazırsın';
@@ -119,9 +128,39 @@ class _PreparationScreenState extends State<PreparationScreen> {
                             ],
                           ),
                         ),
+                        if (widget.order.tools.isNotEmpty) ...[
+                          const SizedBox(height: AppSpace.lg),
+                          _Section(
+                            number: 2,
+                            title: 'Aletleri seç',
+                            hint: 'Her işin doğru aleti var. Yanlış alet ürünün kalitesini düşürür.',
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                for (final req in widget.order.tools) ...[
+                                  Text(req.kind.label, style: AppText.label(color: AppColors.ink)),
+                                  const SizedBox(height: AppSpace.sm),
+                                  Wrap(
+                                    spacing: AppSpace.sm,
+                                    runSpacing: AppSpace.sm,
+                                    children: [
+                                      for (final option in req.kind.options)
+                                        _ShelfChip(
+                                          label: option,
+                                          selected: _tools[req.kind] == option,
+                                          onTap: () => _pickTool(req.kind, option),
+                                        ),
+                                    ],
+                                  ),
+                                  if (req != widget.order.tools.last) const SizedBox(height: AppSpace.lg),
+                                ],
+                              ],
+                            ),
+                          ),
+                        ],
                         const SizedBox(height: AppSpace.lg),
                         _Section(
-                          number: 2,
+                          number: widget.order.tools.isEmpty ? 2 : 3,
                           title: 'Hazırlama sırası',
                           hint: 'Adımlara doğru sırayla dokun. Yanlışsa tekrar dokunup geri al.',
                           child: Column(

@@ -62,6 +62,12 @@ lib/
 - Öğrenme ekranı (Hazırlama) sade; kutlama (yıldız animasyonu) yalnız teslimde.
 - Durum yalnız renkle anlatılmaz: seçimde onay işareti, sayaçta ikon + metin.
 - Reçete kartında adım sırası gösterilmez (hazırlamadaki bulmacanın cevabını verir).
+- Aletler (2026-10-25): hazırlamada spatül, havan ve çalışma yüzeyi seçilir; kurallar ASHP
+  bülteninden (salisilik asit çelik spatülle tepkir; cam havan toz ezmez; parşömen kremde olmaz).
+  Kaç alet yanlış olursa olsun alet hatası tek yıldız. Marketteki basamaklar gerçek aletler
+  (kefeli → elektronik → analitik terazi; merhem taşı → Unguator → merhem değirmeni); havanlar
+  ve spatüller yükseltme değil, farklı işlerin aletleri ().
+  Kaynak listesi: C:\YZ\knowledge\concepts\majistral-alet-ve-makineler.md.
 - Testler gerçek fontu `test/test_fonts.dart` ile yükler; taşma testleri böyle gerçeği yansıtır.
 - Süren işler `shared_preferences` ile telefona kaydedilir; saat şimdilik cihaz saati
   (`JobStore.now`). Sunucu saati gelene kadar saat hilesi mümkün; kapanmamış bir açık.

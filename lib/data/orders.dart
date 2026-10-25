@@ -4,6 +4,16 @@ import '../models/prescription.dart';
 
 // Örnek reçeteler. Hekim ve hasta adları uydurma. Formül miktarları bilerek
 // yok; içerik yayından önce iki kaynakla doğrulanacak (AGENTS.md).
+//
+// Alet kuralları ASHP nonsteril majistral bülteninden: cam havan kaygan ve
+// toz ezmez (sıvı, boyayan madde için); porselen ve Wedgwood toz/kristal için.
+// Salisilik asit çelikle tepkimeye girer. Parşömen kremin suyunu emer.
+
+const _tozHavani = ToolRequirement(
+  ToolKind.mortar,
+  {'Porselen havan', 'Wedgwood havan'},
+  hint: 'Cam havan kaygandır, tozu ezmez; toz için porselen ya da Wedgwood havan kullanılır.',
+);
 
 const List<PrescriptionOrder> prescriptionOrders = [
   PrescriptionOrder(
@@ -23,6 +33,15 @@ const List<PrescriptionOrder> prescriptionOrders = [
     sequenceHint:
         'Salisilik asidi önce sıvı parafinle macun yapmadan vazeline kattığın için merhem kumlu oldu.',
     prepTime: Duration(minutes: 10),
+    tools: [
+      ToolRequirement(
+        ToolKind.spatula,
+        {'Plastik spatül'},
+        hint: 'Salisilik asit çelik spatülle tepkimeye girer; plastik spatül kullanılır.',
+      ),
+      _tozHavani,
+      ToolRequirement(ToolKind.surface, {'Merhem taşı', 'Parşömen blok'}),
+    ],
   ),
   PrescriptionOrder(
     doctorName: 'Dr. Kerem Öz',
@@ -40,6 +59,11 @@ const List<PrescriptionOrder> prescriptionOrders = [
     ],
     sequenceHint: 'Çinko oksidi önce sıvı parafinle macun yapmadığın için merhem kumlu oldu.',
     prepTime: Duration(minutes: 15),
+    tools: [
+      ToolRequirement(ToolKind.spatula, {'Çelik spatül', 'Plastik spatül'}),
+      _tozHavani,
+      ToolRequirement(ToolKind.surface, {'Merhem taşı', 'Parşömen blok'}),
+    ],
   ),
   PrescriptionOrder(
     doctorName: 'Dr. Deniz Kaya',
@@ -57,5 +81,13 @@ const List<PrescriptionOrder> prescriptionOrders = [
     ],
     sequenceHint: 'Yağ ve su fazı ısıtılmadan karıştırıldığı için krem ayrıştı.',
     prepTime: Duration(minutes: 30),
+    tools: [
+      ToolRequirement(ToolKind.spatula, {'Çelik spatül', 'Plastik spatül'}),
+      ToolRequirement(
+        ToolKind.surface,
+        {'Merhem taşı'},
+        hint: 'Parşömen kâğıt kremin suyunu emer; krem cam merhem taşında hazırlanır.',
+      ),
+    ],
   ),
 ];
