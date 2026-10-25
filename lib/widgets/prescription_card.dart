@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/prescription.dart';
+import '../screens/preparation_screen.dart';
 import '../theme/tokens.dart';
 
 class PrescriptionCard extends StatelessWidget {
@@ -135,6 +136,20 @@ class PrescriptionCard extends StatelessWidget {
                     ),
                 ],
               ],
+            ),
+          ),
+          const SizedBox(height: AppSpace.lg),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.kiremit,
+                foregroundColor: Colors.white,
+              ),
+              onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute<void>(builder: (context) => PreparationScreen(order: order)),
+              ),
+              child: const Text('Hazırla'),
             ),
           ),
         ],

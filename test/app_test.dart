@@ -42,6 +42,31 @@ void main() {
     expect(find.text('Dr. Selin Arı'), findsOneWidget);
   });
 
+  testWidgets('reçeteden hazırlama ekranına gidilir, doğru hazırlık 3 yıldız alır', (tester) async {
+    tester.view.physicalSize = const Size(1080, 4000);
+    addTearDown(tester.view.reset);
+    final order = prescriptionOrders.first;
+    await tester.pumpWidget(const MajistralApp());
+    await tester.tap(find.text('Reçeteler'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Hazırla').first);
+    await tester.pumpAndSettle();
+    expect(find.text('Hazırlama'), findsOneWidget);
+
+    for (final chemical in order.chemicals) {
+      await tester.tap(find.widgetWithText(FilterChip, chemical));
+      await tester.pump();
+    }
+    for (final step in order.steps) {
+      await tester.tap(find.text(step.label));
+      await tester.pump();
+    }
+    await tester.tap(find.text('Başlat'));
+    await tester.pumpAndSettle();
+    expect(find.text('Kusursuz hazırlandı!'), findsOneWidget);
+    expect(find.byIcon(Icons.star_rounded), findsNWidgets(3));
+  });
+
   testWidgets('market sekmeleri istasyonları ve kimyasalları gösterir', (tester) async {
     await tester.pumpWidget(const MajistralApp());
     await tester.tap(find.text('Market'));

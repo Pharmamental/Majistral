@@ -16,7 +16,9 @@ class PrescriptionOrder {
     required this.magistralName,
     required this.purpose,
     required this.chemicals,
+    required this.distractors,
     required this.steps,
+    required this.sequenceHint,
   });
 
   final String doctorName;
@@ -25,5 +27,13 @@ class PrescriptionOrder {
   final String magistralName;
   final String purpose;
   final List<String> chemicals;
+
+  /// Rafta reçetedekilerle karışık duran, bu reçetede olmayan kimyasallar.
+  final List<String> distractors;
+
+  /// Doğru sırada verilen adımlar.
   final List<PrescriptionStep> steps;
+
+  /// Sıra yanlışsa ürüne ne olduğunu anlatan tek cümle.
+  final String sequenceHint;
 }

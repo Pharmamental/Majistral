@@ -44,7 +44,8 @@ lib/
 ├── theme/             tokens (renk, boşluk, köşe, yazı), bevel (3B kenar), app_theme
 ├── models/            shop_item (ShopItem, Station), prescription
 ├── data/              stations, market_items, orders (taslak içerik, doğrulanmadı)
-├── screens/           home, orders (Reçeteler), lab (Laboratuvar), market
+├── logic/             quality (hazırlığın 1–3 yıldız hesabı; testi test/quality_test.dart)
+├── screens/           home, orders (Reçeteler), preparation (Hazırlama), lab, market
 └── widgets/           back_pill, home_circle_button, prescription_card, market_widgets,
                        thermometer_panel, thermometer_painter
 ```
