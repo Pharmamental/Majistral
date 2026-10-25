@@ -29,9 +29,19 @@ yanında ne demek olduğunu yaz. Komut ya da dosya adını ancak Tuğrul'un bir 
 `C:\Game` klasöründen `flutter analyze` ve `flutter test`. Temiz = 0 hata, 0 uyarı.
 Doğrulamadan "bitti" denmez.
 
+## Git
+Depo: https://github.com/Pharmamental/Majistral (dal `main`). Tuğrul git bilmez; git işlerini
+asistan yönetir.
+- Oturum başında, koda dokunmadan önce: `git pull --rebase`.
+- İş bitince: `git add -A`, Türkçe kısa commit mesajı, `git pull --rebase`, `git push`.
+- Yeni dal açma, force push yapma, geçmişi değiştirme (`reset --hard`, `rebase -i`,
+  `commit --amend`); riskli ya da geri alınamaz bir işlemde önce Tuğrul'a sor.
+
 ## Klasörün durumu (2026-10-25)
-Temmuz 2026'dan kalma bir Flutter projesi var (`lib/main.dart`, iki test). Git deposu değil.
-Bu eski kodun korunup korunmayacağına henüz karar verilmedi; Tuğrul'a sormadan silinmez.
+Temmuz 2026'dan kalma bir Flutter projesi var (`lib/main.dart`, iki test). `assets/images/`'ta
+havan, kalıp, soğutma, maserasyon, kapsül ikonları var; yani önceki bir majistral oyunu denemesi
+olabilir. Bu kodun korunup korunmayacağına henüz karar verilmedi; Tuğrul'a sormadan silinmez.
+İlk commit (`0bd231c`) bu hâli olduğu gibi saklıyor.
 
 ## Beyne iz bırak
 Bu proje Tuğrul'un ikinci beyninin (`C:\YZ`) parçası; proje kartı
