@@ -147,6 +147,43 @@ void main() {
     expect(store.isReady(j), isTrue);
   });
 
+  test('acele et süreyi ve kaliteyi yarıya indirir: 3 → 2 → 1 → 1', () async {
+    final store = await JobStore.load(now: () => clock);
+    await store.start(order, const PreparationResult(stars: 3, notes: []));
+    await store.completeAction(order.magistralName);
+    expect(store.remaining(store.jobFor(order.magistralName)!), const Duration(minutes: 8));
+
+    await store.rush(order.magistralName);
+    var job = store.jobFor(order.magistralName)!;
+    expect(store.remaining(job), const Duration(minutes: 4));
+    expect(job.stars, 2);
+    expect(job.notes.single, contains('Acele'));
+
+    await store.rush(order.magistralName);
+    await store.rush(order.magistralName);
+    job = store.jobFor(order.magistralName)!;
+    expect(job.stars, 1);
+    expect(store.remaining(job), const Duration(minutes: 1));
+    expect(job.notes, hasLength(1));
+    expect(store.rushesLeft, JobStore.dailyRushes - 3);
+  });
+
+  test('oyuncu adımı beklerken acele edilmez; günde 5 hak, ertesi gün yenilenir', () async {
+    final store = await JobStore.load(now: () => clock);
+    await store.start(order, result);
+    expect(store.canRush(store.jobFor(order.magistralName)!), isFalse); // tartım bekliyor
+    await store.completeAction(order.magistralName);
+    for (var i = 0; i < 6; i++) {
+      await store.rush(order.magistralName);
+    }
+    expect(store.rushesLeft, 0);
+    expect(store.canRush(store.jobFor(order.magistralName)!), isFalse);
+
+    clock = clock.add(const Duration(days: 1));
+    final reopened = await JobStore.load(now: () => clock);
+    expect(reopened.rushesLeft, JobStore.dailyRushes);
+  });
+
   test('istasyonlardan önceki kayıt biçimi de açılır', () async {
     SharedPreferences.setMockInitialValues({
       'prep_jobs_v1':

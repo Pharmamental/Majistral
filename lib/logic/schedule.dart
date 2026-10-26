@@ -27,12 +27,52 @@ List<StepSlot> planSlots(
   return (slots: _place(now, start, busy), pending: later);
 }
 
-List<StepSlot> _place(List<PendingStep> steps, DateTime start, Iterable<StepSlot> busy) {
+/// Acele et: işin [now] anından sonraki çalışma süresi yarıya iner. Çalışan
+/// adım kaldığı yerden yarı sürede biter; sıradaki adımlar yarı süreyle yeniden
+/// yerleştirilir. Başka işlerin zamanları ([others]) değişmez, dolu istasyonda
+/// sıra beklemek kısalmaz. Bitmiş adımlar olduğu gibi kalır.
+List<StepSlot> rushSlots(List<StepSlot> slots, DateTime now, Iterable<StepSlot> others) {
+  final done = [for (final s in slots) if (!now.isBefore(s.end)) s];
+  final rest = [for (final s in slots) if (now.isBefore(s.end)) s];
+  if (rest.isEmpty) return slots;
+  final running = !now.isBefore(rest.first.start) ? rest.first : null;
+  final kept = [
+    ...done,
+    if (running != null)
+      StepSlot(
+        label: running.label,
+        station: running.station,
+        start: running.start,
+        end: now.add(running.end.difference(now) ~/ 2),
+        interactive: running.interactive,
+      ),
+  ];
+  final later = running == null ? rest : rest.skip(1).toList();
+  final placed = _placeTimed(
+    [for (final s in later) (label: s.label, station: s.station, interactive: s.interactive, length: s.end.difference(s.start) ~/ 2)],
+    kept.isEmpty ? now : (kept.last.end.isAfter(now) ? kept.last.end : now),
+    [...others, ...kept],
+  );
+  return [...kept, ...placed];
+}
+
+typedef _Timed = ({String label, LabStation station, bool interactive, Duration length});
+
+List<StepSlot> _place(List<PendingStep> steps, DateTime start, Iterable<StepSlot> busy) => _placeTimed(
+      [
+        for (final s in steps)
+          (label: s.label, station: s.station, interactive: s.interactive, length: Duration(minutes: s.minutes)),
+      ],
+      start,
+      busy,
+    );
+
+List<StepSlot> _placeTimed(List<_Timed> steps, DateTime start, Iterable<StepSlot> busy) {
   final occupied = [...busy];
   final slots = <StepSlot>[];
   var ready = start;
   for (final step in steps) {
-    final length = Duration(minutes: step.minutes);
+    final length = step.length;
     final onStation = occupied.where((s) => s.station == step.station).toList()
       ..sort((a, b) => a.start.compareTo(b.start));
     var begin = ready;

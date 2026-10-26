@@ -58,4 +58,23 @@ void main() {
     expect(stationState(LabStation.isitma, [a, b], at).busy, isFalse);
     expect(b.waitingAt(at)!.label, 'Levigasyon');
   });
+
+  test('acele et: çalışan adım ve sonrakiler yarı sürede biter, bitmişler değişmez', () {
+    final slots = planSlots(sa.steps, t0, const []); // havan 0-3, karıştırma 3-7, ambalaj 7-8
+    final now = t0.add(const Duration(minutes: 1));
+    final rushed = rushSlots(slots, now, const []);
+    expect(rushed.first, same(slots.first)); // tartım bitmişti
+    expect(rushed[1].start, slots[1].start);
+    expect(rushed[1].end, now.add(const Duration(minutes: 1))); // kalan 2 dk → 1 dk
+    expect(rushed[2].end.difference(rushed[2].start), const Duration(minutes: 2));
+    expect(rushed.last.end, now.add(const Duration(minutes: 3, seconds: 30))); // 7 dk → 3,5 dk
+  });
+
+  test('acele et başka işin istasyonuna girmez', () {
+    final first = planSlots(sa.steps, t0, const []);
+    final second = planSlots(zno.steps, t0, first); // havanı 3. dakikada bekliyor
+    final rushed = rushSlots(second, t0, first);
+    expect(rushed[1].start, t0.add(const Duration(minutes: 3)));
+    expect(rushed[1].end, t0.add(const Duration(minutes: 5)));
+  });
 }

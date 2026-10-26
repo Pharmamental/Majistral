@@ -76,6 +76,49 @@ class JobStore extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Günde izlenebilecek ödüllü reklam, yani acele et hakkı (tasarım belgesi).
+  static const dailyRushes = 5;
+  static const _rushKey = 'rush_v1';
+
+  /// Bugün kalan acele et hakkı. Gün cihaz saatine göre değişir.
+  int get rushesLeft {
+    final saved = _prefs.getString(_rushKey)?.split('|');
+    if (saved == null || saved.length != 2 || saved[0] != _today) return dailyRushes;
+    return (dailyRushes - (int.tryParse(saved[1]) ?? 0)).clamp(0, dailyRushes);
+  }
+
+  String get _today {
+    final d = now();
+    return '${d.year}-${d.month}-${d.day}';
+  }
+
+  /// İş süren beklemede mi ve hak var mı? Oyuncu adımı beklerken acele edilmez.
+  bool canRush(PrepJob job) => rushesLeft > 0 && !isReady(job) && !needsAction(job);
+
+  /// Acele edilirse kalacak süre (onay penceresinde gösterilir).
+  Duration remainingAfterRush(PrepJob job) {
+    final others = [for (final j in _jobs) if (j != job) ...j.slots];
+    final left = rushSlots(job.slots, now(), others).last.end.difference(now());
+    return left.isNegative ? Duration.zero : left;
+  }
+
+  /// Acele et (Tuğrul, 2026-10-26): kalan çalışma süresi yarıya iner, kalite
+  /// de yarıya iner ve yukarı yuvarlanır (3 → 2 → 1, en düşük 1).
+  Future<void> rush(String magistralName) async {
+    final job = jobFor(magistralName);
+    if (job == null || !canRush(job)) return;
+    const note = 'Acele edildi: her acele kaliteyi yarıya indirir.';
+    final others = [for (final j in _jobs) if (j != job) ...j.slots];
+    _jobs[_jobs.indexOf(job)] = job.copyWith(
+      slots: rushSlots(job.slots, now(), others),
+      stars: (job.stars / 2).ceil().clamp(1, 3),
+      notes: job.notes.contains(note) ? job.notes : [...job.notes, note],
+    );
+    await _prefs.setString(_rushKey, '$_today|${dailyRushes - rushesLeft + 1}');
+    await _save();
+    notifyListeners();
+  }
+
   /// 0–1 arası ilerleme.
   double progress(PrepJob job) {
     final total = job.duration.inMilliseconds;

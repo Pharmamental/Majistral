@@ -79,6 +79,10 @@ lib/
   bekler, oyuncu reçeteden gramları hesaplayıp yazar (`widgets/weighing_sheet.dart`). Kabul: doğru
   miktarın ±%5'i; yanlış tartım bir yıldız götürür (`evaluateWeighing`). Formüller ve kaynakları
   `lib/data/orders.dart` başında.
+- Acele et (Tuğrul, 2026-10-26): her basış işin planlanmış kalan çalışma süresini yarıya, kaliteyi de
+  yarıya indirir, yıldız yukarı yuvarlanır (3 → 2 → 1, en düşük 1). Günde 5 hak (`JobStore.rush`,
+  `rushSlots`). Oyuncu adımı beklerken basılamaz; başka işlerin zamanları değişmez. Reklam henüz
+  bağlı değil, onay penceresi yerini tutuyor.
 - Testler gerçek fontu `test/test_fonts.dart` ile yükler; taşma testleri böyle gerçeği yansıtır.
 - Süren işler `shared_preferences` ile telefona kaydedilir; saat şimdilik cihaz saati
   (`JobStore.now`). Sunucu saati gelene kadar saat hilesi mümkün; kapanmamış bir açık.

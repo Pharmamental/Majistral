@@ -212,4 +212,33 @@ void main() {
     expect(job.readyAt, clock.add(const Duration(minutes: 17)));
     expect(find.text('1 istasyon çalışıyor'), findsOneWidget);
   });
+
+  testWidgets('acele et reklamdan sonra süreyi yarılar, teslimde 2 yıldız', (tester) async {
+    await _tallScreen(tester);
+    final order = prescriptionOrders.first;
+    var clock = DateTime(2026, 10, 25, 12);
+    final store = await _store(now: () => clock);
+    await store.start(order, const PreparationResult(stars: 3, notes: []));
+    await store.completeAction(order.magistralName); // tartım
+    await tester.pumpWidget(MajistralApp(store: store));
+    expect(find.text('08:00'), findsOneWidget);
+
+    await tester.tap(find.text('Acele et · 5 hak'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.text('Kalan süre: 08:00 › 04:00'), findsOneWidget);
+    await tester.tap(find.text('Reklam izle'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.text('04:00'), findsOneWidget);
+    expect(find.text('Acele et · 4 hak'), findsOneWidget);
+
+    clock = clock.add(const Duration(minutes: 4));
+    await tester.pump(const Duration(seconds: 1));
+    await tester.tap(find.text('Hazır · Teslim Et'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 500));
+    expect(find.byIcon(Icons.star_rounded), findsNWidgets(2));
+    expect(find.text('Acele edildi: her acele kaliteyi yarıya indirir.'), findsOneWidget);
+  });
 }

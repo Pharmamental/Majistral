@@ -149,6 +149,8 @@ class _JobStatusState extends State<JobStatus> {
           const SizedBox(height: AppSpace.lg),
           bar,
           const SizedBox(height: AppSpace.lg),
+          SizedBox(width: double.infinity, child: _RushButton(job: widget.job)),
+          const SizedBox(height: AppSpace.lg),
           _StepList(job: widget.job, at: at),
         ],
       );
@@ -180,8 +182,71 @@ class _JobStatusState extends State<JobStatus> {
             ),
           const SizedBox(height: AppSpace.sm),
           bar,
+          const SizedBox(height: AppSpace.md),
+          SizedBox(width: double.infinity, child: _RushButton(job: widget.job)),
         ],
       ),
+    );
+  }
+}
+
+/// "Acele et": ödüllü reklamla kalan süre yarıya iner, kalite de yarıya iner.
+/// Reklam henüz bağlı değil; onay penceresi reklamın yerini tutuyor.
+class _RushButton extends StatelessWidget {
+  const _RushButton({required this.job});
+
+  final PrepJob job;
+
+  Future<void> _confirm(BuildContext context) async {
+    final store = JobScope.of(context);
+    final before = formatRemaining(store.remaining(job));
+    final after = formatRemaining(store.remainingAfterRush(job));
+    final yes = await showDialog<bool>(
+      context: context,
+      builder: (context) => Dialog(
+        insetPadding: const EdgeInsets.all(AppSpace.xxl),
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpace.xxl),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const Icon(Icons.bolt_rounded, size: 40, color: AppColors.kiremit),
+              const SizedBox(height: AppSpace.sm),
+              Text('Acele et', textAlign: TextAlign.center, style: AppText.title(size: 22)),
+              const SizedBox(height: AppSpace.md),
+              Text('Kalan süre: $before › $after', style: AppText.body(weight: FontWeight.w600)),
+              const SizedBox(height: AppSpace.xs),
+              Text(
+                'Kalite de yarıya iner: aceleyle karıştırılan merhem homojen olmaz.',
+                style: AppText.body(size: 14),
+              ),
+              const SizedBox(height: AppSpace.xs),
+              Text('Bugün ${store.rushesLeft} hakkın var.', style: AppText.label()),
+              const SizedBox(height: AppSpace.xl),
+              ChunkyButton(
+                label: 'Reklam izle',
+                icon: Icons.play_circle_fill_rounded,
+                onPressed: () => Navigator.of(context).pop(true),
+              ),
+              const SizedBox(height: AppSpace.sm),
+              ChunkyButton.secondary(label: 'Vazgeç', onPressed: () => Navigator.of(context).pop(false)),
+            ],
+          ),
+        ),
+      ),
+    );
+    if (yes == true) await store.rush(job.magistralName);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final store = JobScope.of(context);
+    final left = store.rushesLeft;
+    return ChunkyButton.secondary(
+      label: left > 0 ? 'Acele et · $left hak' : 'Bugünkü acele hakkın bitti',
+      icon: Icons.bolt_rounded,
+      onPressed: store.canRush(job) ? () => _confirm(context) : null,
     );
   }
 }
