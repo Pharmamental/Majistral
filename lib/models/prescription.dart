@@ -1,9 +1,37 @@
 import 'package:flutter/material.dart';
 
-class PrescriptionStep {
-  const PrescriptionStep(this.label, {this.icon, this.imagePath});
+/// Laboratuvardaki istasyonlar. Her hazırlık adımı bir istasyonda çalışır;
+/// bir istasyon aynı anda tek iş yapar (Tuğrul: "her adımı bir laboratuvar
+/// aletine bağlamak").
+enum LabStation {
+  terazi('Terazi', 'assets/images/ikon/ikon_terazi_kefeli.png'),
+  havan('Havan', 'assets/images/ikon/ikon_havan_porselen.png'),
+  karistirma('Merhem taşı', 'assets/images/ikon/ikon_merhem_tasi.png'),
+  isitma('Su banyosu', 'assets/images/ikon/ikon_ocak_su_banyosu.png'),
+  ambalaj('Ambalaj masası', 'assets/images/ikon/ikon_kavanoz.png');
+
+  const LabStation(this.label, this.imagePath);
 
   final String label;
+  final String imagePath;
+}
+
+class PrescriptionStep {
+  const PrescriptionStep(
+    this.label, {
+    required this.station,
+    required this.minutes,
+    this.icon,
+    this.imagePath,
+  });
+
+  final String label;
+
+  /// Adımın çalıştığı istasyon.
+  final LabStation station;
+
+  /// Adımın gerçek zamanlı süresi (dakika). Yer tutucu; kapalı testte ayarlanacak.
+  final int minutes;
   final IconData? icon;
   final String? imagePath;
 }
@@ -42,16 +70,16 @@ class PrescriptionOrder {
     required this.distractors,
     required this.steps,
     required this.sequenceHint,
-    required this.prepTime,
     this.tools = const [],
   });
 
   /// Bu reçetede seçilecek aletler; listede olmayan tür bu reçetede sorulmaz.
   final List<ToolRequirement> tools;
 
-  /// Başlat'tan teslime kadar gerçek zamanda geçen süre (tasarım belgesi,
-  /// bölüm 7: küçük 5–15 dk, krem 20–45 dk). Kapalı testte ayarlanacak.
-  final Duration prepTime;
+  /// İstasyonlar boşken Başlat'tan teslime kadar geçen süre: adım sürelerinin
+  /// toplamı (tasarım belgesi, bölüm 7: küçük 5–15 dk, krem 20–45 dk). İstasyon
+  /// doluysa adım sıra bekler, iş daha uzun sürer.
+  Duration get prepTime => Duration(minutes: steps.fold(0, (sum, s) => sum + s.minutes));
 
   final String doctorName;
   final String doctorBranch;

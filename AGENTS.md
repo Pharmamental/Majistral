@@ -44,7 +44,8 @@ lib/
 ├── theme/             tokens (renk, boşluk, köşe, AppText yazı stilleri), app_theme
 ├── models/            shop_item (ShopItem, Station), prescription, prep_job
 ├── data/              stations, market_items, orders (taslak içerik, doğrulanmadı)
-├── logic/             quality (1–3 yıldız hesabı), job_store (süren işler, telefona kayıt,
+├── logic/             quality (1–3 yıldız hesabı), schedule (adımları istasyonlara yerleştirir),
+│                      job_store (süren işler, telefona kayıt,
 │                      JobScope ile ekranlara verilir)
 ├── screens/           home (alt çubuklu kabuk), orders (Reçeteler), preparation (Hazırlama),
 │                      lab (Laboratuvar), market
@@ -68,6 +69,9 @@ lib/
   (kefeli → elektronik → analitik terazi; merhem taşı → Unguator → merhem değirmeni); havanlar
   ve spatüller yükseltme değil, farklı işlerin aletleri (`Station.upgradePath = false`).
   Kaynak listesi: C:\YZ\knowledge\concepts\majistral-alet-ve-makineler.md.
+- Laboratuvar (2026-10-26): her hazırlık adımı bir istasyonda çalışır (LabStation: terazi, havan,
+  merhem taşı, su banyosu, ambalaj masası); bir istasyon aynı anda tek iş yapar, dolu istasyonda
+  adım sıra bekler. Adım zamanları iş başlarken planlanır ve sonra değişmez (logic/schedule.dart).
 - Testler gerçek fontu `test/test_fonts.dart` ile yükler; taşma testleri böyle gerçeği yansıtır.
 - Süren işler `shared_preferences` ile telefona kaydedilir; saat şimdilik cihaz saati
   (`JobStore.now`). Sunucu saati gelene kadar saat hilesi mümkün; kapanmamış bir açık.

@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:game/data/orders.dart';
 import 'package:game/logic/job_store.dart';
 import 'package:game/logic/quality.dart';
+import 'package:game/models/prescription.dart';
 import 'package:game/widgets/job_status.dart';
 
 void main() {
@@ -61,6 +62,30 @@ void main() {
     SharedPreferences.setMockInitialValues({'prep_jobs_v1': 'bozuk{'});
     final store = await JobStore.load(now: () => clock);
     expect(store.jobs, isEmpty);
+  });
+
+  test('ikinci iş dolu istasyonda bekler, laboratuvar bunu gösterir', () async {
+    final store = await JobStore.load(now: () => clock);
+    final first = await store.start(order, result);
+    final second = await store.start(prescriptionOrders[1], result);
+    expect(second.readyAt.isAfter(clock.add(prescriptionOrders[1].prepTime)), isTrue);
+
+    final terazi = store.station(LabStation.terazi);
+    expect(terazi.job!.magistralName, first.magistralName);
+    expect(terazi.queued, 1);
+
+    // Kaydedilip açılınca adım zamanları aynı kalır.
+    final reopened = await JobStore.load(now: () => clock);
+    expect(reopened.jobFor(second.magistralName)!.readyAt, second.readyAt);
+  });
+
+  test('istasyonlardan önceki kayıt biçimi de açılır', () async {
+    SharedPreferences.setMockInitialValues({
+      'prep_jobs_v1':
+          '[{"magistralName":"Eski","startedAt":${clock.millisecondsSinceEpoch},"durationSeconds":600,"stars":3,"notes":[]}]',
+    });
+    final store = await JobStore.load(now: () => clock);
+    expect(store.remaining(store.jobs.single), const Duration(minutes: 10));
   });
 
   test('kalan süre dakika:saniye ya da saat dakika olarak yazılır', () {

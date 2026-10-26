@@ -1,26 +1,182 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
+import '../logic/job_store.dart';
+import '../logic/schedule.dart';
+import '../models/prescription.dart';
 import '../theme/tokens.dart';
 import '../widgets/back_pill.dart';
+import '../widgets/job_status.dart';
 import '../widgets/thermometer_panel.dart';
 
-/// Laboratuvar sekmesi: şimdilik yalnız su banyosu istasyonu. Krem hazırlanırken
-/// yağ ve su fazı ayrı ayrı yaklaşık 70–75 °C'ye ısıtılır; oyuncu bu aralığı
-/// tutmayı öğrenir. Diğer istasyonlar tasarım belgesine göre eklenecek.
-class LabScreen extends StatelessWidget {
+/// Laboratuvar: istasyonların durduğu oda. Her hazırlık adımı bir istasyonda
+/// çalışır; bir istasyon aynı anda tek iş yapar. Kart istasyonun durumunu
+/// gösterir: boş, çalışıyor (hangi iş, hangi adım, kalan süre) ve sıradakiler.
+class LabScreen extends StatefulWidget {
   const LabScreen({super.key});
 
   @override
+  State<LabScreen> createState() => _LabScreenState();
+}
+
+class _LabScreenState extends State<LabScreen> {
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _timer = Timer.periodic(const Duration(seconds: 1), (_) => setState(() {}));
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final store = JobScope.of(context);
+    final states = {for (final s in LabStation.values) s: store.station(s)};
+    final busy = states.values.where((s) => s.busy).length;
+
     return ListView(
       padding: const EdgeInsets.only(bottom: AppSpace.x3),
-      children: const [
-        TabHeader(title: 'Laboratuvar', subtitle: 'Su banyosu · Hidrofil merhem'),
+      children: [
+        TabHeader(
+          title: 'Laboratuvar',
+          subtitle: busy == 0 ? 'Bütün istasyonlar boş' : '$busy istasyon çalışıyor',
+        ),
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: AppSpace.lg),
-          child: ThermometerPanel(title: 'Fazları ısıt', idealMin: 70, idealMax: 75),
+          padding: const EdgeInsets.symmetric(horizontal: AppSpace.lg),
+          child: LayoutBuilder(
+            builder: (context, c) {
+              final columns = c.maxWidth >= 520 ? 3 : 2;
+              final width = (c.maxWidth - AppSpace.md * (columns - 1)) / columns;
+              return Wrap(
+                spacing: AppSpace.md,
+                runSpacing: AppSpace.md,
+                children: [
+                  for (final s in LabStation.values)
+                    SizedBox(width: width, child: _StationCard(station: s, state: states[s]!)),
+                ],
+              );
+            },
+          ),
         ),
       ],
+    );
+  }
+}
+
+class _StationCard extends StatelessWidget {
+  const _StationCard({required this.station, required this.state});
+
+  final LabStation station;
+  final StationState state;
+
+  void _openHeating(BuildContext context) {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: AppColors.background,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.card)),
+      ),
+      builder: (context) => const SafeArea(
+        child: Padding(
+          padding: EdgeInsets.all(AppSpace.lg),
+          child: ThermometerPanel(title: 'Isıtma denemesi', idealMin: 70, idealMax: 75),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final store = JobScope.of(context);
+    final slot = state.slot;
+    final total = slot == null ? 1 : slot.end.difference(slot.start).inMilliseconds;
+    final done = slot == null ? 0 : store.now().difference(slot.start).inMilliseconds;
+    final card = Container(
+      padding: const EdgeInsets.all(AppSpace.md),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(AppRadius.card),
+        border: Border.all(color: state.busy ? AppColors.kiremit : AppColors.line, width: state.busy ? 2 : 1),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 52,
+                height: 52,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: state.busy ? AppColors.kiremitSoft : AppColors.surfaceMuted,
+                  borderRadius: BorderRadius.circular(AppRadius.card),
+                ),
+                child: Image.asset(station.imagePath, width: 44, height: 44),
+              ),
+              const SizedBox(width: AppSpace.sm),
+              Expanded(child: Text(station.label, style: AppText.title(size: 17))),
+            ],
+          ),
+          const SizedBox(height: AppSpace.md),
+          if (slot != null) ...[
+            Text(
+              state.job!.magistralName,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: AppText.body(size: 13, weight: FontWeight.w600),
+            ),
+            const SizedBox(height: AppSpace.xs),
+            Row(
+              children: [
+                Expanded(child: Text(slot.label, style: AppText.label(size: 12))),
+                Text(
+                  formatRemaining(slot.end.difference(store.now())),
+                  style: AppText.timer(size: 14),
+                ),
+              ],
+            ),
+            const SizedBox(height: AppSpace.sm),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(AppRadius.pill),
+              child: LinearProgressIndicator(
+                minHeight: 8,
+                value: (done / total).clamp(0.0, 1.0),
+                backgroundColor: AppColors.kiremitSoft,
+                valueColor: const AlwaysStoppedAnimation(AppColors.kiremit),
+              ),
+            ),
+          ] else
+            Row(
+              children: [
+                const Icon(Icons.check_circle_outline_rounded, size: 16, color: AppColors.inkMuted),
+                const SizedBox(width: AppSpace.xs),
+                Text('Boş', style: AppText.label()),
+              ],
+            ),
+          if (state.queued > 0) ...[
+            const SizedBox(height: AppSpace.sm),
+            Text('Sırada ${state.queued} adım', style: AppText.label(size: 12, color: AppColors.accentText)),
+          ],
+          if (station == LabStation.isitma) ...[
+            const SizedBox(height: AppSpace.sm),
+            Text('Dokun: ısıtma denemesi', style: AppText.label(size: 12)),
+          ],
+        ],
+      ),
+    );
+    if (station != LabStation.isitma) return card;
+    return Semantics(
+      button: true,
+      label: 'Isıtma denemesini aç',
+      child: GestureDetector(onTap: () => _openHeating(context), child: card),
     );
   }
 }

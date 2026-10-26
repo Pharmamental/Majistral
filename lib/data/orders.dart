@@ -25,14 +25,13 @@ const List<PrescriptionOrder> prescriptionOrders = [
     chemicals: ['Salisilik Asit', 'Sıvı Parafin', 'Beyaz Vazelin'],
     distractors: ['Gliserin', 'Distile Su', 'Çinko Oksit'],
     steps: [
-      PrescriptionStep('Tartım', icon: Icons.scale_outlined),
-      PrescriptionStep('Levigasyon', icon: Icons.blender_outlined),
-      PrescriptionStep('Karıştırma', icon: Icons.autorenew),
-      PrescriptionStep('Etiket', icon: Icons.label_outline),
+      PrescriptionStep('Tartım', station: LabStation.terazi, minutes: 2, icon: Icons.scale_outlined),
+      PrescriptionStep('Levigasyon', station: LabStation.havan, minutes: 3, icon: Icons.blender_outlined),
+      PrescriptionStep('Karıştırma', station: LabStation.karistirma, minutes: 4, icon: Icons.autorenew),
+      PrescriptionStep('Etiket', station: LabStation.ambalaj, minutes: 1, icon: Icons.label_outline),
     ],
     sequenceHint:
         'Salisilik asidi önce sıvı parafinle macun yapmadan vazeline kattığın için merhem kumlu oldu.',
-    prepTime: Duration(minutes: 10),
     tools: [
       ToolRequirement(
         ToolKind.spatula,
@@ -52,13 +51,12 @@ const List<PrescriptionOrder> prescriptionOrders = [
     chemicals: ['Çinko Oksit', 'Sıvı Parafin', 'Beyaz Vazelin'],
     distractors: ['Salisilik Asit', 'Gliserin', 'Distile Su'],
     steps: [
-      PrescriptionStep('Tartım', icon: Icons.scale_outlined),
-      PrescriptionStep('Levigasyon', icon: Icons.blender_outlined),
-      PrescriptionStep('Karıştırma', icon: Icons.autorenew),
-      PrescriptionStep('Etiket', icon: Icons.label_outline),
+      PrescriptionStep('Tartım', station: LabStation.terazi, minutes: 3, icon: Icons.scale_outlined),
+      PrescriptionStep('Levigasyon', station: LabStation.havan, minutes: 4, icon: Icons.blender_outlined),
+      PrescriptionStep('Karıştırma', station: LabStation.karistirma, minutes: 6, icon: Icons.autorenew),
+      PrescriptionStep('Etiket', station: LabStation.ambalaj, minutes: 2, icon: Icons.label_outline),
     ],
     sequenceHint: 'Çinko oksidi önce sıvı parafinle macun yapmadığın için merhem kumlu oldu.',
-    prepTime: Duration(minutes: 15),
     tools: [
       ToolRequirement(ToolKind.spatula, {'Çelik spatül', 'Plastik spatül'}),
       _tozHavani,
@@ -74,13 +72,13 @@ const List<PrescriptionOrder> prescriptionOrders = [
     chemicals: ['Yağ fazı bileşenleri', 'Distile Su', 'Gliserin'],
     distractors: ['Çinko Oksit', 'Salisilik Asit', 'Sıvı Parafin'],
     steps: [
-      PrescriptionStep('Tartım', icon: Icons.scale_outlined),
-      PrescriptionStep('Isıtma', imagePath: 'assets/images/Burn_icon.webp'),
-      PrescriptionStep('Emülsifikasyon', icon: Icons.autorenew),
-      PrescriptionStep('Soğuma', imagePath: 'assets/images/Sogutma_ikon.webp'),
+      PrescriptionStep('Tartım', station: LabStation.terazi, minutes: 3, icon: Icons.scale_outlined),
+      PrescriptionStep('Isıtma', station: LabStation.isitma, minutes: 10, imagePath: 'assets/images/Burn_icon.webp'),
+      PrescriptionStep('Emülsifikasyon', station: LabStation.karistirma, minutes: 9, icon: Icons.autorenew),
+      // Krem soğuyana kadar karıştırılır; soğuma da karıştırma istasyonunda.
+      PrescriptionStep('Soğuma', station: LabStation.karistirma, minutes: 8, imagePath: 'assets/images/Sogutma_ikon.webp'),
     ],
     sequenceHint: 'Yağ ve su fazı ısıtılmadan karıştırıldığı için krem ayrıştı.',
-    prepTime: Duration(minutes: 30),
     tools: [
       ToolRequirement(ToolKind.spatula, {'Çelik spatül', 'Plastik spatül'}),
       ToolRequirement(

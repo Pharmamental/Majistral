@@ -92,6 +92,15 @@ class _JobStatusState extends State<JobStatus> {
       );
     }
     final remaining = formatRemaining(store.remaining(widget.job));
+    // Şu an hangi istasyonda, hangi adımda; istasyon doluysa sırada bekliyor.
+    final at = store.now();
+    final active = widget.job.activeAt(at);
+    final waiting = widget.job.waitingAt(at);
+    final where = active != null
+        ? '${active.station.label}: ${active.label}'
+        : waiting != null
+            ? '${waiting.station.label} dolu, sırada'
+            : '';
     final bar = ClipRRect(
       borderRadius: BorderRadius.circular(AppRadius.pill),
       child: LinearProgressIndicator(
@@ -110,8 +119,12 @@ class _JobStatusState extends State<JobStatus> {
           Text('Hazırlanıyor', style: AppText.label(size: 14)),
           const SizedBox(height: AppSpace.xs),
           Text(remaining, style: AppText.timer(size: 44)),
+          const SizedBox(height: AppSpace.xs),
+          Text(where, style: AppText.body(size: 14, weight: FontWeight.w600)),
           const SizedBox(height: AppSpace.lg),
           bar,
+          const SizedBox(height: AppSpace.lg),
+          _StepList(job: widget.job, at: at),
         ],
       );
     }
@@ -132,10 +145,60 @@ class _JobStatusState extends State<JobStatus> {
               Text(remaining, style: AppText.timer()),
             ],
           ),
+          if (where.isNotEmpty)
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Padding(
+                padding: const EdgeInsets.only(top: AppSpace.xs),
+                child: Text(where, style: AppText.label(size: 12)),
+              ),
+            ),
           const SizedBox(height: AppSpace.sm),
           bar,
         ],
       ),
+    );
+  }
+}
+
+/// Adımların listesi: bitti, şimdi, sırada; her adımın yanında istasyonu.
+class _StepList extends StatelessWidget {
+  const _StepList({required this.job, required this.at});
+
+  final PrepJob job;
+  final DateTime at;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        for (final s in job.slots)
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: AppSpace.xs),
+            child: Row(
+              children: [
+                Icon(
+                  !at.isBefore(s.end)
+                      ? Icons.check_circle_rounded
+                      : !at.isBefore(s.start)
+                          ? Icons.play_circle_fill_rounded
+                          : Icons.radio_button_unchecked_rounded,
+                  size: 20,
+                  color: !at.isBefore(s.end)
+                      ? AppColors.success
+                      : !at.isBefore(s.start)
+                          ? AppColors.kiremit
+                          : AppColors.line,
+                ),
+                const SizedBox(width: AppSpace.sm),
+                Image.asset(s.station.imagePath, width: 28, height: 28),
+                const SizedBox(width: AppSpace.sm),
+                Expanded(child: Text(s.label, style: AppText.body(size: 14, weight: FontWeight.w600))),
+                Text(s.station.label, style: AppText.label(size: 12)),
+              ],
+            ),
+          ),
+      ],
     );
   }
 }

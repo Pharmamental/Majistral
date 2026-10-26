@@ -6,6 +6,7 @@ import 'package:game/data/orders.dart';
 import 'package:game/data/stations.dart';
 import 'package:game/logic/job_store.dart';
 import 'package:game/main.dart';
+import 'package:game/models/prescription.dart';
 import 'package:game/widgets/prescription_card.dart';
 
 import 'test_fonts.dart';
@@ -31,7 +32,10 @@ void main() {
     await tester.tap(find.text('Laboratuvar'));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
-    expect(find.text('Fazları ısıt'), findsOneWidget);
+    expect(find.text('Bütün istasyonlar boş'), findsOneWidget);
+    for (final s in LabStation.values) {
+      expect(find.text(s.label), findsOneWidget);
+    }
 
     await tester.tap(find.text('Market'));
     await tester.pumpAndSettle();
@@ -76,9 +80,19 @@ void main() {
     await tester.pump();
     expect(find.text('Hazırlanıyor'), findsOneWidget);
     expect(find.text('10:00'), findsOneWidget);
+    expect(find.text('Terazi: Tartım'), findsOneWidget);
 
+    // Laboratuvarda terazi bu işle çalışıyor görünür.
     await tester.tap(find.text('Reçetelere Dön'));
     await tester.pumpAndSettle();
+    await tester.tap(find.text('Laboratuvar'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.text('1 istasyon çalışıyor'), findsOneWidget);
+    expect(find.text(order.magistralName), findsOneWidget);
+    await tester.tap(find.text('Reçeteler'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
     expect(find.text('Hazırlanıyor'), findsOneWidget);
     expect(find.text('3 reçete · 1 hazırlanıyor'), findsOneWidget);
 
@@ -115,6 +129,10 @@ void main() {
     await tester.tap(find.text('Laboratuvar'));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
+    // Isıtma denemesi su banyosu istasyonundan açılır.
+    await tester.tap(find.text(LabStation.isitma.label));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
     expect(find.text('Soğuk, basılı tutarak ısıt'), findsOneWidget);
 
     final gesture = await tester.startGesture(tester.getCenter(find.byKey(const Key('flame-button'))));

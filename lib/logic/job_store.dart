@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/prep_job.dart';
 import '../models/prescription.dart';
 import 'quality.dart';
+import 'schedule.dart';
 
 /// Süren hazırlıkları tutar ve telefona kaydeder.
 ///
@@ -60,11 +61,15 @@ class JobStore extends ChangeNotifier {
     return (done / total).clamp(0.0, 1.0);
   }
 
+  /// İstasyonun [now] anındaki durumu (Laboratuvar ekranı).
+  StationState station(LabStation station) => stationState(station, _jobs, now());
+
   Future<PrepJob> start(PrescriptionOrder order, PreparationResult result) async {
+    final startedAt = now();
     final job = PrepJob(
       magistralName: order.magistralName,
-      startedAt: now(),
-      duration: order.prepTime,
+      startedAt: startedAt,
+      slots: planSlots(order.steps, startedAt, [for (final j in _jobs) ...j.slots]),
       stars: result.stars,
       notes: result.notes,
     );
