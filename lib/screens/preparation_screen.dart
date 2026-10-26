@@ -268,7 +268,10 @@ class _RecipeSummary extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(order.chemicals.join(' · '), style: AppText.body(weight: FontWeight.w600)),
+                Text(
+                  [for (final i in order.ingredients) '${i.name} ${i.written}'].join(' · '),
+                  style: AppText.body(weight: FontWeight.w600),
+                ),
                 const SizedBox(height: AppSpace.xs),
                 Text('${order.doctorName} · ${order.doctorBranch}', style: AppText.label(size: 12)),
               ],

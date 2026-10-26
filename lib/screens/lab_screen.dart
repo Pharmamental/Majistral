@@ -9,6 +9,7 @@ import '../theme/tokens.dart';
 import '../widgets/back_pill.dart';
 import '../widgets/job_status.dart';
 import '../widgets/heating_sheet.dart';
+import '../widgets/station_action.dart';
 
 /// Laboratuvar: istasyonların durduğu oda. Her hazırlık adımı bir istasyonda
 /// çalışır; bir istasyon aynı anda tek iş yapar. Kart istasyonun durumunu
@@ -159,7 +160,7 @@ class _StationCard extends StatelessWidget {
               children: [
                 const Icon(Icons.touch_app_rounded, size: 16, color: AppColors.accentText),
                 const SizedBox(width: AppSpace.xs),
-                Expanded(child: Text('Sıcaklığı ayarla', style: AppText.label(size: 12, color: AppColors.accentText))),
+                Expanded(child: Text(stationAction(station).button, style: AppText.label(size: 12, color: AppColors.accentText))),
               ],
             ),
           ] else
@@ -184,9 +185,9 @@ class _StationCard extends StatelessWidget {
     if (awaiting.isNotEmpty) {
       return Semantics(
         button: true,
-        label: 'Sıcaklığı ayarla',
+        label: stationAction(station).button,
         child: GestureDetector(
-          onTap: () => openHeating(context, magistralName: awaiting.first.magistralName),
+          onTap: () => openStationAction(context, station, awaiting.first.magistralName),
           child: card,
         ),
       );

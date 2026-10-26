@@ -102,13 +102,14 @@ class PrepJob {
   /// Bütün adımlar bitti mi?
   bool doneAt(DateTime at) => pending.isEmpty && !at.isBefore(readyAt);
 
-  PrepJob copyWith({List<StepSlot>? slots, List<PendingStep>? pending}) => PrepJob(
+  PrepJob copyWith({List<StepSlot>? slots, List<PendingStep>? pending, int? stars, List<String>? notes}) =>
+      PrepJob(
         magistralName: magistralName,
         startedAt: startedAt,
         slots: slots ?? this.slots,
         pending: pending ?? this.pending,
-        stars: stars,
-        notes: notes,
+        stars: stars ?? this.stars,
+        notes: notes ?? this.notes,
       );
 
   /// [at] anında çalışan adım; adımlar arasında sıra bekleniyorsa ya da iş

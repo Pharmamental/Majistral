@@ -7,8 +7,8 @@ import 'package:game/models/prescription.dart';
 
 void main() {
   final t0 = DateTime(2026, 10, 26, 12);
-  final sa = prescriptionOrders[0]; // terazi 2, havan 3, karıştırma 4, ambalaj 1
-  final zno = prescriptionOrders[1]; // terazi 3, havan 4, karıştırma 6, ambalaj 2
+  final sa = prescriptionOrders[0]; // terazi 0 (oyuncu tartar), havan 3, karıştırma 4, ambalaj 1
+  final zno = prescriptionOrders[1]; // terazi 0, havan 4, karıştırma 6, ambalaj 2
 
   PrepJob job(PrescriptionOrder o, List<StepSlot> slots) =>
       PrepJob(magistralName: o.magistralName, startedAt: slots.first.start, slots: slots, stars: 3, notes: const []);
@@ -27,8 +27,8 @@ void main() {
   test('aynı anda başlayan ikinci iş dolu istasyonda sıra bekler', () {
     final first = planSlots(sa.steps, t0, const []);
     final second = planSlots(zno.steps, t0, first);
-    // Terazi ilk 2 dk dolu: ikinci işin tartımı 2. dakikada başlar.
-    expect(second.first.start, t0.add(const Duration(minutes: 2)));
+    // Havan ilk 3 dk dolu: ikinci işin levigasyonu 3. dakikada başlar.
+    expect(second[1].start, t0.add(const Duration(minutes: 3)));
     // Hiçbir istasyonda iki iş çakışmaz.
     for (final a in first) {
       for (final b in second) {
@@ -51,11 +51,11 @@ void main() {
     final a = job(sa, planSlots(sa.steps, t0, const []));
     final b = job(zno, planSlots(zno.steps, t0, a.slots));
     final at = t0.add(const Duration(minutes: 1));
-    final terazi = stationState(LabStation.terazi, [a, b], at);
-    expect(terazi.busy, isTrue);
-    expect(terazi.job!.magistralName, sa.magistralName);
-    expect(terazi.queued, 1);
+    final havan = stationState(LabStation.havan, [a, b], at);
+    expect(havan.busy, isTrue);
+    expect(havan.job!.magistralName, sa.magistralName);
+    expect(havan.queued, 1);
     expect(stationState(LabStation.isitma, [a, b], at).busy, isFalse);
-    expect(b.waitingAt(at)!.label, 'Tartım');
+    expect(b.waitingAt(at)!.label, 'Levigasyon');
   });
 }

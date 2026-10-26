@@ -34,8 +34,9 @@ class PrescriptionStep {
   /// Adımın gerçek zamanlı süresi (dakika). Yer tutucu; kapalı testte ayarlanacak.
   final int minutes;
 
-  /// Süre dolunca iş durur ve oyuncuyu bekler (ısıtmada termometreyi tutmak).
-  /// Oyuncu bitirince sonraki adımlar o andan itibaren planlanır.
+  /// Süre dolunca iş durur ve oyuncuyu bekler (ısıtmada termometreyi tutmak);
+  /// süresi 0 olan adımda (tartım) iş adıma gelir gelmez bekler. Oyuncu
+  /// bitirince sonraki adımlar o andan itibaren planlanır.
   final bool interactive;
   final IconData? icon;
   final String? imagePath;
@@ -64,6 +65,16 @@ class ToolRequirement {
   final String? hint;
 }
 
+/// Reçetedeki bir satır: madde, reçetede nasıl yazıldığı ("%5", "1,25 g",
+/// "ad 50 g") ve terazide tartılacak doğru miktar.
+class Ingredient {
+  const Ingredient(this.name, this.written, this.grams);
+
+  final String name;
+  final String written;
+  final double grams;
+}
+
 class PrescriptionOrder {
   const PrescriptionOrder({
     required this.doctorName,
@@ -71,12 +82,28 @@ class PrescriptionOrder {
     required this.patientName,
     required this.magistralName,
     required this.purpose,
-    required this.chemicals,
+    required this.ingredients,
+    required this.calcHint,
     required this.distractors,
     required this.steps,
     required this.sequenceHint,
+    this.batchNote,
     this.tools = const [],
   });
+
+  /// Reçetedeki maddeler, yazıldığı sırayla.
+  final List<Ingredient> ingredients;
+
+  /// Tartım yanlışsa hesabın nasıl yapıldığını anlatan kısa açıklama.
+  final String calcHint;
+
+  /// Formül başka bir toplam için yazıldıysa ne kadar hazırlanacağı.
+  final String? batchNote;
+
+  List<String> get chemicals => [for (final i in ingredients) i.name];
+
+  /// Hazırlanacak toplam miktar (g).
+  double get totalGrams => ingredients.fold(0, (sum, i) => sum + i.grams);
 
   /// Bu reçetede seçilecek aletler; listede olmayan tür bu reçetede sorulmaz.
   final List<ToolRequirement> tools;
@@ -91,7 +118,6 @@ class PrescriptionOrder {
   final String patientName;
   final String magistralName;
   final String purpose;
-  final List<String> chemicals;
 
   /// Rafta reçetedekilerle karışık duran, bu reçetede olmayan kimyasallar.
   final List<String> distractors;

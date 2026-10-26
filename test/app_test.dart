@@ -98,11 +98,29 @@ void main() {
     expect(find.text('Hazırsın'), findsOneWidget);
     await tester.tap(find.text('Başlat'));
     await tester.pump();
-    expect(find.text('Hazırlanıyor'), findsOneWidget);
-    expect(find.text('10:00'), findsOneWidget);
-    expect(find.text('Terazi: Tartım'), findsOneWidget);
 
-    // Laboratuvarda terazi bu işle çalışıyor görünür.
+    // İş terazide durur; oyuncu miktarları hesaplayıp tartar.
+    expect(find.text('Terazi hazır. Miktarları hesapla ve tart.'), findsOneWidget);
+    await tester.tap(find.text('Tartımı yap'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
+    expect(find.text('Reçetede ad 50 g'), findsOneWidget);
+    for (final i in order.ingredients) {
+      await tester.enterText(find.byKey(Key('tartim-${i.name}')), formatGrams(i.grams));
+    }
+    await tester.pump();
+    await tester.tap(find.text('Tart'));
+    await tester.pump();
+    expect(find.text('Tartım doğru!'), findsOneWidget);
+    await tester.tap(find.text('Devam'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
+
+    expect(find.text('Hazırlanıyor'), findsOneWidget);
+    expect(find.text('08:00'), findsOneWidget);
+    expect(find.text('Havan: Levigasyon'), findsOneWidget);
+
+    // Laboratuvarda havan bu işle çalışıyor görünür.
     await tester.tap(find.text('Reçetelere Dön'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Laboratuvar'));
@@ -161,11 +179,12 @@ void main() {
 
   testWidgets('kremde ısıtma sırası gelince su banyosunda termometre oyuncuyu bekler', (tester) async {
     await _tallScreen(tester);
-    final cream = prescriptionOrders[2]; // tartım 3, ısıtma 10 (oyuncu), emülsifikasyon 9, soğuma 8
+    final cream = prescriptionOrders[2]; // tartım (oyuncu), ısıtma 10 (oyuncu), emülsifikasyon 9, soğuma 8
     var clock = DateTime(2026, 10, 25, 12);
     final store = await _store(now: () => clock);
     await store.start(cream, const PreparationResult(stars: 3, notes: []));
-    clock = clock.add(const Duration(minutes: 13));
+    await store.completeAction(cream.magistralName); // tartım
+    clock = clock.add(const Duration(minutes: 10));
     await tester.pumpWidget(MajistralApp(store: store));
     expect(find.text('3 reçete · 1 seni bekliyor'), findsOneWidget);
     expect(find.text('Sıcaklığı ayarla'), findsOneWidget);

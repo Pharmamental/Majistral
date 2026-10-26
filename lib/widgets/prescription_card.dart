@@ -51,8 +51,12 @@ class PrescriptionCard extends StatelessWidget {
                 Wrap(
                   spacing: AppSpace.sm,
                   runSpacing: AppSpace.sm,
-                  children: [for (final c in order.chemicals) _ChemicalChip(name: c)],
+                  children: [for (final i in order.ingredients) _ChemicalChip(name: '${i.name} ${i.written}')],
                 ),
+                if (order.batchNote != null) ...[
+                  const SizedBox(height: AppSpace.sm),
+                  Text(order.batchNote!, style: AppText.body(size: 14, weight: FontWeight.w600)),
+                ],
                 const SizedBox(height: AppSpace.md),
                 // Adımların sırası burada gösterilmez: hazırlama ekranında oyuncu
                 // o sırayı kendisi kuruyor. Yalnız iş ne kadar sürer, o yazar.

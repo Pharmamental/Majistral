@@ -6,8 +6,8 @@ import '../logic/job_store.dart';
 import '../models/prep_job.dart';
 import '../theme/tokens.dart';
 import 'chunky_button.dart';
-import 'heating_sheet.dart';
 import 'result_view.dart';
+import 'station_action.dart';
 
 /// "02:15" ya da "1 sa 05 dk" biçiminde kalan süre.
 String formatRemaining(Duration d) {
@@ -93,20 +93,21 @@ class _JobStatusState extends State<JobStatus> {
       );
     }
     if (store.needsAction(widget.job)) {
-      final step = widget.job.slots.last;
+      final station = widget.job.slots.last.station;
+      final action = stationAction(station);
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            '${step.station.label}: fazlar ısındı. Sıcaklığı sen ayarla.',
+            action.prompt,
             textAlign: widget.large ? TextAlign.center : TextAlign.start,
             style: AppText.body(size: 14, weight: FontWeight.w600),
           ),
           const SizedBox(height: AppSpace.sm),
           ChunkyButton(
-            label: 'Sıcaklığı ayarla',
-            icon: Icons.thermostat_rounded,
-            onPressed: () => openHeating(context, magistralName: widget.job.magistralName),
+            label: action.button,
+            icon: action.icon,
+            onPressed: () => openStationAction(context, station, widget.job.magistralName),
           ),
           if (widget.large) ...[
             const SizedBox(height: AppSpace.lg),

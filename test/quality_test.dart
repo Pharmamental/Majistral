@@ -93,4 +93,39 @@ void main() {
     );
     expect(r.stars, 1);
   });
+
+  group('tartım', () {
+    Map<String, double?> exact(PrescriptionOrder o) => {for (final i in o.ingredients) i.name: i.grams};
+
+    test('reçetelerin toplamı yazılan toplamla aynı', () {
+      expect(prescriptionOrders[0].totalGrams, closeTo(50, 1e-9));
+      expect(prescriptionOrders[1].totalGrams, closeTo(60, 1e-9));
+      // USP hidrofil merhem "yaklaşık 1000 g" yapar: parabenlerle 1000,4 g.
+      expect(cream.totalGrams, closeTo(100.04, 1e-9));
+    });
+
+    test('doğru tartım açıklama üretmez, %5 içindeki yuvarlama da doğru sayılır', () {
+      for (final o in prescriptionOrders) {
+        expect(evaluateWeighing(o, exact(o)), isEmpty, reason: o.magistralName);
+      }
+      expect(evaluateWeighing(order, {...exact(order), 'Beyaz Vazelin': 46.3}), isEmpty);
+    });
+
+    test('"ad"ı unutmak ve 10 kat hata yakalanır', () {
+      expect(evaluateWeighing(order, {...exact(order), 'Beyaz Vazelin': 50}), hasLength(2));
+      final ten = evaluateWeighing(cream, {...exact(cream), 'Metilparaben': 0.25});
+      expect(ten.first, 'Tartım: Metilparaben 0,25 g tartıldı, doğrusu 0,025 g.');
+      expect(ten.last, cream.calcHint);
+    });
+
+    test('gram Türkçe yazılır ve virgüllü sayı okunur', () {
+      expect(formatGrams(46.25), '46,25');
+      expect(formatGrams(12), '12');
+      expect(formatGrams(0.025), '0,025');
+      expect(formatGrams(100), '100');
+      expect(parseGrams(' 46,25 '), 46.25);
+      expect(parseGrams('2.5'), 2.5);
+      expect(parseGrams('abc'), isNull);
+    });
+  });
 }
