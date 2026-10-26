@@ -10,7 +10,8 @@ import '../models/prescription.dart';
 //   açık ders föyü aynı oranı 100 g için veriyor.
 // - Çinko oksit merhemi: USP Zinc Oxide Compounded Ointment oranları (%20 ZnO,
 //   %15 mineral yağ). USP bazı "beyaz merhem" (vazelin + %5 beyaz balmumu);
-//   oyunda beyaz vazelin kullanıldı, bu bir uyarlamadır.
+//   oyunda beyaz vazelin kullanıldı, bu bir uyarlamadır (Tuğrul'un kararı,
+//   2026-10-26; USP'ye çevirme).
 // - Salisilik asitli vazelin: Prag Charles Üni. föyündeki %1 formülün
 //   levigasyon oranı (asidin yarısı kadar sıvı parafin) %5'e uygulandı.
 //
