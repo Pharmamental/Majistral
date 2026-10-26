@@ -184,19 +184,19 @@ class _Thumb extends StatelessWidget {
   final ShopItem item;
   final double size;
 
+  // Oyuncak blok ikonu açık bir kutunun üstünde durur (Pharmamental'daki gibi);
+  // ikonun kendi gölgesi ve yan yüzü var, kırpılmaz.
   @override
   Widget build(BuildContext context) {
-    return ClipOval(
-      child: SizedBox(
-        width: size,
-        height: size,
-        child: item.imagePath != null
-            ? Image.asset(item.imagePath!, fit: BoxFit.cover)
-            : ColoredBox(
-                color: item.color.withValues(alpha: 0.14),
-                child: Icon(item.icon, color: item.color, size: size * 0.5),
-              ),
-      ),
+    final box = Color.alphaBlend(item.color.withValues(alpha: 0.16), AppColors.surface);
+    return Container(
+      width: size,
+      height: size,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(color: box, borderRadius: BorderRadius.circular(AppRadius.card)),
+      child: item.imagePath != null
+          ? Image.asset(item.imagePath!, width: size * 0.86, height: size * 0.86)
+          : Icon(item.icon, color: item.color, size: size * 0.5),
     );
   }
 }
@@ -299,7 +299,7 @@ class PillTabs<T> extends StatelessWidget {
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
                       color: value == selected
-                          ? AppColors.kiremit
+                          ? AppColors.kiremitDark
                           : Colors.transparent,
                       borderRadius: BorderRadius.circular(AppRadius.pill),
                     ),

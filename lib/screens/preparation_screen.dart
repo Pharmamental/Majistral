@@ -304,7 +304,7 @@ class _Section extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 14,
-                backgroundColor: AppColors.kiremit,
+                backgroundColor: AppColors.kiremitDark,
                 child: Text('$number', style: AppText.title(size: 15, color: Colors.white)),
               ),
               const SizedBox(width: AppSpace.sm),
@@ -422,7 +422,7 @@ class _StepChip extends StatelessWidget {
         constraints: const BoxConstraints(minHeight: 44),
         padding: const EdgeInsets.symmetric(horizontal: AppSpace.lg, vertical: AppSpace.sm),
         decoration: BoxDecoration(
-          color: placed ? AppColors.kiremit : AppColors.surface,
+          color: placed ? AppColors.kiremitDark : AppColors.surface,
           borderRadius: BorderRadius.circular(AppRadius.pill),
           border: Border.all(color: AppColors.kiremit, width: 2),
         ),
@@ -433,7 +433,7 @@ class _StepChip extends StatelessWidget {
               CircleAvatar(
                 radius: 10,
                 backgroundColor: Colors.white,
-                child: Text('$position', style: AppText.label(size: 11, color: AppColors.kiremit)),
+                child: Text('$position', style: AppText.label(size: 11, color: AppColors.accentText)),
               ),
               const SizedBox(width: AppSpace.sm),
             ],
@@ -442,7 +442,7 @@ class _StepChip extends StatelessWidget {
               style: AppText.body(
                 size: 14,
                 weight: FontWeight.w600,
-                color: placed ? Colors.white : AppColors.kiremit,
+                color: placed ? Colors.white : AppColors.accentText,
               ),
             ),
           ],

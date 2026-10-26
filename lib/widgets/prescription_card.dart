@@ -113,7 +113,7 @@ class _DoctorStrip extends StatelessWidget {
           CircleAvatar(
             radius: 20,
             backgroundColor: AppColors.kiremitSoft,
-            child: Text(_initials, style: AppText.title(size: 16, color: AppColors.kiremit)),
+            child: Text(_initials, style: AppText.title(size: 16, color: AppColors.accentText)),
           ),
           const SizedBox(width: AppSpace.md),
           Expanded(

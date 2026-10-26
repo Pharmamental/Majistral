@@ -18,6 +18,7 @@ const ShopItem adSpeedUp = ShopItem(
 const List<ShopItem> chemicals = [
   ShopItem(
     name: 'Beyaz Vazelin',
+    imagePath: 'assets/images/ikon/ikon_vazelin.png',
     description: 'Hidrokarbon merhem bazı, suyla yıkanmaz',
     icon: Icons.spa_outlined,
     color: Color(0xFF757575),
@@ -25,6 +26,7 @@ const List<ShopItem> chemicals = [
   ),
   ShopItem(
     name: 'Sıvı Parafin',
+    imagePath: 'assets/images/ikon/ikon_sivi_parafin.png',
     description: 'Levigasyonda tozu macun yapmak için kullanılır',
     icon: Icons.opacity,
     color: Color(0xFF8D6E63),
@@ -32,6 +34,7 @@ const List<ShopItem> chemicals = [
   ),
   ShopItem(
     name: 'Gliserin',
+    imagePath: 'assets/images/ikon/ikon_gliserin.png',
     description: 'Nemlendirici, suyla karışan bileşen',
     icon: Icons.water_drop_outlined,
     color: Color(0xFF00838F),
@@ -39,6 +42,7 @@ const List<ShopItem> chemicals = [
   ),
   ShopItem(
     name: 'Distile Su',
+    imagePath: 'assets/images/ikon/ikon_distile_su.png',
     description: 'Kremlerin su fazı',
     icon: Icons.water_drop_outlined,
     color: Color(0xFF1565C0),
@@ -46,6 +50,7 @@ const List<ShopItem> chemicals = [
   ),
   ShopItem(
     name: 'Çinko Oksit',
+    imagePath: 'assets/images/ikon/ikon_cinko_oksit.png',
     description: 'Cilt koruyucu ve kurutucu bariyer oluşturur',
     icon: Icons.shield_outlined,
     color: Color(0xFF757575),
@@ -53,6 +58,7 @@ const List<ShopItem> chemicals = [
   ),
   ShopItem(
     name: 'Salisilik Asit',
+    imagePath: 'assets/images/ikon/ikon_salisilik_asit.png',
     description: 'Keratolitik: kalınlaşmış deriyi yumuşatıp soyar',
     icon: Icons.science_outlined,
     color: Color(0xFF5D4037),

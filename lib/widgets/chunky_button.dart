@@ -120,7 +120,7 @@ class _ChunkyButtonState extends State<ChunkyButton> {
                           widget.label,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: AppText.button(size: widget.compact ? 16 : 18, color: fg),
+                          style: AppText.button(size: 19, color: fg),
                         ),
                       ),
                     ],

@@ -21,7 +21,7 @@ ThemeData buildAppTheme() {
       labelTextStyle: WidgetStateProperty.resolveWith(
         (states) => AppText.label(
           size: 12,
-          color: states.contains(WidgetState.selected) ? AppColors.kiremit : AppColors.inkMuted,
+          color: states.contains(WidgetState.selected) ? AppColors.accentText : AppColors.inkMuted,
         ),
       ),
       iconTheme: WidgetStateProperty.resolveWith(
