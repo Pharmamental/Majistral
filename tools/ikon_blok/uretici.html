@@ -34,6 +34,8 @@ const L=(h,a)=>mix(h,'#ffffff',a), D=(h,a)=>mix(h,'#2a1a10',a);
 const f=v=>(+v).toFixed(2);
 const rr=(x,y,w,h,r)=>`M${x+r},${y}H${x+w-r}A${r},${r} 0 0 1 ${x+w},${y+r}V${y+h-r}A${r},${r} 0 0 1 ${x+w-r},${y+h}H${x+r}A${r},${r} 0 0 1 ${x},${y+h-r}V${y+r}A${r},${r} 0 0 1 ${x+r},${y}Z`;
 const circ=(cx,cy,r)=>`M${cx-r},${cy}A${r},${r} 0 1 0 ${cx+r},${cy}A${r},${r} 0 1 0 ${cx-r},${cy}Z`;
+// sivri tepeli altıgen (petek gözü)
+const hx=(cx,cy,r)=>'M'+[0,1,2,3,4,5].map(k=>{const a=(k*60-90)*Math.PI/180;return`${f(cx+r*Math.cos(a))},${f(cy+r*Math.sin(a))}`}).join('L')+'Z';
 // iki ucu yuvarlak çubuk
 function cap(x1,y1,x2,y2,w){const r=w/2,dx=x2-x1,dy=y2-y1,l=Math.hypot(dx,dy),nx=-dy/l*r,ny=dx/l*r;
  return `M${f(x1+nx)},${f(y1+ny)}L${f(x2+nx)},${f(y2+ny)}A${r},${r} 0 0 0 ${f(x2-nx)},${f(y2-ny)}L${f(x1-nx)},${f(y1-ny)}A${r},${r} 0 0 0 ${f(x1+nx)},${f(y1+ny)}Z`}
@@ -176,7 +178,130 @@ const IKONLAR=[
   {d:'M29,62L27,42L32,33L37,42L35,62Z',c:R.krem},
   {d:'M41,62L40,30L47,19L54,30L53,62Z',c:R.krem},
   {d:'M57,62L59,38L65,30L69,40L64,62Z',c:R.krem},
-  {d:'M66,62L71,48L76,46L77,53L73,62Z',c:R.krem}]}
+  {d:'M66,62L71,48L76,46L77,53L73,62Z',c:R.krem}]},
+ // ===== Market hammaddeleri (2026-10-27). Benzer görünen maddeler gerçekte de benzer:
+ // yan yana iki kardeş (Tween/Span, setil/stearil, iki paraben) aynı kapta, kapak rengiyle ayrılır.
+ // --- Bazlar
+ {grup:'Bazlar',dosya:'sari_vazelin',ad:'Sarı Vazelin',kutu:'#FFF0B8',parts:[
+  {d:rr(16,46,68,38,12),c:R.mavi},
+  {d:'M20,48C27,30 73,30 80,48Z',c:'#F2C94C'},       // ağartılmamış vazelin
+  {d:rr(28,58,44,16,4),c:R.krem,flat:1}]},
+ {grup:'Bazlar',dosya:'lanolin',ad:'Susuz Lanolin',kutu:'#C9EFE6',parts:[
+  {d:'M50,60C43,70 42,78 50,84C58,78 57,70 50,60Z',c:R.altin}, // yünden süzülen yağ
+  {d:circ(31,44,13),c:R.krem},{d:circ(69,44,13),c:R.krem},     // yün topağı
+  {d:circ(50,34,16),c:R.krem},{d:circ(50,52,15),c:R.krem},
+  {d:'M27,44C31,40 35,42 34,46M45,30C49,27 54,29 53,33M65,44C69,40 73,42 72,46M46,52C50,49 55,51 54,55',c:R.kremKoyu,line:1}]},
+ {grup:'Bazlar',dosya:'kati_parafin',ad:'Katı Parafin',kutu:'#CFE4F7',parts:[
+  {d:rr(12,54,76,28,6),c:R.kremKoyu},               // alt blok
+  {d:rr(22,30,56,26,6),c:R.krem},                   // üst blok
+  {d:'M30,43H70',c:R.kremKoyu,line:1}]},            // kalıp çizgisi
+ {grup:'Bazlar',dosya:'balmumu',ad:'Beyaz Balmumu',kutu:'#FFD6C2',parts:[
+  ...[[38,38],[62,38],[26,59],[50,59],[74,59]].map(([x,y])=>({d:hx(x,y,13.5),c:'#F1DFA4'})),
+  ...[[38,38],[62,38],[26,59],[50,59],[74,59]].map(([x,y])=>({d:hx(x,y,7),c:D('#F1DFA4',.18),flat:1}))]},
+ {grup:'Bazlar',dosya:'peg_400',ad:'PEG 400',kutu:'#FFE3A6',parts:[
+  {d:rr(37,12,26,12,4),c:R.mor},
+  {d:rr(40,22,20,16,4),c:R.cam},
+  {d:rr(26,34,48,50,13),c:R.cam},
+  {d:rr(32,50,36,22,4),c:R.krem,flat:1},
+  {d:'M38,61H62',c:R.mor,line:1}]},
+ {grup:'Bazlar',dosya:'peg_3350',ad:'PEG 3350',kutu:'#D9D2FA',parts:[
+  {d:'M10,60H90C84,74 68,80 50,80C32,80 16,74 10,60Z',c:R.cam},
+  {d:rr(20,52,22,10,5),c:R.krem},{d:rr(40,53,22,10,5),c:R.krem},{d:rr(60,52,22,10,5),c:R.krem},
+  {d:rr(30,44,22,10,5),c:R.krem},{d:rr(50,44,22,10,5),c:R.krem},
+  {d:rr(40,36,20,10,5),c:R.krem}]},                 // katı PEG pulları
+ // --- Kıvam ve emülgatör
+ {grup:'Kıvam ve emülgatör',dosya:'setil_alkol',ad:'Setil Alkol',kutu:'#D9D2FA',parts:[
+  {d:rr(18,30,64,54,12),c:R.amber},                 // amber cam kavanoz
+  {d:rr(24,18,52,14,6),c:R.mor},
+  {d:circ(36,68,7.5),c:R.krem,flat:1},{d:circ(51,68,7.5),c:R.krem,flat:1},{d:circ(66,68,7.5),c:R.krem,flat:1},
+  {d:circ(43,54,7.5),c:R.krem,flat:1},{d:circ(58,54,7.5),c:R.krem,flat:1}]}, // pastiller
+ {grup:'Kıvam ve emülgatör',dosya:'stearil_alkol',ad:'Stearil Alkol',kutu:'#C9EFE6',parts:[
+  {d:rr(18,30,64,54,12),c:R.amber},
+  {d:rr(24,18,52,14,6),c:R.yesil},
+  {d:rr(26,64,22,9,4.5),c:R.krem,flat:1},{d:rr(50,66,22,9,4.5),c:R.krem,flat:1},
+  {d:rr(34,52,22,9,4.5),c:R.krem,flat:1},{d:rr(52,44,20,9,4.5),c:R.krem,flat:1}]}, // pullar
+ {grup:'Kıvam ve emülgatör',dosya:'stearik_asit',ad:'Stearik Asit',kutu:'#D9D2FA',parts:[
+  {d:rr(18,74,64,11,5),c:R.altinKoyu},              // tabak
+  {d:rr(36,36,28,42,6),c:R.krem},                   // stearin mum
+  {d:'M50,12C41,22 41,31 50,38C59,31 59,22 50,12Z',c:R.altin},
+  {d:'M50,24C46,29 46,33 50,36C54,33 54,29 50,24Z',c:R.turuncu,flat:1}]},
+ {grup:'Kıvam ve emülgatör',dosya:'gliseril_monostearat',ad:'Gliseril Monostearat',kutu:'#CFE4F7',parts:[
+  {d:'M30,50L50,86L70,50Z',c:'#E3A857'},            // külah
+  {d:'M38,55L53,70M47,52L58,63M62,55L47,70M53,52L42,63',c:D('#E3A857',.3),line:1},
+  {d:circ(50,36,21),c:R.krem},                      // dondurma
+  {d:'M30,44C36,52 42,48 46,54C50,50 56,54 60,48C64,52 68,48 70,44Z',c:R.krem}]},
+ {grup:'Kıvam ve emülgatör',dosya:'sodyum_lauril_sulfat',ad:'Sodyum Lauril Sülfat',kutu:'#CFE4F7',parts:[
+  {d:circ(40,32,10),c:R.buz},{d:circ(61,27,12),c:R.buz},{d:circ(74,44,7),c:R.buz}, // kabarcıklar
+  {d:rr(14,60,72,24,11),c:R.krem},                  // köpük
+  {d:circ(30,60,14),c:R.krem},{d:circ(51,54,17),c:R.krem},{d:circ(70,60,14),c:R.krem}]},
+ {grup:'Kıvam ve emülgatör',dosya:'polisorbat_80',ad:'Polisorbat 80 (Tween 80)',kutu:'#C9EFE6',parts:[
+  {d:rr(37,12,26,12,4),c:R.yesil},
+  {d:rr(40,22,20,16,4),c:R.cam},
+  {d:rr(26,34,48,50,13),c:R.cam},
+  {d:rr(30,48,40,32,10),c:'#F2C94C'}]},              // koyu kıvamlı sarı sıvı
+ {grup:'Kıvam ve emülgatör',dosya:'sorbitan_monooleat',ad:'Sorbitan Monooleat (Span 80)',kutu:'#FFF0B8',parts:[
+  {d:rr(37,12,26,12,4),c:R.mavi},
+  {d:rr(40,22,20,16,4),c:R.cam},
+  {d:rr(26,34,48,50,13),c:R.cam},
+  {d:rr(30,48,40,32,10),c:'#A4622A'}]},              // kahverengi yağlı sıvı
+ // --- Su fazı, koruyucu, toz
+ {grup:'Su fazı, koruyucu, toz',dosya:'propilen_glikol',ad:'Propilen Glikol',kutu:'#FFE3A6',parts:[
+  {d:rr(41,8,18,18,9),c:R.mercan},                  // damlalık başı
+  {d:rr(36,22,28,12,4),c:R.kahve},
+  {d:rr(28,32,44,52,13),c:R.cam},
+  {d:rr(32,52,36,28,10),c:R.buz}]},
+ {grup:'Su fazı, koruyucu, toz',dosya:'metilparaben',ad:'Metilparaben',kutu:'#FFD6C2',parts:[
+  {d:rr(18,30,64,54,12),c:R.amber},
+  {d:rr(24,18,52,14,6),c:R.mercan},
+  {d:'M26,78C30,56 70,56 74,78Z',c:R.krem,flat:1}]},  // beyaz toz
+ {grup:'Su fazı, koruyucu, toz',dosya:'propilparaben',ad:'Propilparaben',kutu:'#CFE4F7',parts:[
+  {d:rr(18,30,64,54,12),c:R.amber},
+  {d:rr(24,18,52,14,6),c:R.mavi},
+  {d:'M26,78C30,56 70,56 74,78Z',c:R.krem,flat:1}]},
+ {grup:'Su fazı, koruyucu, toz',dosya:'nisasta',ad:'Nişasta (mısır)',kutu:'#C9EFE6',parts:[
+  {d:'M38,82C22,74 16,54 22,36C30,52 36,64 48,74Z',c:R.yesil},   // sol yaprak
+  {d:'M62,82C78,74 84,54 78,36C70,52 64,64 52,74Z',c:R.yesil},   // sağ yaprak
+  {d:rr(36,14,28,62,14),c:R.sari},                  // koçan
+  {d:'M38,30H62M37,42H63M37,54H63M38,66H62M50,18V72',c:R.altinKoyu,line:1}]},
+ // --- Etkin maddeler
+ {grup:'Etkin maddeler',dosya:'ure',ad:'Üre',kutu:'#CFE4F7',parts:[
+  {d:'M10,60H90C84,74 68,80 50,80C32,80 16,74 10,60Z',c:R.cam},
+  ...[[30,56],[42,56],[54,56],[66,56],[36,46],[48,46],[60,46],[42,36],[54,36]].map(([x,y])=>({d:circ(x,y,6.2),c:R.krem}))]},
+ {grup:'Etkin maddeler',dosya:'kukurt',ad:'Kükürt',kutu:'#D9D2FA',parts:[
+  {d:rr(14,72,72,13,6),c:R.kremKoyu},               // kaya
+  {d:'M24,76L22,52L32,42L42,54L40,76Z',c:R.sari},
+  {d:'M60,76L60,50L70,38L80,50L76,76Z',c:R.sari},
+  {d:'M40,76L37,38L50,18L63,38L60,76Z',c:R.sari},   // kükürt kristalleri
+  {d:'M50,22V72',c:R.altinKoyu,line:1}]},
+ {grup:'Etkin maddeler',dosya:'ihtiyol',ad:'İhtiyol',kutu:'#FFE3A6',parts:[
+  {d:'M12,58C12,40 26,28 50,28C76,28 88,40 88,58C88,74 74,84 50,84C26,84 12,74 12,58Z',c:'#7D726A'}, // şist taşı
+  {d:'M26,56C36,45 56,45 66,56C56,67 36,67 26,56ZM66,56L78,47M66,56L78,65M78,47V65',c:L('#7D726A',.45),line:1}, // fosil balık
+  {d:'M32,56H62M40,50V62M48,49V63M56,50V62',c:L('#7D726A',.45),line:1}]},
+ {grup:'Etkin maddeler',dosya:'lcd',ad:'LCD (kömür katranı çözeltisi)',kutu:'#E4E8EE',parts:[
+  {d:rr(37,12,26,12,4),c:R.kahve},
+  {d:rr(40,22,20,16,4),c:'#3B302B'},
+  {d:rr(26,34,48,50,13),c:'#3B302B'},               // koyu katran
+  {d:rr(32,52,36,20,4),c:R.krem,flat:1},
+  {d:'M38,62H62',c:R.kremKoyu,line:1}]},
+ {grup:'Etkin maddeler',dosya:'rezorsin',ad:'Rezorsin',kutu:'#C9EFE6',parts:[
+  {d:'M10,60H90C84,74 68,80 50,80C32,80 16,74 10,60Z',c:R.cam},
+  {d:'M22,62L24,46L34,40L42,48L40,62Z',c:'#F4A7B9'},
+  {d:'M58,62L60,44L70,40L78,50L74,62Z',c:'#F4A7B9'},
+  {d:'M38,62L42,34L53,26L62,36L60,62Z',c:'#F4A7B9'}]}, // ışıkta pembeleşen kristaller
+ {grup:'Etkin maddeler',dosya:'mentol',ad:'Mentol (nane)',kutu:'#FFE3A6',parts:[
+  {d:cap(50,46,50,84,6),c:D(R.yesil,.25)},          // sap
+  {d:'M48,52C40,40 24,40 14,50C24,62 40,62 48,52Z',c:R.yesil},
+  {d:'M52,52C60,40 76,40 86,50C76,62 60,62 52,52Z',c:R.yesil},
+  {d:'M50,12C63,20 65,38 50,50C35,38 37,20 50,12Z',c:R.yesil},
+  {d:'M50,18V46M20,50H46M54,50H80',c:D(R.yesil,.3),line:1}]},
+ {grup:'Etkin maddeler',dosya:'kafur',ad:'Kafur',kutu:'#D9D2FA',parts:[
+  {d:rr(14,54,34,28,7),c:'#EEF3F6'},{d:rr(52,54,34,28,7),c:'#EEF3F6'},
+  {d:rr(33,28,34,28,7),c:'#EEF3F6'}]},               // kafur tabletleri
+ {grup:'Etkin maddeler',dosya:'benzil_benzoat',ad:'Benzil Benzoat',kutu:'#FFD6C2',parts:[
+  {d:rr(40,12,20,16,5),c:R.mercan},                 // kapak
+  {d:rr(28,26,44,58,16),c:R.krem},                  // losyon şişesi
+  {d:rr(34,44,32,26,5),c:R.mavi,flat:1},
+  {d:'M40,57H60',c:R.krem,line:1}]}
 ];
 
 // ---- çizim (Pharmamental üreticisinden aynen)
