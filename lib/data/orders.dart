@@ -39,7 +39,6 @@ const List<PrescriptionOrder> prescriptionOrders = [
     ],
     calcHint: 'Yüzde toplamdan hesaplanır: 50 g × %5 = 2,5 g salisilik asit. '
         '"ad 50 g" son maddeyle toplamı 50 g\'a tamamla demek: 50 − 2,5 − 1,25 = 46,25 g vazelin.',
-    distractors: ['Gliserin', 'Distile Su', 'Çinko Oksit'],
     steps: [
       PrescriptionStep('Tartım', station: LabStation.terazi, minutes: 0, interactive: true, icon: Icons.scale_outlined),
       PrescriptionStep('Levigasyon', station: LabStation.havan, minutes: 3, icon: Icons.blender_outlined),
@@ -71,7 +70,6 @@ const List<PrescriptionOrder> prescriptionOrders = [
     ],
     calcHint: 'Her yüzdeyi toplamla çarp: 60 g × %20 = 12 g çinko oksit, 60 g × %15 = 9 g sıvı parafin. '
         '"ad 60 g" vazelinin toplamı 60 g\'a tamamladığını söyler: 60 − 12 − 9 = 39 g.',
-    distractors: ['Salisilik Asit', 'Gliserin', 'Distile Su'],
     steps: [
       PrescriptionStep('Tartım', station: LabStation.terazi, minutes: 0, interactive: true, icon: Icons.scale_outlined),
       PrescriptionStep('Levigasyon', station: LabStation.havan, minutes: 4, icon: Icons.blender_outlined),
@@ -102,7 +100,6 @@ const List<PrescriptionOrder> prescriptionOrders = [
     ],
     batchNote: 'Formül 1000 g için yazılmış; sen 100 g hazırla.',
     calcHint: '100 g, 1000 g\'ın onda biri: her miktarı 10\'a böl. 250 g → 25 g, 0,25 g → 0,025 g.',
-    distractors: ['Gliserin', 'Çinko Oksit', 'Salisilik Asit'],
     steps: [
       PrescriptionStep('Tartım', station: LabStation.terazi, minutes: 0, interactive: true, icon: Icons.scale_outlined),
       PrescriptionStep('Isıtma', station: LabStation.isitma, minutes: 10, interactive: true, imagePath: 'assets/images/Burn_icon.webp'),

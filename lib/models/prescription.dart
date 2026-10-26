@@ -84,7 +84,6 @@ class PrescriptionOrder {
     required this.purpose,
     required this.ingredients,
     required this.calcHint,
-    required this.distractors,
     required this.steps,
     required this.sequenceHint,
     this.batchNote,
@@ -99,8 +98,6 @@ class PrescriptionOrder {
 
   /// Formül başka bir toplam için yazıldıysa ne kadar hazırlanacağı.
   final String? batchNote;
-
-  List<String> get chemicals => [for (final i in ingredients) i.name];
 
   /// Hazırlanacak toplam miktar (g).
   double get totalGrams => ingredients.fold(0, (sum, i) => sum + i.grams);
@@ -118,9 +115,6 @@ class PrescriptionOrder {
   final String patientName;
   final String magistralName;
   final String purpose;
-
-  /// Rafta reçetedekilerle karışık duran, bu reçetede olmayan kimyasallar.
-  final List<String> distractors;
 
   /// Doğru sırada verilen adımlar.
   final List<PrescriptionStep> steps;

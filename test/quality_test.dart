@@ -15,33 +15,19 @@ void main() {
       };
 
   PreparationResult evaluate({
-    Set<String>? chemicals,
     List<String>? steps,
     Map<ToolKind, String>? tools,
   }) =>
       evaluatePreparation(
         order: order,
-        selectedChemicals: chemicals ?? order.chemicals.toSet(),
         stepOrder: steps ?? correctSteps,
         selectedTools: tools ?? rightTools(order),
       );
 
-  test('doğru kimyasal, doğru alet ve doğru sıra 3 yıldız, açıklama yok', () {
+  test('doğru alet ve doğru sıra 3 yıldız, açıklama yok', () {
     final r = evaluate();
     expect(r.stars, 3);
     expect(r.notes, isEmpty);
-  });
-
-  test('eksik kimyasal bir yıldız götürür ve adını söyler', () {
-    final r = evaluate(chemicals: order.chemicals.skip(1).toSet());
-    expect(r.stars, 2);
-    expect(r.notes.single, contains(order.chemicals.first));
-  });
-
-  test('reçetede olmayan kimyasal bir yıldız götürür', () {
-    final r = evaluate(chemicals: {...order.chemicals, order.distractors.first});
-    expect(r.stars, 2);
-    expect(r.notes.single, contains(order.distractors.first));
   });
 
   test('yanlış sıra bir yıldız götürür, ipucu ve doğru sırayı gösterir', () {
@@ -75,7 +61,6 @@ void main() {
   test('kremde parşömen blok yanlış, merhem taşı doğru', () {
     PreparationResult run(String surface) => evaluatePreparation(
           order: cream,
-          selectedChemicals: cream.chemicals.toSet(),
           stepOrder: [for (final s in cream.steps) s.label],
           selectedTools: {...rightTools(cream), ToolKind.surface: surface},
         );
@@ -85,12 +70,8 @@ void main() {
     expect(wrong.notes.single, contains('suyunu emer'));
   });
 
-  test('bütün hatalar birlikte olsa da en düşük kalite 1 yıldız', () {
-    final r = evaluate(
-      chemicals: {order.distractors.first},
-      steps: correctSteps.reversed.toList(),
-      tools: const {},
-    );
+  test('alet ve sıra birlikte yanlışsa 1 yıldız kalır', () {
+    final r = evaluate(steps: correctSteps.reversed.toList(), tools: const {});
     expect(r.stars, 1);
   });
 

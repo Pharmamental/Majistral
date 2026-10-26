@@ -11,8 +11,8 @@ import '../widgets/back_pill.dart';
 import '../widgets/chunky_button.dart';
 import '../widgets/job_status.dart';
 
-/// Hazırlama ekranı (tasarım belgesi, bölüm 5): oyuncu reçeteye bakıp raftan
-/// kimyasalları seçer, adımlara sırayla dokunarak hazırlama sırasını kurar ve
+/// Hazırlama ekranı (tasarım belgesi, bölüm 5): oyuncu reçeteye bakıp aletleri
+/// seçer, adımlara sırayla dokunarak hazırlama sırasını kurar ve
 /// "Başlat"a basar. İş gerçek zamanda sürer (bölüm 7); hazır olunca teslimde
 /// 1–3 yıldız ve hatayı anlatan kısa açıklamalar gösterilir.
 class PreparationScreen extends StatefulWidget {
@@ -25,18 +25,14 @@ class PreparationScreen extends StatefulWidget {
 }
 
 class _PreparationScreenState extends State<PreparationScreen> {
-  late final List<String> _shelf;
   late final List<String> _stepPool;
-  final Set<String> _selected = {};
   final List<String> _sequence = [];
   final Map<ToolKind, String> _tools = {};
 
   @override
   void initState() {
     super.initState();
-    final order = widget.order;
-    _shelf = [...order.chemicals, ...order.distractors]..sort();
-    _stepPool = _scrambledSteps(order);
+    _stepPool = _scrambledSteps(widget.order);
   }
 
   // Adımlar karışık sunulur; aynı reçete her açılışta aynı karışık sırayla
@@ -49,10 +45,6 @@ class _PreparationScreenState extends State<PreparationScreen> {
       if (scrambled[i] != correct[i]) same = false;
     }
     return same ? correct.reversed.toList() : scrambled;
-  }
-
-  void _toggleChemical(String name) {
-    setState(() => _selected.contains(name) ? _selected.remove(name) : _selected.add(name));
   }
 
   void _tapStep(String label) {
@@ -76,17 +68,15 @@ class _PreparationScreenState extends State<PreparationScreen> {
   Future<void> _start() async {
     final result = evaluatePreparation(
       order: widget.order,
-      selectedChemicals: _selected,
       stepOrder: _sequence,
       selectedTools: _tools,
     );
     await JobScope.of(context).start(widget.order, result);
   }
 
-  bool get _canStart => _selected.isNotEmpty && _toolsDone && _sequence.length == _stepPool.length;
+  bool get _canStart => _toolsDone && _sequence.length == _stepPool.length;
 
   String get _startHint {
-    if (_selected.isEmpty) return 'Önce raftan kimyasal seç';
     if (!_toolsDone) return 'Aletlerini seç';
     final left = _stepPool.length - _sequence.length;
     if (left > 0) return 'Sıraya $left adım daha koy';
@@ -110,28 +100,10 @@ class _PreparationScreenState extends State<PreparationScreen> {
                 children: job == null
                     ? [
                         _RecipeSummary(order: widget.order),
-                        const SizedBox(height: AppSpace.lg),
-                        _Section(
-                          number: 1,
-                          title: 'Kimyasalları seç',
-                          hint: 'Reçetedekileri raftan al. Rafta başka maddeler de var.',
-                          child: Wrap(
-                            spacing: AppSpace.sm,
-                            runSpacing: AppSpace.sm,
-                            children: [
-                              for (final name in _shelf)
-                                _ShelfChip(
-                                  label: name,
-                                  selected: _selected.contains(name),
-                                  onTap: () => _toggleChemical(name),
-                                ),
-                            ],
-                          ),
-                        ),
                         if (widget.order.tools.isNotEmpty) ...[
                           const SizedBox(height: AppSpace.lg),
                           _Section(
-                            number: 2,
+                            number: 1,
                             title: 'Aletleri seç',
                             hint: 'Her işin doğru aleti var. Yanlış alet ürünün kalitesini düşürür.',
                             child: Column(
@@ -160,7 +132,7 @@ class _PreparationScreenState extends State<PreparationScreen> {
                         ],
                         const SizedBox(height: AppSpace.lg),
                         _Section(
-                          number: widget.order.tools.isEmpty ? 2 : 3,
+                          number: widget.order.tools.isEmpty ? 1 : 2,
                           title: 'Hazırlama sırası',
                           hint: 'Adımlara doğru sırayla dokun. Yanlışsa tekrar dokunup geri al.',
                           child: Column(

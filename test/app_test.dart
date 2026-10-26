@@ -79,12 +79,8 @@ void main() {
     await tester.tap(find.text('Hazırla').first);
     await tester.pumpAndSettle();
     expect(find.text('Hazırlama'), findsOneWidget);
-    expect(find.text('Önce raftan kimyasal seç'), findsOneWidget);
-
-    for (final chemical in order.chemicals) {
-      await tester.tap(find.descendant(of: find.byType(Wrap), matching: find.text(chemical)).first);
-      await tester.pump();
-    }
+    // Kimyasal seçimi yok: maddeler reçeteden gelir, ilk iş alet seçmek.
+    expect(find.text('Kimyasalları seç'), findsNothing);
     expect(find.text('Aletlerini seç'), findsOneWidget);
     // Salisilik asit: çelik değil plastik spatül; toz için porselen havan.
     for (final tool in ['Plastik spatül', 'Porselen havan', 'Merhem taşı']) {
