@@ -56,7 +56,7 @@ class _MarketScreenState extends State<MarketScreen> {
             const SizedBox(height: AppSpace.md),
             Text(
               'Günde en çok 5 kez. Hızlandırma yalnız bekleme süresini kısaltır, '
-              'hazırlama adımlarını atlatmaz.',
+              'hazırlama adımlarını atlatmaz. Her acele kaliteyi de yarıya indirir.',
               style: AppText.body(size: 13, color: AppColors.inkMuted),
             ),
           ],
@@ -69,11 +69,20 @@ class _MarketScreenState extends State<MarketScreen> {
           itemBuilder: (context, index) => StationSection(station: stations[index]),
         );
       case MarketTab.kimyasallar:
-        return ListView.separated(
+        return ListView(
           padding: listPadding,
-          itemCount: chemicals.length,
-          separatorBuilder: (context, index) => const SizedBox(height: AppSpace.md),
-          itemBuilder: (context, index) => ShopItemTile(item: chemicals[index]),
+          children: [
+            for (final group in chemicalGroups) ...[
+              Text(group.title, style: AppText.title(size: 20)),
+              Text(group.subtitle, style: AppText.label(size: 12)),
+              const SizedBox(height: AppSpace.md),
+              for (final item in group.items) ...[
+                ShopItemTile(item: item),
+                const SizedBox(height: AppSpace.md),
+              ],
+              const SizedBox(height: AppSpace.lg),
+            ],
+          ],
         );
     }
   }

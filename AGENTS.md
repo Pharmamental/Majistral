@@ -84,6 +84,10 @@ lib/
   `rushSlots`). Oyuncu adımı beklerken basılamaz. Acele sonrası erken boşalan istasyonlara arkadaki
   işlerin başlamamış adımları kayar (`compactJobs`); başlamış adımlar yerinde kalır. Bu tek
   istisna dışında planlanmış zamanlar değişmez. Reklam henüz bağlı değil, onay penceresi yerini tutuyor.
+- Kimyasal seçimi yok (Tuğrul, 2026-10-26): maddeler reçeteden gelir; hazırlamada yalnız alet ve sıra.
+- Market hammaddeleri (2026-10-26): `chemicalGroups`, 6 rol grubunda 30 madde; liste ve kaynakları
+  beyinde (`knowledge/concepts/majistral-hammaddeler.md`). Reçeteye yeni madde girerse markete de
+  eklenir (`test/market_items_test.dart` denetler). 24 maddenin oyuncak blok ikonu henüz çizilmedi.
 - Testler gerçek fontu `test/test_fonts.dart` ile yükler; taşma testleri böyle gerçeği yansıtır.
 - Süren işler `shared_preferences` ile telefona kaydedilir; saat şimdilik cihaz saati
   (`JobStore.now`). Sunucu saati gelene kadar saat hilesi mümkün; kapanmamış bir açık.
