@@ -75,7 +75,10 @@ lib/
 - Oyuncu adımı (2026-10-26): `interactive: true` adımın süresi dolunca iş durur ve oyuncuyu
   bekler (kremde su banyosu: termometreyi 70–75°'de tut, `widgets/heating_sheet.dart`). Kalan
   adımlar ancak oyuncu bitirince, o andan planlanır (`PrepJob.pending`, `JobStore.completeAction`).
-- Tartım (2026-10-26): Tartım adımı 0 dakikalık oyuncu adımıdır; iş Başlat'tan hemen sonra terazide  bekler, oyuncu reçeteden gramları hesaplayıp yazar (`widgets/weighing_sheet.dart`). Kabul: doğru  miktarın ±%5'i; yanlış tartım bir yıldız götürür (`evaluateWeighing`). Formüller ve kaynakları  `lib/data/orders.dart` başında.
+- Tartım (2026-10-26): Tartım adımı 0 dakikalık oyuncu adımıdır; iş Başlat'tan hemen sonra terazide
+  bekler, oyuncu reçeteden gramları hesaplayıp yazar (`widgets/weighing_sheet.dart`). Kabul: doğru
+  miktarın ±%5'i; yanlış tartım bir yıldız götürür (`evaluateWeighing`). Formüller ve kaynakları
+  `lib/data/orders.dart` başında.
 - Testler gerçek fontu `test/test_fonts.dart` ile yükler; taşma testleri böyle gerçeği yansıtır.
 - Süren işler `shared_preferences` ile telefona kaydedilir; saat şimdilik cihaz saati
   (`JobStore.now`). Sunucu saati gelene kadar saat hilesi mümkün; kapanmamış bir açık.
