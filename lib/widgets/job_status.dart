@@ -132,19 +132,19 @@ class _JobStatusState extends State<JobStatus> {
       child: LinearProgressIndicator(
         minHeight: widget.large ? 14 : 10,
         value: store.progress(widget.job),
-        backgroundColor: AppColors.kiremitSoft,
-        valueColor: const AlwaysStoppedAnimation(AppColors.kiremit),
+        backgroundColor: AppColors.suruyorSoft,
+        valueColor: const AlwaysStoppedAnimation(AppColors.suruyor),
       ),
     );
 
     if (widget.large) {
       return Column(
         children: [
-          const Icon(Icons.hourglass_top_rounded, size: 40, color: AppColors.kiremit),
+          const Icon(Icons.hourglass_top_rounded, size: 40, color: AppColors.suruyor),
           const SizedBox(height: AppSpace.sm),
           Text('Hazırlanıyor', style: AppText.label(size: 14)),
           const SizedBox(height: AppSpace.xs),
-          Text(remaining, style: AppText.timer(size: 44)),
+          Text(remaining, style: AppText.timer(size: 44, color: AppColors.suruyorText)),
           const SizedBox(height: AppSpace.xs),
           Text(where, style: AppText.body(size: 14, weight: FontWeight.w600)),
           const SizedBox(height: AppSpace.lg),
@@ -166,11 +166,11 @@ class _JobStatusState extends State<JobStatus> {
         children: [
           Row(
             children: [
-              const Icon(Icons.hourglass_top_rounded, size: 18, color: AppColors.kiremit),
+              const Icon(Icons.hourglass_top_rounded, size: 18, color: AppColors.suruyor),
               const SizedBox(width: AppSpace.xs),
               Text('Hazırlanıyor', style: AppText.body(size: 14, weight: FontWeight.w600)),
               const Spacer(),
-              Text(remaining, style: AppText.timer()),
+              Text(remaining, style: AppText.timer(color: AppColors.suruyorText)),
             ],
           ),
           if (where.isNotEmpty)
@@ -286,7 +286,7 @@ class _StepList extends StatelessWidget {
           else if (!at.isBefore(s.end))
             _row(Icons.check_circle_rounded, AppColors.success, stepIconPath(s.label), s.label, s.station.label)
           else if (!at.isBefore(s.start))
-            _row(Icons.play_circle_fill_rounded, AppColors.kiremit, stepIconPath(s.label), s.label, s.station.label)
+            _row(Icons.play_circle_fill_rounded, AppColors.suruyor, stepIconPath(s.label), s.label, s.station.label)
           else
             _row(Icons.radio_button_unchecked_rounded, AppColors.line, stepIconPath(s.label), s.label, s.station.label),
         // Oyuncunun adımından sonra planlanacak adımlar.

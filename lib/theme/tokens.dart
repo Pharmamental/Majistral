@@ -31,6 +31,13 @@ class AppColors {
 
   static const Color star = Color(0xFFF2A900);
 
+  // Reçete durumları (2026-10-27): şerit, açık zemin, yazı. Yazı açık zeminde
+  // en az 5,1:1 (ölçüldü); şerit süs, durum her zaman yazıyla da söylenir.
+  static const Color yeni = kiremit, yeniSoft = kiremitSoft, yeniText = Color(0xFF9C3F25);
+  static const Color suruyor = Color(0xFF4C9BE8), suruyorSoft = Color(0xFFDCEBFA), suruyorText = Color(0xFF1D5C96);
+  static const Color bekliyor = Color(0xFFE9A21E), bekliyorSoft = Color(0xFFFCEBC7), bekliyorText = Color(0xFF7A5200);
+  static const Color hazir = success, hazirSoft = successSoft, hazirText = successDark;
+
   // İstasyon kademeleri.
   static const Color rusty = Color(0xFF8D6E52);
   static const Color goodCondition = Color(0xFF607D8B);

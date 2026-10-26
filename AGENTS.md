@@ -88,6 +88,10 @@ lib/
   (Tuğrul, 2026-10-27): hazırlamada adımlar sabit sırayla gösterilir, oyuncu yalnız alet seçer.
   Her adımın kendi oyuncak blok ikonu var (`stepIcons`, `ikon_adim_<ad>.png`); yeni adım adı
   eklenirse ikonu da çizilir (`test/quality_test.dart` denetler).
+- Reçete durum renkleri (2026-10-27): `OrderStatus` (seni bekliyor amber, hazır yeşil, hazırlanıyor
+  mavi, yeni kiremit); renkler `AppColors` içinde, yazı tonları açık zeminde ≥5,1:1 ölçüldü. Reçeteler
+  sekmesi bu sırayla gruplanır; kartın şeridi ve süren işin göstergeleri grubun rengini taşır.
+  Birincil düğme her zaman kiremit.
 - Market hammaddeleri (2026-10-26): `chemicalGroups`, 6 rol grubunda 31 madde; liste ve kaynakları
   beyinde (`knowledge/concepts/majistral-hammaddeler.md`). Reçeteye yeni madde girerse markete de
   eklenir; her maddenin oyuncak blok ikonu olur (`test/market_items_test.dart` ikisini de denetler).
