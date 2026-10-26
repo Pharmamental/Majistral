@@ -301,7 +301,47 @@ const IKONLAR=[
   {d:rr(40,12,20,16,5),c:R.mercan},                 // kapak
   {d:rr(28,26,44,58,16),c:R.krem},                  // losyon şişesi
   {d:rr(34,44,32,26,5),c:R.mavi,flat:1},
-  {d:'M40,57H60',c:R.krem,line:1}]}
+  {d:'M40,57H60',c:R.krem,line:1}]},
+ // ===== Hazırlama adımları (2026-10-27): her adımda gerçekte yapılan iş
+ {grup:'Adımlar',dosya:'adim_tartim',ad:'Tartım',kutu:'#FFE3A6',parts:[
+  {d:rr(66,40,18,28,4),c:R.altinKoyu},              // pirinç ağırlık
+  {d:circ(75,38,5.5),c:R.altin},                    // ağırlığın tutamağı
+  {d:'M12,58H80L72,82H20Z',c:R.mavi},               // tartım kayığı
+  {d:'M22,60C28,40 64,40 70,60Z',c:R.krem}]},       // tartılan toz
+ {grup:'Adımlar',dosya:'adim_levigasyon',ad:'Levigasyon',kutu:'#CFE4F7',parts:[
+  {d:'M24,44C28,28 72,28 76,44Z',c:'#F2D27A'},      // tozla sıvı parafinin macunu
+  {d:cap(76,10,56,38,11),c:R.kremKoyu},             // macunu ezen havan eli
+  {d:'M17,46H83C83,66 68,80 50,80C32,80 17,66 17,46Z',c:R.krem}, // havan
+  {d:rr(13,40,74,9,4.5),c:R.krem},
+  {d:rr(35,76,30,9,3.5),c:R.kremKoyu}]},
+ {grup:'Adımlar',dosya:'adim_karistirma',ad:'Karıştırma',kutu:'#C9EFE6',parts:[
+  {d:'M12,52H88L84,80H16Z',c:R.cam},                // merhem taşı
+  {d:'M24,60C26,42 70,42 74,58C76,68 26,70 24,60Z',c:R.krem}, // merhem
+  {d:'M36,58C38,49 58,49 59,55C60,62 46,63 45,57',c:R.altinKoyu,line:1}, // karışan etkin madde
+  {d:cap(58,56,82,30,8),c:R.metal},                 // spatül ağzı
+  {d:cap(80,32,90,20,8),c:R.kahve}]},               // sap
+ {grup:'Adımlar',dosya:'adim_isitma',ad:'Isıtma',kutu:'#FFD6C2',parts:[
+  {d:cap(66,10,50,62,8),c:'#F4F6F8'},               // termometre
+  {d:rr(20,30,52,54,8),c:R.cam},                    // beher
+  {d:rr(24,52,44,28,6),c:'#F6E7B0'},                // eriyen yağ fazı
+  {d:circ(51,64,5),c:R.kan,flat:1},                 // termometrenin haznesi
+  {d:'M54,54L64,20',c:R.kan,line:1}]},              // yükselen kırmızı sıvı
+ {grup:'Adımlar',dosya:'adim_emulsifikasyon',ad:'Emülsifikasyon',kutu:'#D9D2FA',parts:[
+  {d:'M56,12L86,24L76,46L48,34Z',c:R.cam},          // su fazının beheri (eğik)
+  {d:'M60,22L80,30L75,41L54,32Z',c:R.buz,flat:1},
+  {d:'M50,34C44,44 40,52 38,62',c:R.mavi,w:6},      // yağ fazına dökülen su
+  {d:rr(12,48,52,36,8),c:R.cam},                    // yağ fazının beheri
+  {d:rr(16,60,44,20,6),c:'#F6E7B0'}]},
+ {grup:'Adımlar',dosya:'adim_soguma',ad:'Soğuma',kutu:'#CFE4F7',parts:[
+  {d:rr(34,10,32,44,6),c:R.cam},                    // kremli beher
+  {d:rr(37,22,26,22,4),c:R.krem},
+  {d:'M12,52H88C88,70 72,82 50,82C28,82 12,70 12,52Z',c:R.mavi}, // soğuk su kabı
+  {d:rr(10,46,80,9,4.5),c:R.mavi},
+  {d:rr(14,34,16,16,4),c:R.buz},{d:rr(70,34,16,16,4),c:R.buz}]}, // buz küpleri
+ {grup:'Adımlar',dosya:'adim_etiket',ad:'Etiket',kutu:'#FFE3A6',parts:[
+  {d:'M22,28H78C82,28 86,32 86,36V60L68,78H22C18,78 14,74 14,70V36C14,32 18,28 22,28Z',c:R.kan}, // kırmızı majistral etiketi
+  {d:'M86,60L68,78L71,63Z',c:R.krem},               // kalkan köşe
+  {d:'M26,42H72M26,52H64M26,62H52',c:R.krem,line:1}]}
 ];
 
 // ---- çizim (Pharmamental üreticisinden aynen)

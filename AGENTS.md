@@ -84,7 +84,10 @@ lib/
   `rushSlots`). Oyuncu adımı beklerken basılamaz. Acele sonrası erken boşalan istasyonlara arkadaki
   işlerin başlamamış adımları kayar (`compactJobs`); başlamış adımlar yerinde kalır. Bu tek
   istisna dışında planlanmış zamanlar değişmez. Reklam henüz bağlı değil, onay penceresi yerini tutuyor.
-- Kimyasal seçimi yok (Tuğrul, 2026-10-26): maddeler reçeteden gelir; hazırlamada yalnız alet ve sıra.
+- Kimyasal seçimi yok (Tuğrul, 2026-10-26): maddeler reçeteden gelir. Adım sırası da sorulmaz
+  (Tuğrul, 2026-10-27): hazırlamada adımlar sabit sırayla gösterilir, oyuncu yalnız alet seçer.
+  Her adımın kendi oyuncak blok ikonu var (`stepIcons`, `ikon_adim_<ad>.png`); yeni adım adı
+  eklenirse ikonu da çizilir (`test/quality_test.dart` denetler).
 - Market hammaddeleri (2026-10-26): `chemicalGroups`, 6 rol grubunda 31 madde; liste ve kaynakları
   beyinde (`knowledge/concepts/majistral-hammaddeler.md`). Reçeteye yeni madde girerse markete de
   eklenir; her maddenin oyuncak blok ikonu olur (`test/market_items_test.dart` ikisini de denetler).

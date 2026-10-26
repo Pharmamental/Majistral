@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:game/data/orders.dart';
@@ -7,34 +9,19 @@ import 'package:game/models/prescription.dart';
 void main() {
   final order = prescriptionOrders.first; // %5 salisilik asitli vazelin
   final cream = prescriptionOrders[2]; // hidrofil merhem
-  final correctSteps = [for (final s in order.steps) s.label];
 
   /// Her alet türünden ilk uygun seçenek.
   Map<ToolKind, String> rightTools(PrescriptionOrder o) => {
         for (final req in o.tools) req.kind: req.allowed.first,
       };
 
-  PreparationResult evaluate({
-    List<String>? steps,
-    Map<ToolKind, String>? tools,
-  }) =>
-      evaluatePreparation(
-        order: order,
-        stepOrder: steps ?? correctSteps,
-        selectedTools: tools ?? rightTools(order),
-      );
+  PreparationResult evaluate({Map<ToolKind, String>? tools}) =>
+      evaluatePreparation(order: order, selectedTools: tools ?? rightTools(order));
 
-  test('doğru alet ve doğru sıra 3 yıldız, açıklama yok', () {
+  test('doğru aletle 3 yıldız, açıklama yok', () {
     final r = evaluate();
     expect(r.stars, 3);
     expect(r.notes, isEmpty);
-  });
-
-  test('yanlış sıra bir yıldız götürür, ipucu ve doğru sırayı gösterir', () {
-    final r = evaluate(steps: correctSteps.reversed.toList());
-    expect(r.stars, 2);
-    expect(r.notes, contains(order.sequenceHint));
-    expect(r.notes.last, startsWith('Doğru sıra:'));
   });
 
   test('salisilik asitte çelik spatül bir yıldız götürür ve nedenini söyler', () {
@@ -61,7 +48,6 @@ void main() {
   test('kremde parşömen blok yanlış, merhem taşı doğru', () {
     PreparationResult run(String surface) => evaluatePreparation(
           order: cream,
-          stepOrder: [for (final s in cream.steps) s.label],
           selectedTools: {...rightTools(cream), ToolKind.surface: surface},
         );
     expect(run('Merhem taşı').stars, 3);
@@ -70,9 +56,13 @@ void main() {
     expect(wrong.notes.single, contains('suyunu emer'));
   });
 
-  test('alet ve sıra birlikte yanlışsa 1 yıldız kalır', () {
-    final r = evaluate(steps: correctSteps.reversed.toList(), tools: const {});
-    expect(r.stars, 1);
+  test('her adımın kendi ikonu var ve dosyası duruyor', () {
+    for (final o in prescriptionOrders) {
+      for (final step in o.steps) {
+        expect(stepIcons, contains(step.label), reason: step.label);
+        expect(File(step.imagePath).existsSync(), isTrue, reason: step.imagePath);
+      }
+    }
   });
 
   group('tartım', () {

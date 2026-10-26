@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../logic/job_store.dart';
 import '../models/prep_job.dart';
+import '../models/prescription.dart';
 import '../theme/tokens.dart';
 import 'chunky_button.dart';
 import 'result_view.dart';
@@ -281,16 +282,16 @@ class _StepList extends StatelessWidget {
       children: [
         for (final s in job.slots)
           if (waitingForPlayer && identical(s, job.slots.last))
-            _row(Icons.touch_app_rounded, AppColors.kiremit, s.station.imagePath, s.label, 'Sıra sende')
+            _row(Icons.touch_app_rounded, AppColors.kiremit, stepIconPath(s.label), s.label, 'Sıra sende')
           else if (!at.isBefore(s.end))
-            _row(Icons.check_circle_rounded, AppColors.success, s.station.imagePath, s.label, s.station.label)
+            _row(Icons.check_circle_rounded, AppColors.success, stepIconPath(s.label), s.label, s.station.label)
           else if (!at.isBefore(s.start))
-            _row(Icons.play_circle_fill_rounded, AppColors.kiremit, s.station.imagePath, s.label, s.station.label)
+            _row(Icons.play_circle_fill_rounded, AppColors.kiremit, stepIconPath(s.label), s.label, s.station.label)
           else
-            _row(Icons.radio_button_unchecked_rounded, AppColors.line, s.station.imagePath, s.label, s.station.label),
+            _row(Icons.radio_button_unchecked_rounded, AppColors.line, stepIconPath(s.label), s.label, s.station.label),
         // Oyuncunun adımından sonra planlanacak adımlar.
         for (final p in job.pending)
-          _row(Icons.radio_button_unchecked_rounded, AppColors.line, p.station.imagePath, p.label, p.station.label),
+          _row(Icons.radio_button_unchecked_rounded, AppColors.line, stepIconPath(p.label), p.label, p.station.label),
       ],
     );
   }

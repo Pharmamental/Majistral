@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 /// Laboratuvardaki istasyonlar. Her hazırlık adımı bir istasyonda çalışır;
 /// bir istasyon aynı anda tek iş yapar (Tuğrul: "her adımı bir laboratuvar
 /// aletine bağlamak").
@@ -16,14 +14,26 @@ enum LabStation {
   final String imagePath;
 }
 
+/// Her hazırlama adımının kendi oyuncak blok ikonu (tools/ikon_blok, "Adımlar").
+const stepIcons = {
+  'Tartım': 'tartim',
+  'Levigasyon': 'levigasyon',
+  'Karıştırma': 'karistirma',
+  'Isıtma': 'isitma',
+  'Emülsifikasyon': 'emulsifikasyon',
+  'Soğuma': 'soguma',
+  'Etiket': 'etiket',
+};
+
+/// Adım adına göre ikon; kayıttaki eski işlerin adımları da böyle bulunur.
+String stepIconPath(String label) => 'assets/images/ikon/ikon_adim_${stepIcons[label] ?? 'karistirma'}.png';
+
 class PrescriptionStep {
   const PrescriptionStep(
     this.label, {
     required this.station,
     required this.minutes,
     this.interactive = false,
-    this.icon,
-    this.imagePath,
   });
 
   final String label;
@@ -38,8 +48,8 @@ class PrescriptionStep {
   /// süresi 0 olan adımda (tartım) iş adıma gelir gelmez bekler. Oyuncu
   /// bitirince sonraki adımlar o andan itibaren planlanır.
   final bool interactive;
-  final IconData? icon;
-  final String? imagePath;
+
+  String get imagePath => stepIconPath(label);
 }
 
 /// Hazırlamada seçilen alet türleri ve her türün raftaki seçenekleri.
@@ -85,7 +95,6 @@ class PrescriptionOrder {
     required this.ingredients,
     required this.calcHint,
     required this.steps,
-    required this.sequenceHint,
     this.batchNote,
     this.tools = const [],
   });
@@ -118,7 +127,4 @@ class PrescriptionOrder {
 
   /// Doğru sırada verilen adımlar.
   final List<PrescriptionStep> steps;
-
-  /// Sıra yanlışsa ürüne ne olduğunu anlatan tek cümle.
-  final String sequenceHint;
 }

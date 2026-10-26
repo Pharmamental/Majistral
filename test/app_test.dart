@@ -84,13 +84,14 @@ void main() {
     expect(find.text('Aletlerini seç'), findsOneWidget);
     // Salisilik asit: çelik değil plastik spatül; toz için porselen havan.
     for (final tool in ['Plastik spatül', 'Porselen havan', 'Merhem taşı']) {
-      await tester.tap(find.text(tool));
+      await tester.tap(find.text(tool).first); // "Merhem taşı" adım listesinde istasyon adı olarak da geçer
       await tester.pump();
     }
-    for (final step in order.steps) {
-      await tester.tap(find.text(step.label));
-      await tester.pump();
-    }
+    // Sıra sorulmaz: adımlar doğru sırayla, sabit gösterilir.
+    expect(find.text('Hazırlama adımları'), findsOneWidget);
+    final ys = [for (final step in order.steps) tester.getTopLeft(find.text(step.label)).dy];
+    expect(ys, [...ys]..sort());
+    expect(find.text('Sen yaparsın'), findsOneWidget); // tartım
     expect(find.text('Hazırsın'), findsOneWidget);
     await tester.tap(find.text('Başlat'));
     await tester.pump();

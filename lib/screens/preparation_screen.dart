@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 
 import '../logic/job_store.dart';
@@ -12,8 +10,8 @@ import '../widgets/chunky_button.dart';
 import '../widgets/job_status.dart';
 
 /// Hazırlama ekranı (tasarım belgesi, bölüm 5): oyuncu reçeteye bakıp aletleri
-/// seçer, adımlara sırayla dokunarak hazırlama sırasını kurar ve
-/// "Başlat"a basar. İş gerçek zamanda sürer (bölüm 7); hazır olunca teslimde
+/// seçer ve "Başlat"a basar. Adımların sırası oyuncuya sorulmaz, sabit
+/// gösterilir (Tuğrul, 2026-10-27). İş gerçek zamanda sürer (bölüm 7); hazır olunca teslimde
 /// 1–3 yıldız ve hatayı anlatan kısa açıklamalar gösterilir.
 class PreparationScreen extends StatefulWidget {
   const PreparationScreen({super.key, required this.order});
@@ -25,39 +23,7 @@ class PreparationScreen extends StatefulWidget {
 }
 
 class _PreparationScreenState extends State<PreparationScreen> {
-  late final List<String> _stepPool;
-  final List<String> _sequence = [];
   final Map<ToolKind, String> _tools = {};
-
-  @override
-  void initState() {
-    super.initState();
-    _stepPool = _scrambledSteps(widget.order);
-  }
-
-  // Adımlar karışık sunulur; aynı reçete her açılışta aynı karışık sırayla
-  // gelir ki oyuncu ezberden değil, bilgiden ilerlesin ve testler sabit kalsın.
-  static List<String> _scrambledSteps(PrescriptionOrder order) {
-    final correct = [for (final s in order.steps) s.label];
-    final scrambled = [...correct]..shuffle(Random(order.magistralName.length));
-    var same = true;
-    for (var i = 0; i < correct.length; i++) {
-      if (scrambled[i] != correct[i]) same = false;
-    }
-    return same ? correct.reversed.toList() : scrambled;
-  }
-
-  void _tapStep(String label) {
-    setState(() {
-      final index = _sequence.indexOf(label);
-      if (index == -1) {
-        _sequence.add(label);
-      } else {
-        // Sıradaki bir adıma tekrar dokunmak onu ve sonrakileri geri alır.
-        _sequence.removeRange(index, _sequence.length);
-      }
-    });
-  }
 
   void _pickTool(ToolKind kind, String option) {
     setState(() => _tools[kind] = option);
@@ -66,22 +32,13 @@ class _PreparationScreenState extends State<PreparationScreen> {
   bool get _toolsDone => widget.order.tools.every((req) => _tools.containsKey(req.kind));
 
   Future<void> _start() async {
-    final result = evaluatePreparation(
-      order: widget.order,
-      stepOrder: _sequence,
-      selectedTools: _tools,
-    );
+    final result = evaluatePreparation(order: widget.order, selectedTools: _tools);
     await JobScope.of(context).start(widget.order, result);
   }
 
-  bool get _canStart => _toolsDone && _sequence.length == _stepPool.length;
+  bool get _canStart => _toolsDone;
 
-  String get _startHint {
-    if (!_toolsDone) return 'Aletlerini seç';
-    final left = _stepPool.length - _sequence.length;
-    if (left > 0) return 'Sıraya $left adım daha koy';
-    return 'Hazırsın';
-  }
+  String get _startHint => _toolsDone ? 'Hazırsın' : 'Aletlerini seç';
 
   // Öğrenme ekranı: sade, süs yok (Tasarım Rehberi, öğrenme modu). Birincil
   // aksiyon "Başlat" altta sabit, başparmak bölgesinde.
@@ -133,25 +90,11 @@ class _PreparationScreenState extends State<PreparationScreen> {
                         const SizedBox(height: AppSpace.lg),
                         _Section(
                           number: widget.order.tools.isEmpty ? 1 : 2,
-                          title: 'Hazırlama sırası',
-                          hint: 'Adımlara doğru sırayla dokun. Yanlışsa tekrar dokunup geri al.',
+                          title: 'Hazırlama adımları',
+                          hint: 'Bu reçete bu sırayla hazırlanır. Dokunmalı adımları sen yaparsın.',
                           child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              _SequenceSlots(total: _stepPool.length, sequence: _sequence),
-                              const SizedBox(height: AppSpace.lg),
-                              Wrap(
-                                spacing: AppSpace.sm,
-                                runSpacing: AppSpace.sm,
-                                children: [
-                                  for (final label in _stepPool)
-                                    _StepChip(
-                                      label: label,
-                                      position: _sequence.indexOf(label) + 1,
-                                      onTap: () => _tapStep(label),
-                                    ),
-                                ],
-                              ),
+                              for (final (i, step) in widget.order.steps.indexed) _StepRow(number: i + 1, step: step),
                             ],
                           ),
                         ),
@@ -339,89 +282,45 @@ class _ShelfChip extends StatelessWidget {
   }
 }
 
-/// Sıranın boş ve dolu yuvaları: oyuncu kaç adım kaldığını tek bakışta görür.
-class _SequenceSlots extends StatelessWidget {
-  const _SequenceSlots({required this.total, required this.sequence});
+/// Sabit adım listesinde bir satır: sıra, adımın ikonu, adı, istasyonu, süresi.
+class _StepRow extends StatelessWidget {
+  const _StepRow({required this.number, required this.step});
 
-  final int total;
-  final List<String> sequence;
+  final int number;
+  final PrescriptionStep step;
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        for (var i = 0; i < total; i++) ...[
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: AppSpace.xs),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 24,
+            child: Text('$number', style: AppText.title(size: 16, color: AppColors.accentText)),
+          ),
+          Image.asset(step.imagePath, width: 44, height: 44),
+          const SizedBox(width: AppSpace.md),
           Expanded(
-            child: Container(
-              height: 52,
-              alignment: Alignment.center,
-              padding: const EdgeInsets.symmetric(horizontal: AppSpace.xs),
-              decoration: BoxDecoration(
-                color: i < sequence.length ? AppColors.kiremitSoft : AppColors.surfaceMuted,
-                borderRadius: BorderRadius.circular(AppSpace.md),
-                border: Border.all(color: i < sequence.length ? AppColors.kiremit : AppColors.line),
-              ),
-              child: i < sequence.length
-                  ? Text(
-                      sequence[i],
-                      textAlign: TextAlign.center,
-                      maxLines: 2,
-                      style: AppText.label(size: 11, color: AppColors.ink),
-                    )
-                  : Text('${i + 1}', style: AppText.title(size: 16, color: AppColors.line)),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(step.label, style: AppText.body(size: 15, weight: FontWeight.w600)),
+                Text(step.station.label, style: AppText.label(size: 12)),
+              ],
             ),
           ),
-          if (i != total - 1) const SizedBox(width: AppSpace.xs),
+          if (step.interactive)
+            Row(
+              children: [
+                const Icon(Icons.touch_app_rounded, size: 16, color: AppColors.accentText),
+                const SizedBox(width: AppSpace.xs),
+                Text(step.minutes == 0 ? 'Sen yaparsın' : '${step.minutes} dk + sen', style: AppText.label(size: 12, color: AppColors.accentText)),
+              ],
+            )
+          else
+            Text('${step.minutes} dk', style: AppText.label(size: 12)),
         ],
-      ],
-    );
-  }
-}
-
-class _StepChip extends StatelessWidget {
-  const _StepChip({required this.label, required this.position, required this.onTap});
-
-  final String label;
-
-  /// Sıradaki yeri (1'den başlar); 0 ise henüz sıraya konmadı.
-  final int position;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final placed = position > 0;
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(AppRadius.pill),
-      child: Container(
-        constraints: const BoxConstraints(minHeight: 44),
-        padding: const EdgeInsets.symmetric(horizontal: AppSpace.lg, vertical: AppSpace.sm),
-        decoration: BoxDecoration(
-          color: placed ? AppColors.kiremitDark : AppColors.surface,
-          borderRadius: BorderRadius.circular(AppRadius.pill),
-          border: Border.all(color: AppColors.kiremit, width: 2),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (placed) ...[
-              CircleAvatar(
-                radius: 10,
-                backgroundColor: Colors.white,
-                child: Text('$position', style: AppText.label(size: 11, color: AppColors.accentText)),
-              ),
-              const SizedBox(width: AppSpace.sm),
-            ],
-            Text(
-              label,
-              style: AppText.body(
-                size: 14,
-                weight: FontWeight.w600,
-                color: placed ? Colors.white : AppColors.accentText,
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }

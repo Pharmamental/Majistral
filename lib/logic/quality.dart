@@ -9,12 +9,11 @@ class PreparationResult {
 }
 
 /// Tasarım belgesi bölüm 5: her hata türü bir yıldız götürür, en düşük kalite
-/// 1 yıldızdır ve ürün her zaman satılır. Başlat'ta bakılan hata türleri: yanlış
-/// alet (kaç alet yanlış olursa olsun tek yıldız) ve yanlış adım sırası.
-/// Kimyasal seçimi yok (Tuğrul, 2026-10-26): maddeler reçeteden gelir.
+/// 1 yıldızdır ve ürün her zaman satılır. Başlat'ta bakılan tek hata türü yanlış
+/// alet (kaç alet yanlış olursa olsun tek yıldız). Kimyasal seçimi (Tuğrul,
+/// 2026-10-26) ve adım sırası (2026-10-27) oyuncuya sorulmaz.
 PreparationResult evaluatePreparation({
   required PrescriptionOrder order,
-  required List<String> stepOrder,
   Map<ToolKind, String> selectedTools = const {},
 }) {
   final notes = <String>[];
@@ -31,22 +30,7 @@ PreparationResult evaluatePreparation({
     }
   }
 
-  final correctOrder = [for (final s in order.steps) s.label];
-  if (!_sameOrder(stepOrder, correctOrder)) {
-    stars--;
-    notes.add(order.sequenceHint);
-    notes.add('Doğru sıra: ${correctOrder.join(' › ')}.');
-  }
-
-  return PreparationResult(stars: stars < 1 ? 1 : stars, notes: notes);
-}
-
-bool _sameOrder(List<String> a, List<String> b) {
-  if (a.length != b.length) return false;
-  for (var i = 0; i < a.length; i++) {
-    if (a[i] != b[i]) return false;
-  }
-  return true;
+  return PreparationResult(stars: stars, notes: notes);
 }
 
 /// Tartımda kabul edilen sapma: doğru miktarın %5'i. Oyun kararı; yuvarlamaya

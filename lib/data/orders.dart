@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 import '../models/prescription.dart';
 
 // Örnek reçeteler. Hekim ve hasta adları uydurma. İçerik yayından önce
@@ -40,13 +38,11 @@ const List<PrescriptionOrder> prescriptionOrders = [
     calcHint: 'Yüzde toplamdan hesaplanır: 50 g × %5 = 2,5 g salisilik asit. '
         '"ad 50 g" son maddeyle toplamı 50 g\'a tamamla demek: 50 − 2,5 − 1,25 = 46,25 g vazelin.',
     steps: [
-      PrescriptionStep('Tartım', station: LabStation.terazi, minutes: 0, interactive: true, icon: Icons.scale_outlined),
-      PrescriptionStep('Levigasyon', station: LabStation.havan, minutes: 3, icon: Icons.blender_outlined),
-      PrescriptionStep('Karıştırma', station: LabStation.karistirma, minutes: 4, icon: Icons.autorenew),
-      PrescriptionStep('Etiket', station: LabStation.ambalaj, minutes: 1, icon: Icons.label_outline),
+      PrescriptionStep('Tartım', station: LabStation.terazi, minutes: 0, interactive: true),
+      PrescriptionStep('Levigasyon', station: LabStation.havan, minutes: 3),
+      PrescriptionStep('Karıştırma', station: LabStation.karistirma, minutes: 4),
+      PrescriptionStep('Etiket', station: LabStation.ambalaj, minutes: 1),
     ],
-    sequenceHint:
-        'Salisilik asidi önce sıvı parafinle macun yapmadan vazeline kattığın için merhem kumlu oldu.',
     tools: [
       ToolRequirement(
         ToolKind.spatula,
@@ -71,12 +67,11 @@ const List<PrescriptionOrder> prescriptionOrders = [
     calcHint: 'Her yüzdeyi toplamla çarp: 60 g × %20 = 12 g çinko oksit, 60 g × %15 = 9 g sıvı parafin. '
         '"ad 60 g" vazelinin toplamı 60 g\'a tamamladığını söyler: 60 − 12 − 9 = 39 g.',
     steps: [
-      PrescriptionStep('Tartım', station: LabStation.terazi, minutes: 0, interactive: true, icon: Icons.scale_outlined),
-      PrescriptionStep('Levigasyon', station: LabStation.havan, minutes: 4, icon: Icons.blender_outlined),
-      PrescriptionStep('Karıştırma', station: LabStation.karistirma, minutes: 6, icon: Icons.autorenew),
-      PrescriptionStep('Etiket', station: LabStation.ambalaj, minutes: 2, icon: Icons.label_outline),
+      PrescriptionStep('Tartım', station: LabStation.terazi, minutes: 0, interactive: true),
+      PrescriptionStep('Levigasyon', station: LabStation.havan, minutes: 4),
+      PrescriptionStep('Karıştırma', station: LabStation.karistirma, minutes: 6),
+      PrescriptionStep('Etiket', station: LabStation.ambalaj, minutes: 2),
     ],
-    sequenceHint: 'Çinko oksidi önce sıvı parafinle macun yapmadığın için merhem kumlu oldu.',
     tools: [
       ToolRequirement(ToolKind.spatula, {'Çelik spatül', 'Plastik spatül'}),
       _tozHavani,
@@ -101,13 +96,12 @@ const List<PrescriptionOrder> prescriptionOrders = [
     batchNote: 'Formül 1000 g için yazılmış; sen 100 g hazırla.',
     calcHint: '100 g, 1000 g\'ın onda biri: her miktarı 10\'a böl. 250 g → 25 g, 0,25 g → 0,025 g.',
     steps: [
-      PrescriptionStep('Tartım', station: LabStation.terazi, minutes: 0, interactive: true, icon: Icons.scale_outlined),
-      PrescriptionStep('Isıtma', station: LabStation.isitma, minutes: 10, interactive: true, imagePath: 'assets/images/Burn_icon.webp'),
-      PrescriptionStep('Emülsifikasyon', station: LabStation.karistirma, minutes: 9, icon: Icons.autorenew),
+      PrescriptionStep('Tartım', station: LabStation.terazi, minutes: 0, interactive: true),
+      PrescriptionStep('Isıtma', station: LabStation.isitma, minutes: 10, interactive: true),
+      PrescriptionStep('Emülsifikasyon', station: LabStation.karistirma, minutes: 9),
       // Krem soğuyana kadar karıştırılır; soğuma da karıştırma istasyonunda.
-      PrescriptionStep('Soğuma', station: LabStation.karistirma, minutes: 8, imagePath: 'assets/images/Sogutma_ikon.webp'),
+      PrescriptionStep('Soğuma', station: LabStation.karistirma, minutes: 8),
     ],
-    sequenceHint: 'Yağ ve su fazı ısıtılmadan karıştırıldığı için krem ayrıştı.',
     tools: [
       ToolRequirement(ToolKind.spatula, {'Çelik spatül', 'Plastik spatül'}),
       ToolRequirement(
