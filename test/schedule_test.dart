@@ -70,6 +70,36 @@ void main() {
     expect(rushed.last.end, now.add(const Duration(minutes: 3, seconds: 30))); // 7 dk → 3,5 dk
   });
 
+  test('acele edilen iş istasyonu erken boşaltınca arkadaki iş öne kayar', () {
+    final first = planSlots(sa.steps, t0, const []);
+    final second = planSlots(zno.steps, t0, first); // havanı 3. dakikada bekliyor
+    final now = t0.add(const Duration(minutes: 1));
+    final rushed = rushSlots(first, now, second); // SA havanı 2. dakikada biter
+    final jobs = compactJobs([rushed, second], now);
+
+    expect(jobs[1][1].start, t0.add(const Duration(minutes: 2)));
+    // Kimse geç kalmaz, sıra ve süreler aynı, hiçbir istasyonda çakışma yok.
+    expect(jobs[1].last.end.isAfter(second.last.end), isFalse);
+    expect([for (final s in jobs[1]) s.label], [for (final s in second) s.label]);
+    expect([for (final s in jobs[1]) s.end.difference(s.start)], [for (final s in second) s.end.difference(s.start)]);
+    final all = [...jobs[0], ...jobs[1]];
+    for (final a in all) {
+      for (final b in all) {
+        if (identical(a, b) || a.station != b.station) continue;
+        expect(a.start.isBefore(b.end) && b.start.isBefore(a.end), isFalse, reason: '${a.station} çakışıyor');
+      }
+    }
+  });
+
+  test('başlamış adımlar sıkıştırmada yerinde kalır', () {
+    final first = planSlots(sa.steps, t0, const []);
+    final second = planSlots(zno.steps, t0, first);
+    final now = t0.add(const Duration(minutes: 4)); // ZnO havanı 3. dakikada başladı
+    final jobs = compactJobs([first, second], now);
+    expect(jobs[1][1], same(second[1]));
+    expect(jobs[0][2], same(first[2])); // SA karıştırması çalışıyor
+  });
+
   test('acele et başka işin istasyonuna girmez', () {
     final first = planSlots(sa.steps, t0, const []);
     final second = planSlots(zno.steps, t0, first); // havanı 3. dakikada bekliyor

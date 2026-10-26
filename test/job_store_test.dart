@@ -168,6 +168,26 @@ void main() {
     expect(store.rushesLeft, JobStore.dailyRushes - 3);
   });
 
+  test('acele sonrası aynı istasyonu bekleyen iş öne kayar ve bu kayıtta kalır', () async {
+    final store = await JobStore.load(now: () => clock);
+    final second = prescriptionOrders[1];
+    await store.start(order, result);
+    await store.start(second, result);
+    await store.completeAction(order.magistralName);
+    await store.completeAction(second.magistralName);
+    final before = store.jobFor(second.magistralName)!.readyAt;
+
+    clock = clock.add(const Duration(minutes: 1));
+    await store.rush(order.magistralName); // SA havanı 3. yerine 2. dakikada biter
+    final moved = store.jobFor(second.magistralName)!;
+    expect(moved.slots[1].start, clock.add(const Duration(minutes: 1)));
+    expect(moved.readyAt, before.subtract(const Duration(minutes: 1)));
+    expect(moved.stars, 2); // yalnız acele edilen işin kalitesi düşer
+
+    final reopened = await JobStore.load(now: () => clock);
+    expect(reopened.jobFor(second.magistralName)!.readyAt, moved.readyAt);
+  });
+
   test('oyuncu adımı beklerken acele edilmez; günde 5 hak, ertesi gün yenilenir', () async {
     final store = await JobStore.load(now: () => clock);
     await store.start(order, result);

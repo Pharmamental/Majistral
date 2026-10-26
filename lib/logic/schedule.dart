@@ -56,7 +56,39 @@ List<StepSlot> rushSlots(List<StepSlot> slots, DateTime now, Iterable<StepSlot> 
   return [...kept, ...placed];
 }
 
-typedef _Timed = ({String label, LabStation station, bool interactive, Duration length});
+/// Acele sonrası boşalan istasyonlara arkadaki işler kayar. Başlamış ya da
+/// bitmiş adımlar ([now] anına kadar) yerinde kalır; başlamamış adımlar sırayı
+/// bozmadan, ilk başlayacak olandan başlayarak boş olan en erken aralığa
+/// yeniden yerleştirilir. Her işin adım sırası ve süreleri değişmez.
+List<List<StepSlot>> compactJobs(List<List<StepSlot>> jobs, DateTime now) {
+  bool started(StepSlot s) => !now.isBefore(s.start);
+  final result = [for (final slots in jobs) [...slots]];
+  final placed = [for (final slots in jobs) ...slots.where(started)];
+  final order = [
+    for (var i = 0; i < jobs.length; i++)
+      if (jobs[i].any((s) => !started(s))) i,
+  ]..sort((a, b) {
+      final first = jobs[a].firstWhere((s) => !started(s)).start.compareTo(jobs[b].firstWhere((s) => !started(s)).start);
+      return first != 0 ? first : a.compareTo(b);
+    });
+  for (final i in order) {
+    final kept = jobs[i].where(started).toList();
+    final ready = kept.isNotEmpty && kept.last.end.isAfter(now) ? kept.last.end : now;
+    final moved = _placeTimed(
+      [
+        for (final s in jobs[i].where((s) => !started(s)))
+          (label: s.label, station: s.station, interactive: s.interactive, length: s.end.difference(s.start)),
+      ],
+      ready,
+      placed,
+    );
+    result[i] = [...kept, ...moved];
+    placed.addAll(moved);
+  }
+  return result;
+}
+
+typedef _Timed =({String label, LabStation station, bool interactive, Duration length});
 
 List<StepSlot> _place(List<PendingStep> steps, DateTime start, Iterable<StepSlot> busy) => _placeTimed(
       [

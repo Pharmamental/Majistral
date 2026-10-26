@@ -114,6 +114,11 @@ class JobStore extends ChangeNotifier {
       stars: (job.stars / 2).ceil().clamp(1, 3),
       notes: job.notes.contains(note) ? job.notes : [...job.notes, note],
     );
+    // Erken boşalan istasyonlara arkada bekleyen işler kayar (Tuğrul, 2026-10-26).
+    final compacted = compactJobs([for (final j in _jobs) j.slots], now());
+    for (var i = 0; i < _jobs.length; i++) {
+      _jobs[i] = _jobs[i].copyWith(slots: compacted[i]);
+    }
     await _prefs.setString(_rushKey, '$_today|${dailyRushes - rushesLeft + 1}');
     await _save();
     notifyListeners();
