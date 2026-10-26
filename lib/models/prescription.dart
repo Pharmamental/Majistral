@@ -21,6 +21,7 @@ class PrescriptionStep {
     this.label, {
     required this.station,
     required this.minutes,
+    this.interactive = false,
     this.icon,
     this.imagePath,
   });
@@ -32,6 +33,10 @@ class PrescriptionStep {
 
   /// Adımın gerçek zamanlı süresi (dakika). Yer tutucu; kapalı testte ayarlanacak.
   final int minutes;
+
+  /// Süre dolunca iş durur ve oyuncuyu bekler (ısıtmada termometreyi tutmak).
+  /// Oyuncu bitirince sonraki adımlar o andan itibaren planlanır.
+  final bool interactive;
   final IconData? icon;
   final String? imagePath;
 }

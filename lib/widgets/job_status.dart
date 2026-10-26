@@ -6,6 +6,7 @@ import '../logic/job_store.dart';
 import '../models/prep_job.dart';
 import '../theme/tokens.dart';
 import 'chunky_button.dart';
+import 'heating_sheet.dart';
 import 'result_view.dart';
 
 /// "02:15" ya da "1 sa 05 dk" biçiminde kalan süre.
@@ -91,6 +92,29 @@ class _JobStatusState extends State<JobStatus> {
         ),
       );
     }
+    if (store.needsAction(widget.job)) {
+      final step = widget.job.slots.last;
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            '${step.station.label}: fazlar ısındı. Sıcaklığı sen ayarla.',
+            textAlign: widget.large ? TextAlign.center : TextAlign.start,
+            style: AppText.body(size: 14, weight: FontWeight.w600),
+          ),
+          const SizedBox(height: AppSpace.sm),
+          ChunkyButton(
+            label: 'Sıcaklığı ayarla',
+            icon: Icons.thermostat_rounded,
+            onPressed: () => openHeating(context, magistralName: widget.job.magistralName),
+          ),
+          if (widget.large) ...[
+            const SizedBox(height: AppSpace.lg),
+            _StepList(job: widget.job, at: store.now()),
+          ],
+        ],
+      );
+    }
     final remaining = formatRemaining(store.remaining(widget.job));
     // Şu an hangi istasyonda, hangi adımda; istasyon doluysa sırada bekliyor.
     final at = store.now();
@@ -168,36 +192,39 @@ class _StepList extends StatelessWidget {
   final PrepJob job;
   final DateTime at;
 
+  Widget _row(IconData icon, Color color, String imagePath, String label, String station) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: AppSpace.xs),
+      child: Row(
+        children: [
+          Icon(icon, size: 20, color: color),
+          const SizedBox(width: AppSpace.sm),
+          Image.asset(imagePath, width: 28, height: 28),
+          const SizedBox(width: AppSpace.sm),
+          Expanded(child: Text(label, style: AppText.body(size: 14, weight: FontWeight.w600))),
+          Text(station, style: AppText.label(size: 12)),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final waitingForPlayer = job.needsActionAt(at);
     return Column(
       children: [
         for (final s in job.slots)
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: AppSpace.xs),
-            child: Row(
-              children: [
-                Icon(
-                  !at.isBefore(s.end)
-                      ? Icons.check_circle_rounded
-                      : !at.isBefore(s.start)
-                          ? Icons.play_circle_fill_rounded
-                          : Icons.radio_button_unchecked_rounded,
-                  size: 20,
-                  color: !at.isBefore(s.end)
-                      ? AppColors.success
-                      : !at.isBefore(s.start)
-                          ? AppColors.kiremit
-                          : AppColors.line,
-                ),
-                const SizedBox(width: AppSpace.sm),
-                Image.asset(s.station.imagePath, width: 28, height: 28),
-                const SizedBox(width: AppSpace.sm),
-                Expanded(child: Text(s.label, style: AppText.body(size: 14, weight: FontWeight.w600))),
-                Text(s.station.label, style: AppText.label(size: 12)),
-              ],
-            ),
-          ),
+          if (waitingForPlayer && identical(s, job.slots.last))
+            _row(Icons.touch_app_rounded, AppColors.kiremit, s.station.imagePath, s.label, 'Sıra sende')
+          else if (!at.isBefore(s.end))
+            _row(Icons.check_circle_rounded, AppColors.success, s.station.imagePath, s.label, s.station.label)
+          else if (!at.isBefore(s.start))
+            _row(Icons.play_circle_fill_rounded, AppColors.kiremit, s.station.imagePath, s.label, s.station.label)
+          else
+            _row(Icons.radio_button_unchecked_rounded, AppColors.line, s.station.imagePath, s.label, s.station.label),
+        // Oyuncunun adımından sonra planlanacak adımlar.
+        for (final p in job.pending)
+          _row(Icons.radio_button_unchecked_rounded, AppColors.line, p.station.imagePath, p.label, p.station.label),
       ],
     );
   }

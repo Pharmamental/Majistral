@@ -79,6 +79,40 @@ void main() {
     expect(reopened.jobFor(second.magistralName)!.readyAt, second.readyAt);
   });
 
+  test('kremde ısıtma bitince iş oyuncuyu bekler, termometreden sonra devam eder', () async {
+    final cream = prescriptionOrders[2]; // tartım 3, ısıtma 10 (oyuncu), emülsifikasyon 9, soğuma 8
+    final store = await JobStore.load(now: () => clock);
+    final job = await store.start(cream, result);
+    expect(job.slots.map((s) => s.label), ['Tartım', 'Isıtma']);
+    expect(job.pending.map((p) => p.label), ['Emülsifikasyon', 'Soğuma']);
+
+    // Isıtma süresi dolmadan oyuncu bir şey yapamaz.
+    clock = clock.add(const Duration(minutes: 12));
+    expect(store.needsAction(store.jobFor(cream.magistralName)!), isFalse);
+    await store.completeAction(cream.magistralName);
+    expect(store.jobFor(cream.magistralName)!.pending, hasLength(2));
+
+    // Süre dolunca iş durur: hazır değil, oyuncuyu bekliyor; beklemek bitirmez.
+    clock = clock.add(const Duration(minutes: 30));
+    var j = store.jobFor(cream.magistralName)!;
+    expect(store.needsAction(j), isTrue);
+    expect(store.isReady(j), isFalse);
+
+    // Kayıt açılıp kapansa da bekleme sürer.
+    final reopened = await JobStore.load(now: () => clock);
+    expect(reopened.needsAction(reopened.jobFor(cream.magistralName)!), isTrue);
+
+    // Termometreden sonra kalan adımlar şu andan planlanır.
+    final actionAt = clock;
+    await store.completeAction(cream.magistralName);
+    j = store.jobFor(cream.magistralName)!;
+    expect(j.pending, isEmpty);
+    expect(j.slots[2].start, actionAt);
+    expect(j.readyAt, actionAt.add(const Duration(minutes: 17)));
+    clock = clock.add(const Duration(minutes: 17));
+    expect(store.isReady(j), isTrue);
+  });
+
   test('istasyonlardan önceki kayıt biçimi de açılır', () async {
     SharedPreferences.setMockInitialValues({
       'prep_jobs_v1':

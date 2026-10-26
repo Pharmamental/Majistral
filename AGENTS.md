@@ -72,6 +72,9 @@ lib/
 - Laboratuvar (2026-10-26): her hazırlık adımı bir istasyonda çalışır (LabStation: terazi, havan,
   merhem taşı, su banyosu, ambalaj masası); bir istasyon aynı anda tek iş yapar, dolu istasyonda
   adım sıra bekler. Adım zamanları iş başlarken planlanır ve sonra değişmez (logic/schedule.dart).
+- Oyuncu adımı (2026-10-26): `interactive: true` adımın süresi dolunca iş durur ve oyuncuyu
+  bekler (kremde su banyosu: termometreyi 70–75°'de tut, `widgets/heating_sheet.dart`). Kalan
+  adımlar ancak oyuncu bitirince, o andan planlanır (`PrepJob.pending`, `JobStore.completeAction`).
 - Testler gerçek fontu `test/test_fonts.dart` ile yükler; taşma testleri böyle gerçeği yansıtır.
 - Süren işler `shared_preferences` ile telefona kaydedilir; saat şimdilik cihaz saati
   (`JobStore.now`). Sunucu saati gelene kadar saat hilesi mümkün; kapanmamış bir açık.

@@ -51,7 +51,24 @@ class JobStore extends ChangeNotifier {
     return left.isNegative ? Duration.zero : left;
   }
 
-  bool isReady(PrepJob job) => remaining(job) == Duration.zero;
+  /// Bütün adımlar bitti, teslim edilebilir.
+  bool isReady(PrepJob job) => job.doneAt(now());
+
+  /// İş oyuncunun yapacağı adımda (ısıtma) duruyor mu?
+  bool needsAction(PrepJob job) => job.needsActionAt(now());
+
+  /// Oyuncu adımı bitirdi (termometreyi doğru aralıkta tuttu): kalan adımlar
+  /// şu andan itibaren istasyonlara planlanır.
+  Future<void> completeAction(String magistralName) async {
+    final job = jobFor(magistralName);
+    if (job == null || !needsAction(job)) return;
+    final others = [for (final j in _jobs) if (j != job) ...j.slots];
+    final next = planUntilAction(job.pending, now(), [...others, ...job.slots]);
+    final i = _jobs.indexOf(job);
+    _jobs[i] = job.copyWith(slots: [...job.slots, ...next.slots], pending: next.pending);
+    await _save();
+    notifyListeners();
+  }
 
   /// 0–1 arası ilerleme.
   double progress(PrepJob job) {
@@ -66,10 +83,16 @@ class JobStore extends ChangeNotifier {
 
   Future<PrepJob> start(PrescriptionOrder order, PreparationResult result) async {
     final startedAt = now();
+    final plan = planUntilAction(
+      [for (final s in order.steps) PendingStep.of(s)],
+      startedAt,
+      [for (final j in _jobs) ...j.slots],
+    );
     final job = PrepJob(
       magistralName: order.magistralName,
       startedAt: startedAt,
-      slots: planSlots(order.steps, startedAt, [for (final j in _jobs) ...j.slots]),
+      slots: plan.slots,
+      pending: plan.pending,
       stars: result.stars,
       notes: result.notes,
     );

@@ -73,7 +73,7 @@ const List<PrescriptionOrder> prescriptionOrders = [
     distractors: ['Çinko Oksit', 'Salisilik Asit', 'Sıvı Parafin'],
     steps: [
       PrescriptionStep('Tartım', station: LabStation.terazi, minutes: 3, icon: Icons.scale_outlined),
-      PrescriptionStep('Isıtma', station: LabStation.isitma, minutes: 10, imagePath: 'assets/images/Burn_icon.webp'),
+      PrescriptionStep('Isıtma', station: LabStation.isitma, minutes: 10, interactive: true, imagePath: 'assets/images/Burn_icon.webp'),
       PrescriptionStep('Emülsifikasyon', station: LabStation.karistirma, minutes: 9, icon: Icons.autorenew),
       // Krem soğuyana kadar karıştırılır; soğuma da karıştırma istasyonunda.
       PrescriptionStep('Soğuma', station: LabStation.karistirma, minutes: 8, imagePath: 'assets/images/Sogutma_ikon.webp'),

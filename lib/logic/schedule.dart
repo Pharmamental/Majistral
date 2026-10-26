@@ -11,7 +11,23 @@ List<StepSlot> planSlots(
   List<PrescriptionStep> steps,
   DateTime start,
   Iterable<StepSlot> busy,
+) =>
+    _place([for (final s in steps) PendingStep.of(s)], start, busy);
+
+/// Adımları oyuncunun yapacağı ilk adıma kadar (o dahil) planlar; geri
+/// kalanları beklemeye bırakır. O adım bitince kalanlar yine bununla planlanır.
+({List<StepSlot> slots, List<PendingStep> pending}) planUntilAction(
+  List<PendingStep> steps,
+  DateTime start,
+  Iterable<StepSlot> busy,
 ) {
+  final stop = steps.indexWhere((s) => s.interactive);
+  final now = stop == -1 ? steps : steps.sublist(0, stop + 1);
+  final later = stop == -1 ? <PendingStep>[] : steps.sublist(stop + 1);
+  return (slots: _place(now, start, busy), pending: later);
+}
+
+List<StepSlot> _place(List<PendingStep> steps, DateTime start, Iterable<StepSlot> busy) {
   final occupied = [...busy];
   final slots = <StepSlot>[];
   var ready = start;
@@ -24,7 +40,13 @@ List<StepSlot> planSlots(
       // [begin, begin+length) ile çakışıyorsa bu işin bitişine kay.
       if (begin.isBefore(s.end) && s.start.isBefore(begin.add(length))) begin = s.end;
     }
-    final slot = StepSlot(label: step.label, station: step.station, start: begin, end: begin.add(length));
+    final slot = StepSlot(
+      label: step.label,
+      station: step.station,
+      start: begin,
+      end: begin.add(length),
+      interactive: step.interactive,
+    );
     slots.add(slot);
     occupied.add(slot);
     ready = slot.end;

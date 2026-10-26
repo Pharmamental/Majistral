@@ -18,15 +18,17 @@ class OrdersScreen extends StatelessWidget {
     int rank(PrescriptionOrder o) {
       final job = store.jobFor(o.magistralName);
       if (job == null) return 1;
-      return store.isReady(job) ? 0 : 2;
+      return store.isReady(job) || store.needsAction(job) ? 0 : 2;
     }
 
     final orders = [...prescriptionOrders]..sort((a, b) => rank(a).compareTo(rank(b)));
-    final running = store.jobs.where((j) => !store.isReady(j)).length;
-    final ready = store.jobs.length - running;
+    final waiting = store.jobs.where(store.needsAction).length;
+    final running = store.jobs.where((j) => !store.isReady(j)).length - waiting;
+    final ready = store.jobs.length - running - waiting;
     final parts = [
       '${prescriptionOrders.length} reçete',
       if (ready > 0) '$ready hazır',
+      if (waiting > 0) '$waiting seni bekliyor',
       if (running > 0) '$running hazırlanıyor',
     ];
 

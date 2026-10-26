@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:game/data/orders.dart';
 import 'package:game/data/stations.dart';
 import 'package:game/logic/job_store.dart';
+import 'package:game/logic/quality.dart';
 import 'package:game/main.dart';
 import 'package:game/models/prescription.dart';
 import 'package:game/widgets/prescription_card.dart';
@@ -20,6 +21,25 @@ Future<void> _tallScreen(WidgetTester tester) async {
   tester.view.physicalSize = const Size(1080, 4800);
   tester.view.devicePixelRatio = 3;
   addTearDown(tester.view.reset);
+}
+
+/// Termometreyi ideal aralığa (70–75°) getirip orada tutar.
+Future<void> _holdThermometer(WidgetTester tester) async {
+  final gesture = await tester.startGesture(tester.getCenter(find.byKey(const Key('flame-button'))));
+  // 22°/sn ısınma: 0'dan ~72°'ye yaklaşık 3,3 sn.
+  for (var i = 0; i < 33; i++) {
+    await tester.pump(const Duration(milliseconds: 100));
+  }
+  await gesture.up();
+  // Bırakınca 14°/sn soğur: 100 ms soğuma (-1,4°) + 64 ms ısıtma (+1,4°)
+  // sıcaklığı aralıkta sabit tutar.
+  for (var i = 0; i < 40; i++) {
+    await tester.pump(const Duration(milliseconds: 100));
+    if (find.text('Tekrar Dene').evaluate().isNotEmpty) break;
+    final g = await tester.startGesture(tester.getCenter(find.byKey(const Key('flame-button'))));
+    await tester.pump(const Duration(milliseconds: 64));
+    await g.up();
+  }
 }
 
 void main() {
@@ -135,21 +155,42 @@ void main() {
     await tester.pump(const Duration(milliseconds: 400));
     expect(find.text('Soğuk, basılı tutarak ısıt'), findsOneWidget);
 
-    final gesture = await tester.startGesture(tester.getCenter(find.byKey(const Key('flame-button'))));
-    // 22°/sn ısınma: 0'dan ~72°'ye yaklaşık 3,3 sn.
-    for (var i = 0; i < 33; i++) {
-      await tester.pump(const Duration(milliseconds: 100));
-    }
-    await gesture.up();
-    // Bırakınca 14°/sn soğur: 100 ms soğuma (-1,4°) + 64 ms ısıtma (+1,4°)
-    // sıcaklığı aralıkta sabit tutar.
-    for (var i = 0; i < 40; i++) {
-      await tester.pump(const Duration(milliseconds: 100));
-      if (find.text('Tekrar Dene').evaluate().isNotEmpty) break;
-      final g = await tester.startGesture(tester.getCenter(find.byKey(const Key('flame-button'))));
-      await tester.pump(const Duration(milliseconds: 64));
-      await g.up();
-    }
+    await _holdThermometer(tester);
     expect(find.text('Isı ideal aralıkta sabit tutuldu!'), findsOneWidget);
+  });
+
+  testWidgets('kremde ısıtma sırası gelince su banyosunda termometre oyuncuyu bekler', (tester) async {
+    await _tallScreen(tester);
+    final cream = prescriptionOrders[2]; // tartım 3, ısıtma 10 (oyuncu), emülsifikasyon 9, soğuma 8
+    var clock = DateTime(2026, 10, 25, 12);
+    final store = await _store(now: () => clock);
+    await store.start(cream, const PreparationResult(stars: 3, notes: []));
+    clock = clock.add(const Duration(minutes: 13));
+    await tester.pumpWidget(MajistralApp(store: store));
+    expect(find.text('3 reçete · 1 seni bekliyor'), findsOneWidget);
+    expect(find.text('Sıcaklığı ayarla'), findsOneWidget);
+
+    // Laboratuvarda su banyosu kartı işi gösterir; dokununca termometre açılır.
+    await tester.tap(find.text('Laboratuvar'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.text('1 iş seni bekliyor'), findsOneWidget);
+    expect(find.text(cream.magistralName), findsOneWidget);
+    await tester.tap(find.text('Sıcaklığı ayarla'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
+    expect(find.text('Fazları ısıt'), findsOneWidget);
+
+    await _holdThermometer(tester);
+    expect(find.text('Isı ideal aralıkta sabit tutuldu!'), findsOneWidget);
+    await tester.pump(const Duration(seconds: 1));
+    await tester.pump(const Duration(milliseconds: 400));
+    expect(find.text('Fazları ısıt'), findsNothing);
+
+    // Kalan iki adım şimdi planlandı: 9 + 8 dk sonra teslim edilir.
+    final job = store.jobFor(cream.magistralName)!;
+    expect(job.pending, isEmpty);
+    expect(job.readyAt, clock.add(const Duration(minutes: 17)));
+    expect(find.text('1 istasyon çalışıyor'), findsOneWidget);
   });
 }

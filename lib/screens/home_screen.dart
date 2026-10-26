@@ -21,7 +21,8 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final store = JobScope.of(context);
-    final ready = store.jobs.where(store.isReady).length;
+    // Teslim edilecek ya da oyuncuyu bekleyen (ısıtma) işler.
+    final ready = store.jobs.where((j) => store.isReady(j) || store.needsAction(j)).length;
 
     return Scaffold(
       body: SafeArea(
