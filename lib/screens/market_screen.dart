@@ -4,6 +4,7 @@ import '../data/market_items.dart';
 import '../data/stations.dart';
 import '../theme/tokens.dart';
 import '../widgets/back_pill.dart';
+import '../widgets/counter_top.dart';
 import '../widgets/market_widgets.dart';
 
 enum MarketTab { hizlandirma, istasyonlar, kimyasallar }
@@ -27,27 +28,35 @@ class _MarketScreenState extends State<MarketScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Başlık ve sekmeler duvarda, ürünler tezgâhta (Tuğrul, 2026-10-27).
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const TabHeader(title: 'Market', subtitle: 'İstasyonunu yükselt, kimyasal al'),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpace.lg),
-          child: PillTabs<MarketTab>(
-            values: MarketTab.values,
-            selected: _tab,
-            labelOf: _label,
-            onChanged: (t) => setState(() => _tab = t),
+        ColoredBox(
+          color: AppColors.wall,
+          child: Column(
+            children: [
+              const TabHeader(title: 'Market', subtitle: 'İstasyonunu yükselt, kimyasal al'),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(AppSpace.lg, 0, AppSpace.lg, AppSpace.lg),
+                child: PillTabs<MarketTab>(
+                  values: MarketTab.values,
+                  selected: _tab,
+                  labelOf: _label,
+                  onChanged: (t) => setState(() => _tab = t),
+                ),
+              ),
+            ],
           ),
         ),
-        const SizedBox(height: AppSpace.lg),
-        Expanded(child: _content()),
+        Expanded(child: CounterTop(child: _content())),
       ],
     );
   }
 
   Widget _content() {
     final bottom = AppSpace.x3 + MediaQuery.paddingOf(context).bottom;
-    final listPadding = EdgeInsets.fromLTRB(AppSpace.lg, 0, AppSpace.lg, bottom);
+    final listPadding = EdgeInsets.fromLTRB(AppSpace.lg, AppSpace.lg, AppSpace.lg, bottom);
     switch (_tab) {
       case MarketTab.hizlandirma:
         return ListView(
@@ -64,7 +73,7 @@ class _MarketScreenState extends State<MarketScreen> {
         );
       case MarketTab.istasyonlar:
         return ListView.separated(
-          padding: EdgeInsets.only(bottom: bottom),
+          padding: EdgeInsets.only(top: AppSpace.lg, bottom: bottom),
           itemCount: stations.length,
           separatorBuilder: (context, index) => const SizedBox(height: AppSpace.xxl),
           itemBuilder: (context, index) => StationSection(station: stations[index]),

@@ -7,6 +7,7 @@ import '../logic/schedule.dart';
 import '../models/prescription.dart';
 import '../theme/tokens.dart';
 import '../widgets/back_pill.dart';
+import '../widgets/counter_top.dart';
 import '../widgets/job_status.dart';
 import '../widgets/heating_sheet.dart';
 import '../widgets/station_action.dart';
@@ -47,28 +48,44 @@ class _LabScreenState extends State<LabScreen> {
       if (waiting > 0) '$waiting iş seni bekliyor',
     ].join(' · ');
 
-    return ListView(
-      padding: EdgeInsets.only(bottom: AppSpace.x3 + MediaQuery.paddingOf(context).bottom),
+    // Başlık duvarda, istasyonlar tezgâhta (Tuğrul, 2026-10-27); liste tezgâhın
+    // içinde kayar, tezgâh çizgisi yerinde kalır.
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        TabHeader(
-          title: 'Laboratuvar',
-          subtitle: status.isEmpty ? 'Bütün istasyonlar boş' : status,
+        ColoredBox(
+          color: AppColors.wall,
+          child: TabHeader(title: 'Laboratuvar', subtitle: status.isEmpty ? 'Bütün istasyonlar boş' : status),
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpace.lg),
-          child: LayoutBuilder(
-            builder: (context, c) {
-              final columns = c.maxWidth >= 520 ? 3 : 2;
-              final width = (c.maxWidth - AppSpace.md * (columns - 1)) / columns;
-              return Wrap(
-                spacing: AppSpace.md,
-                runSpacing: AppSpace.md,
-                children: [
-                  for (final s in LabStation.values)
-                    SizedBox(width: width, child: _StationCard(station: s, state: states[s]!)),
-                ],
-              );
-            },
+        Expanded(
+          child: CounterTop(
+            child: ListView(
+              padding: EdgeInsets.fromLTRB(
+                AppSpace.lg,
+                AppSpace.lg,
+                AppSpace.lg,
+                AppSpace.x3 + MediaQuery.paddingOf(context).bottom,
+              ),
+              children: [
+                LayoutBuilder(
+                  builder: (context, c) {
+                    final columns = c.maxWidth >= 520 ? 3 : 2;
+                    final width = (c.maxWidth - AppSpace.md * (columns - 1)) / columns;
+                    return Wrap(
+                      spacing: AppSpace.md,
+                      runSpacing: AppSpace.md,
+                      children: [
+                        for (final s in LabStation.values)
+                          SizedBox(
+                            width: width,
+                            child: _StationCard(station: s, state: states[s]!),
+                          ),
+                      ],
+                    );
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ],
