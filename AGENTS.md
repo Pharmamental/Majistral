@@ -107,6 +107,8 @@ lib/
   (`CounterTop`, `orders_screen.dart`). Laboratuvar ve Market de tezgâhta:
   başlık (ve Market sekmeleri) duvarda, liste tezgâhın içinde kayar. Laboratuvarın tezgâhı ayrı
   bir oda gibi koyu gri arduvaz (`LabBench`, `AppColors.labBench`; Tuğrul 2026-10-27, "G1").
+  Market'te üstte bordo-beyaz çizgili tente, altında kum tezgâh (`MarketStall`; Tuğrul
+  2026-10-27, "T1"); tezgâhta doğrudan duran yazı `ink` rengindedir, `inkMuted` kumda soluk kalır.
 - Süren iş kartı (Tuğrul, 2026-10-27): madde listesi kartta görünmez; sağ üstte
   "Reçete" düğmesi pencere açar (miktar, her maddenin marketteki görevi, ne işe yarar `purpose`,
   neyde kullanılır `usedFor`; kaynakları `lib/data/orders.dart` başında). Yerine adım şeridi gelir (biten onaylı, süren mor, oyuncuyu bekleyen amber, sıradaki silik) ve

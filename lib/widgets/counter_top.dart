@@ -89,6 +89,97 @@ class _SlatePainter extends CustomPainter {
   bool shouldRepaint(_SlatePainter oldDelegate) => false;
 }
 
+/// Market tezgâhı: üstte bordo-beyaz çizgili tente, altında lifli kum tezgâh
+/// (Tuğrul, 2026-10-27). Liste tentenin kumaşının altından başlar.
+class MarketStall extends StatelessWidget {
+  const MarketStall({super.key, required this.child});
+
+  /// Tentenin düz kumaş kısmı; liste bunun altından başlar.
+  static const double _awningBody = 18;
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return ColoredBox(
+      color: AppColors.marketBench,
+      child: Stack(
+        children: [
+          Positioned.fill(
+            child: CustomPaint(
+              painter: _KraftPainter(),
+              child: Padding(padding: const EdgeInsets.only(top: _awningBody + AppSpace.sm), child: child),
+            ),
+          ),
+          const Positioned(
+            left: 0,
+            right: 0,
+            top: 0,
+            height: _awningBody + 16,
+            child: CustomPaint(painter: _AwningPainter(body: _awningBody)),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Tente: dönüşümlü bordo ve beyaz şeritler, altı yarım daire saçak, altına
+/// düşen gölge; üst kenarda borunun koyu çizgisi.
+class _AwningPainter extends CustomPainter {
+  const _AwningPainter({required this.body});
+
+  final double body;
+
+  static const double _stripe = 26;
+
+  Path _scallop(double x) => Path()
+    ..moveTo(x, 0)
+    ..lineTo(x + _stripe, 0)
+    ..lineTo(x + _stripe, body)
+    ..arcToPoint(Offset(x, body), radius: const Radius.circular(_stripe / 2))
+    ..close();
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final count = (size.width / _stripe).ceil();
+    final all = Path();
+    for (var i = 0; i < count; i++) {
+      all.addPath(_scallop(i * _stripe), Offset.zero);
+    }
+    canvas.drawShadow(all, Colors.black, 4, false);
+    for (var i = 0; i < count; i++) {
+      canvas.drawPath(_scallop(i * _stripe), Paint()..color = i.isEven ? AppColors.awning : AppColors.awningLight);
+    }
+    canvas.drawRect(Rect.fromLTWH(0, 0, size.width, 3), Paint()..color = Colors.black.withValues(alpha: 0.18));
+  }
+
+  @override
+  bool shouldRepaint(_AwningPainter oldDelegate) => oldDelegate.body != body;
+}
+
+/// Kum tezgâhın lifleri: kısa, rastgele yönlü ince çizgiler, sabit tohumla.
+class _KraftPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final rnd = math.Random(4);
+    final p = Paint()
+      ..strokeWidth = 0.8
+      ..strokeCap = StrokeCap.round;
+    for (var i = 0; i < size.width * size.height / 70; i++) {
+      p.color = (rnd.nextBool() ? AppColors.marketBenchFleck : Colors.white)
+          .withValues(alpha: 0.08 + rnd.nextDouble() * 0.12);
+      final o = Offset(rnd.nextDouble() * size.width, rnd.nextDouble() * size.height);
+      final a = rnd.nextDouble() * math.pi;
+      final l = 1.5 + rnd.nextDouble() * 3;
+      canvas.drawLine(o, o + Offset(math.cos(a) * l, math.sin(a) * l), p);
+    }
+  }
+
+  @override
+  bool shouldRepaint(_KraftPainter oldDelegate) => false;
+}
+
 /// Yatay tahtalar, her biri biraz farklı tonda; tahta aralarında koyu derz,
 /// içinde düzensiz dalgalı damarlar. Desen sabit tohumla çizilir, her karede
 /// aynı kalır.

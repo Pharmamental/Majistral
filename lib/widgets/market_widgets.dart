@@ -28,7 +28,7 @@ class StationSection extends StatelessWidget {
                 station.upgradePath
                     ? 'Basitten gelişmişe'
                     : 'Her işin ayrı aleti',
-                style: AppText.label(size: 12),
+                style: AppText.label(size: 12, color: AppColors.ink),
               ),
             ],
           ),

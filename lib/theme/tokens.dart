@@ -58,6 +58,14 @@ class AppColors {
   static const Color labBenchLip = Color(0xFF6B747D); // kenarın üst yüzü
   static const Color labBenchEdge = Color(0xFF343A41); // kenarın ön yüzü
 
+  // Market (Tuğrul, 2026-10-27, "T1"): bordo-beyaz çizgili tente, altında kum tezgâh.
+  // Bordo hiçbir durum rengine benzemez. Tezgâhta doğrudan duran yazı `ink` olur
+  // (inkMuted kumda soluk kalıyor).
+  static const Color awning = Color(0xFF7E2A35);
+  static const Color awningLight = Color(0xFFF4EFE6);
+  static const Color marketBench = Color(0xFFC4B08F);
+  static const Color marketBenchFleck = Color(0xFF7A6446);
+
   // Reçete durumları (2026-10-27): şerit, açık zemin, yazı. Yazı açık zeminde
   // en az 5,1:1 (ölçüldü); şerit süs, durum her zaman yazıyla da söylenir.
   // Mavi birincil renk olunca "hazırlanıyor" mora geçti.

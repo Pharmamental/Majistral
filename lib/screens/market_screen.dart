@@ -28,7 +28,7 @@ class _MarketScreenState extends State<MarketScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Başlık ve sekmeler duvarda, ürünler tezgâhta (Tuğrul, 2026-10-27).
+    // Başlık ve sekmeler duvarda, ürünler tentenin altında kum tezgâhta (Tuğrul, 2026-10-27).
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -49,7 +49,7 @@ class _MarketScreenState extends State<MarketScreen> {
             ],
           ),
         ),
-        Expanded(child: CounterTop(child: _content())),
+        Expanded(child: MarketStall(child: _content())),
       ],
     );
   }
@@ -67,7 +67,7 @@ class _MarketScreenState extends State<MarketScreen> {
             Text(
               'Günde en çok 5 kez. Hızlandırma yalnız bekleme süresini kısaltır, '
               'hazırlama adımlarını atlatmaz. Her acele kaliteyi de yarıya indirir.',
-              style: AppText.body(size: 13, color: AppColors.inkMuted),
+              style: AppText.body(size: 13),
             ),
           ],
         );
@@ -84,7 +84,7 @@ class _MarketScreenState extends State<MarketScreen> {
           children: [
             for (final group in chemicalGroups) ...[
               Text(group.title, style: AppText.title(size: 20)),
-              Text(group.subtitle, style: AppText.label(size: 12)),
+              Text(group.subtitle, style: AppText.label(size: 12, color: AppColors.ink)),
               const SizedBox(height: AppSpace.md),
               for (final item in group.items) ...[
                 ShopItemTile(item: item),
