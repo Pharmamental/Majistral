@@ -31,7 +31,7 @@ enum OrderStatus {
   }
 }
 
-/// Reçete kartı. Solda durum renginde şerit (durumun adı grup başlığında);
+/// Reçete kartı (yan şerit yok, Tuğrul 2026-10-27; durum kartın başındaki çipte).
 /// "Rp." ile majistral, altında hekim ve hasta. Yeni reçetede maddeler gerçek
 /// reçetedeki gibi ad–miktar sütunlarında ve süre başlıkta; iş başlayınca liste
 /// "Reçete" düğmesine iner (pencerede açılır), yerini adım şeridi alır. En
@@ -41,8 +41,7 @@ class PrescriptionCard extends StatelessWidget {
 
   final PrescriptionOrder order;
 
-  /// Kartın başında durum çipi (tezgâhta asılı kartlarda; durum yalnız şeridin
-  /// rengiyle anlatılmasın diye).
+  /// Kartın başında durum çipi (tezgâhta asılı kartlarda).
   final bool showStatus;
 
   @override
@@ -57,83 +56,73 @@ class PrescriptionCard extends StatelessWidget {
         shape: PrescriptionStubBorder(),
         shadows: [BoxShadow(color: Color(0x14000000), blurRadius: 12, offset: Offset(0, 4))],
       ),
-      child: IntrinsicHeight(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(AppSpace.lg, AppSpace.lg, AppSpace.lg, AppSpace.lg),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(width: 8, color: status.color),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(AppSpace.lg, AppSpace.lg, AppSpace.lg, AppSpace.lg),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (showStatus) ...[
-                      _StatusChip(status: status),
-                      const SizedBox(height: AppSpace.sm),
-                    ],
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.baseline,
-                                textBaseline: TextBaseline.alphabetic,
-                                children: [
-                                  Text('Rp.', style: AppText.display(size: 22, color: AppColors.accentText)),
-                                  const SizedBox(width: AppSpace.sm),
-                                  Expanded(child: Text(order.magistralName, style: AppText.title(size: 20))),
-                                  if (job == null) ...[
-                                    const SizedBox(width: AppSpace.sm),
-                                    Text('${order.prepTime.inMinutes} dk', style: AppText.label(size: 12)),
-                                  ],
-                                ],
-                              ),
-                              Text.rich(
-                                TextSpan(children: [
-                                  TextSpan(text: '${order.doctorName} · ${order.doctorBranch} · Hasta '),
-                                  TextSpan(
-                                    text: order.patientName,
-                                    style: AppText.label(size: 12, color: AppColors.ink),
-                                  ),
-                                ]),
-                                style: AppText.label(size: 12),
-                              ),
-                            ],
-                          ),
-                        ),
-                        if (job != null) ...[
+            if (showStatus) ...[
+              _StatusChip(status: status),
+              const SizedBox(height: AppSpace.sm),
+            ],
+            Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.baseline,
+                        textBaseline: TextBaseline.alphabetic,
+                        children: [
+                          Text('Rp.', style: AppText.display(size: 22, color: AppColors.accentText)),
                           const SizedBox(width: AppSpace.sm),
-                          _RecipeButton(order: order),
+                          Expanded(child: Text(order.magistralName, style: AppText.title(size: 20))),
+                          if (job == null) ...[
+                            const SizedBox(width: AppSpace.sm),
+                            Text('${order.prepTime.inMinutes} dk', style: AppText.label(size: 12)),
+                          ],
                         ],
-                      ],
-                    ),
-                    if (job == null) ...[
-                      const SizedBox(height: AppSpace.xs),
-                      Text(order.purpose, style: AppText.body(size: 14, color: AppColors.inkMuted)),
-                      const SizedBox(height: AppSpace.md),
-                      _Formula(order: order),
-                    ],
-                    const SizedBox(height: AppSpace.lg),
-                    if (job != null)
-                      JobStatus(job: job)
-                    else
-                      SizedBox(
-                        width: double.infinity,
-                        child: ChunkyButton(
-                          label: 'Hazırla',
-                          icon: Icons.science_rounded,
-                          onPressed: () => Navigator.of(context).push(
-                            MaterialPageRoute<void>(builder: (context) => PreparationScreen(order: order)),
-                          ),
-                        ),
                       ),
-                  ],
+                      Text.rich(
+                        TextSpan(children: [
+                          TextSpan(text: '${order.doctorName} · ${order.doctorBranch} · Hasta '),
+                          TextSpan(
+                            text: order.patientName,
+                            style: AppText.label(size: 12, color: AppColors.ink),
+                          ),
+                        ]),
+                        style: AppText.label(size: 12),
+                      ),
+                    ],
+                  ),
+                ),
+                if (job != null) ...[
+                  const SizedBox(width: AppSpace.sm),
+                  _RecipeButton(order: order),
+                ],
+              ],
+            ),
+            if (job == null) ...[
+              const SizedBox(height: AppSpace.xs),
+              Text(order.purpose, style: AppText.body(size: 14, color: AppColors.inkMuted)),
+              const SizedBox(height: AppSpace.md),
+              _Formula(order: order),
+            ],
+            const SizedBox(height: AppSpace.lg),
+            if (job != null)
+              JobStatus(job: job)
+            else
+              SizedBox(
+                width: double.infinity,
+                child: ChunkyButton(
+                  label: 'Hazırla',
+                  icon: Icons.science_rounded,
+                  onPressed: () => Navigator.of(context).push(
+                    MaterialPageRoute<void>(builder: (context) => PreparationScreen(order: order)),
+                  ),
                 ),
               ),
-            ),
           ],
         ),
       ),

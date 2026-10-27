@@ -54,7 +54,7 @@ lib/
 ```
 
 ## Arayüz kuralları (2026-10-25, Tasarım Rehberi'nden)
-- Renk 60-30-10 (Tuğrul, 2026-10-27, "eski eczane"): porselen beyazı zemin, beyaz kart, kobalt mavisi yalnız birincil aksiyon, bal meşesi ahşap tezgâh. Hazır/teslim yeşil. Krem + kiremit ve Nunito "Claude yaptı" diye belli ettiği için bırakıldı; yapay zekânın varsayılan seçimlerine (krem + terracotta, Inter, Nunito, mor-mavi geçiş) dönme, rengi ve yazıyı eczanenin kendi malzemesinden türet.
+- Renk 60-30-10 (Tuğrul, 2026-10-27, "eski eczane"): porselen beyazı zemin, beyaz kart, kobalt mavisi yalnız birincil aksiyon, koyu ceviz tezgâh (yatay tahtalar, her biri farklı tonda, düzensiz damar; açık ve düz çizgili ahşap da yapay zekâ izi sayıldı). Hazır/teslim yeşil. Krem + kiremit ve Nunito "Claude yaptı" diye belli ettiği için bırakıldı; yapay zekânın varsayılan seçimlerine (krem + terracotta, Inter, Nunito, mor-mavi geçiş) dönme, rengi ve yazıyı eczanenin kendi malzemesinden türet.
 - Yazı: hepsi Bitter (eski eczane etiketi gibi tırnaklı), başlık ve düğme en kalın (900); `assets/fonts/`'ta gömülü (OFL).
   Değişken font olduğu için kalınlık `AppText` ile verilir (`fontVariations`); düz
   `TextStyle(fontWeight)` bazı cihazlarda kalın çizmez. Ok için `›` kullan. Yeni font eklemeden önce
@@ -93,7 +93,7 @@ lib/
   eklenirse ikonu da çizilir (`test/quality_test.dart` denetler).
 - Reçete durum renkleri (2026-10-27): `OrderStatus` (seni bekliyor amber, hazır yeşil, hazırlanıyor
   mor, yeni kobalt); renkler `AppColors` içinde, yazı tonları açık zeminde ≥5,1:1 ölçüldü. Reçeteler
-  sekmesi bu sırayla dizilir; kartın şeridi ve süren işin göstergeleri durumun rengini taşır.
+  sekmesi bu sırayla dizilir; kartın başındaki çip ve süren işin göstergeleri durumun rengini taşır; kartta yan şerit yok (Tuğrul, 2026-10-27).
   Birincil düğme her zaman kobalt.
 - Tezgâh (Tuğrul, 2026-10-27): Reçeteler başlığı açık duvarda, reçeteler ahşap tezgâhta yan yana;
   sağa sola kaydırılır (`PageView`, yanındaki kartın kenarı görünür). Kartlar tezgâhın raf kenarına

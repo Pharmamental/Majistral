@@ -33,14 +33,21 @@ class AppColors {
   static const Color star = Color(0xFFF2A900);
 
   // Tezgâh (Tuğrul, 2026-10-27): başlık açık duvarda, reçeteler ahşap tezgâhta.
-  // Ahşap porselenin yanında krem gibi kalmasın diye bal meşesi tonunda (2026-10-27).
+  // Koyu ceviz (Tuğrul, 2026-10-27): açık, düz çizgili ahşap "yapay zekâ yaptı" diye
+  // belli ediyordu; tahtalar tek tek farklı tonda, damarlar düzensiz.
   static const Color wall = Color(0xFFF4F6F9);
-  static const Color counter = Color(0xFFD9BF98);
-  static const Color counterDeep = Color(0xFFCFB289);
-  static const Color counterLip = Color(0xFFE6D2B0); // raf kenarının üst yüzü
-  static const Color counterEdge = Color(0xFFB08E62); // raf kenarının ön yüzü
+  static const List<Color> counterPlanks = [
+    Color(0xFF6E4A31),
+    Color(0xFF65432C),
+    Color(0xFF74503A),
+    Color(0xFF6A4630),
+  ];
+  static const Color counterLip = Color(0xFF8A5E3E); // raf kenarının üst yüzü
+  static const Color counterEdge = Color(0xFF4A2F1E); // raf kenarının ön yüzü
+  static const Color counterSeam = Color(0x66301C10); // tahta arası derz
   static const Color tape = Color(0xE6F2E4C2); // kâğıt bant, hafif saydam
-  static const Color counterGrain = Color(0xFF8A6640);
+  static const Color counterGrain = Color(0xFF3E2716); // koyu damar
+  static const Color counterGrainLight = Color(0xFF8C6446); // açık damar
 
   // Reçete durumları (2026-10-27): şerit, açık zemin, yazı. Yazı açık zeminde
   // en az 5,1:1 (ölçüldü); şerit süs, durum her zaman yazıyla da söylenir.
