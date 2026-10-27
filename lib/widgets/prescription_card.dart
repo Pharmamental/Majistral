@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import '../logic/job_store.dart';
 import '../models/prescription.dart';
 import '../theme/tokens.dart';
-import 'chunky_button.dart';
 import 'job_status.dart';
 import 'recipe_sheet.dart';
 
@@ -34,6 +33,7 @@ enum OrderStatus {
 /// "Rp." ile majistral, altında hekim ve hasta; sağ üstte "Reçete" düğmesi
 /// (maddeler ve miktarlar pencerede). Her durumda aynı düzen (Tuğrul,
 /// 2026-10-27): ortada adım kutuları ve süre, en altta kartın tek aksiyonu.
+/// Yalnız tezgâhtaki, alınmış reçeteler için.
 class PrescriptionCard extends StatelessWidget {
   const PrescriptionCard({super.key, required this.order, this.showStatus = false});
 
@@ -96,21 +96,8 @@ class PrescriptionCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: AppSpace.lg),
-            if (job != null)
-              JobStatus(job: job)
-            else ...[
-              PlannedSteps(order: order),
-              const SizedBox(height: AppSpace.md),
-              SizedBox(
-                width: double.infinity,
-                child: ChunkyButton(
-                  label: 'Hazırla',
-                  icon: Icons.science_rounded,
-                  // Reçete kabul edilir; adımları laboratuvarda başlatılır (Tuğrul, 2026-10-27).
-                  onPressed: () => store.accept(order),
-                ),
-              ),
-            ],
+            // Kart yalnız tezgâhta, alınmış reçetede çizilir; gelen reçete duvarda fiştir.
+            if (job != null) JobStatus(job: job),
           ],
         ),
       ),

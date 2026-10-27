@@ -6,8 +6,9 @@ import '../theme/tokens.dart';
 import 'chunky_button.dart';
 
 /// Reçetenin ayrıntısı: her maddenin miktarı ve görevi, ürünün ne işe yaradığı
-/// ve neyde kullanıldığı. Reçete kartındaki "Reçete" düğmesi açar.
-Future<void> openRecipe(BuildContext context, PrescriptionOrder order) {
+/// ve neyde kullanıldığı. Reçete kartındaki "Reçete" düğmesi açar. Duvardaki
+/// gelen reçete fişi [onTake] ile açar: altta "Al" düğmesi çıkar.
+Future<void> openRecipe(BuildContext context, PrescriptionOrder order, {VoidCallback? onTake}) {
   return showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
@@ -105,6 +106,17 @@ Future<void> openRecipe(BuildContext context, PrescriptionOrder order) {
                 ),
               ),
               const SizedBox(height: AppSpace.lg),
+              if (onTake != null) ...[
+                ChunkyButton(
+                  label: 'Al',
+                  icon: Icons.add_rounded,
+                  onPressed: () {
+                    Navigator.of(sheetContext).pop();
+                    onTake();
+                  },
+                ),
+                const SizedBox(height: AppSpace.sm),
+              ],
               ChunkyButton.secondary(label: 'Kapat', onPressed: () => Navigator.of(sheetContext).pop()),
             ],
           ),

@@ -67,11 +67,11 @@ lib/
 - Öğrenme ekranları (Laboratuvar, alet penceresi) sade; kutlama (yıldız animasyonu) yalnız teslimde.
 - Durum yalnız renkle anlatılmaz: seçimde onay işareti, sayaçta ikon + metin.
 - Bütün reçete kartları aynı düzende (Tuğrul, 2026-10-27, "hidrofil merhem tasarımı"): sağ üstte
-  "Reçete" düğmesi, ortada adım kutuları; yeni reçetede kutular sade (ikon soluk değil), süreleriyle, altında toplam
-  süre (`PlannedSteps`), en altta Hazırla. Madde listesi kartta değil, pencerede. "Reçete"
+  "Reçete" düğmesi, ortada adım kutuları, en altta kartın tek aksiyonu. Kart yalnız tezgâhta,
+  alınmış reçetede çizilir. Madde listesi kartta değil, pencerede. "Reçete"
   penceresinin "Hazırlık" bölümü adımları ikon ve `›` okuyla gösterir; ok şeridi yalnız orada.
   Adım kutusu beyaz, ikon açık gri dairede (`AppColors.iconWell`; cam ikonlar beyazda kayboluyordu).
-- Aletler (Tuğrul, 2026-10-27): alet seçme ekranı yok; Hazırla reçeteyi kabul eder. Laboratuvarda
+- Aletler (Tuğrul, 2026-10-27): alet seçme ekranı yok; duvardan "Al" reçeteyi kabul eder. Laboratuvarda
   sahip olunan aletler durur (`labTools`): havanlar ve spatüller farklı işlerin aletleri, her biri
   ayrı (`Station.upgradePath = false`); kademeli gruplarda (merhem taşı → Unguator → merhem
   değirmeni, su banyosu, ambalaj) yalnız sahip olunan en yükseği. Merhem taşında karıştırma
@@ -103,12 +103,15 @@ lib/
   mor, yeni kobalt); renkler `AppColors` içinde, yazı tonları açık zeminde ≥5,1:1 ölçüldü. Reçeteler
   sekmesi bu sırayla dizilir; kartın başındaki çip ve süren işin göstergeleri durumun rengini taşır; kartta yan şerit yok (Tuğrul, 2026-10-27).
   Birincil düğme her zaman kobalt.
-- Tezgâh (Tuğrul, 2026-10-27): Reçeteler başlığı açık duvarda, reçeteler ahşap tezgâhta yan yana;
-  sağa sola kaydırılır (`PageView`, yanındaki kartın kenarı görünür). Kartlar tezgâhın raf kenarına
-  iki parça kâğıt bantla asılı, düz (eğiklik Tuğrul isteğiyle kalktı, `PaperTape`); durum kartın başında çipte.
-  Kartı tezgâhın altına uzatıp düğmeyi alta sabitlemek denendi, Tuğrul geri aldırdı. Duvarda bütün reçetelerin küçük fişleri
-  (durum + ad), dokununca o kart gelir; bütün fişler aynı boyda, düz ve durum renginde çerçeveli; gösterilen kartın fişinin altında kısa kobalt çizgi.
-  (`CounterTop`, `orders_screen.dart`). Laboratuvar ve Market de tezgâhta:
+- Duvar ve tezgâh (Tuğrul, 2026-10-27): duvarda gelen reçeteler, tezgâhta elindekiler. Duvarda
+  henüz alınmamış reçetelerin küçük fişleri (hekim, ad, süre; hepsi aynı boyda, düz, kobalt
+  çerçeveli); dokununca reçete penceresi açılır, altta "Al". Alınan reçete duvardan kalkar,
+  tezgâha iner ve öne gelir; teslim edilince duvara geri döner. Elde tutma sınırı ve
+  reçetenin kaybolması yok (yeni reçetenin gelişi henüz tasarlanmadı). Tezgâhta kartlar yan
+  yana, sağa sola kaydırılır (`PageView`, yanındaki kartın kenarı görünür), raf kenarına iki
+  parça kâğıt bantla asılı, düz (eğiklik Tuğrul isteğiyle kalktı, `PaperTape`); durum kartın
+  başında çipte. Tezgâh boşken bantlı küçük not. Kartı tezgâhın altına uzatıp düğmeyi alta
+  sabitlemek denendi, Tuğrul geri aldırdı (`CounterTop`, `orders_screen.dart`). Laboratuvar ve Market de tezgâhta:
   başlık (ve Market sekmeleri) duvarda, liste tezgâhın içinde kayar. Laboratuvarın tezgâhı ayrı
   bir oda gibi koyu gri arduvaz (`LabBench`, `AppColors.labBench`; Tuğrul 2026-10-27, "G1").
   Market'te üstte bordo-beyaz çizgili tente, altında kum tezgâh (`MarketStall`; Tuğrul

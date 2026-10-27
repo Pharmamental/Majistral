@@ -40,6 +40,14 @@ Future<void> _holdThermometer(WidgetTester tester) async {
   }
 }
 
+/// Duvardaki gelen reçete fişini açar ve "Al"a basar.
+Future<void> _take(WidgetTester tester, String magistralName) async {
+  await tester.tap(find.text(magistralName).first);
+  await tester.pumpAndSettle();
+  await tester.tap(find.text('Al'));
+  await tester.pumpAndSettle();
+}
+
 /// Laboratuvarda alete basar, reçete penceresini açar.
 Future<void> _pickTool(WidgetTester tester, String name) async {
   await tester.tap(find.text(name));
@@ -60,7 +68,7 @@ void main() {
 
   testWidgets('alt çubukla üç bölüm arasında geçilir', (tester) async {
     await tester.pumpWidget(MajistralApp(store: await _store()));
-    expect(find.text('3 reçete'), findsOneWidget);
+    expect(find.text('0 elinde'), findsOneWidget);
 
     await tester.tap(find.text('Laboratuvar'));
     await tester.pump();
@@ -75,18 +83,31 @@ void main() {
     expect(find.text(stations.first.name), findsOneWidget);
   });
 
-  testWidgets('reçeteler tezgâhta sağa sola kaydırılır', (tester) async {
+  testWidgets('gelen reçeteler duvarda; alınan tezgâha iner, tezgâhta sağa sola kaydırılır', (tester) async {
     await _tallScreen(tester);
     await tester.pumpWidget(MajistralApp(store: await _store()));
-    expect(find.text('Dr. Selin · Dermatoloji · Hasta M. Yılmaz', findRichText: true), findsOneWidget);
-    for (final o in prescriptionOrders.skip(1)) {
-      await tester.drag(find.byType(PageView), const Offset(-500, 0));
-      await tester.pumpAndSettle();
-      expect(find.text(o.magistralName), findsNWidgets(2)); // duvardaki fiş ve kart
-    }
-    // Duvardaki fişe dokununca o reçetenin kartı gelir.
-    await tester.tap(find.text(prescriptionOrders.first.magistralName).first);
+    expect(find.text('Gelen reçeteler · 3'), findsOneWidget);
+    expect(find.text('Tezgâhın boş. Duvardan bir reçete al.'), findsOneWidget);
+
+    // Fişe dokununca reçete açılır; "Kapat" almadan kapatır.
+    await tester.tap(find.text(prescriptionOrders.first.magistralName));
     await tester.pumpAndSettle();
+    expect(find.text(prescriptionOrders.first.usedFor), findsOneWidget);
+    await tester.tap(find.text('Kapat'));
+    await tester.pumpAndSettle();
+    expect(find.text('Gelen reçeteler · 3'), findsOneWidget);
+
+    for (final o in prescriptionOrders) {
+      await _take(tester, o.magistralName);
+    }
+    expect(find.text('Şimdilik yeni reçete yok'), findsOneWidget);
+    expect(find.text('3 elinde · 3 seni bekliyor'), findsOneWidget);
+    // Son alınan kart öne gelir; geri kaydırınca ilki görünür.
+    expect(find.text('Dr. Deniz · Dermatoloji · Hasta E. Şahin', findRichText: true), findsOneWidget);
+    for (var i = 0; i < 2; i++) {
+      await tester.drag(find.byType(PageView), const Offset(500, 0));
+      await tester.pumpAndSettle();
+    }
     expect(find.text('Dr. Selin · Dermatoloji · Hasta M. Yılmaz', findRichText: true), findsOneWidget);
   });
 
@@ -97,10 +118,9 @@ void main() {
     final store = await _store(now: () => clock);
     await tester.pumpWidget(MajistralApp(store: store));
 
-    // Alet seçme ekranı yok: Hazırla reçeteyi kabul eder, kart ilk adımı bekler.
-    await tester.tap(find.text('Hazırla').first);
-    await tester.pump();
-    expect(find.text('Seni bekliyor'), findsNWidgets(2)); // duvardaki fiş ve kartın durumu
+    // Alet seçme ekranı yok: duvardan alınan reçete tezgâhta ilk adımı bekler.
+    await _take(tester, order.magistralName);
+    expect(find.text('Seni bekliyor'), findsOneWidget); // kartın durumu
     expect(find.text('Sıra sende: Levigasyon. Laboratuvarda aletine bas.'), findsOneWidget);
     expect(find.text('Tartım'), findsNothing); // tartım oyundan çıktı (2026-10-27)
 
@@ -127,7 +147,7 @@ void main() {
     await tester.tap(find.text('Reçeteler'));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
-    expect(find.text('Hazırlanıyor'), findsNWidgets(2));
+    expect(find.text('Hazırlanıyor'), findsOneWidget);
     expect(find.text('03:00'), findsOneWidget);
     expect(find.text('sonra sıra sende'), findsOneWidget);
 
@@ -138,7 +158,7 @@ void main() {
     expect(find.text(order.ingredients.first.written), findsOneWidget);
     await tester.tap(find.text('Kapat'));
     await tester.pumpAndSettle();
-    expect(find.text('3 reçete · 1 hazırlanıyor'), findsOneWidget);
+    expect(find.text('1 elinde · 1 hazırlanıyor'), findsOneWidget);
 
     // Levigasyon bitti: salisilik asitte çelik spatül sönük, plastik uygun.
     clock = clock.add(const Duration(minutes: 3));
@@ -168,7 +188,7 @@ void main() {
     await tester.tap(find.text('Tamam'));
     await tester.pumpAndSettle();
     expect(store.jobFor(order.magistralName), isNull);
-    expect(find.text('Hazırla'), findsWidgets);
+    expect(find.text('Gelen reçeteler · 3'), findsOneWidget); // teslim edilen duvara döner
   });
 
   testWidgets('market sekmeleri istasyonları, reklamı ve kimyasalları gösterir', (tester) async {
@@ -192,7 +212,7 @@ void main() {
     final store = await _store(now: () => clock);
     await store.accept(cream);
     await tester.pumpWidget(MajistralApp(store: store));
-    expect(find.text('3 reçete · 1 seni bekliyor'), findsOneWidget);
+    expect(find.text('1 elinde · 1 seni bekliyor'), findsOneWidget);
 
     await tester.tap(find.text('Laboratuvar'));
     await tester.pump();
