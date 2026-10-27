@@ -18,6 +18,7 @@ void main() {
   final plastik = tools['Plastik spatül']!;
   final banyo = tools['Ocak ve su banyosu']!;
   final kavanoz = tools['Kavanoz']!;
+  final kapsul = tools['Porselen kapsül']!;
   late DateTime clock;
 
   setUp(() {
@@ -74,6 +75,22 @@ void main() {
     expect(store.whyNot(celik, j), contains('çelikle tepkimeye girer'));
     expect(store.whyNot(plastik, j), isNull);
     expect(store.whyNot(havan, j), 'Bu aletle işin bitti.');
+  });
+
+  test('kremde emülsifikasyon ve soğuma porselen kapsülde; spatül bu reçetede gerekmez', () async {
+    final store = await JobStore.load(now: () => clock);
+    var job = await take(store, cream);
+    expect(store.whyNot(plastik, job), 'Bu reçetede bu alete gerek yok.');
+    expect(store.whyNot(kapsul, job), 'Bu aleti daha sonra kullanacaksın; önce Isıtma.');
+    await store.startStep(job.id, banyo); // termometre oyunu ekranda; burada doğrudan başlar
+    clock = clock.add(const Duration(minutes: 10));
+    await store.startStep(job.id, kapsul);
+    clock = clock.add(const Duration(minutes: 9));
+    await store.startStep(job.id, kapsul);
+    clock = clock.add(const Duration(minutes: 8));
+    job = store.job(job.id)!;
+    expect([for (final r in job.runs) r.tool], ['Ocak ve su banyosu', 'Porselen kapsül', 'Porselen kapsül']);
+    expect(store.isReady(job), isTrue);
   });
 
   test('cam havan levigasyonda kullanılamaz', () async {

@@ -1,7 +1,7 @@
 /// Bir adımın hangi tür aletle yapıldığı. Laboratuvarda o türün sahip olunan
 /// aletleri durur (data/lab_tools.dart); oyuncu alete basıp reçeteyi seçer
 /// (Tuğrul, 2026-10-27).
-enum StepTool { havan, karistirma, isitma, ambalaj }
+enum StepTool { havan, karistirma, isitma, kapsul, ambalaj }
 
 /// Her hazırlama adımının kendi oyuncak blok ikonu (tools/ikon_blok, "Adımlar").
 const stepIcons = {

@@ -107,6 +107,21 @@ const List<Station> stations = [
       ),
     ],
   ),
+  // Eritme yönteminde kap: kremde yağ fazı burada ısıtılır, su fazı buna eklenir,
+  // soğuyana kadar burada karıştırılır (Ankara Üni. föyleri, USP; 2026-10-28).
+  Station(
+    name: 'Kaplar',
+    upgradePath: false,
+    tiers: [
+      ShopItem(
+        name: 'Porselen kapsül',
+        imagePath: 'assets/images/ikon/ikon_kapsul_porselen.png',
+        description: 'Yayvan porselen kap. Bazlar burada eritilir; krem soğuyana kadar burada karıştırılır.',
+        icon: Icons.soup_kitchen_outlined,
+        color: AppColors.rusty,
+      ),
+    ],
+  ),
   Station(
     name: 'Ambalaj',
     tiers: [

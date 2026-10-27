@@ -18,7 +18,7 @@ void main() {
 
   test('laboratuvarda sahip olunan aletler: havan ve spatüller ayrı, kademede en yükseği', () {
     expect([for (final t in labTools()) t.name],
-        ['Porselen havan', 'Çelik spatül', 'Plastik spatül', 'Ocak ve su banyosu', 'Kavanoz']);
+        ['Porselen havan', 'Çelik spatül', 'Plastik spatül', 'Ocak ve su banyosu', 'Porselen kapsül', 'Kavanoz']);
     for (final t in labTools()) {
       expect(File(t.imagePath).existsSync(), isTrue, reason: t.imagePath);
     }
@@ -28,7 +28,7 @@ void main() {
     const bought = {'Unguator', 'Termostatlı su banyosu', 'Cam havan'};
     final tools = labTools(owns: (i) => isOwned(i) || bought.contains(i.name));
     expect([for (final t in tools) t.name],
-        ['Porselen havan', 'Cam havan', 'Unguator', 'Termostatlı su banyosu', 'Kavanoz']);
+        ['Porselen havan', 'Cam havan', 'Unguator', 'Termostatlı su banyosu', 'Porselen kapsül', 'Kavanoz']);
     expect(tools.firstWhere((t) => t.name == 'Unguator').kind, StepTool.karistirma);
   });
 

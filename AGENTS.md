@@ -85,8 +85,11 @@ lib/
   ayrı (`Station.upgradePath = false`); kademeli gruplarda (merhem taşı → Unguator → merhem
   değirmeni, su banyosu, ambalaj) yalnız sahip olunan en yükseği. Merhem taşında karıştırma
   spatülle; Unguator ya da değirmen alınınca karıştırma adımları ona geçer. Satın alma yokken
-  sahip olunan = ücretsiz kademe (`isOwned`). Adım → alet: levigasyon havan, karıştırma/
-  emülsifikasyon/soğuma spatül, ısıtma su banyosu, etiket ambalaj. Kurallar ASHP bülteninden
+  sahip olunan = ücretsiz kademe (`isOwned`). Adım → alet: levigasyon havan, karıştırma spatül,
+  ısıtma su banyosu, kremde emülsifikasyon ve soğuma porselen kapsül (Tuğrul, 2026-10-28; Ankara
+  föyleri ve USP: su fazı yağ fazına kapsülde karıştırılarak eklenir, soğuyana kadar karıştırılır;
+  markette "Kaplar" grubu), etiket ambalaj. Alet inceleme sayfası (20 alet, kaynaklı):
+  https://claude.ai/artifact/RSKXpt9XPG4epnxApKCk7h Kurallar ASHP bülteninden
   (salisilik asit çelikle tepkir, cam havan toz ezmez) adımın `notWith`'inde; parşömen çıktı.
   Kaynak listesi: C:\YZ\knowledge\concepts\majistral-alet-ve-makineler.md.
 - Laboratuvar (Tuğrul, 2026-10-27): her adımı oyuncu başlatır. Alete basınca kabul edilmiş

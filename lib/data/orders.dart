@@ -87,9 +87,10 @@ const List<PrescriptionOrder> prescriptionOrders = [
     batchNote: 'Formül 1000 g için yazılmış; sen 100 g hazırla.',
     steps: [
       PrescriptionStep('Isıtma', tool: StepTool.isitma, minutes: 10, interactive: true),
-      PrescriptionStep('Emülsifikasyon', tool: StepTool.karistirma, minutes: 9),
-      // Krem soğuyana kadar karıştırılır; soğuma da karıştırma aletinde.
-      PrescriptionStep('Soğuma', tool: StepTool.karistirma, minutes: 8),
+      // Su fazı yağ fazına porselen kapsülde karıştırılarak eklenir, krem soğuyana
+      // kadar kapsülde karıştırılır (Ankara Üni. föyleri, USP; 2026-10-28).
+      PrescriptionStep('Emülsifikasyon', tool: StepTool.kapsul, minutes: 9),
+      PrescriptionStep('Soğuma', tool: StepTool.kapsul, minutes: 8),
     ],
   ),
 ];
