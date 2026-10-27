@@ -68,8 +68,12 @@ void main() {
     for (final o in prescriptionOrders.skip(1)) {
       await tester.drag(find.byType(PageView), const Offset(-500, 0));
       await tester.pumpAndSettle();
-      expect(find.text(o.magistralName), findsOneWidget);
+      expect(find.text(o.magistralName), findsNWidgets(2)); // duvardaki fiş ve kart
     }
+    // Duvardaki fişe dokununca o reçetenin kartı gelir.
+    await tester.tap(find.text(prescriptionOrders.first.magistralName).first);
+    await tester.pumpAndSettle();
+    expect(find.text('Dr. Selin · Dermatoloji · Hasta M. Yılmaz', findRichText: true), findsOneWidget);
   });
 
   testWidgets('hazırlık gerçek zamanda sürer, hazır olunca teslim edilir', (tester) async {
@@ -114,7 +118,7 @@ void main() {
     await tester.tap(find.text('Reçeteler'));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
-    expect(find.text('Hazırlanıyor'), findsOneWidget); // kartın üstündeki durum
+    expect(find.text('Hazırlanıyor'), findsNWidgets(2)); // duvardaki fiş ve kartın durumu
     expect(find.text('sonra hazır'), findsOneWidget); // kartın sayacı
 
     // Süren işte reçete düğmeyle açılır: miktarlar, görevler, kullanım alanı.

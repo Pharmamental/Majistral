@@ -37,13 +37,17 @@ enum OrderStatus {
 /// "Reçete" düğmesine iner (pencerede açılır), yerini adım şeridi alır. En
 /// altta kartın tek aksiyonu.
 class PrescriptionCard extends StatelessWidget {
-  const PrescriptionCard({super.key, required this.order, this.showStatus = false});
+  const PrescriptionCard({super.key, required this.order, this.showStatus = false, this.pinAction = false});
 
   final PrescriptionOrder order;
 
   /// Kartın başında durum çipi (tezgâhta asılı kartlarda; durum yalnız şeridin
   /// rengiyle anlatılmasın diye).
   final bool showStatus;
+
+  /// Kart kendisine verilen yüksekliği doldurur, aksiyon en alta iner
+  /// (başparmak bölgesi; Tuğrul, 2026-10-27). Üstte en az o yükseklik verilmeli.
+  final bool pinAction;
 
   @override
   Widget build(BuildContext context) {
@@ -116,6 +120,7 @@ class PrescriptionCard extends StatelessWidget {
                       const SizedBox(height: AppSpace.md),
                       _Formula(order: order),
                     ],
+                    if (pinAction) const Spacer(),
                     const SizedBox(height: AppSpace.lg),
                     if (job != null)
                       JobStatus(job: job)

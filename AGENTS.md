@@ -97,8 +97,10 @@ lib/
   Birincil düğme her zaman kiremit.
 - Tezgâh (Tuğrul, 2026-10-27): Reçeteler başlığı açık duvarda, reçeteler ahşap tezgâhta yan yana;
   sağa sola kaydırılır (`PageView`, yanındaki kartın kenarı görünür). Kartlar tezgâhın raf kenarına
-  iki parça kâğıt bantla asılı, hafif eğik (`PaperTape`); durum kartın başında çipte,
-  altta durum renginde noktalar (`CounterTop`, `orders_screen.dart`). Laboratuvar ve Market de böyle:
+  iki parça kâğıt bantla asılı, hafif eğik (`PaperTape`); durum kartın başında çipte. Kart tezgâhın
+  altına kadar uzar, düğmesi en altta (`pinAction`). Duvarda bütün reçetelerin küçük fişleri
+  (durum + ad), dokununca o kart gelir; gösterilen kartın fişi durum renginde çerçeveli.
+  (`CounterTop`, `orders_screen.dart`). Laboratuvar ve Market de tezgâhta:
   başlık (ve Market sekmeleri) duvarda, liste tezgâhın içinde kayar.
 - Süren iş kartı (Tuğrul, 2026-10-27): iş başlayınca madde listesi kartta görünmez; sağ üstte
   "Reçete" düğmesi pencere açar (miktar, her maddenin marketteki görevi, ne işe yarar `purpose`,
