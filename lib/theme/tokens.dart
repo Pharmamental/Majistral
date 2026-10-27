@@ -31,6 +31,13 @@ class AppColors {
 
   static const Color star = Color(0xFFF2A900);
 
+  // Tezgâh (Tuğrul, 2026-10-27): başlık açık duvarda, reçeteler ahşap tezgâhta.
+  static const Color wall = Color(0xFFF7F4EE);
+  static const Color counter = Color(0xFFE6DCCB);
+  static const Color counterDeep = Color(0xFFDED2BF);
+  static const Color counterEdge = Color(0xFFCFC3B0);
+  static const Color counterGrain = Color(0xFF967855);
+
   // Reçete durumları (2026-10-27): şerit, açık zemin, yazı. Yazı açık zeminde
   // en az 5,1:1 (ölçüldü); şerit süs, durum her zaman yazıyla da söylenir.
   static const Color yeni = kiremit, yeniSoft = kiremitSoft, yeniText = Color(0xFF9C3F25);

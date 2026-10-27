@@ -27,6 +27,9 @@ class _HomeScreenState extends State<HomeScreen> {
     final ready = store.jobs.where((j) => store.isReady(j) || store.needsAction(j)).length;
 
     return Scaffold(
+      // İçerik alt çubuğun arkasına uzanır; ortadaki daireyi saran boşlukta
+      // tezgâh görünsün. Listeler alt boşluğu MediaQuery'den alır.
+      extendBody: true,
       body: SafeArea(
         bottom: false,
         child: IndexedStack(

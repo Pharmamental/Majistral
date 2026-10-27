@@ -2,61 +2,143 @@ import 'package:flutter/material.dart';
 
 import '../data/orders.dart';
 import '../logic/job_store.dart';
+import '../models/prescription.dart';
 import '../theme/tokens.dart';
 import '../widgets/back_pill.dart';
+import '../widgets/counter_top.dart';
 import '../widgets/prescription_card.dart';
 
-/// Reçeteler sekmesi (ana döngünün başladığı yer). Reçeteler durumlarına göre
-/// gruplanır; oyuncunun bir şey yapması gerekenler üstte: seni bekleyen, hazır,
-/// hazırlanan, yeni. Her grubun rengi kartın şeridiyle aynı.
+/// Reçeteler sekmesi (ana döngünün başladığı yer). Başlık duvarda, reçeteler
+/// ahşap tezgâhta yan yana durur ve sağa sola kaydırılır (Tuğrul, 2026-10-27).
+/// Sıra durumlara göre: seni bekleyen, hazır, hazırlanan, yeni; her kartın
+/// üstünde durumu yazar, alttaki noktalar durum renginde.
 class OrdersScreen extends StatelessWidget {
   const OrdersScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     final store = JobScope.of(context);
-    final groups = {
+    final deck = [
       for (final status in OrderStatus.values)
-        status: [for (final o in prescriptionOrders) if (OrderStatus.of(store, o) == status) o],
-    };
-    final waiting = groups[OrderStatus.bekliyor]!.length;
-    final ready = groups[OrderStatus.hazir]!.length;
-    final running = groups[OrderStatus.suruyor]!.length;
+        for (final o in prescriptionOrders)
+          if (OrderStatus.of(store, o) == status) (order: o, status: status),
+    ];
+    int count(OrderStatus s) => deck.where((e) => e.status == s).length;
     final parts = [
       '${prescriptionOrders.length} reçete',
-      if (ready > 0) '$ready hazır',
-      if (waiting > 0) '$waiting seni bekliyor',
-      if (running > 0) '$running hazırlanıyor',
+      if (count(OrderStatus.hazir) > 0) '${count(OrderStatus.hazir)} hazır',
+      if (count(OrderStatus.bekliyor) > 0) '${count(OrderStatus.bekliyor)} seni bekliyor',
+      if (count(OrderStatus.suruyor) > 0) '${count(OrderStatus.suruyor)} hazırlanıyor',
     ];
 
-    return ListView(
-      padding: const EdgeInsets.only(bottom: AppSpace.x3),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        TabHeader(title: 'Reçeteler', subtitle: parts.join(' · ')),
-        for (final MapEntry(key: status, value: orders) in groups.entries)
-          if (orders.isNotEmpty) ...[
-            _GroupHeader(status: status, count: orders.length),
-            for (final o in orders)
-              Padding(
-                padding: const EdgeInsets.fromLTRB(AppSpace.lg, 0, AppSpace.lg, AppSpace.lg),
-                child: PrescriptionCard(order: o),
-              ),
-          ],
+        ColoredBox(
+          color: AppColors.wall,
+          child: TabHeader(title: 'Reçeteler', subtitle: parts.join(' · ')),
+        ),
+        Expanded(child: CounterTop(child: _Deck(deck: deck))),
       ],
     );
   }
 }
 
-class _GroupHeader extends StatelessWidget {
-  const _GroupHeader({required this.status, required this.count});
+typedef _DeckEntry = ({PrescriptionOrder order, OrderStatus status});
+
+/// Tezgâhtaki reçeteler: bir kart tam, yanındaki kartın kenarı görünür.
+class _Deck extends StatefulWidget {
+  const _Deck({required this.deck});
+
+  final List<_DeckEntry> deck;
+
+  @override
+  State<_Deck> createState() => _DeckState();
+}
+
+class _DeckState extends State<_Deck> {
+  final _controller = PageController(viewportFraction: 0.88);
+  int _page = 0;
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final deck = widget.deck;
+    final page = _page.clamp(0, deck.length - 1);
+    return Column(
+      children: [
+        Expanded(
+          child: PageView.builder(
+            controller: _controller,
+            itemCount: deck.length,
+            onPageChanged: (i) => setState(() => _page = i),
+            itemBuilder: (context, i) => Padding(
+              padding: const EdgeInsets.fromLTRB(AppSpace.xs + 2, AppSpace.lg, AppSpace.xs + 2, 0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _StatusLabel(status: deck[i].status),
+                  const SizedBox(height: AppSpace.sm),
+                  Flexible(
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.only(bottom: AppSpace.lg),
+                      child: PrescriptionCard(order: deck[i].order),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.only(bottom: AppSpace.md + MediaQuery.paddingOf(context).bottom),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              for (final (i, e) in deck.indexed)
+                GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: () => _controller.animateToPage(
+                    i,
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeOut,
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: AppSpace.xs, vertical: AppSpace.sm),
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      width: i == page ? 22 : 8,
+                      height: 8,
+                      decoration: BoxDecoration(
+                        color: i == page ? e.status.color : e.status.color.withValues(alpha: 0.4),
+                        borderRadius: BorderRadius.circular(AppRadius.pill),
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// Kartın üstünde durumu: renkli nokta ve adı (durum yalnız renkle anlatılmaz).
+class _StatusLabel extends StatelessWidget {
+  const _StatusLabel({required this.status});
 
   final OrderStatus status;
-  final int count;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(AppSpace.xl, AppSpace.sm, AppSpace.xl, AppSpace.md),
+      padding: const EdgeInsets.only(left: AppSpace.xs),
       child: Row(
         children: [
           Container(
@@ -66,12 +148,6 @@ class _GroupHeader extends StatelessWidget {
           ),
           const SizedBox(width: AppSpace.sm),
           Text(status.label, style: AppText.title(size: 17)),
-          const SizedBox(width: AppSpace.sm),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: AppSpace.sm),
-            decoration: BoxDecoration(color: status.soft, borderRadius: BorderRadius.circular(AppRadius.pill)),
-            child: Text('$count', style: AppText.label(size: 12, color: status.text)),
-          ),
         ],
       ),
     );

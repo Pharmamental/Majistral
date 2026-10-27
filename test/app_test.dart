@@ -8,7 +8,6 @@ import 'package:game/logic/job_store.dart';
 import 'package:game/logic/quality.dart';
 import 'package:game/main.dart';
 import 'package:game/models/prescription.dart';
-import 'package:game/widgets/prescription_card.dart';
 
 import 'test_fonts.dart';
 
@@ -62,11 +61,15 @@ void main() {
     expect(find.text(stations.first.name), findsOneWidget);
   });
 
-  testWidgets('reçete ekranı her reçete için bir kart gösterir', (tester) async {
+  testWidgets('reçeteler tezgâhta sağa sola kaydırılır', (tester) async {
     await _tallScreen(tester);
     await tester.pumpWidget(MajistralApp(store: await _store()));
-    expect(find.byType(PrescriptionCard), findsNWidgets(prescriptionOrders.length));
     expect(find.text('Dr. Selin · Dermatoloji · Hasta M. Yılmaz', findRichText: true), findsOneWidget);
+    for (final o in prescriptionOrders.skip(1)) {
+      await tester.drag(find.byType(PageView), const Offset(-500, 0));
+      await tester.pumpAndSettle();
+      expect(find.text(o.magistralName), findsOneWidget);
+    }
   });
 
   testWidgets('hazırlık gerçek zamanda sürer, hazır olunca teslim edilir', (tester) async {
@@ -111,7 +114,7 @@ void main() {
     await tester.tap(find.text('Reçeteler'));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
-    expect(find.text('Hazırlanıyor'), findsOneWidget); // grup başlığı
+    expect(find.text('Hazırlanıyor'), findsOneWidget); // kartın üstündeki durum
     expect(find.text('sonra hazır'), findsOneWidget); // kartın sayacı
 
     // Süren işte reçete düğmeyle açılır: miktarlar, görevler, kullanım alanı.
@@ -133,7 +136,7 @@ void main() {
     await tester.tap(find.text('Tamam'));
     await tester.pumpAndSettle();
     expect(store.jobFor(order.magistralName), isNull);
-    expect(find.text('Hazırla'), findsNWidgets(prescriptionOrders.length));
+    expect(find.text('Hazırla'), findsWidgets);
   });
 
   testWidgets('market sekmeleri istasyonları, reklamı ve kimyasalları gösterir', (tester) async {

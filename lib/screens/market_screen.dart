@@ -46,7 +46,8 @@ class _MarketScreenState extends State<MarketScreen> {
   }
 
   Widget _content() {
-    const listPadding = EdgeInsets.fromLTRB(AppSpace.lg, 0, AppSpace.lg, AppSpace.x3);
+    final bottom = AppSpace.x3 + MediaQuery.paddingOf(context).bottom;
+    final listPadding = EdgeInsets.fromLTRB(AppSpace.lg, 0, AppSpace.lg, bottom);
     switch (_tab) {
       case MarketTab.hizlandirma:
         return ListView(
@@ -63,7 +64,7 @@ class _MarketScreenState extends State<MarketScreen> {
         );
       case MarketTab.istasyonlar:
         return ListView.separated(
-          padding: const EdgeInsets.only(bottom: AppSpace.x3),
+          padding: EdgeInsets.only(bottom: bottom),
           itemCount: stations.length,
           separatorBuilder: (context, index) => const SizedBox(height: AppSpace.xxl),
           itemBuilder: (context, index) => StationSection(station: stations[index]),

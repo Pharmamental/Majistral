@@ -48,7 +48,7 @@ class _LabScreenState extends State<LabScreen> {
     ].join(' · ');
 
     return ListView(
-      padding: const EdgeInsets.only(bottom: AppSpace.x3),
+      padding: EdgeInsets.only(bottom: AppSpace.x3 + MediaQuery.paddingOf(context).bottom),
       children: [
         TabHeader(
           title: 'Laboratuvar',
