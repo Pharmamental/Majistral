@@ -67,7 +67,7 @@ lib/
 - Öğrenme ekranı (Hazırlama) sade; kutlama (yıldız animasyonu) yalnız teslimde.
 - Durum yalnız renkle anlatılmaz: seçimde onay işareti, sayaçta ikon + metin.
 - Bütün reçete kartları aynı düzende (Tuğrul, 2026-10-27, "hidrofil merhem tasarımı"): sağ üstte
-  "Reçete" düğmesi, ortada adım kutuları; yeni reçetede kutular silik, süreleriyle, altında toplam
+  "Reçete" düğmesi, ortada adım kutuları; yeni reçetede kutular sade (ikon soluk değil), süreleriyle, altında toplam
   süre (`PlannedSteps`), en altta Hazırla. Madde listesi kartta değil, pencerede. "Reçete"
   penceresinin "Hazırlık" bölümü adımları ikon ve `›` okuyla gösterir; ok şeridi yalnız orada.
   Adım kutusu beyaz, ikon açık gri dairede (`AppColors.iconWell`; cam ikonlar beyazda kayboluyordu).
