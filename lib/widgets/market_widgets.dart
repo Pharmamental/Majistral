@@ -82,7 +82,7 @@ class StationTierCard extends StatelessWidget {
       padding: const EdgeInsets.all(AppSpace.lg),
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(AppRadius.card),
+        borderRadius: BorderRadius.circular(AppRadius.paper),
         border: Border.all(
           color: owned ? tier.color : AppColors.line,
           width: owned ? 2 : 1,
@@ -116,7 +116,7 @@ class StationTierCard extends StatelessWidget {
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
                       color: AppColors.surfaceMuted,
-                      borderRadius: BorderRadius.circular(AppRadius.card),
+                      borderRadius: BorderRadius.circular(AppRadius.pill),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -193,7 +193,7 @@ class _Thumb extends StatelessWidget {
       width: size,
       height: size,
       alignment: Alignment.center,
-      decoration: BoxDecoration(color: box, borderRadius: BorderRadius.circular(AppRadius.card)),
+      decoration: BoxDecoration(color: box, shape: BoxShape.circle),
       child: item.imagePath != null
           ? Image.asset(item.imagePath!, width: size * 0.86, height: size * 0.86)
           : Icon(item.icon, color: item.color, size: size * 0.5),
@@ -216,7 +216,7 @@ class ShopItemTile extends StatelessWidget {
       padding: const EdgeInsets.all(AppSpace.lg),
       decoration: BoxDecoration(
         color: highlight ? AppColors.successSoft : AppColors.surface,
-        borderRadius: BorderRadius.circular(AppRadius.card),
+        borderRadius: BorderRadius.circular(AppRadius.paper),
         border: Border.all(
           color: highlight ? AppColors.success : AppColors.line,
           width: highlight ? 2 : 1,

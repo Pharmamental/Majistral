@@ -180,7 +180,7 @@ class _Formula extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: AppSpace.md, vertical: AppSpace.sm),
       decoration: BoxDecoration(
         color: AppColors.surfaceMuted,
-        borderRadius: BorderRadius.circular(AppSpace.md),
+        borderRadius: BorderRadius.circular(AppRadius.paperInner),
       ),
       child: Column(
         children: [
@@ -227,7 +227,7 @@ class PrescriptionStubBorder extends ShapeBorder {
 
   static const double _pitch = 14;
   static const double _hole = 4.5;
-  static const double _radius = 16;
+  static const double _radius = AppRadius.paper;
 
   @override
   EdgeInsetsGeometry get dimensions => EdgeInsets.zero;

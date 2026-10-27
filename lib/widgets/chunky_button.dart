@@ -88,7 +88,7 @@ class _ChunkyButtonState extends State<ChunkyButton> {
                 child: DecoratedBox(
                   decoration: BoxDecoration(
                     color: edge,
-                    borderRadius: BorderRadius.circular(AppRadius.card),
+                    borderRadius: BorderRadius.circular(AppRadius.pill),
                   ),
                 ),
               ),
@@ -103,7 +103,7 @@ class _ChunkyButtonState extends State<ChunkyButton> {
                   padding: const EdgeInsets.symmetric(horizontal: AppSpace.lg),
                   decoration: BoxDecoration(
                     color: face,
-                    borderRadius: BorderRadius.circular(AppRadius.card),
+                    borderRadius: BorderRadius.circular(AppRadius.pill),
                     border: widget.color == AppColors.surface && _enabled
                         ? Border.all(color: AppColors.line, width: 2)
                         : null,

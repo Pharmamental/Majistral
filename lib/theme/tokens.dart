@@ -61,7 +61,11 @@ class AppSpace {
 class AppRadius {
   AppRadius._();
 
-  static const double card = 20;
+  // Şekil görevini söyler (Tuğrul, 2026-10-27): bilgi taşıyan kutular kâğıt gibi
+  // az yuvarlak, basılan her şey tam hap, eşya ikonlarının kutusu daire
+  // (BoxShape.circle). Reçete kartı koçan (PrescriptionStubBorder).
+  static const double paper = 6;
+  static const double paperInner = 4;
   static const double pill = 999;
 }
 

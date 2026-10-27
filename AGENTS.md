@@ -59,7 +59,10 @@ lib/
   Değişken font olduğu için kalınlık `AppText` ile verilir (`fontVariations`); düz
   `TextStyle(fontWeight)` bazı cihazlarda kalın çizmez. Ok için `›` kullan. Yeni font eklemeden önce
   dosyada ş, ğ, İ var mı tara: Fredoka, Lilita One, Titan One, Sniglet'te yok.
-- Boşluk 4-8-12-16-20-24-32-40-48, köşe 20, çip tam yuvarlak, dokunma alanı en az 44.
+- Boşluk 4-8-12-16-20-24-32-40-48, dokunma alanı en az 44.
+- Köşe dili "görevine göre" (Tuğrul, 2026-10-27): bilgi kutuları (kart, pencere, iç kutu) kâğıt gibi
+  az yuvarlak (`AppRadius.paper` 6, `paperInner` 4); basılan her şey (düğme, sekme, çip) tam hap;
+  eşya ve madde ikonlarının kutusu daire. Her öğeye aynı köşeyi verme.
 - Birincil aksiyon altta (başparmak bölgesi): kartın en altı ya da ekranın sabit alt çubuğu.
 - Öğrenme ekranı (Hazırlama) sade; kutlama (yıldız animasyonu) yalnız teslimde.
 - Durum yalnız renkle anlatılmaz: seçimde onay işareti, sayaçta ikon + metin.
@@ -98,7 +101,7 @@ lib/
   büyük "… sonra hazır" sayacı. Acele düğmesinin üstüne bedel satırı ya da şimşek ikonları konmaz.
   Hekim adı yalnız unvan ve ilk ad ("Dr. Deniz").
 - Reçete kartı koçan biçiminde (Tuğrul, 2026-10-27): üst kenar yarım daire delikli, alt köşeler
-  yuvarlak (`PrescriptionStubBorder`). Uygulamanın geri kalanının köşe dili henüz seçilmedi.
+  yuvarlak (`PrescriptionStubBorder`).
 - Market hammaddeleri (2026-10-26): `chemicalGroups`, 6 rol grubunda 31 madde; liste ve kaynakları
   beyinde (`knowledge/concepts/majistral-hammaddeler.md`). Reçeteye yeni madde girerse markete de
   eklenir; her maddenin oyuncak blok ikonu olur (`test/market_items_test.dart` ikisini de denetler).

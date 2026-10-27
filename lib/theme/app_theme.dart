@@ -32,7 +32,7 @@ ThemeData buildAppTheme() {
     ),
     dialogTheme: const DialogThemeData(
       backgroundColor: AppColors.surface,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(AppRadius.card))),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(AppRadius.paper))),
     ),
   );
 }

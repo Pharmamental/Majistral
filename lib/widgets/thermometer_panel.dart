@@ -116,7 +116,7 @@ class _ThermometerPanelState extends State<ThermometerPanel> with SingleTickerPr
       padding: const EdgeInsets.all(AppSpace.xl),
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(AppRadius.card),
+        borderRadius: BorderRadius.circular(AppRadius.paper),
         border: Border.all(color: AppColors.line),
       ),
       child: Column(

@@ -168,7 +168,7 @@ class _JobStatusState extends State<JobStatus> {
       padding: const EdgeInsets.all(AppSpace.md),
       decoration: BoxDecoration(
         color: AppColors.surfaceMuted,
-        borderRadius: BorderRadius.circular(AppRadius.card),
+        borderRadius: BorderRadius.circular(AppRadius.paper),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -366,7 +366,7 @@ class _StepTile extends StatelessWidget {
       decoration: BoxDecoration(
         color: fill,
         border: Border.all(color: border, width: 2),
-        borderRadius: BorderRadius.circular(AppSpace.lg),
+        borderRadius: BorderRadius.circular(AppRadius.paperInner),
       ),
       child: Stack(
         alignment: Alignment.topCenter,

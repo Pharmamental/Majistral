@@ -15,7 +15,7 @@ Future<void> openHeating(BuildContext context, {String? magistralName}) {
     isScrollControlled: true,
     backgroundColor: AppColors.background,
     shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.card)),
+      borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.paper)),
     ),
     builder: (sheetContext) => SafeArea(
       child: Padding(

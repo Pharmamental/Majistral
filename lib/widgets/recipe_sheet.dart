@@ -13,7 +13,7 @@ Future<void> openRecipe(BuildContext context, PrescriptionOrder order) {
     isScrollControlled: true,
     backgroundColor: AppColors.background,
     shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.card)),
+      borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.paper)),
     ),
     builder: (sheetContext) => SafeArea(
       child: ConstrainedBox(
@@ -109,7 +109,7 @@ class _Section extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(AppSpace.md, AppSpace.sm, AppSpace.md, AppSpace.md),
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(AppSpace.md),
+        borderRadius: BorderRadius.circular(AppRadius.paper),
         border: Border.all(color: AppColors.line),
       ),
       child: Column(

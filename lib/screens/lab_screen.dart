@@ -98,7 +98,7 @@ class _StationCard extends StatelessWidget {
       padding: const EdgeInsets.all(AppSpace.md),
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(AppRadius.card),
+        borderRadius: BorderRadius.circular(AppRadius.paper),
         border: Border.all(color: highlight ? AppColors.kiremit : AppColors.line, width: highlight ? 2 : 1),
       ),
       child: Column(
@@ -112,7 +112,7 @@ class _StationCard extends StatelessWidget {
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                   color: highlight ? AppColors.kiremitSoft : AppColors.surfaceMuted,
-                  borderRadius: BorderRadius.circular(AppRadius.card),
+                  shape: BoxShape.circle,
                 ),
                 child: Image.asset(station.imagePath, width: 44, height: 44),
               ),

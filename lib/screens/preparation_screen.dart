@@ -171,7 +171,7 @@ class _RecipeSummary extends StatelessWidget {
       padding: const EdgeInsets.all(AppSpace.lg),
       decoration: BoxDecoration(
         color: AppColors.surfaceMuted,
-        borderRadius: BorderRadius.circular(AppRadius.card),
+        borderRadius: BorderRadius.circular(AppRadius.paper),
         border: Border.all(color: AppColors.line),
       ),
       child: Row(
@@ -212,7 +212,7 @@ class _Section extends StatelessWidget {
       padding: const EdgeInsets.all(AppSpace.lg),
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(AppRadius.card),
+        borderRadius: BorderRadius.circular(AppRadius.paper),
         border: Border.all(color: AppColors.line),
       ),
       child: Column(
@@ -337,7 +337,7 @@ class _RunningCard extends StatelessWidget {
       padding: const EdgeInsets.all(AppSpace.xxl),
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(AppRadius.card),
+        borderRadius: BorderRadius.circular(AppRadius.paper),
         border: Border.all(color: AppColors.line),
       ),
       child: Column(
