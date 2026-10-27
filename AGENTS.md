@@ -70,6 +70,7 @@ lib/
   "Reçete" düğmesi, ortada adım kutuları; yeni reçetede kutular silik, süreleriyle, altında toplam
   süre (`PlannedSteps`), en altta Hazırla. Madde listesi kartta değil, pencerede. "Reçete"
   penceresinin "Hazırlık" bölümü adımları ikon ve `›` okuyla gösterir; ok şeridi yalnız orada.
+  Adım kutusu beyaz, ikon açık gri dairede (`AppColors.iconWell`; cam ikonlar beyazda kayboluyordu).
 - Aletler (2026-10-25): hazırlamada spatül, havan ve çalışma yüzeyi seçilir; kurallar ASHP
   bülteninden (salisilik asit çelik spatülle tepkir; cam havan toz ezmez; parşömen kremde olmaz).
   Kaç alet yanlış olursa olsun alet hatası tek yıldız. Marketteki basamaklar gerçek aletler

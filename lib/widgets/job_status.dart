@@ -420,9 +420,15 @@ class _StepTile extends StatelessWidget {
         children: [
           Column(
             children: [
-              Opacity(
-                opacity: faded ? 0.55 : 1,
-                child: Image.asset(stepIconPath(label), width: 40, height: 40),
+              Container(
+                width: 52,
+                height: 52,
+                alignment: Alignment.center,
+                decoration: const BoxDecoration(color: AppColors.iconWell, shape: BoxShape.circle),
+                child: Opacity(
+                  opacity: faded ? 0.55 : 1,
+                  child: Image.asset(stepIconPath(label), width: 40, height: 40),
+                ),
               ),
               const SizedBox(height: AppSpace.xs),
               FittedBox(

@@ -16,6 +16,9 @@ class AppColors {
   static const Color surface = Color(0xFFFCFDFE); // kartlar
   static const Color surfaceMuted = Color(0xFFF1F4F8); // kart içi ikinci yüzey
   static const Color line = Color(0xFFD5DCE4);
+  // Adım ikonunun arkasındaki daire (Tuğrul, 2026-10-27): cam ikonlar beyaz kutuda
+  // kayboluyordu.
+  static const Color iconWell = Color(0xFFDDE3EB);
 
   static const Color ink = Color(0xFF172033); // mürekkep laciverti
   static const Color inkMuted = Color(0xFF545E70);
