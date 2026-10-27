@@ -108,6 +108,7 @@ class PrescriptionOrder {
   /// doluysa adım sıra bekler, iş daha uzun sürer.
   Duration get prepTime => Duration(minutes: steps.fold(0, (sum, s) => sum + s.minutes));
 
+  /// Unvan ve yalnız ilk ad: "Dr. Deniz" (Tuğrul, 2026-10-27).
   final String doctorName;
   final String doctorBranch;
   final String patientName;

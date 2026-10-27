@@ -99,6 +99,10 @@ class _JobStatusState extends State<JobStatus> {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          if (!widget.large) ...[
+            _StepStrip(job: widget.job, at: store.now()),
+            const SizedBox(height: AppSpace.md),
+          ],
           Text(
             action.prompt,
             textAlign: widget.large ? TextAlign.center : TextAlign.start,
@@ -156,6 +160,10 @@ class _JobStatusState extends State<JobStatus> {
         ],
       );
     }
+    // Kartta kalan süre bütün iş için: oyuncu adımının arkasındaki, henüz
+    // planlanmamış adımlar da eklenir.
+    final total = store.remaining(widget.job) +
+        Duration(minutes: widget.job.pending.fold(0, (sum, p) => sum + p.minutes));
     return Container(
       padding: const EdgeInsets.all(AppSpace.md),
       decoration: BoxDecoration(
@@ -163,27 +171,22 @@ class _JobStatusState extends State<JobStatus> {
         borderRadius: BorderRadius.circular(AppRadius.card),
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          _StepStrip(job: widget.job, at: at),
+          const SizedBox(height: AppSpace.md),
           Row(
+            crossAxisAlignment: CrossAxisAlignment.baseline,
+            textBaseline: TextBaseline.alphabetic,
             children: [
-              const Icon(Icons.hourglass_top_rounded, size: 18, color: AppColors.suruyor),
+              const Icon(Icons.hourglass_top_rounded, size: 20, color: AppColors.suruyor),
               const SizedBox(width: AppSpace.xs),
-              Text('Hazırlanıyor', style: AppText.body(size: 14, weight: FontWeight.w600)),
-              const Spacer(),
-              Text(remaining, style: AppText.timer(color: AppColors.suruyorText)),
+              Text(formatRemaining(total), style: AppText.timer(size: 28, color: AppColors.suruyorText)),
+              const SizedBox(width: AppSpace.sm),
+              Text('sonra hazır', style: AppText.label(size: 13)),
             ],
           ),
-          if (where.isNotEmpty)
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Padding(
-                padding: const EdgeInsets.only(top: AppSpace.xs),
-                child: Text(where, style: AppText.label(size: 12)),
-              ),
-            ),
           const SizedBox(height: AppSpace.sm),
-          bar,
-          const SizedBox(height: AppSpace.md),
           SizedBox(width: double.infinity, child: _RushButton(job: widget.job)),
         ],
       ),
@@ -293,6 +296,127 @@ class _StepList extends StatelessWidget {
         for (final p in job.pending)
           _row(Icons.radio_button_unchecked_rounded, AppColors.line, stepIconPath(p.label), p.label, p.station.label),
       ],
+    );
+  }
+}
+
+/// Kartta adımlar yan yana: biten soluk ve onaylı, süren mavi çerçeveli ve
+/// kalan süreli, oyuncuyu bekleyen amber "Sıra sende", sıradakiler silik.
+class _StepStrip extends StatelessWidget {
+  const _StepStrip({required this.job, required this.at});
+
+  final PrepJob job;
+  final DateTime at;
+
+  @override
+  Widget build(BuildContext context) {
+    final waitingForPlayer = job.needsActionAt(at);
+    final tiles = <Widget>[
+      for (final s in job.slots)
+        if (waitingForPlayer && identical(s, job.slots.last))
+          _StepTile(label: s.label, state: _TileState.player, note: 'Sıra sende')
+        else if (!at.isBefore(s.end))
+          _StepTile(label: s.label, state: _TileState.done, note: 'Bitti')
+        else if (!at.isBefore(s.start))
+          _StepTile(
+            label: s.label,
+            state: _TileState.now,
+            note: '${formatRemaining(s.end.difference(at))} kaldı',
+            progress: at.difference(s.start).inMilliseconds / s.end.difference(s.start).inMilliseconds,
+          )
+        else
+          _StepTile(label: s.label, state: _TileState.next, note: '${s.end.difference(s.start).inMinutes} dk'),
+      for (final p in job.pending) _StepTile(label: p.label, state: _TileState.next, note: '${p.minutes} dk'),
+    ];
+    return IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          for (final (i, t) in tiles.indexed) ...[
+            if (i > 0) const SizedBox(width: AppSpace.sm),
+            Expanded(child: t),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+enum _TileState { done, now, player, next }
+
+class _StepTile extends StatelessWidget {
+  const _StepTile({required this.label, required this.state, required this.note, this.progress});
+
+  final String label;
+  final _TileState state;
+  final String note;
+  final double? progress;
+
+  @override
+  Widget build(BuildContext context) {
+    final (Color fill, Color border, Color noteColor) = switch (state) {
+      _TileState.done => (Colors.transparent, Colors.transparent, AppColors.success),
+      _TileState.now => (AppColors.suruyorSoft, AppColors.suruyor, AppColors.suruyorText),
+      _TileState.player => (AppColors.bekliyorSoft, AppColors.bekliyor, AppColors.bekliyorText),
+      _TileState.next => (AppColors.surface, AppColors.line, AppColors.inkMuted),
+    };
+    final faded = state == _TileState.done || state == _TileState.next;
+    return Container(
+      padding: const EdgeInsets.fromLTRB(AppSpace.xs, AppSpace.sm, AppSpace.xs, AppSpace.sm),
+      decoration: BoxDecoration(
+        color: fill,
+        border: Border.all(color: border, width: 2),
+        borderRadius: BorderRadius.circular(AppSpace.lg),
+      ),
+      child: Stack(
+        alignment: Alignment.topCenter,
+        children: [
+          Column(
+            children: [
+              Opacity(
+                opacity: faded ? 0.55 : 1,
+                child: Image.asset(stepIconPath(label), width: 40, height: 40),
+              ),
+              const SizedBox(height: AppSpace.xs),
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(label, maxLines: 1, style: AppText.label(size: 12, color: AppColors.ink)),
+              ),
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  note,
+                  maxLines: 1,
+                  style: AppText.label(size: 11, color: noteColor).copyWith(
+                    fontFeatures: const [FontFeature.tabularFigures()],
+                  ),
+                ),
+              ),
+              if (progress != null) ...[
+                const SizedBox(height: AppSpace.xs),
+                FractionallySizedBox(
+                  widthFactor: 0.8,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(AppRadius.pill),
+                    child: LinearProgressIndicator(
+                      minHeight: 4,
+                      value: progress!.clamp(0.0, 1.0),
+                      backgroundColor: AppColors.surface,
+                      valueColor: const AlwaysStoppedAnimation(AppColors.suruyor),
+                    ),
+                  ),
+                ),
+              ],
+            ],
+          ),
+          if (state == _TileState.done)
+            const Positioned(
+              top: 0,
+              right: 0,
+              child: Icon(Icons.check_circle_rounded, size: 18, color: AppColors.success),
+            ),
+        ],
+      ),
     );
   }
 }

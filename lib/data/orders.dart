@@ -25,7 +25,7 @@ const _tozHavani = ToolRequirement(
 
 const List<PrescriptionOrder> prescriptionOrders = [
   PrescriptionOrder(
-    doctorName: 'Dr. Selin Arı',
+    doctorName: 'Dr. Selin',
     doctorBranch: 'Dermatoloji',
     patientName: 'M. Yılmaz',
     magistralName: '%5 Salisilik Asitli Vazelin',
@@ -51,7 +51,7 @@ const List<PrescriptionOrder> prescriptionOrders = [
     ],
   ),
   PrescriptionOrder(
-    doctorName: 'Dr. Kerem Öz',
+    doctorName: 'Dr. Kerem',
     doctorBranch: 'Aile Hekimi',
     patientName: 'A. Demir',
     magistralName: 'Çinko Oksit Merhemi',
@@ -73,7 +73,7 @@ const List<PrescriptionOrder> prescriptionOrders = [
     ],
   ),
   PrescriptionOrder(
-    doctorName: 'Dr. Deniz Kaya',
+    doctorName: 'Dr. Deniz',
     doctorBranch: 'Dermatoloji',
     patientName: 'E. Şahin',
     magistralName: 'Hidrofil Merhem',

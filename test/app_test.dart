@@ -66,7 +66,7 @@ void main() {
     await _tallScreen(tester);
     await tester.pumpWidget(MajistralApp(store: await _store()));
     expect(find.byType(PrescriptionCard), findsNWidgets(prescriptionOrders.length));
-    expect(find.text('Dr. Selin Arı · Dermatoloji'), findsOneWidget);
+    expect(find.text('Dr. Selin · Dermatoloji · Hasta M. Yılmaz', findRichText: true), findsOneWidget);
   });
 
   testWidgets('hazırlık gerçek zamanda sürer, hazır olunca teslim edilir', (tester) async {
@@ -111,7 +111,8 @@ void main() {
     await tester.tap(find.text('Reçeteler'));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
-    expect(find.text('Hazırlanıyor'), findsNWidgets(2)); // grup başlığı ve kartın sayacı
+    expect(find.text('Hazırlanıyor'), findsOneWidget); // grup başlığı
+    expect(find.text('sonra hazır'), findsOneWidget); // kartın sayacı
     expect(find.text('3 reçete · 1 hazırlanıyor'), findsOneWidget);
 
     clock = clock.add(order.prepTime);

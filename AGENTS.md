@@ -91,6 +91,10 @@ lib/
   mavi, yeni kiremit); renkler `AppColors` içinde, yazı tonları açık zeminde ≥5,1:1 ölçüldü. Reçeteler
   sekmesi bu sırayla gruplanır; kartın şeridi ve süren işin göstergeleri grubun rengini taşır.
   Birincil düğme her zaman kiremit.
+- Süren iş kartı (Tuğrul, 2026-10-27): iş başlayınca reçete tek satıra katlanır ("Göster" açar),
+  yerine adım şeridi gelir (biten onaylı, süren mavi, oyuncuyu bekleyen amber, sıradaki silik) ve
+  büyük "… sonra hazır" sayacı. Acele düğmesinin üstüne bedel satırı ya da şimşek ikonları konmaz.
+  Hekim adı yalnız unvan ve ilk ad ("Dr. Deniz").
 - Market hammaddeleri (2026-10-26): `chemicalGroups`, 6 rol grubunda 31 madde; liste ve kaynakları
   beyinde (`knowledge/concepts/majistral-hammaddeler.md`). Reçeteye yeni madde girerse markete de
   eklenir; her maddenin oyuncak blok ikonu olur (`test/market_items_test.dart` ikisini de denetler).
