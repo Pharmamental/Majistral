@@ -111,7 +111,7 @@ lib/
   yuvarlak (`PrescriptionStubBorder`).
 - Alt çubuk (Tuğrul, 2026-10-27): ortada laboratuvar, çubuktan taşan büyük daire (porselen havan);
   yanlarda Reçeteler (reçete koçanı) ve Market (tenteli dükkân) oyuncak blok ikonları
-  (`GameTabBar`). Seçim her yerde aynı: adı kobalt yazı + altında kısa kobalt çizgi (`SelectionMark`); daire seçimle renk değiştirmez. İkonlar `uretici.html` "Sekmeler" grubunda.
+  (`GameTabBar`). Seçim her yerde aynı: adı kobalt yazı + altında kısa kobalt çizgi (`SelectionMark`); alt çubukta çizgi sekmeden sekmeye kayar, yolda uzayıp yerinde kısalır (`_SlidingMark`, Tuğrul 2026-10-27); daire seçimle renk değiştirmez. İkonlar `uretici.html` "Sekmeler" grubunda.
 - Market hammaddeleri (2026-10-26): `chemicalGroups`, 6 rol grubunda 31 madde; liste ve kaynakları
   beyinde (`knowledge/concepts/majistral-hammaddeler.md`). Reçeteye yeni madde girerse markete de
   eklenir; her maddenin oyuncak blok ikonu olur (`test/market_items_test.dart` ikisini de denetler).

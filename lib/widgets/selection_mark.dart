@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../theme/tokens.dart';
 
-/// Seçili öğenin altındaki kısa kobalt çizgi (Tuğrul, 2026-10-27: alt çubukta
-/// ve duvardaki fişlerde seçim aynı yolla gösterilir). Seçilmeyende görünmez ama
+/// Seçili fişin altındaki kısa kobalt çizgi (Tuğrul, 2026-10-27: alt çubuktaki
+/// kayan çizgiyle aynı görünüş, `_SlidingMark`). Seçilmeyende görünmez ama
 /// yerini tutar, böylece seçim değişince yerleşim kaymaz.
 class SelectionMark extends StatelessWidget {
   const SelectionMark({super.key, required this.selected});

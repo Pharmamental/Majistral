@@ -1,7 +1,9 @@
+
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
 import '../theme/tokens.dart';
-import 'selection_mark.dart';
 
 /// Alt çubuktaki bir bölüm: adı ve oyuncak blok ikonu.
 typedef GameTab = ({String label, String image});
@@ -9,8 +11,8 @@ typedef GameTab = ({String label, String image});
 /// Alt çubuk (Tuğrul, 2026-10-27, "ortada laboratuvar"): oyunun kalbi
 /// laboratuvar ortada, çubuktan taşan büyük porselen daire; yanlarda Reçeteler
 /// ve Market. Seçili sekme adının kobalt yazısı ve altındaki kısa kobalt
-/// çizgiyle ([SelectionMark]) belli olur, daire seçimle değişmez; seçilmeyen
-/// ikonlar soluk durur. Taşan daire çubuğun kendi
+/// çizgiyle belli olur; çizgi sekmeden sekmeye kayar ([_SlidingMark]), daire
+/// seçimle değişmez; seçilmeyen ikonlar soluk durur. Taşan daire çubuğun kendi
 /// alanında kalır, böylece dokunulabilir.
 class GameTabBar extends StatelessWidget {
   const GameTabBar({
@@ -31,6 +33,22 @@ class GameTabBar extends StatelessWidget {
 
   static const double _barHeight = 76;
   static const double _lift = 30;
+
+  /// Ortadaki bölüm biraz geniş.
+  static int _flex(int i) => i == 1 ? 11 : 10;
+
+  /// Her bölümün ortası, çubuk genişliğinin oranı olarak (0–1).
+  List<double> _centers() {
+    final flexes = [for (var i = 0; i < tabs.length; i++) _flex(i)];
+    final total = flexes.reduce((a, b) => a + b);
+    final centers = <double>[];
+    var start = 0;
+    for (final f in flexes) {
+      centers.add((start + f / 2) / total);
+      start += f;
+    }
+    return centers;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +74,7 @@ class GameTabBar extends StatelessWidget {
               children: [
                 for (final (i, tab) in tabs.indexed)
                   Expanded(
-                    flex: i == 1 ? 11 : 10,
+                    flex: _flex(i),
                     child: _TabButton(
                       tab: tab,
                       big: i == 1,
@@ -67,6 +85,12 @@ class GameTabBar extends StatelessWidget {
                   ),
               ],
             ),
+          ),
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: bottom + AppSpace.xs,
+            child: _SlidingMark(centers: _centers(), index: index),
           ),
         ],
       ),
@@ -151,11 +175,82 @@ class _TabButton extends StatelessWidget {
                 maxLines: 1,
                 style: AppText.label(size: 12, color: selected ? AppColors.accentText : AppColors.inkMuted),
               ),
-              const SizedBox(height: 3),
-              SelectionMark(selected: selected),
+              // Kayan seçim çizgisinin yeri ([_SlidingMark] çubuğun üstünde çizer).
+              const SizedBox(height: 3 + 4),
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// Seçili sekmenin altındaki kobalt çizgi. Sekme değişince eski yerinden yenisine
+/// kayar ve yolun ortasında biraz uzayıp yerine oturunca kısalır (Tuğrul,
+/// 2026-10-27). "Hareketi azalt" açıksa atlamadan yerine geçer.
+class _SlidingMark extends StatefulWidget {
+  const _SlidingMark({required this.centers, required this.index});
+
+  /// Bölüm ortaları, çubuk genişliğinin oranı olarak.
+  final List<double> centers;
+  final int index;
+
+  @override
+  State<_SlidingMark> createState() => _SlidingMarkState();
+}
+
+class _SlidingMarkState extends State<_SlidingMark> with SingleTickerProviderStateMixin {
+  static const double _width = 20;
+  static const double _stretch = 22;
+
+  late final _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 340), value: 1);
+  late double _from = widget.centers[widget.index];
+
+  @override
+  void didUpdateWidget(_SlidingMark old) {
+    super.didUpdateWidget(old);
+    if (old.index == widget.index) return;
+    // Çizginin şu anki yeri; kayarken yeni dokunuş gelirse oradan devam eder.
+    final t = Curves.easeOutCubic.transform(_controller.value);
+    _from += (old.centers[old.index] - _from) * t;
+    if (MediaQuery.disableAnimationsOf(context)) {
+      _controller.value = 1;
+    } else {
+      _controller.forward(from: 0);
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) => AnimatedBuilder(
+        animation: _controller,
+        builder: (context, _) {
+          final v = _controller.value;
+          final t = Curves.easeOutCubic.transform(v);
+          final center = _from + (widget.centers[widget.index] - _from) * t;
+          final width = _width + _stretch * math.sin(math.pi * v);
+          return Align(
+            alignment: Alignment.centerLeft,
+            child: Padding(
+              padding: EdgeInsets.only(left: constraints.maxWidth * center - width / 2),
+              child: Container(
+                width: width,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: AppColors.kobalt,
+                  borderRadius: BorderRadius.circular(AppRadius.pill),
+                ),
+              ),
+            ),
+          );
+        },
       ),
     );
   }
