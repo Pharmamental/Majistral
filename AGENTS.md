@@ -97,9 +97,9 @@ lib/
   Birincil düğme her zaman kobalt.
 - Tezgâh (Tuğrul, 2026-10-27): Reçeteler başlığı açık duvarda, reçeteler ahşap tezgâhta yan yana;
   sağa sola kaydırılır (`PageView`, yanındaki kartın kenarı görünür). Kartlar tezgâhın raf kenarına
-  iki parça kâğıt bantla asılı, hafif eğik (`PaperTape`); durum kartın başında çipte.
+  iki parça kâğıt bantla asılı, düz (eğiklik Tuğrul isteğiyle kalktı, `PaperTape`); durum kartın başında çipte.
   Kartı tezgâhın altına uzatıp düğmeyi alta sabitlemek denendi, Tuğrul geri aldırdı. Duvarda bütün reçetelerin küçük fişleri
-  (durum + ad), dokununca o kart gelir; gösterilen kartın fişi durum renginde çerçeveli.
+  (durum + ad), dokununca o kart gelir; bütün fişler aynı boyda, düz ve durum renginde çerçeveli; gösterilen kartın fişinin altında kısa kobalt çizgi.
   (`CounterTop`, `orders_screen.dart`). Laboratuvar ve Market de tezgâhta:
   başlık (ve Market sekmeleri) duvarda, liste tezgâhın içinde kayar.
 - Süren iş kartı (Tuğrul, 2026-10-27): iş başlayınca madde listesi kartta görünmez; sağ üstte
@@ -111,7 +111,7 @@ lib/
   yuvarlak (`PrescriptionStubBorder`).
 - Alt çubuk (Tuğrul, 2026-10-27): ortada laboratuvar, çubuktan taşan büyük daire (porselen havan);
   yanlarda Reçeteler (reçete koçanı) ve Market (tenteli dükkân) oyuncak blok ikonları küçük
-  dairelerde (`GameTabBar`). İkonlar `uretici.html` "Sekmeler" grubunda.
+  (`GameTabBar`). Seçim her yerde aynı: adı kobalt yazı + altında kısa kobalt çizgi (`SelectionMark`); daire seçimle renk değiştirmez. İkonlar `uretici.html` "Sekmeler" grubunda.
 - Market hammaddeleri (2026-10-26): `chemicalGroups`, 6 rol grubunda 31 madde; liste ve kaynakları
   beyinde (`knowledge/concepts/majistral-hammaddeler.md`). Reçeteye yeni madde girerse markete de
   eklenir; her maddenin oyuncak blok ikonu olur (`test/market_items_test.dart` ikisini de denetler).

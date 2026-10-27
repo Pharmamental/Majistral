@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 
 import '../theme/tokens.dart';
+import 'selection_mark.dart';
 
 /// Alt çubuktaki bir bölüm: adı ve oyuncak blok ikonu.
 typedef GameTab = ({String label, String image});
 
 /// Alt çubuk (Tuğrul, 2026-10-27, "ortada laboratuvar"): oyunun kalbi
-/// laboratuvar ortada, çubuktan taşan büyük bir daire; yanlarda Reçeteler ve
-/// Market daha küçük dairelerde. İkon kutuları daire (köşe dili: eşya ikonu).
-/// Seçili sekme kobalt çerçeve ve açık kobalt dolguyla, adı da kobalt yazıyla
-/// belli olur; seçilmeyen ikonlar soluk durur. Taşan daire çubuğun kendi
+/// laboratuvar ortada, çubuktan taşan büyük porselen daire; yanlarda Reçeteler
+/// ve Market. Seçili sekme adının kobalt yazısı ve altındaki kısa kobalt
+/// çizgiyle ([SelectionMark]) belli olur, daire seçimle değişmez; seçilmeyen
+/// ikonlar soluk durur. Taşan daire çubuğun kendi
 /// alanında kalır, böylece dokunulabilir.
 class GameTabBar extends StatelessWidget {
   const GameTabBar({
@@ -95,16 +96,14 @@ class _TabButton extends StatelessWidget {
       width: size,
       height: size,
       alignment: Alignment.center,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: selected ? AppColors.kobaltSoft : (big ? AppColors.surface : Colors.transparent),
-        border: big || selected
-            ? Border.all(color: selected ? AppColors.kobalt : AppColors.line, width: big ? 3 : 2)
-            : null,
-        boxShadow: big
-            ? [BoxShadow(color: selected ? AppColors.kobaltDark : AppColors.line, offset: const Offset(0, 4))]
-            : null,
-      ),
+      decoration: big
+          ? const BoxDecoration(
+              shape: BoxShape.circle,
+              color: AppColors.surface,
+              border: Border.fromBorderSide(BorderSide(color: AppColors.line, width: 3)),
+              boxShadow: [BoxShadow(color: AppColors.line, offset: Offset(0, 4))],
+            )
+          : null,
       child: Opacity(
         opacity: selected ? 1 : 0.6,
         child: Image.asset(tab.image, width: size * 0.78, height: size * 0.78),
@@ -119,7 +118,7 @@ class _TabButton extends StatelessWidget {
         behavior: HitTestBehavior.opaque,
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.only(bottom: AppSpace.sm),
+          padding: const EdgeInsets.only(bottom: AppSpace.xs),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -152,6 +151,8 @@ class _TabButton extends StatelessWidget {
                 maxLines: 1,
                 style: AppText.label(size: 12, color: selected ? AppColors.accentText : AppColors.inkMuted),
               ),
+              const SizedBox(height: 3),
+              SelectionMark(selected: selected),
             ],
           ),
         ),

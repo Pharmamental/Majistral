@@ -1,5 +1,3 @@
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
 
 import '../data/orders.dart';
@@ -9,6 +7,7 @@ import '../theme/tokens.dart';
 import '../widgets/counter_top.dart';
 import '../widgets/paper_tape.dart';
 import '../widgets/prescription_card.dart';
+import '../widgets/selection_mark.dart';
 
 /// Reçeteler sekmesi (ana döngünün başladığı yer). Duvarda başlık ve bütün
 /// reçetelerin küçük fişleri: oyuncu hangisinin hazır, hangisinin kendisini
@@ -91,7 +90,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                   children: [
                     for (final (i, e) in deck.indexed) ...[
                       if (i > 0) const SizedBox(width: AppSpace.sm),
-                      _Slip(entry: e, index: i, selected: i == page, onTap: () => _show(i)),
+                      _Slip(entry: e, selected: i == page, onTap: () => _show(i)),
                     ],
                   ],
                 ),
@@ -102,8 +101,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
         Expanded(
           child: CounterTop(
             // Kartlar raf kenarına bantla asılı: bant raf kenarına taşar, bu
-            // yüzden sayfa kırpılmaz. Kart bantla birlikte hafif eğik durur;
-            // eğim kartın sırasına göre sağa sola değişir.
+            // yüzden sayfa kırpılmaz. Kartlar düz durur (Tuğrul, 2026-10-27).
             child: PageView.builder(
               controller: _controller,
               clipBehavior: Clip.none,
@@ -116,22 +114,18 @@ class _OrdersScreenState extends State<OrdersScreen> {
                   AppSpace.xs + 2,
                   AppSpace.md + MediaQuery.paddingOf(context).bottom,
                 ),
-                child: Transform.rotate(
-                  angle: (i.isEven ? -0.8 : 0.7) * math.pi / 180,
-                  alignment: Alignment.topCenter,
-                  child: Stack(
-                    clipBehavior: Clip.none,
-                    children: [
-                      Positioned.fill(
-                        top: AppSpace.xs,
-                        child: SingleChildScrollView(
-                          child: PrescriptionCard(order: deck[i].order, showStatus: true),
-                        ),
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    Positioned.fill(
+                      top: AppSpace.xs,
+                      child: SingleChildScrollView(
+                        child: PrescriptionCard(order: deck[i].order, showStatus: true),
                       ),
-                      const Positioned(top: -CounterTop.lip + 3, left: AppSpace.xxl, child: PaperTape(angle: -6)),
-                      const Positioned(top: -CounterTop.lip + 4, right: AppSpace.xxl, child: PaperTape(angle: 5)),
-                    ],
-                  ),
+                    ),
+                    const Positioned(top: -CounterTop.lip + 3, left: AppSpace.xxl, child: PaperTape(angle: -6)),
+                    const Positioned(top: -CounterTop.lip + 4, right: AppSpace.xxl, child: PaperTape(angle: 5)),
+                  ],
                 ),
               ),
             ),
@@ -143,12 +137,12 @@ class _OrdersScreenState extends State<OrdersScreen> {
 }
 
 /// Duvardaki küçük reçete fişi: durumu ve ilacın adı, üstünde bir parça bant.
-/// Tezgâhta gösterilen kartın fişi durum renginde çerçeveli ve biraz büyük.
+/// Bütün fişler aynı boyda, düz ve durum renginde çerçeveli (Tuğrul,
+/// 2026-10-27); tezgâhta gösterilen kartın fişinin altında kobalt çizgi var.
 class _Slip extends StatelessWidget {
-  const _Slip({required this.entry, required this.index, required this.selected, required this.onTap});
+  const _Slip({required this.entry, required this.selected, required this.onTap});
 
   final _DeckEntry entry;
-  final int index;
   final bool selected;
   final VoidCallback onTap;
 
@@ -162,12 +156,10 @@ class _Slip extends StatelessWidget {
       excludeSemantics: true,
       child: GestureDetector(
         onTap: onTap,
-        child: AnimatedScale(
-          scale: selected ? 1 : 0.94,
-          duration: const Duration(milliseconds: 200),
-          child: Transform.rotate(
-            angle: (index.isEven ? 1.2 : -1.0) * math.pi / 180,
-            child: Stack(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Stack(
               clipBehavior: Clip.none,
               alignment: Alignment.topCenter,
               children: [
@@ -177,14 +169,7 @@ class _Slip extends StatelessWidget {
                   decoration: ShapeDecoration(
                     color: AppColors.surface,
                     shape: const PrescriptionStubBorder(),
-                    shadows: [
-                      BoxShadow(
-                        color: selected ? status.color.withValues(alpha: 0.45) : const Color(0x1A172033),
-                        blurRadius: selected ? 0 : 6,
-                        spreadRadius: selected ? 2 : 0,
-                        offset: selected ? Offset.zero : const Offset(0, 2),
-                      ),
-                    ],
+                    shadows: [BoxShadow(color: status.color.withValues(alpha: 0.45), spreadRadius: 2)],
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -208,11 +193,15 @@ class _Slip extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(height: AppSpace.xs),
-                      Text(
-                        entry.order.magistralName,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: AppText.title(size: 13),
+                      // İki satırlık yer hep ayrılır, kısa adlı fiş de aynı boyda kalır.
+                      SizedBox(
+                        height: 36,
+                        child: Text(
+                          entry.order.magistralName,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: AppText.title(size: 13),
+                        ),
                       ),
                     ],
                   ),
@@ -220,7 +209,9 @@ class _Slip extends StatelessWidget {
                 const Positioned(top: -8, child: PaperTape(width: 36, height: 14)),
               ],
             ),
-          ),
+            const SizedBox(height: AppSpace.sm),
+            SelectionMark(selected: selected),
+          ],
         ),
       ),
     );
