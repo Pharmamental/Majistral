@@ -13,6 +13,11 @@ import '../models/prescription.dart';
 // - Salisilik asitli vazelin: Prag Charles Üni. föyündeki %1 formülün
 //   levigasyon oranı (asidin yarısı kadar sıvı parafin) %5'e uygulandı.
 //
+// Kullanım alanları (usedFor, 2026-10-27): salisilik asit Drugs.com (AHFS)
+// monografı ve beyindeki majistral-ilaclar notu; çinko oksit merhemi
+// Kaiser Permanente ve MedicineNet ilaç bilgileri; hidrofil merhem suyla
+// uzaklaştırılabilen baz (farmasötik teknoloji ders notları, içerik haritası).
+//
 // Alet kuralları ASHP nonsteril majistral bülteninden: cam havan kaygan ve
 // toz ezmez (sıvı, boyayan madde için); porselen ve Wedgwood toz/kristal için.
 // Salisilik asit çelikle tepkimeye girer. Parşömen kremin suyunu emer.
@@ -30,6 +35,7 @@ const List<PrescriptionOrder> prescriptionOrders = [
     patientName: 'M. Yılmaz',
     magistralName: '%5 Salisilik Asitli Vazelin',
     purpose: 'Kalınlaşmış, nasırlı deriyi yumuşatma',
+    usedFor: 'Nasır, kallus ve siğil gibi kalınlaşmış deride',
     ingredients: [
       Ingredient('Salisilik Asit', '%5'),
       Ingredient('Sıvı Parafin', '1,25 g'),
@@ -56,6 +62,7 @@ const List<PrescriptionOrder> prescriptionOrders = [
     patientName: 'A. Demir',
     magistralName: 'Çinko Oksit Merhemi',
     purpose: 'Cildi koruyan, kurutan bariyer merhem',
+    usedFor: 'Pişik, sürtünme tahrişi ve hafif deri tahrişlerinde',
     ingredients: [
       Ingredient('Çinko Oksit', '%20'),
       Ingredient('Sıvı Parafin', '%15'),
@@ -78,6 +85,7 @@ const List<PrescriptionOrder> prescriptionOrders = [
     patientName: 'E. Şahin',
     magistralName: 'Hidrofil Merhem',
     purpose: 'Suyla yıkanabilen krem tipi baz',
+    usedFor: 'Etkin maddeleri taşıyan baz olarak; suyla kolay temizlenmesi istenen kremlerde',
     ingredients: [
       Ingredient('Metilparaben', '0,25 g'),
       Ingredient('Propilparaben', '0,15 g'),

@@ -6,6 +6,7 @@ import '../screens/preparation_screen.dart';
 import '../theme/tokens.dart';
 import 'chunky_button.dart';
 import 'job_status.dart';
+import 'recipe_sheet.dart';
 
 /// Bir reçetenin oyuncu açısından durumu; renk ve etiket buradan gelir.
 enum OrderStatus {
@@ -33,7 +34,8 @@ enum OrderStatus {
 /// Reçete kartı. Solda durum renginde şerit (durumun adı grup başlığında);
 /// "Rp." ile majistral, altında hekim ve hasta. Yeni reçetede maddeler gerçek
 /// reçetedeki gibi ad–miktar sütunlarında ve süre başlıkta; iş başlayınca liste
-/// tek satıra katlanır, yerini adım şeridi alır. En altta kartın tek aksiyonu.
+/// "Reçete" düğmesine iner (pencerede açılır), yerini adım şeridi alır. En
+/// altta kartın tek aksiyonu.
 class PrescriptionCard extends StatelessWidget {
   const PrescriptionCard({super.key, required this.order});
 
@@ -64,36 +66,48 @@ class PrescriptionCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
-                      crossAxisAlignment: CrossAxisAlignment.baseline,
-                      textBaseline: TextBaseline.alphabetic,
                       children: [
-                        Text('Rp.', style: AppText.display(size: 22, color: AppColors.accentText)),
-                        const SizedBox(width: AppSpace.sm),
-                        Expanded(child: Text(order.magistralName, style: AppText.title(size: 20))),
-                        if (job == null) ...[
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.baseline,
+                                textBaseline: TextBaseline.alphabetic,
+                                children: [
+                                  Text('Rp.', style: AppText.display(size: 22, color: AppColors.accentText)),
+                                  const SizedBox(width: AppSpace.sm),
+                                  Expanded(child: Text(order.magistralName, style: AppText.title(size: 20))),
+                                  if (job == null) ...[
+                                    const SizedBox(width: AppSpace.sm),
+                                    Text('${order.prepTime.inMinutes} dk', style: AppText.label(size: 12)),
+                                  ],
+                                ],
+                              ),
+                              Text.rich(
+                                TextSpan(children: [
+                                  TextSpan(text: '${order.doctorName} · ${order.doctorBranch} · Hasta '),
+                                  TextSpan(
+                                    text: order.patientName,
+                                    style: AppText.label(size: 12, color: AppColors.ink),
+                                  ),
+                                ]),
+                                style: AppText.label(size: 12),
+                              ),
+                            ],
+                          ),
+                        ),
+                        if (job != null) ...[
                           const SizedBox(width: AppSpace.sm),
-                          Text('${order.prepTime.inMinutes} dk', style: AppText.label(size: 12)),
+                          _RecipeButton(order: order),
                         ],
                       ],
-                    ),
-                    Text.rich(
-                      TextSpan(children: [
-                        TextSpan(text: '${order.doctorName} · ${order.doctorBranch} · Hasta '),
-                        TextSpan(
-                          text: order.patientName,
-                          style: AppText.label(size: 12, color: AppColors.ink),
-                        ),
-                      ]),
-                      style: AppText.label(size: 12),
                     ),
                     if (job == null) ...[
                       const SizedBox(height: AppSpace.xs),
                       Text(order.purpose, style: AppText.body(size: 14, color: AppColors.inkMuted)),
                       const SizedBox(height: AppSpace.md),
                       _Formula(order: order),
-                    ] else ...[
-                      const SizedBox(height: AppSpace.md),
-                      _FoldedFormula(order: order),
                     ],
                     const SizedBox(height: AppSpace.lg),
                     if (job != null)
@@ -120,71 +134,36 @@ class PrescriptionCard extends StatelessWidget {
   }
 }
 
-/// Süren işte reçete tek satır: madde sayısı ve amacı, varsa toplam notu;
-/// dokununca madde listesi açılır.
-class _FoldedFormula extends StatefulWidget {
-  const _FoldedFormula({required this.order});
+/// Süren işte reçetenin yerine küçük düğme: maddeler, miktarlar ve kullanım
+/// alanı pencerede açılır.
+class _RecipeButton extends StatelessWidget {
+  const _RecipeButton({required this.order});
 
   final PrescriptionOrder order;
 
   @override
-  State<_FoldedFormula> createState() => _FoldedFormulaState();
-}
-
-class _FoldedFormulaState extends State<_FoldedFormula> {
-  bool _open = false;
-
-  @override
   Widget build(BuildContext context) {
-    final order = widget.order;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Material(
-          color: AppColors.surfaceMuted,
-          borderRadius: BorderRadius.circular(AppSpace.md),
-          child: InkWell(
-            borderRadius: BorderRadius.circular(AppSpace.md),
-            onTap: () => setState(() => _open = !_open),
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(minHeight: 44),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: AppSpace.md, vertical: AppSpace.sm),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            '${order.ingredients.length} madde · ${order.purpose}',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: AppText.body(size: 14, weight: FontWeight.w600),
-                          ),
-                          if (order.batchNote != null)
-                            Text(order.batchNote!, style: AppText.label(size: 12, color: AppColors.accentText)),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: AppSpace.sm),
-                    Text(_open ? 'Gizle' : 'Göster', style: AppText.label(size: 12)),
-                    Icon(
-                      _open ? Icons.expand_less_rounded : Icons.expand_more_rounded,
-                      size: 20,
-                      color: AppColors.inkMuted,
-                    ),
-                  ],
-                ),
-              ),
+    return Material(
+      color: AppColors.surfaceMuted,
+      shape: const StadiumBorder(side: BorderSide(color: AppColors.line)),
+      child: InkWell(
+        customBorder: const StadiumBorder(),
+        onTap: () => openRecipe(context, order),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 44),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: AppSpace.md),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.receipt_long_rounded, size: 18, color: AppColors.inkMuted),
+                const SizedBox(width: AppSpace.xs),
+                Text('Reçete', style: AppText.label(size: 13, color: AppColors.ink)),
+              ],
             ),
           ),
         ),
-        if (_open) ...[
-          const SizedBox(height: AppSpace.xs),
-          _Formula(order: order, showNote: false),
-        ],
-      ],
+      ),
     );
   }
 }
@@ -192,10 +171,9 @@ class _FoldedFormulaState extends State<_FoldedFormula> {
 /// Reçetenin madde satırları: solda ad, sağda reçetede yazan miktar; sayılar
 /// hizalı. Formül başka toplam için yazıldıysa altta not.
 class _Formula extends StatelessWidget {
-  const _Formula({required this.order, this.showNote = true});
+  const _Formula({required this.order});
 
   final PrescriptionOrder order;
-  final bool showNote;
 
   @override
   Widget build(BuildContext context) {
@@ -224,7 +202,7 @@ class _Formula extends StatelessWidget {
               ),
             ),
           ],
-          if (showNote && order.batchNote != null) ...[
+          if (order.batchNote != null) ...[
             const Divider(height: 1, color: AppColors.line),
             Padding(
               padding: const EdgeInsets.only(top: AppSpace.sm, bottom: AppSpace.xs),

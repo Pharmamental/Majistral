@@ -55,9 +55,10 @@ lib/
 
 ## Arayüz kuralları (2026-10-25, Tasarım Rehberi'nden)
 - Renk 60-30-10: krem zemin, beyaz kart, kiremit yalnız birincil aksiyon. Hazır/teslim yeşil.
-- Yazı: başlık ve düğme Baloo 2, gövde Rubik; ikisi `assets/fonts/`'ta gömülü (OFL). Değişken
-  font olduğu için kalınlık `AppText` ile verilir (`fontVariations`); düz `TextStyle(fontWeight)`
-  bazı cihazlarda kalın çizmez. Rubik'te `→` yok; `›` kullan.
+- Yazı: başlık ve düğme Baloo 2, gövde Nunito (2026-10-27); ikisi `assets/fonts/`'ta gömülü (OFL).
+  Değişken font olduğu için kalınlık `AppText` ile verilir (`fontVariations`); düz
+  `TextStyle(fontWeight)` bazı cihazlarda kalın çizmez. Ok için `›` kullan. Yeni font eklemeden önce
+  dosyada ş, ğ, İ var mı tara: Fredoka, Lilita One, Titan One, Sniglet'te yok.
 - Boşluk 4-8-12-16-20-24-32-40-48, köşe 20, çip tam yuvarlak, dokunma alanı en az 44.
 - Birincil aksiyon altta (başparmak bölgesi): kartın en altı ya da ekranın sabit alt çubuğu.
 - Öğrenme ekranı (Hazırlama) sade; kutlama (yıldız animasyonu) yalnız teslimde.
@@ -91,8 +92,9 @@ lib/
   mavi, yeni kiremit); renkler `AppColors` içinde, yazı tonları açık zeminde ≥5,1:1 ölçüldü. Reçeteler
   sekmesi bu sırayla gruplanır; kartın şeridi ve süren işin göstergeleri grubun rengini taşır.
   Birincil düğme her zaman kiremit.
-- Süren iş kartı (Tuğrul, 2026-10-27): iş başlayınca reçete tek satıra katlanır ("Göster" açar),
-  yerine adım şeridi gelir (biten onaylı, süren mavi, oyuncuyu bekleyen amber, sıradaki silik) ve
+- Süren iş kartı (Tuğrul, 2026-10-27): iş başlayınca madde listesi kartta görünmez; sağ üstte
+  "Reçete" düğmesi pencere açar (miktar, her maddenin marketteki görevi, ne işe yarar `purpose`,
+  neyde kullanılır `usedFor`; kaynakları `lib/data/orders.dart` başında). Yerine adım şeridi gelir (biten onaylı, süren mavi, oyuncuyu bekleyen amber, sıradaki silik) ve
   büyük "… sonra hazır" sayacı. Acele düğmesinin üstüne bedel satırı ya da şimşek ikonları konmaz.
   Hekim adı yalnız unvan ve ilk ad ("Dr. Deniz").
 - Market hammaddeleri (2026-10-26): `chemicalGroups`, 6 rol grubunda 31 madde; liste ve kaynakları

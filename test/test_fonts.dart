@@ -17,7 +17,7 @@ Future<void> loadAppFonts() async {
   }
 
   await load('Baloo2', ['assets/fonts/Baloo2.ttf']);
-  await load('Rubik', ['assets/fonts/Rubik.ttf']);
+  await load('Nunito', ['assets/fonts/Nunito.ttf']);
 
   // Material ikonları Flutter SDK'nın içinden.
   final flutterRoot = Platform.environment['FLUTTER_ROOT'];

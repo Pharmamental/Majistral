@@ -88,6 +88,7 @@ class PrescriptionOrder {
     required this.patientName,
     required this.magistralName,
     required this.purpose,
+    required this.usedFor,
     required this.ingredients,
     required this.steps,
     this.batchNote,
@@ -113,7 +114,11 @@ class PrescriptionOrder {
   final String doctorBranch;
   final String patientName;
   final String magistralName;
+  /// Ne işe yarar (kartta ve reçete penceresinde).
   final String purpose;
+
+  /// Neyde kullanılır (reçete penceresinde).
+  final String usedFor;
 
   /// Doğru sırada verilen adımlar.
   final List<PrescriptionStep> steps;

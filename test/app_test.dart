@@ -113,6 +113,14 @@ void main() {
     await tester.pump(const Duration(milliseconds: 300));
     expect(find.text('Hazırlanıyor'), findsOneWidget); // grup başlığı
     expect(find.text('sonra hazır'), findsOneWidget); // kartın sayacı
+
+    // Süren işte reçete düğmeyle açılır: miktarlar, görevler, kullanım alanı.
+    await tester.tap(find.text('Reçete'));
+    await tester.pumpAndSettle();
+    expect(find.text(order.usedFor), findsOneWidget);
+    expect(find.text(order.ingredients.first.written), findsOneWidget);
+    await tester.tap(find.text('Kapat'));
+    await tester.pumpAndSettle();
     expect(find.text('3 reçete · 1 hazırlanıyor'), findsOneWidget);
 
     clock = clock.add(order.prepTime);

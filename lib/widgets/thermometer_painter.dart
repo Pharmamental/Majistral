@@ -167,7 +167,7 @@ class ThermometerPainter extends CustomPainter {
       text: TextSpan(
         text: text,
         style: const TextStyle(
-          fontFamily: 'Rubik',
+          fontFamily: 'Nunito',
           fontSize: 11,
           fontWeight: FontWeight.w700,
           fontVariations: [FontVariation.weight(700)],

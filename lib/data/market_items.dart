@@ -103,3 +103,13 @@ final List<ChemicalGroup> chemicalGroups = [
     ],
   ),
 ];
+
+/// Bir hammaddenin marketteki kısa açıklaması (reçetedeki görevi); yoksa null.
+String? chemicalRole(String name) {
+  for (final g in chemicalGroups) {
+    for (final i in g.items) {
+      if (i.name == name) return i.description;
+    }
+  }
+  return null;
+}

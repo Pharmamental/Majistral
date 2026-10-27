@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 // - Renk 60-30-10: krem zemin (60) + beyaz kart (30) + kiremit vurgu (10, yalnız
 //   birincil aksiyon ve önemli bilgi).
 // - Boşluk yalnız 4-8-12-16-20-24-32-40-48; köşe kart/buton 20, çip tam yuvarlak.
-// - Yazı: başlık ve düğme Baloo 2 (oyun hissi), gövde Rubik; sayaçta sabit genişlikli rakam.
+// - Yazı: başlık ve düğme Baloo 2 (oyun hissi), gövde Nunito (2026-10-27); sayaçta sabit genişlikli rakam.
 
 class AppColors {
   AppColors._();
@@ -92,14 +92,14 @@ class AppText {
       _style('Baloo2', size, FontWeight.w700, color, height: 1.1);
 
   static TextStyle body({double size = 15, Color color = AppColors.ink, FontWeight weight = FontWeight.w400}) =>
-      _style('Rubik', size, weight, color, height: 1.4);
+      _style('Nunito', size, weight, color, height: 1.4);
 
   static TextStyle label({double size = 13, Color color = AppColors.inkMuted}) =>
-      _style('Rubik', size, FontWeight.w600, color, height: 1.3);
+      _style('Nunito', size, FontWeight.w600, color, height: 1.3);
 
   /// Sayaç: rakamlar sabit genişlikte, saniye değişince yazı titremesin.
   static TextStyle timer({double size = 16, Color color = AppColors.accentText}) =>
-      _style('Rubik', size, FontWeight.w700, color).copyWith(
+      _style('Nunito', size, FontWeight.w700, color).copyWith(
         fontFeatures: const [FontFeature.tabularFigures()],
       );
 }

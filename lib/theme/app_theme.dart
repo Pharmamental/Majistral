@@ -5,7 +5,7 @@ import 'tokens.dart';
 ThemeData buildAppTheme() {
   final base = ThemeData(
     useMaterial3: true,
-    fontFamily: 'Rubik',
+    fontFamily: 'Nunito',
     colorScheme: ColorScheme.fromSeed(
       seedColor: AppColors.kiremit,
       primary: AppColors.kiremit,
