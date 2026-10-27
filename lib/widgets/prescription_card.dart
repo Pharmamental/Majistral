@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../logic/job_store.dart';
 import '../models/prescription.dart';
-import '../screens/preparation_screen.dart';
 import '../theme/tokens.dart';
 import 'chunky_button.dart';
 import 'job_status.dart';
@@ -107,9 +106,8 @@ class PrescriptionCard extends StatelessWidget {
                 child: ChunkyButton(
                   label: 'Hazırla',
                   icon: Icons.science_rounded,
-                  onPressed: () => Navigator.of(context).push(
-                    MaterialPageRoute<void>(builder: (context) => PreparationScreen(order: order)),
-                  ),
+                  // Reçete kabul edilir; adımları laboratuvarda başlatılır (Tuğrul, 2026-10-27).
+                  onPressed: () => store.accept(order),
                 ),
               ),
             ],

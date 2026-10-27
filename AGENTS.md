@@ -43,14 +43,14 @@ lib/
 ├── main.dart          Uygulama girişi (MajistralApp)
 ├── theme/             tokens (renk, boşluk, köşe, AppText yazı stilleri), app_theme
 ├── models/            shop_item (ShopItem, Station), prescription, prep_job
-├── data/              stations, market_items, orders (taslak içerik, doğrulanmadı)
-├── logic/             quality (1–3 yıldız hesabı), schedule (adımları istasyonlara yerleştirir),
-│                      job_store (süren işler, telefona kayıt,
+├── data/              stations, lab_tools (laboratuvardaki aletler), market_items, orders
+│                      (taslak içerik, doğrulanmadı)
+├── logic/             job_store (kabul edilen reçeteler, adım başlatma, acele, telefona kayıt,
 │                      JobScope ile ekranlara verilir)
-├── screens/           home (alt çubuklu kabuk), orders (Reçeteler), preparation (Hazırlama),
-│                      lab (Laboratuvar), market
+├── screens/           home (alt çubuklu kabuk), orders (Reçeteler), lab (Laboratuvar), market
 └── widgets/           chunky_button (3B düğme), game_tab_bar (alt çubuk), back_pill, prescription_card,
-                       job_status, result_view, market_widgets, thermometer_panel/painter
+                       job_status, tool_sheet (alet → reçete), heating_sheet, result_view,
+                       market_widgets, thermometer_panel/painter
 ```
 
 ## Arayüz kuralları (2026-10-25, Tasarım Rehberi'nden)
@@ -64,37 +64,41 @@ lib/
   az yuvarlak (`AppRadius.paper` 6, `paperInner` 4); basılan her şey (düğme, sekme, çip) tam hap;
   eşya ve madde ikonlarının kutusu daire. Her öğeye aynı köşeyi verme.
 - Birincil aksiyon altta (başparmak bölgesi): kartın en altı ya da ekranın sabit alt çubuğu.
-- Öğrenme ekranı (Hazırlama) sade; kutlama (yıldız animasyonu) yalnız teslimde.
+- Öğrenme ekranları (Laboratuvar, alet penceresi) sade; kutlama (yıldız animasyonu) yalnız teslimde.
 - Durum yalnız renkle anlatılmaz: seçimde onay işareti, sayaçta ikon + metin.
 - Bütün reçete kartları aynı düzende (Tuğrul, 2026-10-27, "hidrofil merhem tasarımı"): sağ üstte
   "Reçete" düğmesi, ortada adım kutuları; yeni reçetede kutular sade (ikon soluk değil), süreleriyle, altında toplam
   süre (`PlannedSteps`), en altta Hazırla. Madde listesi kartta değil, pencerede. "Reçete"
   penceresinin "Hazırlık" bölümü adımları ikon ve `›` okuyla gösterir; ok şeridi yalnız orada.
   Adım kutusu beyaz, ikon açık gri dairede (`AppColors.iconWell`; cam ikonlar beyazda kayboluyordu).
-- Aletler (2026-10-25): hazırlamada spatül, havan ve çalışma yüzeyi seçilir; kurallar ASHP
-  bülteninden (salisilik asit çelik spatülle tepkir; cam havan toz ezmez; parşömen kremde olmaz).
-  Kaç alet yanlış olursa olsun alet hatası tek yıldız. Marketteki basamaklar gerçek aletler
-  (merhem taşı → Unguator → merhem değirmeni); havanlar
-  ve spatüller yükseltme değil, farklı işlerin aletleri (`Station.upgradePath = false`).
+- Aletler (Tuğrul, 2026-10-27): alet seçme ekranı yok; Hazırla reçeteyi kabul eder. Laboratuvarda
+  sahip olunan aletler durur (`labTools`): havanlar ve spatüller farklı işlerin aletleri, her biri
+  ayrı (`Station.upgradePath = false`); kademeli gruplarda (merhem taşı → Unguator → merhem
+  değirmeni, su banyosu, ambalaj) yalnız sahip olunan en yükseği. Merhem taşında karıştırma
+  spatülle; Unguator ya da değirmen alınınca karıştırma adımları ona geçer. Satın alma yokken
+  sahip olunan = ücretsiz kademe (`isOwned`). Adım → alet: levigasyon havan, karıştırma/
+  emülsifikasyon/soğuma spatül, ısıtma su banyosu, etiket ambalaj. Kurallar ASHP bülteninden
+  (salisilik asit çelikle tepkir, cam havan toz ezmez) adımın `notWith`'inde; parşömen çıktı.
   Kaynak listesi: C:\YZ\knowledge\concepts\majistral-alet-ve-makineler.md.
-- Laboratuvar (2026-10-26): her hazırlık adımı bir istasyonda çalışır (LabStation: havan,
-  merhem taşı, su banyosu, ambalaj masası); bir istasyon aynı anda tek iş yapar, dolu istasyonda
-  adım sıra bekler. Adım zamanları iş başlarken planlanır ve sonra değişmez (logic/schedule.dart).
-- Oyuncu adımı (2026-10-26): `interactive: true` adımın süresi dolunca iş durur ve oyuncuyu
-  bekler (kremde su banyosu: termometreyi 70–75°'de tut, `widgets/heating_sheet.dart`). Kalan
-  adımlar ancak oyuncu bitirince, o andan planlanır (`PrepJob.pending`, `JobStore.completeAction`).
+- Laboratuvar (Tuğrul, 2026-10-27): her adımı oyuncu başlatır. Alete basınca kabul edilmiş
+  reçeteler açılır (`widgets/tool_sheet.dart`); aleti şimdi kullanabilenler kobalt vurgulu,
+  kullanamayanların altında nedeni (`JobStore.whyNot`: "daha sonra kullanacaksın", "bu reçetede
+  gerek yok", alet kuralı, alet dolu). Bir alet aynı anda tek reçetede çalışır; farklı aletler
+  aynı anda farklı reçetelerde. Adım bitince reçete sıradakini bekler ("seni bekliyor"), kendi
+  kendine ilerlemez. Yanlış alet seçilemediği için alet hatası ve yıldız kaybı yok.
+- Oyuncu adımı (Tuğrul, 2026-10-27): `interactive: true` adımda önce oyun, sonra süre (kremde su
+  banyosu: termometreyi 70–75°'de tut, `widgets/heating_sheet.dart`); süre oyun bitince başlar.
 - Tartım yok (Tuğrul, 2026-10-27): tartım adımı, terazi istasyonu ve markette terazi kaldırıldı;
   iş levigasyon ya da ısıtmayla başlar. Reçete miktarları kartta yazılı kalır. Formüller ve
-  kaynakları `lib/data/orders.dart` başında. Eski kayıtlarda terazi adımı okunurken atlanır.
-- Acele et (Tuğrul, 2026-10-26): her basış işin planlanmış kalan çalışma süresini yarıya, kaliteyi de
-  yarıya indirir, yıldız yukarı yuvarlanır (3 → 2 → 1, en düşük 1). Günde 5 hak (`JobStore.rush`,
-  `rushSlots`). Oyuncu adımı beklerken basılamaz. Acele sonrası erken boşalan istasyonlara arkadaki
-  işlerin başlamamış adımları kayar (`compactJobs`); başlamış adımlar yerinde kalır. Bu tek
-  istisna dışında planlanmış zamanlar değişmez. Reklam henüz bağlı değil, onay penceresi yerini tutuyor.
+  kaynakları `lib/data/orders.dart` başında. Kayıt anahtarı `prep_jobs_v2`; alet seçimli eski
+  kayıtlar (v1) okunmaz.
+- Acele et (Tuğrul, 2026-10-26): her basış çalışan adımın kalan süresini yarıya, kaliteyi de
+  yarıya indirir, yıldız yukarı yuvarlanır (3 → 2 → 1, en düşük 1). Günde 5 hak (`JobStore.rush`).
+  Adım çalışmıyorsa (reçete oyuncuyu bekliyor) basılamaz. Reklam henüz bağlı değil, onay penceresi yerini tutuyor.
 - Kimyasal seçimi yok (Tuğrul, 2026-10-26): maddeler reçeteden gelir. Adım sırası da sorulmaz
-  (Tuğrul, 2026-10-27): hazırlamada adımlar sabit sırayla gösterilir, oyuncu yalnız alet seçer.
+  (Tuğrul, 2026-10-27): adımlar sabit sırayla yapılır.
   Her adımın kendi oyuncak blok ikonu var (`stepIcons`, `ikon_adim_<ad>.png`); yeni adım adı
-  eklenirse ikonu da çizilir (`test/quality_test.dart` denetler).
+  eklenirse ikonu da çizilir (`test/steps_test.dart` denetler).
 - Reçete durum renkleri (2026-10-27): `OrderStatus` (seni bekliyor amber, hazır yeşil, hazırlanıyor
   mor, yeni kobalt); renkler `AppColors` içinde, yazı tonları açık zeminde ≥5,1:1 ölçüldü. Reçeteler
   sekmesi bu sırayla dizilir; kartın başındaki çip ve süren işin göstergeleri durumun rengini taşır; kartta yan şerit yok (Tuğrul, 2026-10-27).

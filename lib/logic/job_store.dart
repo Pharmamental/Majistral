@@ -3,38 +3,49 @@ import 'dart:convert';
 import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../data/lab_tools.dart';
+import '../data/orders.dart';
 import '../models/prep_job.dart';
 import '../models/prescription.dart';
-import 'quality.dart';
-import 'schedule.dart';
 
-/// Süren hazırlıkları tutar ve telefona kaydeder.
+/// Kabul edilmiş reçeteleri tutar ve telefona kaydeder.
+///
+/// Her adımı oyuncu başlatır (Tuğrul, 2026-10-27): laboratuvarda bir alete
+/// basar, reçeteyi seçer; mini oyunlu adımda önce oyun, sonra süre. Adım
+/// bitince reçete sıradaki adım için oyuncuyu bekler. Bir alet aynı anda tek
+/// reçetede çalışır.
 ///
 /// Saat şimdilik cihaz saatinden okunur ([now]). Tasarım belgesi saat hilesine
 /// karşı sunucu saatini istiyor; sunucu gelince yalnız [now] değişecek.
 class JobStore extends ChangeNotifier {
-  JobStore._(this._prefs, this.now, this._jobs);
+  JobStore._(this._prefs, this.now, this._jobs, this._orders);
 
-  static const _key = 'prep_jobs_v1';
+  // Alet seçimiyle planlanan eski kayıtlar (v1) bu düzene çevrilmez, okunmaz.
+  static const _key = 'prep_jobs_v2';
 
   final SharedPreferences _prefs;
   final DateTime Function() now;
   final List<PrepJob> _jobs;
+  final List<PrescriptionOrder> _orders;
 
-  static Future<JobStore> load({DateTime Function()? now}) async {
+  static Future<JobStore> load({DateTime Function()? now, List<PrescriptionOrder>? orders}) async {
     final prefs = await SharedPreferences.getInstance();
     final raw = prefs.getString(_key);
+    final known = orders ?? prescriptionOrders;
     final jobs = <PrepJob>[];
     if (raw != null) {
       try {
         for (final item in jsonDecode(raw) as List) {
-          jobs.add(PrepJob.fromJson(item as Map<String, dynamic>));
+          final job = PrepJob.fromJson(item as Map<String, dynamic>);
+          // Oyundan çıkarılmış reçetenin kaydı atlanır.
+          if (known.any((o) => o.magistralName == job.magistralName)) jobs.add(job);
         }
-      } on FormatException {
+      } on Object {
         // Bozuk kayıt oyunu açılmaz hâle getirmesin; boş başla.
+        jobs.clear();
       }
     }
-    return JobStore._(prefs, now ?? DateTime.now, jobs);
+    return JobStore._(prefs, now ?? DateTime.now, jobs, known);
   }
 
   List<PrepJob> get jobs => List.unmodifiable(_jobs);
@@ -46,26 +57,82 @@ class JobStore extends ChangeNotifier {
     return null;
   }
 
-  Duration remaining(PrepJob job) {
-    final left = job.readyAt.difference(now());
-    return left.isNegative ? Duration.zero : left;
+  PrescriptionOrder orderOf(PrepJob job) => _orders.firstWhere((o) => o.magistralName == job.magistralName);
+
+  /// Sırası gelen ama başlatılmamış adım; bütün adımlar başlatıldıysa null.
+  PrescriptionStep? nextStep(PrepJob job) {
+    final steps = orderOf(job).steps;
+    return job.runs.length < steps.length ? steps[job.runs.length] : null;
   }
 
+  /// Şu an çalışan adım.
+  StepRun? running(PrepJob job) => job.runningAt(now());
+
+  /// Reçete sıradaki adımı oyuncunun başlatmasını bekliyor.
+  bool needsAction(PrepJob job) => running(job) == null && nextStep(job) != null;
+
   /// Bütün adımlar bitti, teslim edilebilir.
-  bool isReady(PrepJob job) => job.doneAt(now());
+  bool isReady(PrepJob job) => running(job) == null && nextStep(job) == null;
 
-  /// İş oyuncunun yapacağı adımda (ısıtma) duruyor mu?
-  bool needsAction(PrepJob job) => job.needsActionAt(now());
+  /// Çalışan adımın kalan süresi ve başlamamış adımların süreleri.
+  Duration remaining(PrepJob job) {
+    final run = running(job);
+    final steps = orderOf(job).steps.skip(job.runs.length);
+    return (run == null ? Duration.zero : run.end.difference(now())) +
+        Duration(minutes: steps.fold(0, (sum, s) => sum + s.minutes));
+  }
 
-  /// Oyuncu adımı bitirdi (termometre): kalan adımlar şu andan itibaren
-  /// istasyonlara planlanır.
-  Future<void> completeAction(String magistralName) async {
+  /// [tool] şu an hangi reçetenin hangi adımında çalışıyor; boşsa null.
+  ({PrepJob job, StepRun run})? busyWith(LabTool tool) {
+    for (final job in _jobs) {
+      final run = running(job);
+      if (run != null && run.tool == tool.name) return (job: job, run: run);
+    }
+    return null;
+  }
+
+  /// [tool] bu reçetenin sıradaki adımında şimdi kullanılabilir mi? Değilse
+  /// oyuncuya gösterilecek neden.
+  String? whyNot(LabTool tool, PrepJob job) {
+    final steps = orderOf(job).steps;
+    final run = running(job);
+    if (run != null) return 'Şu an ${run.label} sürüyor.';
+    final step = nextStep(job);
+    if (step == null) return 'Hazır, teslim edebilirsin.';
+    if (!steps.any((s) => s.tool == tool.kind)) return 'Bu reçetede bu alete gerek yok.';
+    if (step.tool != tool.kind) {
+      final later = steps.skip(job.runs.length).any((s) => s.tool == tool.kind);
+      return later ? 'Bu aleti daha sonra kullanacaksın; önce ${step.label}.' : 'Bu aletle işin bitti.';
+    }
+    final reason = step.notWith[tool.name];
+    if (reason != null) return reason;
+    final busy = busyWith(tool);
+    if (busy != null) return 'Alet dolu: ${busy.job.magistralName} bitince kullanabilirsin.';
+    return null;
+  }
+
+  /// Reçeteyi kabul eder; adımlarını oyuncu laboratuvarda başlatır.
+  Future<PrepJob> accept(PrescriptionOrder order) async {
+    final job = PrepJob(magistralName: order.magistralName, acceptedAt: now(), stars: 3, notes: const []);
+    _jobs
+      ..removeWhere((j) => j.magistralName == order.magistralName)
+      ..add(job);
+    await _save();
+    notifyListeners();
+    return job;
+  }
+
+  /// Reçetenin sıradaki adımını [tool] ile şimdi başlatır. Mini oyunlu adımda
+  /// bu, oyun bittikten sonra çağrılır. Alet uygun değilse hiçbir şey yapmaz.
+  Future<void> startStep(String magistralName, LabTool tool) async {
     final job = jobFor(magistralName);
-    if (job == null || !needsAction(job)) return;
-    final others = [for (final j in _jobs) if (j != job) ...j.slots];
-    final next = planUntilAction(job.pending, now(), [...others, ...job.slots]);
-    final i = _jobs.indexOf(job);
-    _jobs[i] = job.copyWith(slots: [...job.slots, ...next.slots], pending: next.pending);
+    if (job == null || whyNot(tool, job) != null) return;
+    final step = nextStep(job)!;
+    final start = now();
+    _jobs[_jobs.indexOf(job)] = job.copyWith(runs: [
+      ...job.runs,
+      StepRun(label: step.label, tool: tool.name, start: start, end: start.add(Duration(minutes: step.minutes))),
+    ]);
     await _save();
     notifyListeners();
   }
@@ -86,70 +153,30 @@ class JobStore extends ChangeNotifier {
     return '${d.year}-${d.month}-${d.day}';
   }
 
-  /// İş süren beklemede mi ve hak var mı? Oyuncu adımı beklerken acele edilmez.
-  bool canRush(PrepJob job) => rushesLeft > 0 && !isReady(job) && !needsAction(job);
+  /// Çalışan bir adım ve hak var mı? Oyuncuyu bekleyen reçetede acele edilmez.
+  bool canRush(PrepJob job) => rushesLeft > 0 && running(job) != null;
 
-  /// Acele edilirse kalacak süre (onay penceresinde gösterilir).
-  Duration remainingAfterRush(PrepJob job) {
-    final others = [for (final j in _jobs) if (j != job) ...j.slots];
-    final left = rushSlots(job.slots, now(), others).last.end.difference(now());
-    return left.isNegative ? Duration.zero : left;
+  /// Acele edilirse çalışan adımın kalacak süresi (onay penceresinde).
+  Duration stepLeftAfterRush(PrepJob job) {
+    final run = running(job);
+    return run == null ? Duration.zero : run.end.difference(now()) ~/ 2;
   }
 
-  /// Acele et (Tuğrul, 2026-10-26): kalan çalışma süresi yarıya iner, kalite
-  /// de yarıya iner ve yukarı yuvarlanır (3 → 2 → 1, en düşük 1).
+  /// Acele et (Tuğrul, 2026-10-26): çalışan adımın kalan süresi yarıya iner,
+  /// kalite de yarıya iner ve yukarı yuvarlanır (3 → 2 → 1, en düşük 1).
   Future<void> rush(String magistralName) async {
     final job = jobFor(magistralName);
     if (job == null || !canRush(job)) return;
     const note = 'Acele edildi: her acele kaliteyi yarıya indirir.';
-    final others = [for (final j in _jobs) if (j != job) ...j.slots];
+    final run = running(job)!;
     _jobs[_jobs.indexOf(job)] = job.copyWith(
-      slots: rushSlots(job.slots, now(), others),
+      runs: [...job.runs.take(job.runs.length - 1), run.copyWith(end: now().add(stepLeftAfterRush(job)))],
       stars: (job.stars / 2).ceil().clamp(1, 3),
       notes: job.notes.contains(note) ? job.notes : [...job.notes, note],
     );
-    // Erken boşalan istasyonlara arkada bekleyen işler kayar (Tuğrul, 2026-10-26).
-    final compacted = compactJobs([for (final j in _jobs) j.slots], now());
-    for (var i = 0; i < _jobs.length; i++) {
-      _jobs[i] = _jobs[i].copyWith(slots: compacted[i]);
-    }
     await _prefs.setString(_rushKey, '$_today|${dailyRushes - rushesLeft + 1}');
     await _save();
     notifyListeners();
-  }
-
-  /// 0–1 arası ilerleme.
-  double progress(PrepJob job) {
-    final total = job.duration.inMilliseconds;
-    if (total == 0) return 1;
-    final done = total - remaining(job).inMilliseconds;
-    return (done / total).clamp(0.0, 1.0);
-  }
-
-  /// İstasyonun [now] anındaki durumu (Laboratuvar ekranı).
-  StationState station(LabStation station) => stationState(station, _jobs, now());
-
-  Future<PrepJob> start(PrescriptionOrder order, PreparationResult result) async {
-    final startedAt = now();
-    final plan = planUntilAction(
-      [for (final s in order.steps) PendingStep.of(s)],
-      startedAt,
-      [for (final j in _jobs) ...j.slots],
-    );
-    final job = PrepJob(
-      magistralName: order.magistralName,
-      startedAt: startedAt,
-      slots: plan.slots,
-      pending: plan.pending,
-      stars: result.stars,
-      notes: result.notes,
-    );
-    _jobs
-      ..removeWhere((j) => j.magistralName == order.magistralName)
-      ..add(job);
-    await _save();
-    notifyListeners();
-    return job;
   }
 
   /// Hazır işi teslim eder ve listeden çıkarır. Hazır değilse hiçbir şey yapmaz.

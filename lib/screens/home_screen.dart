@@ -13,6 +13,10 @@ import 'orders_screen.dart';
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
+  /// Alt çubuktaki [index]. sekmeye geçer (kartın "Laboratuvara git" düğmesi).
+  static void showTab(BuildContext context, int index) =>
+      context.findAncestorStateOfType<_HomeScreenState>()?._select(index);
+
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
@@ -20,10 +24,12 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _index = 0;
 
+  void _select(int i) => setState(() => _index = i);
+
   @override
   Widget build(BuildContext context) {
     final store = JobScope.of(context);
-    // Teslim edilecek ya da oyuncuyu bekleyen (ısıtma) işler.
+    // Teslim edilecek ya da sıradaki adımı oyuncuyu bekleyen işler.
     final ready = store.jobs.where((j) => store.isReady(j) || store.needsAction(j)).length;
 
     return Scaffold(
@@ -43,7 +49,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       bottomNavigationBar: GameTabBar(
         index: _index,
-        onSelect: (i) => setState(() => _index = i),
+        onSelect: _select,
         badges: {0: ready},
         tabs: const [
           (label: 'Reçeteler', image: 'assets/images/ikon/ikon_sekme_receteler.png'),

@@ -20,13 +20,11 @@ import '../models/prescription.dart';
 //
 // Alet kuralları ASHP nonsteril majistral bülteninden: cam havan kaygan ve
 // toz ezmez (sıvı, boyayan madde için); porselen ve Wedgwood toz/kristal için.
-// Salisilik asit çelikle tepkimeye girer. Parşömen kremin suyunu emer.
+// Salisilik asit çelikle tepkimeye girer. Karıştırma merhem taşı üstünde
+// spatülle yapılır; Unguator ya da değirmen alınınca o makineyle.
 
-const _tozHavani = ToolRequirement(
-  ToolKind.mortar,
-  {'Porselen havan', 'Wedgwood havan'},
-  hint: 'Cam havan kaygandır, tozu ezmez; toz için porselen ya da Wedgwood havan kullanılır.',
-);
+// Levigasyonlar toz ezer: cam havan bu adımda kullanılamaz.
+const _tozHavani = {'Cam havan': 'Cam havan kaygandır, tozu ezmez.'};
 
 const List<PrescriptionOrder> prescriptionOrders = [
   PrescriptionOrder(
@@ -42,18 +40,14 @@ const List<PrescriptionOrder> prescriptionOrders = [
       Ingredient('Beyaz Vazelin', 'ad 50 g'),
     ],
     steps: [
-      PrescriptionStep('Levigasyon', station: LabStation.havan, minutes: 3),
-      PrescriptionStep('Karıştırma', station: LabStation.karistirma, minutes: 4),
-      PrescriptionStep('Etiket', station: LabStation.ambalaj, minutes: 1),
-    ],
-    tools: [
-      ToolRequirement(
-        ToolKind.spatula,
-        {'Plastik spatül'},
-        hint: 'Salisilik asit çelik spatülle tepkimeye girer; plastik spatül kullanılır.',
+      PrescriptionStep('Levigasyon', tool: StepTool.havan, minutes: 3, notWith: _tozHavani),
+      PrescriptionStep(
+        'Karıştırma',
+        tool: StepTool.karistirma,
+        minutes: 4,
+        notWith: {'Çelik spatül': 'Salisilik asit çelikle tepkimeye girer; plastik spatül kullanılır.'},
       ),
-      _tozHavani,
-      ToolRequirement(ToolKind.surface, {'Merhem taşı', 'Parşömen blok'}),
+      PrescriptionStep('Etiket', tool: StepTool.ambalaj, minutes: 1),
     ],
   ),
   PrescriptionOrder(
@@ -69,14 +63,9 @@ const List<PrescriptionOrder> prescriptionOrders = [
       Ingredient('Beyaz Vazelin', 'ad 60 g'),
     ],
     steps: [
-      PrescriptionStep('Levigasyon', station: LabStation.havan, minutes: 4),
-      PrescriptionStep('Karıştırma', station: LabStation.karistirma, minutes: 6),
-      PrescriptionStep('Etiket', station: LabStation.ambalaj, minutes: 2),
-    ],
-    tools: [
-      ToolRequirement(ToolKind.spatula, {'Çelik spatül', 'Plastik spatül'}),
-      _tozHavani,
-      ToolRequirement(ToolKind.surface, {'Merhem taşı', 'Parşömen blok'}),
+      PrescriptionStep('Levigasyon', tool: StepTool.havan, minutes: 4, notWith: _tozHavani),
+      PrescriptionStep('Karıştırma', tool: StepTool.karistirma, minutes: 6),
+      PrescriptionStep('Etiket', tool: StepTool.ambalaj, minutes: 2),
     ],
   ),
   PrescriptionOrder(
@@ -97,18 +86,10 @@ const List<PrescriptionOrder> prescriptionOrders = [
     ],
     batchNote: 'Formül 1000 g için yazılmış; sen 100 g hazırla.',
     steps: [
-      PrescriptionStep('Isıtma', station: LabStation.isitma, minutes: 10, interactive: true),
-      PrescriptionStep('Emülsifikasyon', station: LabStation.karistirma, minutes: 9),
-      // Krem soğuyana kadar karıştırılır; soğuma da karıştırma istasyonunda.
-      PrescriptionStep('Soğuma', station: LabStation.karistirma, minutes: 8),
-    ],
-    tools: [
-      ToolRequirement(ToolKind.spatula, {'Çelik spatül', 'Plastik spatül'}),
-      ToolRequirement(
-        ToolKind.surface,
-        {'Merhem taşı'},
-        hint: 'Parşömen kâğıt kremin suyunu emer; krem cam merhem taşında hazırlanır.',
-      ),
+      PrescriptionStep('Isıtma', tool: StepTool.isitma, minutes: 10, interactive: true),
+      PrescriptionStep('Emülsifikasyon', tool: StepTool.karistirma, minutes: 9),
+      // Krem soğuyana kadar karıştırılır; soğuma da karıştırma aletinde.
+      PrescriptionStep('Soğuma', tool: StepTool.karistirma, minutes: 8),
     ],
   ),
 ];

@@ -2,19 +2,19 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+import '../data/lab_tools.dart';
 import '../logic/job_store.dart';
-import '../logic/schedule.dart';
-import '../models/prescription.dart';
 import '../theme/tokens.dart';
 import '../widgets/back_pill.dart';
 import '../widgets/counter_top.dart';
 import '../widgets/job_status.dart';
-import '../widgets/heating_sheet.dart';
-import '../widgets/station_action.dart';
+import '../widgets/tool_sheet.dart';
 
-/// Laboratuvar: istasyonların durduğu oda. Her hazırlık adımı bir istasyonda
-/// çalışır; bir istasyon aynı anda tek iş yapar. Kart istasyonun durumunu
-/// gösterir: boş, çalışıyor (hangi iş, hangi adım, kalan süre) ve sıradakiler.
+/// Laboratuvar: sahip olunan aletlerin durduğu oda (Tuğrul, 2026-10-27). Oyuncu
+/// bir alete basar, açılan pencerede reçeteyi seçer ve o reçetenin sıradaki
+/// adımı başlar. Bir alet aynı anda tek reçetede çalışır. Kart aletin
+/// durumunu gösterir: çalışıyor (hangi reçete, hangi adım, kalan süre) ya da
+/// boş; şimdi kullanabilecek bir reçete varsa kart vurgulu.
 class LabScreen extends StatefulWidget {
   const LabScreen({super.key});
 
@@ -40,22 +40,22 @@ class _LabScreenState extends State<LabScreen> {
   @override
   Widget build(BuildContext context) {
     final store = JobScope.of(context);
-    final states = {for (final s in LabStation.values) s: store.station(s)};
-    final busy = states.values.where((s) => s.busy).length;
+    final tools = labTools();
+    final busy = tools.where((t) => store.busyWith(t) != null).length;
     final waiting = store.jobs.where(store.needsAction).length;
     final status = [
-      if (busy > 0) '$busy istasyon çalışıyor',
-      if (waiting > 0) '$waiting iş seni bekliyor',
+      if (busy > 0) '$busy alet çalışıyor',
+      if (waiting > 0) '$waiting reçete seni bekliyor',
     ].join(' · ');
 
-    // Başlık duvarda, istasyonlar gri laboratuvar tezgâhında (Tuğrul, 2026-10-27); liste tezgâhın
+    // Başlık duvarda, aletler gri laboratuvar tezgâhında (Tuğrul, 2026-10-27); liste tezgâhın
     // içinde kayar, tezgâh çizgisi yerinde kalır.
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         ColoredBox(
           color: AppColors.wall,
-          child: TabHeader(title: 'Laboratuvar', subtitle: status.isEmpty ? 'Bütün istasyonlar boş' : status),
+          child: TabHeader(title: 'Laboratuvar', subtitle: status.isEmpty ? 'Bütün aletler boş' : status),
         ),
         Expanded(
           child: LabBench(
@@ -75,11 +75,7 @@ class _LabScreenState extends State<LabScreen> {
                       spacing: AppSpace.md,
                       runSpacing: AppSpace.md,
                       children: [
-                        for (final s in LabStation.values)
-                          SizedBox(
-                            width: width,
-                            child: _StationCard(station: s, state: states[s]!),
-                          ),
+                        for (final t in tools) SizedBox(width: width, child: _ToolCard(tool: t)),
                       ],
                     );
                   },
@@ -93,24 +89,21 @@ class _LabScreenState extends State<LabScreen> {
   }
 }
 
-class _StationCard extends StatelessWidget {
-  const _StationCard({required this.station, required this.state});
+class _ToolCard extends StatelessWidget {
+  const _ToolCard({required this.tool});
 
-  final LabStation station;
-  final StationState state;
+  final LabTool tool;
 
   @override
   Widget build(BuildContext context) {
     final store = JobScope.of(context);
-    final slot = state.slot;
-    // Bu istasyonda ısıtması bitmiş, oyuncunun sıcaklığı ayarlamasını bekleyen iş.
-    final awaiting = [
-      for (final j in store.jobs)
-        if (store.needsAction(j) && j.slots.last.station == station) j,
-    ];
-    final highlight = state.busy || awaiting.isNotEmpty;
-    final total = slot == null ? 1 : slot.end.difference(slot.start).inMilliseconds;
-    final done = slot == null ? 0 : store.now().difference(slot.start).inMilliseconds;
+    final busy = store.busyWith(tool);
+    // Bu aletle şimdi başlatılabilecek reçeteler.
+    final ready = [for (final j in store.jobs) if (!store.isReady(j) && store.whyNot(tool, j) == null) j];
+    final highlight = busy != null || ready.isNotEmpty;
+    final run = busy?.run;
+    final total = run == null ? 1 : run.end.difference(run.start).inMilliseconds;
+    final done = run == null ? 0 : store.now().difference(run.start).inMilliseconds;
     final card = Container(
       padding: const EdgeInsets.all(AppSpace.md),
       decoration: BoxDecoration(
@@ -131,16 +124,16 @@ class _StationCard extends StatelessWidget {
                   color: highlight ? AppColors.kobaltSoft : AppColors.surfaceMuted,
                   shape: BoxShape.circle,
                 ),
-                child: Image.asset(station.imagePath, width: 44, height: 44),
+                child: Image.asset(tool.imagePath, width: 44, height: 44),
               ),
               const SizedBox(width: AppSpace.sm),
-              Expanded(child: Text(station.label, style: AppText.title(size: 17))),
+              Expanded(child: Text(tool.name, style: AppText.title(size: 17))),
             ],
           ),
           const SizedBox(height: AppSpace.md),
-          if (slot != null) ...[
+          if (busy != null) ...[
             Text(
-              state.job!.magistralName,
+              busy.job.magistralName,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: AppText.body(size: 13, weight: FontWeight.w600),
@@ -148,11 +141,8 @@ class _StationCard extends StatelessWidget {
             const SizedBox(height: AppSpace.xs),
             Row(
               children: [
-                Expanded(child: Text(slot.label, style: AppText.label(size: 12))),
-                Text(
-                  formatRemaining(slot.end.difference(store.now())),
-                  style: AppText.timer(size: 14),
-                ),
+                Expanded(child: Text(run!.label, style: AppText.label(size: 12))),
+                Text(formatRemaining(run.end.difference(store.now())), style: AppText.timer(size: 14)),
               ],
             ),
             const SizedBox(height: AppSpace.sm),
@@ -165,22 +155,20 @@ class _StationCard extends StatelessWidget {
                 valueColor: const AlwaysStoppedAnimation(AppColors.kobalt),
               ),
             ),
-          ] else if (awaiting.isNotEmpty) ...[
-            Text(
-              awaiting.first.magistralName,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: AppText.body(size: 13, weight: FontWeight.w600),
-            ),
-            const SizedBox(height: AppSpace.xs),
+          ] else if (ready.isNotEmpty)
             Row(
               children: [
                 const Icon(Icons.touch_app_rounded, size: 16, color: AppColors.accentText),
                 const SizedBox(width: AppSpace.xs),
-                Expanded(child: Text(stationAction(station).button, style: AppText.label(size: 12, color: AppColors.accentText))),
+                Expanded(
+                  child: Text(
+                    '${ready.length} reçete bu aleti bekliyor',
+                    style: AppText.label(size: 12, color: AppColors.accentText),
+                  ),
+                ),
               ],
-            ),
-          ] else
+            )
+          else
             Row(
               children: [
                 const Icon(Icons.check_circle_outline_rounded, size: 16, color: AppColors.inkMuted),
@@ -188,32 +176,13 @@ class _StationCard extends StatelessWidget {
                 Text('Boş', style: AppText.label()),
               ],
             ),
-          if (state.queued > 0) ...[
-            const SizedBox(height: AppSpace.sm),
-            Text('Sırada ${state.queued} adım', style: AppText.label(size: 12, color: AppColors.accentText)),
-          ],
-          if (station == LabStation.isitma && awaiting.isEmpty) ...[
-            const SizedBox(height: AppSpace.sm),
-            Text('Dokun: ısıtma denemesi', style: AppText.label(size: 12)),
-          ],
         ],
       ),
     );
-    if (awaiting.isNotEmpty) {
-      return Semantics(
-        button: true,
-        label: stationAction(station).button,
-        child: GestureDetector(
-          onTap: () => openStationAction(context, station, awaiting.first.magistralName),
-          child: card,
-        ),
-      );
-    }
-    if (station != LabStation.isitma) return card;
     return Semantics(
       button: true,
-      label: 'Isıtma denemesini aç',
-      child: GestureDetector(onTap: () => openHeating(context), child: card),
+      label: tool.name,
+      child: GestureDetector(onTap: () => openToolSheet(context, tool), child: card),
     );
   }
 }
