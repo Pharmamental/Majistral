@@ -74,6 +74,24 @@ Future<void> openRecipe(BuildContext context, PrescriptionOrder order) {
                       ),
                       const SizedBox(height: AppSpace.md),
                       _Section(
+                        title: 'Hazırlık',
+                        child: Wrap(
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          runSpacing: AppSpace.sm,
+                          children: [
+                            for (final (n, s) in order.steps.indexed) ...[
+                              if (n > 0)
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: AppSpace.xs),
+                                  child: Text('›', style: AppText.display(size: 22, color: AppColors.inkMuted)),
+                                ),
+                              _StepChip(step: s),
+                            ],
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: AppSpace.md),
+                      _Section(
                         title: 'Ne işe yarar',
                         child: Text(order.purpose, style: AppText.body(size: 14)),
                       ),
@@ -118,6 +136,30 @@ class _Section extends StatelessWidget {
           Text(title, style: AppText.title(size: 16)),
           const SizedBox(height: AppSpace.xs),
           child,
+        ],
+      ),
+    );
+  }
+}
+
+/// Hazırlık şeridinde bir adım: ikonu ve altında adı.
+class _StepChip extends StatelessWidget {
+  const _StepChip({required this.step});
+
+  final PrescriptionStep step;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 64,
+      child: Column(
+        children: [
+          Image.asset(step.imagePath, width: 40, height: 40),
+          const SizedBox(height: AppSpace.xs),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(step.label, style: AppText.label(size: 11, color: AppColors.ink)),
+          ),
         ],
       ),
     );

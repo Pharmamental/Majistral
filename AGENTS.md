@@ -66,7 +66,8 @@ lib/
 - Birincil aksiyon altta (başparmak bölgesi): kartın en altı ya da ekranın sabit alt çubuğu.
 - Öğrenme ekranı (Hazırlama) sade; kutlama (yıldız animasyonu) yalnız teslimde.
 - Durum yalnız renkle anlatılmaz: seçimde onay işareti, sayaçta ikon + metin.
-- Reçete kartında adım sırası gösterilmez (hazırlamadaki bulmacanın cevabını verir).
+- Reçete kartında adım sırası gösterilmez. "Reçete" penceresinde ise "Hazırlık" bölümü adımları
+  ikon ve `›` okuyla sırayla gösterir (Tuğrul, 2026-10-27; adım sırası artık sorulmadığı için).
 - Aletler (2026-10-25): hazırlamada spatül, havan ve çalışma yüzeyi seçilir; kurallar ASHP
   bülteninden (salisilik asit çelik spatülle tepkir; cam havan toz ezmez; parşömen kremde olmaz).
   Kaç alet yanlış olursa olsun alet hatası tek yıldız. Marketteki basamaklar gerçek aletler
