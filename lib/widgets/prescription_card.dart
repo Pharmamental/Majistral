@@ -37,9 +37,13 @@ enum OrderStatus {
 /// "Reçete" düğmesine iner (pencerede açılır), yerini adım şeridi alır. En
 /// altta kartın tek aksiyonu.
 class PrescriptionCard extends StatelessWidget {
-  const PrescriptionCard({super.key, required this.order});
+  const PrescriptionCard({super.key, required this.order, this.showStatus = false});
 
   final PrescriptionOrder order;
+
+  /// Kartın başında durum çipi (tezgâhta asılı kartlarda; durum yalnız şeridin
+  /// rengiyle anlatılmasın diye).
+  final bool showStatus;
 
   @override
   Widget build(BuildContext context) {
@@ -64,6 +68,10 @@ class PrescriptionCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    if (showStatus) ...[
+                      _StatusChip(status: status),
+                      const SizedBox(height: AppSpace.sm),
+                    ],
                     Row(
                       children: [
                         Expanded(
@@ -128,6 +136,33 @@ class PrescriptionCard extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// Durumun adı açık zeminli hapta, önünde durum renginde nokta.
+class _StatusChip extends StatelessWidget {
+  const _StatusChip({required this.status});
+
+  final OrderStatus status;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: AppSpace.sm, vertical: 2),
+      decoration: BoxDecoration(color: status.soft, borderRadius: BorderRadius.circular(AppRadius.pill)),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 8,
+            height: 8,
+            decoration: BoxDecoration(color: status.color, shape: BoxShape.circle),
+          ),
+          const SizedBox(width: AppSpace.xs + 2),
+          Text(status.label, style: AppText.label(size: 12, color: status.text)),
+        ],
       ),
     );
   }

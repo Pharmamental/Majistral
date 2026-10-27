@@ -35,7 +35,9 @@ class AppColors {
   static const Color wall = Color(0xFFF7F4EE);
   static const Color counter = Color(0xFFE6DCCB);
   static const Color counterDeep = Color(0xFFDED2BF);
-  static const Color counterEdge = Color(0xFFCFC3B0);
+  static const Color counterLip = Color(0xFFEFE6D6); // raf kenarının üst yüzü
+  static const Color counterEdge = Color(0xFFC4B49B); // raf kenarının ön yüzü
+  static const Color tape = Color(0xE6F2E4C2); // kâğıt bant, hafif saydam
   static const Color counterGrain = Color(0xFF967855);
 
   // Reçete durumları (2026-10-27): şerit, açık zemin, yazı. Yazı açık zeminde

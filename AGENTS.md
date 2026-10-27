@@ -96,7 +96,8 @@ lib/
   sekmesi bu sırayla dizilir; kartın şeridi ve süren işin göstergeleri durumun rengini taşır.
   Birincil düğme her zaman kiremit.
 - Tezgâh (Tuğrul, 2026-10-27): Reçeteler başlığı açık duvarda, reçeteler ahşap tezgâhta yan yana;
-  sağa sola kaydırılır (`PageView`, yanındaki kartın kenarı görünür), her kartın üstünde durumu,
+  sağa sola kaydırılır (`PageView`, yanındaki kartın kenarı görünür). Kartlar tezgâhın raf kenarına
+  iki parça kâğıt bantla asılı, hafif eğik (`PaperTape`); durum kartın başında çipte,
   altta durum renginde noktalar (`CounterTop`, `orders_screen.dart`). Laboratuvar ve Market de böyle:
   başlık (ve Market sekmeleri) duvarda, liste tezgâhın içinde kayar.
 - Süren iş kartı (Tuğrul, 2026-10-27): iş başlayınca madde listesi kartta görünmez; sağ üstte

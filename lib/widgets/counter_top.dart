@@ -2,10 +2,14 @@ import 'package:flutter/material.dart';
 
 import '../theme/tokens.dart';
 
-/// Ahşap tezgâh: üstte duvarla birleştiği kenar, altında hafif koyulaşan
-/// ahşap ve dikey tahta damarları. Reçeteler tezgâhın üstünde durur.
+/// Ahşap tezgâh: üstte raf kenarı (açık üst yüz, koyu ön yüz, altına düşen
+/// gölge), altında hafif koyulaşan ahşap ve dikey tahta damarları. Reçeteler
+/// raf kenarına bantla yapıştırılıp asılır (2026-10-27).
 class CounterTop extends StatelessWidget {
   const CounterTop({super.key, required this.child});
+
+  /// Raf kenarının yüksekliği; asılan kartların bandı bu kenara biner.
+  static const double lip = 15;
 
   final Widget child;
 
@@ -14,7 +18,8 @@ class CounterTop extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Container(height: 4, color: AppColors.counterEdge),
+        Container(height: 5, color: AppColors.counterLip),
+        Container(height: lip - 5, color: AppColors.counterEdge),
         Expanded(
           child: DecoratedBox(
             decoration: const BoxDecoration(
@@ -44,6 +49,17 @@ class _GrainPainter extends CustomPainter {
     for (var x = 0.0; x < size.width; x += 23) {
       canvas.drawRect(Rect.fromLTWH(x, 0, 2, size.height), wide);
     }
+    // Raf kenarının altına düşen gölge.
+    final shade = Rect.fromLTWH(0, 0, size.width, 10);
+    canvas.drawRect(
+      shade,
+      Paint()
+        ..shader = LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [AppColors.counterGrain.withValues(alpha: 0.18), AppColors.counterGrain.withValues(alpha: 0)],
+        ).createShader(shade),
+    );
   }
 
   @override

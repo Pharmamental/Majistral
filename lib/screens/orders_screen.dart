@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
 import '../data/orders.dart';
@@ -6,12 +8,14 @@ import '../models/prescription.dart';
 import '../theme/tokens.dart';
 import '../widgets/back_pill.dart';
 import '../widgets/counter_top.dart';
+import '../widgets/paper_tape.dart';
 import '../widgets/prescription_card.dart';
 
 /// Reçeteler sekmesi (ana döngünün başladığı yer). Başlık duvarda, reçeteler
 /// ahşap tezgâhta yan yana durur ve sağa sola kaydırılır (Tuğrul, 2026-10-27).
-/// Sıra durumlara göre: seni bekleyen, hazır, hazırlanan, yeni; her kartın
-/// üstünde durumu yazar, alttaki noktalar durum renginde.
+/// Kartlar tezgâhın raf kenarına bantla asılı. Sıra durumlara göre: seni
+/// bekleyen, hazır, hazırlanan, yeni; her kartın içinde durumu yazar, alttaki
+/// noktalar durum renginde.
 class OrdersScreen extends StatelessWidget {
   const OrdersScreen({super.key});
 
@@ -73,24 +77,33 @@ class _DeckState extends State<_Deck> {
     return Column(
       children: [
         Expanded(
+          // Kartlar raf kenarına bantla asılı (Tuğrul, 2026-10-27): bant raf
+          // kenarına taşar, bu yüzden sayfa kırpılmaz. Kart bantla birlikte
+          // hafif eğik durur; eğim kartın sırasına göre sağa sola değişir.
           child: PageView.builder(
             controller: _controller,
+            clipBehavior: Clip.none,
             itemCount: deck.length,
             onPageChanged: (i) => setState(() => _page = i),
             itemBuilder: (context, i) => Padding(
-              padding: const EdgeInsets.fromLTRB(AppSpace.xs + 2, AppSpace.lg, AppSpace.xs + 2, 0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _StatusLabel(status: deck[i].status),
-                  const SizedBox(height: AppSpace.sm),
-                  Flexible(
-                    child: SingleChildScrollView(
-                      padding: const EdgeInsets.only(bottom: AppSpace.lg),
-                      child: PrescriptionCard(order: deck[i].order),
+              padding: const EdgeInsets.symmetric(horizontal: AppSpace.xs + 2),
+              child: Transform.rotate(
+                angle: (i.isEven ? -0.8 : 0.7) * math.pi / 180,
+                alignment: Alignment.topCenter,
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    Positioned.fill(
+                      top: AppSpace.xs,
+                      child: SingleChildScrollView(
+                        padding: const EdgeInsets.only(bottom: AppSpace.lg),
+                        child: PrescriptionCard(order: deck[i].order, showStatus: true),
+                      ),
                     ),
-                  ),
-                ],
+                    const Positioned(top: -CounterTop.lip + 3, left: AppSpace.xxl, child: PaperTape(angle: -6)),
+                    const Positioned(top: -CounterTop.lip + 4, right: AppSpace.xxl, child: PaperTape(angle: 5)),
+                  ],
+                ),
               ),
             ),
           ),
@@ -125,31 +138,6 @@ class _DeckState extends State<_Deck> {
           ),
         ),
       ],
-    );
-  }
-}
-
-/// Kartın üstünde durumu: renkli nokta ve adı (durum yalnız renkle anlatılmaz).
-class _StatusLabel extends StatelessWidget {
-  const _StatusLabel({required this.status});
-
-  final OrderStatus status;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: AppSpace.xs),
-      child: Row(
-        children: [
-          Container(
-            width: 12,
-            height: 12,
-            decoration: BoxDecoration(color: status.color, shape: BoxShape.circle),
-          ),
-          const SizedBox(width: AppSpace.sm),
-          Text(status.label, style: AppText.title(size: 17)),
-        ],
-      ),
     );
   }
 }
