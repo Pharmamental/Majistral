@@ -66,6 +66,9 @@ lib/
 - Birincil aksiyon altta (başparmak bölgesi): kartın en altı ya da ekranın sabit alt çubuğu.
 - Öğrenme ekranları (Laboratuvar, alet penceresi) sade; kutlama (yıldız animasyonu) yalnız teslimde.
 - Durum yalnız renkle anlatılmaz: seçimde onay işareti, sayaçta ikon + metin.
+- Seçici düğmeler (Tuğrul, 2026-10-27): kobalt hap seçime hızlı (180 ms) ve doğrusal kayar, yazı
+  rengi de aynı sürede geçer (`PillTabs`, `widgets/market_widgets.dart`). Yeni seçici düğme
+  eklenince `PillTabs` kullanılır ya da aynı geçiş verilir. "Hareketi azalt" açıksa hap atlar.
 - Pencereler alttan gelmez, yerinden büyür (Tuğrul, 2026-10-27, "A"): dokunulan şeyin yerinden
   büyüyüp ortada kâğıt olarak açılır, arka kararır ama görünür, arkaya dokununca küçülüp yerine
   döner (`openGrowing`, `widgets/grow_panel.dart`). Reçete penceresi koçan delikli reçete kâğıdı;

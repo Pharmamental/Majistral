@@ -261,7 +261,9 @@ class ShopItemTile extends StatelessWidget {
   }
 }
 
-/// Sekme seçici: tam yuvarlak hap biçiminde, seçili olan kobalt dolgu.
+/// Sekme seçici: tam yuvarlak hap biçiminde, seçili olan kobalt dolgu. Kobalt
+/// hap seçime hızlı ve doğrusal kayar (Tuğrul, 2026-10-27); bundan sonraki
+/// seçici düğmeler de bunu kullanır.
 class PillTabs<T> extends StatelessWidget {
   const PillTabs({
     super.key,
@@ -276,8 +278,13 @@ class PillTabs<T> extends StatelessWidget {
   final String Function(T) labelOf;
   final ValueChanged<T> onChanged;
 
+  static const _slide = Duration(milliseconds: 180);
+
   @override
   Widget build(BuildContext context) {
+    // Hareketi azalt açıksa hap atlar.
+    final duration = MediaQuery.disableAnimationsOf(context) ? Duration.zero : _slide;
+    final index = values.indexOf(selected);
     return Container(
       padding: const EdgeInsets.all(AppSpace.xs),
       decoration: BoxDecoration(
@@ -285,37 +292,55 @@ class PillTabs<T> extends StatelessWidget {
         borderRadius: BorderRadius.circular(AppRadius.pill),
         border: Border.all(color: AppColors.line),
       ),
-      child: Row(
+      child: Stack(
         children: [
-          for (final value in values)
-            Expanded(
-              child: Semantics(
-                button: true,
-                selected: value == selected,
-                child: GestureDetector(
-                  onTap: () => onChanged(value),
-                  child: Container(
-                    height: 44,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: value == selected
-                          ? AppColors.kobaltDark
-                          : Colors.transparent,
-                      borderRadius: BorderRadius.circular(AppRadius.pill),
-                    ),
-                    child: Text(
-                      labelOf(value),
-                      style: AppText.label(
-                        size: 14,
-                        color: value == selected
-                            ? Colors.white
-                            : AppColors.inkMuted,
-                      ),
-                    ),
+          Positioned.fill(
+            child: AnimatedAlign(
+              duration: duration,
+              curve: Curves.linear,
+              alignment: Alignment(values.length == 1 ? 0 : -1 + 2 * index / (values.length - 1), 0),
+              child: FractionallySizedBox(
+                widthFactor: 1 / values.length,
+                heightFactor: 1,
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: AppColors.kobaltDark,
+                    borderRadius: BorderRadius.circular(AppRadius.pill),
                   ),
                 ),
               ),
             ),
+          ),
+          Row(
+            children: [
+              for (final value in values)
+                Expanded(
+                  child: Semantics(
+                    button: true,
+                    selected: value == selected,
+                    child: GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: () => onChanged(value),
+                      child: Container(
+                        height: 44,
+                        alignment: Alignment.center,
+                        child: AnimatedDefaultTextStyle(
+                          duration: duration,
+                          curve: Curves.linear,
+                          style: AppText.label(
+                            size: 14,
+                            color: value == selected
+                                ? Colors.white
+                                : AppColors.inkMuted,
+                          ),
+                          child: Text(labelOf(value)),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          ),
         ],
       ),
     );
