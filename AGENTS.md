@@ -97,6 +97,8 @@ lib/
   neyde kullanılır `usedFor`; kaynakları `lib/data/orders.dart` başında). Yerine adım şeridi gelir (biten onaylı, süren mavi, oyuncuyu bekleyen amber, sıradaki silik) ve
   büyük "… sonra hazır" sayacı. Acele düğmesinin üstüne bedel satırı ya da şimşek ikonları konmaz.
   Hekim adı yalnız unvan ve ilk ad ("Dr. Deniz").
+- Reçete kartı koçan biçiminde (Tuğrul, 2026-10-27): üst kenar yarım daire delikli, alt köşeler
+  yuvarlak (`PrescriptionStubBorder`). Uygulamanın geri kalanının köşe dili henüz seçilmedi.
 - Market hammaddeleri (2026-10-26): `chemicalGroups`, 6 rol grubunda 31 madde; liste ve kaynakları
   beyinde (`knowledge/concepts/majistral-hammaddeler.md`). Reçeteye yeni madde girerse markete de
   eklenir; her maddenin oyuncak blok ikonu olur (`test/market_items_test.dart` ikisini de denetler).
