@@ -94,10 +94,10 @@ lib/
 - Reçete durum renkleri (2026-10-27): `OrderStatus` (seni bekliyor amber, hazır yeşil, hazırlanıyor
   mavi, yeni kiremit); renkler `AppColors` içinde, yazı tonları açık zeminde ≥5,1:1 ölçüldü. Reçeteler
   sekmesi bu sırayla dizilir; kartın şeridi ve süren işin göstergeleri durumun rengini taşır.
+  Birincil düğme her zaman kiremit.
 - Tezgâh (Tuğrul, 2026-10-27): Reçeteler başlığı açık duvarda, reçeteler ahşap tezgâhta yan yana;
   sağa sola kaydırılır (`PageView`, yanındaki kartın kenarı görünür), her kartın üstünde durumu,
   altta durum renginde noktalar (`CounterTop`, `orders_screen.dart`). Laboratuvar ve Market düz zeminde.
-  Birincil düğme her zaman kiremit.
 - Süren iş kartı (Tuğrul, 2026-10-27): iş başlayınca madde listesi kartta görünmez; sağ üstte
   "Reçete" düğmesi pencere açar (miktar, her maddenin marketteki görevi, ne işe yarar `purpose`,
   neyde kullanılır `usedFor`; kaynakları `lib/data/orders.dart` başında). Yerine adım şeridi gelir (biten onaylı, süren mavi, oyuncuyu bekleyen amber, sıradaki silik) ve
