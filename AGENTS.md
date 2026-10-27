@@ -85,7 +85,9 @@ lib/
   ayrı (`Station.upgradePath = false`); kademeli gruplarda (merhem taşı → Unguator → merhem
   değirmeni, su banyosu, ambalaj) yalnız sahip olunan en yükseği. Merhem taşında karıştırma
   spatülle; Unguator ya da değirmen alınınca karıştırma adımları ona geçer. Satın alma yokken
-  sahip olunan = ücretsiz kademe (`isOwned`). Adım → alet: levigasyon havan, karıştırma spatül,
+  sahip olunan = ücretsiz kademe (`isOwned`). Adım → alet: levigasyon havan ya da merhem taşında
+  spatül (Tuğrul, 2026-10-28; `PrescriptionStep.orWith`; salisilik asitte çelik spatül yine yok),
+  karıştırma spatül,
   ısıtma su banyosu, kremde emülsifikasyon ve soğuma porselen kapsül (Tuğrul, 2026-10-28; Ankara
   föyleri ve USP: su fazı yağ fazına kapsülde karıştırılarak eklenir, soğuyana kadar karıştırılır;
   markette "Kaplar" grubu), etiket ambalaj. Alet inceleme sayfası (20 alet, kaynaklı):

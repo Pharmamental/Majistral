@@ -23,8 +23,11 @@ import '../models/prescription.dart';
 // Salisilik asit çelikle tepkimeye girer. Karıştırma merhem taşı üstünde
 // spatülle yapılır; Unguator ya da değirmen alınınca o makineyle.
 
-// Levigasyonlar toz ezer: cam havan bu adımda kullanılamaz.
+// Levigasyon havanda ya da merhem taşında spatülle yapılır (Fırat Üni. beceri
+// kılavuzu, PTCB rehberi; 2026-10-28). Toz ezildiği için cam havan kullanılamaz.
+const _levigasyon = {StepTool.karistirma};
 const _tozHavani = {'Cam havan': 'Cam havan kaygandır, tozu ezmez.'};
+const _celikSA = 'Salisilik asit çelikle tepkimeye girer; plastik spatül kullanılır.';
 
 const List<PrescriptionOrder> prescriptionOrders = [
   PrescriptionOrder(
@@ -40,13 +43,14 @@ const List<PrescriptionOrder> prescriptionOrders = [
       Ingredient('Beyaz Vazelin', 'ad 50 g'),
     ],
     steps: [
-      PrescriptionStep('Levigasyon', tool: StepTool.havan, minutes: 3, notWith: _tozHavani),
       PrescriptionStep(
-        'Karıştırma',
-        tool: StepTool.karistirma,
-        minutes: 4,
-        notWith: {'Çelik spatül': 'Salisilik asit çelikle tepkimeye girer; plastik spatül kullanılır.'},
+        'Levigasyon',
+        tool: StepTool.havan,
+        orWith: _levigasyon,
+        minutes: 3,
+        notWith: {..._tozHavani, 'Çelik spatül': _celikSA},
       ),
+      PrescriptionStep('Karıştırma', tool: StepTool.karistirma, minutes: 4, notWith: {'Çelik spatül': _celikSA}),
       PrescriptionStep('Etiket', tool: StepTool.ambalaj, minutes: 1),
     ],
   ),
@@ -63,7 +67,7 @@ const List<PrescriptionOrder> prescriptionOrders = [
       Ingredient('Beyaz Vazelin', 'ad 60 g'),
     ],
     steps: [
-      PrescriptionStep('Levigasyon', tool: StepTool.havan, minutes: 4, notWith: _tozHavani),
+      PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levigasyon, minutes: 4, notWith: _tozHavani),
       PrescriptionStep('Karıştırma', tool: StepTool.karistirma, minutes: 6),
       PrescriptionStep('Etiket', tool: StepTool.ambalaj, minutes: 2),
     ],

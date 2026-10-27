@@ -134,8 +134,8 @@ void main() {
     await tester.pump(const Duration(milliseconds: 300));
     expect(find.text('1 reçete seni bekliyor'), findsOneWidget);
 
-    // Spatüle basınca reçete sönük, nedeni yazılı: önce levigasyon.
-    await _pickTool(tester, 'Plastik spatül');
+    // Kavanoza basınca reçete sönük, nedeni yazılı: önce levigasyon.
+    await _pickTool(tester, 'Kavanoz');
     expect(find.text('Bu aleti daha sonra kullanacaksın; önce Levigasyon.'), findsOneWidget);
     await tester.tap(_inSheet(order.magistralName));
     await tester.pump();

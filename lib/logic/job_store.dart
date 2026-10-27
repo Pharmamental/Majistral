@@ -173,9 +173,9 @@ class JobStore extends ChangeNotifier {
     if (run != null) return 'Şu an ${run.label} sürüyor.';
     final step = nextStep(job);
     if (step == null) return 'Hazır, teslim edebilirsin.';
-    if (!steps.any((s) => s.tool == tool.kind)) return 'Bu reçetede bu alete gerek yok.';
-    if (step.tool != tool.kind) {
-      final later = steps.skip(job.runs.length).any((s) => s.tool == tool.kind);
+    if (!steps.any((s) => s.uses(tool.kind))) return 'Bu reçetede bu alete gerek yok.';
+    if (!step.uses(tool.kind)) {
+      final later = steps.skip(job.runs.length).any((s) => s.uses(tool.kind));
       return later ? 'Bu aleti daha sonra kullanacaksın; önce ${step.label}.' : 'Bu aletle işin bitti.';
     }
     final reason = step.notWith[tool.name];

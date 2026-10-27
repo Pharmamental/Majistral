@@ -62,9 +62,9 @@ void main() {
     final store = await JobStore.load(now: () => clock);
     final job = await take(store, order);
     expect(store.whyNot(havan, job), isNull);
-    expect(store.whyNot(plastik, job), 'Bu aleti daha sonra kullanacaksın; önce Levigasyon.');
+    expect(store.whyNot(kavanoz, job), 'Bu aleti daha sonra kullanacaksın; önce Levigasyon.');
     expect(store.whyNot(banyo, job), 'Bu reçetede bu alete gerek yok.');
-    await store.startStep(jobOf(store, order)!.id, plastik);
+    await store.startStep(jobOf(store, order)!.id, kavanoz);
     expect(jobOf(store, order)!.runs, isEmpty);
 
     await store.startStep(jobOf(store, order)!.id, havan);
@@ -91,6 +91,18 @@ void main() {
     job = store.job(job.id)!;
     expect([for (final r in job.runs) r.tool], ['Ocak ve su banyosu', 'Porselen kapsül', 'Porselen kapsül']);
     expect(store.isReady(job), isTrue);
+  });
+
+  test('levigasyon merhem taşında spatülle de yapılır; salisilik asitte çelik spatül olmaz', () async {
+    final store = await JobStore.load(now: () => clock);
+    final sa = await take(store, order);
+    final zn = await take(store, zno);
+    expect(store.whyNot(plastik, sa), isNull);
+    expect(store.whyNot(celik, sa), contains('çelikle tepkimeye girer'));
+    expect(store.whyNot(celik, zn), isNull); // çinko oksitte çelik uygun
+    await store.startStep(sa.id, plastik);
+    expect(store.running(store.job(sa.id)!)!.label, 'Levigasyon');
+    expect(store.running(store.job(sa.id)!)!.tool, 'Plastik spatül');
   });
 
   test('cam havan levigasyonda kullanılamaz', () async {

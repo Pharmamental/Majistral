@@ -23,12 +23,20 @@ class PrescriptionStep {
     required this.minutes,
     this.interactive = false,
     this.notWith = const {},
+    this.orWith = const {},
   });
 
   final String label;
 
   /// Adımı yapan alet türü.
   final StepTool tool;
+
+  /// Adımı aynı doğrulukla yapan başka alet türleri (levigasyon: havan ya da
+  /// merhem taşında spatül; Tuğrul, 2026-10-28).
+  final Set<StepTool> orWith;
+
+  /// Bu alet türüyle yapılabilir mi?
+  bool uses(StepTool kind) => kind == tool || orWith.contains(kind);
 
   /// Adımın gerçek zamanlı süresi (dakika). Yer tutucu; kapalı testte ayarlanacak.
   final int minutes;
