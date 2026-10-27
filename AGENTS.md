@@ -49,7 +49,7 @@ lib/
 │                      JobScope ile ekranlara verilir)
 ├── screens/           home (alt çubuklu kabuk), orders (Reçeteler), preparation (Hazırlama),
 │                      lab (Laboratuvar), market
-└── widgets/           chunky_button (3B düğme), back_pill (başlıklar), prescription_card,
+└── widgets/           chunky_button (3B düğme), game_tab_bar (alt çubuk), back_pill, prescription_card,
                        job_status, result_view, market_widgets, thermometer_panel/painter
 ```
 
@@ -102,6 +102,9 @@ lib/
   Hekim adı yalnız unvan ve ilk ad ("Dr. Deniz").
 - Reçete kartı koçan biçiminde (Tuğrul, 2026-10-27): üst kenar yarım daire delikli, alt köşeler
   yuvarlak (`PrescriptionStubBorder`).
+- Alt çubuk (Tuğrul, 2026-10-27): ortada laboratuvar, çubuktan taşan büyük daire (porselen havan);
+  yanlarda Reçeteler (reçete koçanı) ve Market (tenteli dükkân) oyuncak blok ikonları küçük
+  dairelerde (`GameTabBar`). İkonlar `uretici.html` "Sekmeler" grubunda.
 - Market hammaddeleri (2026-10-26): `chemicalGroups`, 6 rol grubunda 31 madde; liste ve kaynakları
   beyinde (`knowledge/concepts/majistral-hammaddeler.md`). Reçeteye yeni madde girerse markete de
   eklenir; her maddenin oyuncak blok ikonu olur (`test/market_items_test.dart` ikisini de denetler).

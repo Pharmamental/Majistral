@@ -312,7 +312,22 @@ const IKONLAR=[
  {grup:'Adımlar',dosya:'adim_etiket',ad:'Etiket',kutu:'#FFE3A6',parts:[
   {d:'M22,28H78C82,28 86,32 86,36V60L68,78H22C18,78 14,74 14,70V36C14,32 18,28 22,28Z',c:R.kan}, // kırmızı majistral etiketi
   {d:'M86,60L68,78L71,63Z',c:R.krem},               // kalkan köşe
-  {d:'M26,42H72M26,52H64M26,62H52',c:R.krem,line:1}]}
+  {d:'M26,42H72M26,52H64M26,62H52',c:R.krem,line:1}]},
+ // ===== Alt çubuk sekmeleri (2026-10-27). Laboratuvar sekmesi porselen havanı kullanır.
+ {grup:'Sekmeler',dosya:'sekme_receteler',ad:'Reçeteler (reçete koçanı)',kutu:'#CFE4F7',parts:[
+  {d:rr(20,22,60,64,6),c:R.krem},                    // kâğıt
+  {d:rr(16,13,68,15,5),c:R.mavi},                    // koçanın cilt şeridi
+  ...[28,36,44,52,60,68].map(x=>({d:circ(x,33,2.2),c:D(R.kremKoyu,.15),flat:1})), // koparma delikleri
+  {d:'M28,50C30,42 35,42 34,49C33,55 39,52 41,46C42,42 45,44 45,49C45,53 50,52 52,46C54,41 57,45 57,50L60,46C62,43 66,44 70,46',c:R.ekran,line:1}, // hekimin el yazısı
+  {d:'M28,60H68M28,71H54',c:R.kremKoyu,line:1}]},
+ {grup:'Sekmeler',dosya:'sekme_market',ad:'Market (dükkân)',kutu:'#FFD6C2',parts:[
+  {d:rr(20,38,60,46,4),c:R.krem},                    // dükkân duvarı
+  {d:rr(12,18,76,10,5),c:R.kahve},                   // tente çubuğu
+  {d:'M14,25H86V42A9,9 0 0 1 68,42A9,9 0 0 1 50,42A9,9 0 0 1 32,42A9,9 0 0 1 14,42Z',c:R.mercan}, // çizgili tente
+  {d:'M32,25H50V42A9,9 0 0 1 32,42Z',c:R.krem,flat:1},
+  {d:'M68,25H86V42A9,9 0 0 1 68,42Z',c:R.krem,flat:1},
+  {d:rr(27,58,22,16,3),c:R.cam,flat:1},              // vitrin
+  {d:rr(56,58,16,26,3),c:R.mavi,flat:1}]}            // kapı
 ];
 
 // ---- çizim (Pharmamental üreticisinden aynen)

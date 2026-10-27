@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 
 import '../logic/job_store.dart';
+import '../widgets/game_tab_bar.dart';
 import 'lab_screen.dart';
 import 'market_screen.dart';
 import 'orders_screen.dart';
 
 /// Uygulamanın kabuğu: üç ana bölüm alt gezinme çubuğunda (Tasarım Rehberi,
-/// Navigasyon: 3–5 üst düzey hedef için alt çubuk; başparmak bölgesinde).
-/// Hazır iş varsa Reçeteler simgesinde rozet görünür.
+/// Navigasyon: 3–5 üst düzey hedef için alt çubuk; başparmak bölgesinde),
+/// ortada laboratuvar ([GameTabBar]).
+/// Hazır ya da oyuncuyu bekleyen iş varsa Reçeteler simgesinde rozet görünür.
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -36,33 +38,14 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: _index,
-        onDestinationSelected: (i) => setState(() => _index = i),
-        destinations: [
-          NavigationDestination(
-            icon: Badge(
-              isLabelVisible: ready > 0,
-              label: Text('$ready'),
-              child: const Icon(Icons.receipt_long_outlined),
-            ),
-            selectedIcon: Badge(
-              isLabelVisible: ready > 0,
-              label: Text('$ready'),
-              child: const Icon(Icons.receipt_long_rounded),
-            ),
-            label: 'Reçeteler',
-          ),
-          const NavigationDestination(
-            icon: Icon(Icons.science_outlined),
-            selectedIcon: Icon(Icons.science_rounded),
-            label: 'Laboratuvar',
-          ),
-          const NavigationDestination(
-            icon: Icon(Icons.storefront_outlined),
-            selectedIcon: Icon(Icons.storefront_rounded),
-            label: 'Market',
-          ),
+      bottomNavigationBar: GameTabBar(
+        index: _index,
+        onSelect: (i) => setState(() => _index = i),
+        badges: {0: ready},
+        tabs: const [
+          (label: 'Reçeteler', image: 'assets/images/ikon/ikon_sekme_receteler.png'),
+          (label: 'Laboratuvar', image: 'assets/images/ikon/ikon_havan_porselen.png'),
+          (label: 'Market', image: 'assets/images/ikon/ikon_sekme_market.png'),
         ],
       ),
     );
