@@ -66,19 +66,18 @@ lib/
 - Aletler (2026-10-25): hazırlamada spatül, havan ve çalışma yüzeyi seçilir; kurallar ASHP
   bülteninden (salisilik asit çelik spatülle tepkir; cam havan toz ezmez; parşömen kremde olmaz).
   Kaç alet yanlış olursa olsun alet hatası tek yıldız. Marketteki basamaklar gerçek aletler
-  (kefeli → elektronik → analitik terazi; merhem taşı → Unguator → merhem değirmeni); havanlar
+  (merhem taşı → Unguator → merhem değirmeni); havanlar
   ve spatüller yükseltme değil, farklı işlerin aletleri (`Station.upgradePath = false`).
   Kaynak listesi: C:\YZ\knowledge\concepts\majistral-alet-ve-makineler.md.
-- Laboratuvar (2026-10-26): her hazırlık adımı bir istasyonda çalışır (LabStation: terazi, havan,
+- Laboratuvar (2026-10-26): her hazırlık adımı bir istasyonda çalışır (LabStation: havan,
   merhem taşı, su banyosu, ambalaj masası); bir istasyon aynı anda tek iş yapar, dolu istasyonda
   adım sıra bekler. Adım zamanları iş başlarken planlanır ve sonra değişmez (logic/schedule.dart).
 - Oyuncu adımı (2026-10-26): `interactive: true` adımın süresi dolunca iş durur ve oyuncuyu
   bekler (kremde su banyosu: termometreyi 70–75°'de tut, `widgets/heating_sheet.dart`). Kalan
   adımlar ancak oyuncu bitirince, o andan planlanır (`PrepJob.pending`, `JobStore.completeAction`).
-- Tartım (2026-10-26): Tartım adımı 0 dakikalık oyuncu adımıdır; iş Başlat'tan hemen sonra terazide
-  bekler, oyuncu reçeteden gramları hesaplayıp yazar (`widgets/weighing_sheet.dart`). Kabul: doğru
-  miktarın ±%5'i; yanlış tartım bir yıldız götürür (`evaluateWeighing`). Formüller ve kaynakları
-  `lib/data/orders.dart` başında.
+- Tartım yok (Tuğrul, 2026-10-27): tartım adımı, terazi istasyonu ve markette terazi kaldırıldı;
+  iş levigasyon ya da ısıtmayla başlar. Reçete miktarları kartta yazılı kalır. Formüller ve
+  kaynakları `lib/data/orders.dart` başında. Eski kayıtlarda terazi adımı okunurken atlanır.
 - Acele et (Tuğrul, 2026-10-26): her basış işin planlanmış kalan çalışma süresini yarıya, kaliteyi de
   yarıya indirir, yıldız yukarı yuvarlanır (3 → 2 → 1, en düşük 1). Günde 5 hak (`JobStore.rush`,
   `rushSlots`). Oyuncu adımı beklerken basılamaz. Acele sonrası erken boşalan istasyonlara arkadaki

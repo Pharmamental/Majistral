@@ -8,7 +8,8 @@ import 'package:game/models/prescription.dart';
 import 'package:game/widgets/job_status.dart';
 
 void main() {
-  final order = prescriptionOrders.first;
+  final order = prescriptionOrders.first; // havan 3, karıştırma 4, ambalaj 1
+  final cream = prescriptionOrders[2]; // ısıtma 10 (oyuncu), emülsifikasyon 9, soğuma 8
   const result = PreparationResult(stars: 2, notes: ['Eksik kimyasal: X.']);
   late DateTime clock;
 
@@ -17,19 +18,13 @@ void main() {
     clock = DateTime(2026, 10, 25, 12);
   });
 
-  test('iş terazide oyuncuyu bekler; tartımdan sonra süre işler, dolunca hazır olur', () async {
+  test('başlatılan işin kalan süresi saatle azalır, süre dolunca hazır olur', () async {
     final store = await JobStore.load(now: () => clock);
-    var job = await store.start(order, result);
-    expect(store.needsAction(job), isTrue);
-    expect(job.slots.single.station, LabStation.terazi);
-
-    // Beklemek tartımı yapmaz.
-    clock = clock.add(const Duration(hours: 1));
-    expect(store.needsAction(store.jobFor(order.magistralName)!), isTrue);
-
-    await store.completeAction(order.magistralName);
-    job = store.jobFor(order.magistralName)!;
+    final job = await store.start(order, result);
+    expect(store.needsAction(job), isFalse);
+    expect(job.slots.first.station, LabStation.havan);
     expect(store.remaining(job), order.prepTime);
+
     clock = clock.add(const Duration(minutes: 4));
     expect(store.remaining(job), order.prepTime - const Duration(minutes: 4));
 
@@ -39,28 +34,9 @@ void main() {
     expect(store.progress(job), 1.0);
   });
 
-  test('yanlış tartım bir yıldız götürür ve açıklaması teslimde görünür', () async {
-    final store = await JobStore.load(now: () => clock);
-    await store.start(order, const PreparationResult(stars: 3, notes: []));
-    // "ad 50 g" unutulup vazelinden 50 g tartıldı.
-    final mistakes = evaluateWeighing(order, {'Salisilik Asit': 2.5, 'Sıvı Parafin': 1.25, 'Beyaz Vazelin': 50});
-    await store.completeAction(order.magistralName, mistakes: mistakes);
-    final job = store.jobFor(order.magistralName)!;
-    expect(job.stars, 2);
-    expect(job.notes.first, 'Tartım: Beyaz Vazelin 50 g tartıldı, doğrusu 46,25 g.');
-    expect(job.notes.last, order.calcHint);
-
-    // Yıldız 1'in altına düşmez.
-    final low = await JobStore.load(now: () => clock);
-    await low.start(prescriptionOrders[1], const PreparationResult(stars: 1, notes: []));
-    await low.completeAction(prescriptionOrders[1].magistralName, mistakes: ['x']);
-    expect(low.jobFor(prescriptionOrders[1].magistralName)!.stars, 1);
-  });
-
   test('uygulama kapanıp açılınca iş ve sonucu kaldığı yerden devam eder', () async {
     final first = await JobStore.load(now: () => clock);
     await first.start(order, result);
-    await first.completeAction(order.magistralName);
 
     clock = clock.add(const Duration(minutes: 3));
     final reopened = await JobStore.load(now: () => clock);
@@ -73,8 +49,6 @@ void main() {
   test('hazır olmayan iş teslim edilemez, hazır olan teslim edilip silinir', () async {
     final store = await JobStore.load(now: () => clock);
     await store.start(order, result);
-    expect(await store.deliver(order.magistralName), isNull);
-    await store.completeAction(order.magistralName);
     expect(await store.deliver(order.magistralName), isNull);
 
     clock = clock.add(order.prepTime);
@@ -92,14 +66,24 @@ void main() {
     expect(store.jobs, isEmpty);
   });
 
+  test('kaldırılan terazinin eski kayıttaki adımı atlanır, iş yine açılır', () async {
+    final t = clock.millisecondsSinceEpoch;
+    final dk = const Duration(minutes: 1).inMilliseconds;
+    SharedPreferences.setMockInitialValues({
+      'prep_jobs_v1': '[{"magistralName":"Eski","startedAt":$t,"stars":3,"notes":[],"pending":[],"slots":['
+          '{"label":"Tartım","station":"terazi","start":$t,"end":$t,"interactive":true},'
+          '{"label":"Levigasyon","station":"havan","start":$t,"end":${t + 3 * dk}}]}]',
+    });
+    final store = await JobStore.load(now: () => clock);
+    expect(store.jobs.single.slots.map((s) => s.label), ['Levigasyon']);
+    expect(store.remaining(store.jobs.single), const Duration(minutes: 3));
+  });
+
   test('ikinci iş dolu istasyonda bekler, laboratuvar bunu gösterir', () async {
     final store = await JobStore.load(now: () => clock);
     final second = prescriptionOrders[1];
     await store.start(order, result);
-    await store.start(second, result);
-    await store.completeAction(order.magistralName);
-    await store.completeAction(second.magistralName);
-    final job = store.jobFor(second.magistralName)!;
+    final job = await store.start(second, result);
     expect(job.readyAt.isAfter(clock.add(second.prepTime)), isTrue);
 
     final havan = store.station(LabStation.havan);
@@ -112,12 +96,9 @@ void main() {
   });
 
   test('kremde ısıtma bitince iş oyuncuyu bekler, termometreden sonra devam eder', () async {
-    final cream = prescriptionOrders[2]; // tartım (oyuncu), ısıtma 10 (oyuncu), emülsifikasyon 9, soğuma 8
     final store = await JobStore.load(now: () => clock);
-    await store.start(cream, result);
-    await store.completeAction(cream.magistralName); // tartım
-    final job = store.jobFor(cream.magistralName)!;
-    expect(job.slots.map((s) => s.label), ['Tartım', 'Isıtma']);
+    final job = await store.start(cream, result);
+    expect(job.slots.map((s) => s.label), ['Isıtma']);
     expect(job.pending.map((p) => p.label), ['Emülsifikasyon', 'Soğuma']);
 
     // Isıtma süresi dolmadan oyuncu bir şey yapamaz.
@@ -141,7 +122,7 @@ void main() {
     await store.completeAction(cream.magistralName);
     j = store.jobFor(cream.magistralName)!;
     expect(j.pending, isEmpty);
-    expect(j.slots[2].start, actionAt);
+    expect(j.slots[1].start, actionAt);
     expect(j.readyAt, actionAt.add(const Duration(minutes: 17)));
     clock = clock.add(const Duration(minutes: 17));
     expect(store.isReady(j), isTrue);
@@ -150,7 +131,6 @@ void main() {
   test('acele et süreyi ve kaliteyi yarıya indirir: 3 → 2 → 1 → 1', () async {
     final store = await JobStore.load(now: () => clock);
     await store.start(order, const PreparationResult(stars: 3, notes: []));
-    await store.completeAction(order.magistralName);
     expect(store.remaining(store.jobFor(order.magistralName)!), const Duration(minutes: 8));
 
     await store.rush(order.magistralName);
@@ -173,14 +153,12 @@ void main() {
     final second = prescriptionOrders[1];
     await store.start(order, result);
     await store.start(second, result);
-    await store.completeAction(order.magistralName);
-    await store.completeAction(second.magistralName);
     final before = store.jobFor(second.magistralName)!.readyAt;
 
     clock = clock.add(const Duration(minutes: 1));
     await store.rush(order.magistralName); // SA havanı 3. yerine 2. dakikada biter
     final moved = store.jobFor(second.magistralName)!;
-    expect(moved.slots[1].start, clock.add(const Duration(minutes: 1)));
+    expect(moved.slots.first.start, clock.add(const Duration(minutes: 1)));
     expect(moved.readyAt, before.subtract(const Duration(minutes: 1)));
     expect(moved.stars, 2); // yalnız acele edilen işin kalitesi düşer
 
@@ -190,9 +168,11 @@ void main() {
 
   test('oyuncu adımı beklerken acele edilmez; günde 5 hak, ertesi gün yenilenir', () async {
     final store = await JobStore.load(now: () => clock);
+    await store.start(cream, result);
+    clock = clock.add(const Duration(minutes: 10));
+    expect(store.canRush(store.jobFor(cream.magistralName)!), isFalse); // termometre bekliyor
+
     await store.start(order, result);
-    expect(store.canRush(store.jobFor(order.magistralName)!), isFalse); // tartım bekliyor
-    await store.completeAction(order.magistralName);
     for (var i = 0; i < 6; i++) {
       await store.rush(order.magistralName);
     }

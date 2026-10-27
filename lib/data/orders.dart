@@ -31,14 +31,11 @@ const List<PrescriptionOrder> prescriptionOrders = [
     magistralName: '%5 Salisilik Asitli Vazelin',
     purpose: 'Kalınlaşmış, nasırlı deriyi yumuşatma',
     ingredients: [
-      Ingredient('Salisilik Asit', '%5', 2.5),
-      Ingredient('Sıvı Parafin', '1,25 g', 1.25),
-      Ingredient('Beyaz Vazelin', 'ad 50 g', 46.25),
+      Ingredient('Salisilik Asit', '%5'),
+      Ingredient('Sıvı Parafin', '1,25 g'),
+      Ingredient('Beyaz Vazelin', 'ad 50 g'),
     ],
-    calcHint: 'Yüzde toplamdan hesaplanır: 50 g × %5 = 2,5 g salisilik asit. '
-        '"ad 50 g" son maddeyle toplamı 50 g\'a tamamla demek: 50 − 2,5 − 1,25 = 46,25 g vazelin.',
     steps: [
-      PrescriptionStep('Tartım', station: LabStation.terazi, minutes: 0, interactive: true),
       PrescriptionStep('Levigasyon', station: LabStation.havan, minutes: 3),
       PrescriptionStep('Karıştırma', station: LabStation.karistirma, minutes: 4),
       PrescriptionStep('Etiket', station: LabStation.ambalaj, minutes: 1),
@@ -60,14 +57,11 @@ const List<PrescriptionOrder> prescriptionOrders = [
     magistralName: 'Çinko Oksit Merhemi',
     purpose: 'Cildi koruyan, kurutan bariyer merhem',
     ingredients: [
-      Ingredient('Çinko Oksit', '%20', 12),
-      Ingredient('Sıvı Parafin', '%15', 9),
-      Ingredient('Beyaz Vazelin', 'ad 60 g', 39),
+      Ingredient('Çinko Oksit', '%20'),
+      Ingredient('Sıvı Parafin', '%15'),
+      Ingredient('Beyaz Vazelin', 'ad 60 g'),
     ],
-    calcHint: 'Her yüzdeyi toplamla çarp: 60 g × %20 = 12 g çinko oksit, 60 g × %15 = 9 g sıvı parafin. '
-        '"ad 60 g" vazelinin toplamı 60 g\'a tamamladığını söyler: 60 − 12 − 9 = 39 g.',
     steps: [
-      PrescriptionStep('Tartım', station: LabStation.terazi, minutes: 0, interactive: true),
       PrescriptionStep('Levigasyon', station: LabStation.havan, minutes: 4),
       PrescriptionStep('Karıştırma', station: LabStation.karistirma, minutes: 6),
       PrescriptionStep('Etiket', station: LabStation.ambalaj, minutes: 2),
@@ -85,18 +79,16 @@ const List<PrescriptionOrder> prescriptionOrders = [
     magistralName: 'Hidrofil Merhem',
     purpose: 'Suyla yıkanabilen krem tipi baz',
     ingredients: [
-      Ingredient('Metilparaben', '0,25 g', 0.025),
-      Ingredient('Propilparaben', '0,15 g', 0.015),
-      Ingredient('Sodyum Lauril Sülfat', '10 g', 1),
-      Ingredient('Propilen Glikol', '120 g', 12),
-      Ingredient('Stearil Alkol', '250 g', 25),
-      Ingredient('Beyaz Vazelin', '250 g', 25),
-      Ingredient('Distile Su', '370 g', 37),
+      Ingredient('Metilparaben', '0,25 g'),
+      Ingredient('Propilparaben', '0,15 g'),
+      Ingredient('Sodyum Lauril Sülfat', '10 g'),
+      Ingredient('Propilen Glikol', '120 g'),
+      Ingredient('Stearil Alkol', '250 g'),
+      Ingredient('Beyaz Vazelin', '250 g'),
+      Ingredient('Distile Su', '370 g'),
     ],
     batchNote: 'Formül 1000 g için yazılmış; sen 100 g hazırla.',
-    calcHint: '100 g, 1000 g\'ın onda biri: her miktarı 10\'a böl. 250 g → 25 g, 0,25 g → 0,025 g.',
     steps: [
-      PrescriptionStep('Tartım', station: LabStation.terazi, minutes: 0, interactive: true),
       PrescriptionStep('Isıtma', station: LabStation.isitma, minutes: 10, interactive: true),
       PrescriptionStep('Emülsifikasyon', station: LabStation.karistirma, minutes: 9),
       // Krem soğuyana kadar karıştırılır; soğuma da karıştırma istasyonunda.

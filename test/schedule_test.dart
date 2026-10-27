@@ -7,8 +7,8 @@ import 'package:game/models/prescription.dart';
 
 void main() {
   final t0 = DateTime(2026, 10, 26, 12);
-  final sa = prescriptionOrders[0]; // terazi 0 (oyuncu tartar), havan 3, karıştırma 4, ambalaj 1
-  final zno = prescriptionOrders[1]; // terazi 0, havan 4, karıştırma 6, ambalaj 2
+  final sa = prescriptionOrders[0]; // havan 3, karıştırma 4, ambalaj 1
+  final zno = prescriptionOrders[1]; // havan 4, karıştırma 6, ambalaj 2
 
   PrepJob job(PrescriptionOrder o, List<StepSlot> slots) =>
       PrepJob(magistralName: o.magistralName, startedAt: slots.first.start, slots: slots, stars: 3, notes: const []);
@@ -16,7 +16,7 @@ void main() {
   test('istasyonlar boşken adımlar arka arkaya, toplam süre adımların toplamı', () {
     final slots = planSlots(sa.steps, t0, const []);
     expect([for (final s in slots) s.station],
-        [LabStation.terazi, LabStation.havan, LabStation.karistirma, LabStation.ambalaj]);
+        [LabStation.havan, LabStation.karistirma, LabStation.ambalaj]);
     expect(slots.first.start, t0);
     for (var i = 1; i < slots.length; i++) {
       expect(slots[i].start, slots[i - 1].end);
@@ -28,7 +28,7 @@ void main() {
     final first = planSlots(sa.steps, t0, const []);
     final second = planSlots(zno.steps, t0, first);
     // Havan ilk 3 dk dolu: ikinci işin levigasyonu 3. dakikada başlar.
-    expect(second[1].start, t0.add(const Duration(minutes: 3)));
+    expect(second.first.start, t0.add(const Duration(minutes: 3)));
     // Hiçbir istasyonda iki iş çakışmaz.
     for (final a in first) {
       for (final b in second) {
@@ -63,11 +63,14 @@ void main() {
     final slots = planSlots(sa.steps, t0, const []); // havan 0-3, karıştırma 3-7, ambalaj 7-8
     final now = t0.add(const Duration(minutes: 1));
     final rushed = rushSlots(slots, now, const []);
-    expect(rushed.first, same(slots.first)); // tartım bitmişti
-    expect(rushed[1].start, slots[1].start);
-    expect(rushed[1].end, now.add(const Duration(minutes: 1))); // kalan 2 dk → 1 dk
-    expect(rushed[2].end.difference(rushed[2].start), const Duration(minutes: 2));
+    expect(rushed.first.start, slots.first.start);
+    expect(rushed.first.end, now.add(const Duration(minutes: 1))); // kalan 2 dk → 1 dk
+    expect(rushed[1].end.difference(rushed[1].start), const Duration(minutes: 2));
     expect(rushed.last.end, now.add(const Duration(minutes: 3, seconds: 30))); // 7 dk → 3,5 dk
+
+    // Bitmiş adım olduğu gibi kalır.
+    final later = rushSlots(slots, t0.add(const Duration(minutes: 4)), const []);
+    expect(later.first, same(slots.first));
   });
 
   test('acele edilen iş istasyonu erken boşaltınca arkadaki iş öne kayar', () {
@@ -77,7 +80,7 @@ void main() {
     final rushed = rushSlots(first, now, second); // SA havanı 2. dakikada biter
     final jobs = compactJobs([rushed, second], now);
 
-    expect(jobs[1][1].start, t0.add(const Duration(minutes: 2)));
+    expect(jobs[1].first.start, t0.add(const Duration(minutes: 2)));
     // Kimse geç kalmaz, sıra ve süreler aynı, hiçbir istasyonda çakışma yok.
     expect(jobs[1].last.end.isAfter(second.last.end), isFalse);
     expect([for (final s in jobs[1]) s.label], [for (final s in second) s.label]);
@@ -96,15 +99,15 @@ void main() {
     final second = planSlots(zno.steps, t0, first);
     final now = t0.add(const Duration(minutes: 4)); // ZnO havanı 3. dakikada başladı
     final jobs = compactJobs([first, second], now);
-    expect(jobs[1][1], same(second[1]));
-    expect(jobs[0][2], same(first[2])); // SA karıştırması çalışıyor
+    expect(jobs[1].first, same(second.first));
+    expect(jobs[0][1], same(first[1])); // SA karıştırması çalışıyor
   });
 
   test('acele et başka işin istasyonuna girmez', () {
     final first = planSlots(sa.steps, t0, const []);
     final second = planSlots(zno.steps, t0, first); // havanı 3. dakikada bekliyor
     final rushed = rushSlots(second, t0, first);
-    expect(rushed[1].start, t0.add(const Duration(minutes: 3)));
-    expect(rushed[1].end, t0.add(const Duration(minutes: 5)));
+    expect(rushed.first.start, t0.add(const Duration(minutes: 3)));
+    expect(rushed.first.end, t0.add(const Duration(minutes: 5)));
   });
 }

@@ -146,7 +146,12 @@ class PrepJob {
       magistralName: json['magistralName'] as String,
       startedAt: startedAt,
       slots: rawSlots != null
-          ? [for (final s in rawSlots) StepSlot.fromJson(s as Map<String, dynamic>)]
+          ? [
+              for (final s in rawSlots)
+                // Kaldırılan istasyonun (terazi, 2026-10-27) eski adımları atlanır.
+                if (LabStation.values.asNameMap().containsKey((s as Map<String, dynamic>)['station']))
+                  StepSlot.fromJson(s),
+            ]
           // İstasyonlardan önceki kayıt biçimi: tek parça iş, ambalaj masasında.
           : [
               StepSlot(

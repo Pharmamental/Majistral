@@ -2,7 +2,6 @@
 /// bir istasyon aynı anda tek iş yapar (Tuğrul: "her adımı bir laboratuvar
 /// aletine bağlamak").
 enum LabStation {
-  terazi('Terazi', 'assets/images/ikon/ikon_terazi_kefeli.png'),
   havan('Havan', 'assets/images/ikon/ikon_havan_porselen.png'),
   karistirma('Merhem taşı', 'assets/images/ikon/ikon_merhem_tasi.png'),
   isitma('Su banyosu', 'assets/images/ikon/ikon_ocak_su_banyosu.png'),
@@ -16,7 +15,6 @@ enum LabStation {
 
 /// Her hazırlama adımının kendi oyuncak blok ikonu (tools/ikon_blok, "Adımlar").
 const stepIcons = {
-  'Tartım': 'tartim',
   'Levigasyon': 'levigasyon',
   'Karıştırma': 'karistirma',
   'Isıtma': 'isitma',
@@ -44,9 +42,8 @@ class PrescriptionStep {
   /// Adımın gerçek zamanlı süresi (dakika). Yer tutucu; kapalı testte ayarlanacak.
   final int minutes;
 
-  /// Süre dolunca iş durur ve oyuncuyu bekler (ısıtmada termometreyi tutmak);
-  /// süresi 0 olan adımda (tartım) iş adıma gelir gelmez bekler. Oyuncu
-  /// bitirince sonraki adımlar o andan itibaren planlanır.
+  /// Süre dolunca iş durur ve oyuncuyu bekler (ısıtmada termometreyi tutmak).
+  /// Oyuncu bitirince sonraki adımlar o andan itibaren planlanır.
   final bool interactive;
 
   String get imagePath => stepIconPath(label);
@@ -75,14 +72,13 @@ class ToolRequirement {
   final String? hint;
 }
 
-/// Reçetedeki bir satır: madde, reçetede nasıl yazıldığı ("%5", "1,25 g",
-/// "ad 50 g") ve terazide tartılacak doğru miktar.
+/// Reçetedeki bir satır: madde ve reçetede nasıl yazıldığı ("%5", "1,25 g",
+/// "ad 50 g").
 class Ingredient {
-  const Ingredient(this.name, this.written, this.grams);
+  const Ingredient(this.name, this.written);
 
   final String name;
   final String written;
-  final double grams;
 }
 
 class PrescriptionOrder {
@@ -93,7 +89,6 @@ class PrescriptionOrder {
     required this.magistralName,
     required this.purpose,
     required this.ingredients,
-    required this.calcHint,
     required this.steps,
     this.batchNote,
     this.tools = const [],
@@ -102,14 +97,8 @@ class PrescriptionOrder {
   /// Reçetedeki maddeler, yazıldığı sırayla.
   final List<Ingredient> ingredients;
 
-  /// Tartım yanlışsa hesabın nasıl yapıldığını anlatan kısa açıklama.
-  final String calcHint;
-
   /// Formül başka bir toplam için yazıldıysa ne kadar hazırlanacağı.
   final String? batchNote;
-
-  /// Hazırlanacak toplam miktar (g).
-  double get totalGrams => ingredients.fold(0, (sum, i) => sum + i.grams);
 
   /// Bu reçetede seçilecek aletler; listede olmayan tür bu reçetede sorulmaz.
   final List<ToolRequirement> tools;

@@ -10,34 +10,6 @@ import '../theme/tokens.dart';
 
 const List<Station> stations = [
   Station(
-    name: 'Terazi',
-    tiers: [
-      ShopItem(
-        name: 'Kefeli eczane terazisi',
-        imagePath: 'assets/images/ikon/ikon_terazi_kefeli.png',
-        description: 'Ağırlık takımıyla tartar. Çok küçük miktarda hata payı büyür.',
-        icon: Icons.scale_outlined,
-        color: AppColors.rusty,
-      ),
-      ShopItem(
-        name: 'Elektronik hassas terazi',
-        imagePath: 'assets/images/ikon/ikon_terazi_elektronik.png',
-        description: '0,01 g hassasiyet, hızlı tartım. Tartım adımını %15 kısaltır.',
-        icon: Icons.scale_outlined,
-        color: AppColors.goodCondition,
-        price: 1000,
-      ),
-      ShopItem(
-        name: 'Analitik terazi',
-        imagePath: 'assets/images/ikon/ikon_terazi_analitik.png',
-        description: '0,1 mg hassasiyet; çok küçük miktarlar için. Tartım adımını %30 kısaltır.',
-        icon: Icons.scale_outlined,
-        color: AppColors.advanced,
-        price: 3000,
-      ),
-    ],
-  ),
-  Station(
     name: 'Havanlar',
     upgradePath: false,
     tiers: [

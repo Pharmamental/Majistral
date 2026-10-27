@@ -47,30 +47,6 @@ const R={mercan:'#E8553D',krem:'#FFF3E4',mor:'#7C5CE6',altin:'#F7BE38',altinKoyu
 
 // ---- ikonlar: dosya adı -> ikon_<dosya>.png. kutu: önizlemedeki pastel kutu rengi.
 const IKONLAR=[
- // ===== Terazi basamakları
- {grup:'Terazi',dosya:'terazi_kefeli',ad:'Kefeli eczane terazisi',kutu:'#FFE3A6',parts:[
-  {d:'M26,31L13,58M26,31L39,58M74,31L61,58M74,31L87,58',c:R.kahve,line:1},
-  {d:rr(46,27,8,52,3),c:R.metal},
-  {d:rr(10,25,80,7,3.5),c:R.altin},
-  {d:circ(50,24,6),c:R.altinKoyu},
-  {d:'M8,58H44C44,67 37,72 26,72C15,72 8,67 8,58Z',c:R.altin},
-  {d:'M56,58H92C92,67 85,72 74,72C63,72 56,67 56,58Z',c:R.altin},
-  {d:rr(28,76,44,9,4),c:R.kahve}]},
- {grup:'Terazi',dosya:'terazi_elektronik',ad:'Elektronik hassas terazi',kutu:'#CFE4F7',parts:[
-  {d:rr(44,36,12,10,2),c:R.metal},                  // kefe ayağı
-  {d:rr(20,28,60,10,5),c:R.metal},                  // kefe
-  {d:rr(12,44,76,40,10),c:R.kremKoyu},              // gövde
-  {d:rr(20,56,36,16,4),c:R.ekran,flat:1},           // ekran
-  {d:'M26,64H34M38,64H50',c:R.yesil,line:1},        // rakamlar
-  {d:circ(70,64,6),c:R.mercan,flat:1}]},            // düğme
- {grup:'Terazi',dosya:'terazi_analitik',ad:'Analitik terazi',kutu:'#D9D2FA',parts:[
-  {d:rr(16,20,68,50,9),c:R.cam},                    // cam kabin
-  {d:rr(46,50,8,14,2),c:R.metal},                   // kefe ayağı
-  {d:rr(32,44,36,8,4),c:R.metal},                   // kefe
-  {d:rr(72,32,5,22,2.5),c:R.metal},                 // kapı kolu
-  {d:rr(10,64,80,20,8),c:R.mor},                    // taban
-  {d:rr(20,69,26,10,3),c:R.ekran,flat:1},
-  {d:'M25,74H32M35,74H41',c:R.yesil,line:1}]},
  // ===== Havanlar
  {grup:'Havan',dosya:'havan_porselen',ad:'Porselen havan',kutu:'#CFE4F7',parts:[
   {d:cap(72,12,53,46,11),c:R.kremKoyu},
@@ -303,11 +279,6 @@ const IKONLAR=[
   {d:rr(34,44,32,26,5),c:R.mavi,flat:1},
   {d:'M40,57H60',c:R.krem,line:1}]},
  // ===== Hazırlama adımları (2026-10-27): her adımda gerçekte yapılan iş
- {grup:'Adımlar',dosya:'adim_tartim',ad:'Tartım',kutu:'#FFE3A6',parts:[
-  {d:rr(66,40,18,28,4),c:R.altinKoyu},              // pirinç ağırlık
-  {d:circ(75,38,5.5),c:R.altin},                    // ağırlığın tutamağı
-  {d:'M12,58H80L72,82H20Z',c:R.mavi},               // tartım kayığı
-  {d:'M22,60C28,40 64,40 70,60Z',c:R.krem}]},       // tartılan toz
  {grup:'Adımlar',dosya:'adim_levigasyon',ad:'Levigasyon',kutu:'#CFE4F7',parts:[
   {d:'M24,44C28,28 72,28 76,44Z',c:'#F2D27A'},      // tozla sıvı parafinin macunu
   {d:cap(76,10,56,38,11),c:R.kremKoyu},             // macunu ezen havan eli

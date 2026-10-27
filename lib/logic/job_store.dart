@@ -57,21 +57,15 @@ class JobStore extends ChangeNotifier {
   /// İş oyuncunun yapacağı adımda (ısıtma) duruyor mu?
   bool needsAction(PrepJob job) => job.needsActionAt(now());
 
-  /// Oyuncu adımı bitirdi (tartım ya da termometre): kalan adımlar şu andan
-  /// itibaren istasyonlara planlanır. [mistakes] boş değilse (yanlış tartım)
-  /// bir yıldız gider, açıklamalar teslimde gösterilir; en düşük 1 yıldız.
-  Future<void> completeAction(String magistralName, {List<String> mistakes = const []}) async {
+  /// Oyuncu adımı bitirdi (termometre): kalan adımlar şu andan itibaren
+  /// istasyonlara planlanır.
+  Future<void> completeAction(String magistralName) async {
     final job = jobFor(magistralName);
     if (job == null || !needsAction(job)) return;
     final others = [for (final j in _jobs) if (j != job) ...j.slots];
     final next = planUntilAction(job.pending, now(), [...others, ...job.slots]);
     final i = _jobs.indexOf(job);
-    _jobs[i] = job.copyWith(
-      slots: [...job.slots, ...next.slots],
-      pending: next.pending,
-      stars: mistakes.isEmpty ? job.stars : (job.stars - 1).clamp(1, 3),
-      notes: [...job.notes, ...mistakes],
-    );
+    _jobs[i] = job.copyWith(slots: [...job.slots, ...next.slots], pending: next.pending);
     await _save();
     notifyListeners();
   }
