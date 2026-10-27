@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 // - Renk 60-30-10: krem zemin (60) + beyaz kart (30) + kiremit vurgu (10, yalnız
 //   birincil aksiyon ve önemli bilgi).
 // - Boşluk yalnız 4-8-12-16-20-24-32-40-48; köşe kart/buton 20, çip tam yuvarlak.
-// - Yazı: başlık ve düğme Baloo 2 (oyun hissi), gövde Nunito (2026-10-27); sayaçta sabit genişlikli rakam.
+// - Yazı: hepsi Nunito (Tuğrul, 2026-10-27); başlık ve düğme en kalın (900), sayaçta sabit genişlikli rakam.
 
 class AppColors {
   AppColors._();
@@ -83,13 +83,13 @@ class AppText {
   }
 
   static TextStyle display({double size = 32, Color color = AppColors.ink}) =>
-      _style('Baloo2', size, FontWeight.w800, color, height: 1.1);
+      _style('Nunito', size, FontWeight.w900, color, height: 1.1);
 
   static TextStyle title({double size = 20, Color color = AppColors.ink}) =>
-      _style('Baloo2', size, FontWeight.w700, color, height: 1.15);
+      _style('Nunito', size, FontWeight.w900, color, height: 1.15);
 
   static TextStyle button({double size = 18, Color color = Colors.white}) =>
-      _style('Baloo2', size, FontWeight.w700, color, height: 1.1);
+      _style('Nunito', size, FontWeight.w900, color, height: 1.1);
 
   static TextStyle body({double size = 15, Color color = AppColors.ink, FontWeight weight = FontWeight.w400}) =>
       _style('Nunito', size, weight, color, height: 1.4);

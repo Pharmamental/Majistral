@@ -63,13 +63,10 @@ flutter:
     - assets/images/
     - assets/images/ikon/
 
-  # Yazı tipleri uygulamaya gömülü (internetsiz çalışır). İkisi de SIL OFL 1.1,
-  # lisans metinleri assets/fonts/ altında. Değişken font: kalınlık TextStyle'da
+  # Yazı tipi uygulamaya gömülü (internetsiz çalışır). SIL OFL 1.1,
+  # lisans metni assets/fonts/ altında. Değişken font: kalınlık TextStyle'da
   # fontVariations ile verilir (lib/theme/tokens.dart).
   fonts:
-    - family: Baloo2
-      fonts:
-        - asset: assets/fonts/Baloo2.ttf
     - family: Nunito
       fonts:
         - asset: assets/fonts/Nunito.ttf

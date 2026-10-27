@@ -55,7 +55,7 @@ lib/
 
 ## Arayüz kuralları (2026-10-25, Tasarım Rehberi'nden)
 - Renk 60-30-10: krem zemin, beyaz kart, kiremit yalnız birincil aksiyon. Hazır/teslim yeşil.
-- Yazı: başlık ve düğme Baloo 2, gövde Nunito (2026-10-27); ikisi `assets/fonts/`'ta gömülü (OFL).
+- Yazı: hepsi Nunito (Tuğrul, 2026-10-27), başlık ve düğme en kalın (900); `assets/fonts/`'ta gömülü (OFL).
   Değişken font olduğu için kalınlık `AppText` ile verilir (`fontVariations`); düz
   `TextStyle(fontWeight)` bazı cihazlarda kalın çizmez. Ok için `›` kullan. Yeni font eklemeden önce
   dosyada ş, ğ, İ var mı tara: Fredoka, Lilita One, Titan One, Sniglet'te yok.

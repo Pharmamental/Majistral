@@ -16,7 +16,6 @@ Future<void> loadAppFonts() async {
     await loader.load();
   }
 
-  await load('Baloo2', ['assets/fonts/Baloo2.ttf']);
   await load('Nunito', ['assets/fonts/Nunito.ttf']);
 
   // Material ikonları Flutter SDK'nın içinden.
