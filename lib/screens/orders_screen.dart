@@ -13,10 +13,9 @@ import '../widgets/prescription_card.dart';
 /// Reçeteler sekmesi (ana döngünün başladığı yer). Duvarda başlık ve bütün
 /// reçetelerin küçük fişleri: oyuncu hangisinin hazır, hangisinin kendisini
 /// beklediğini kaydırmadan görür, fişe dokununca o kart gelir. Tezgâhta
-/// reçeteler raf kenarına bantla asılı, yan yana durur ve sağa sola kaydırılır;
-/// kart tezgâhın altına kadar uzar, düğmesi başparmak bölgesinde
-/// (Tuğrul, 2026-10-27). Sıra durumlara göre: seni bekleyen, hazır,
-/// hazırlanan, yeni.
+/// reçeteler raf kenarına bantla asılı, yan yana durur ve sağa sola kaydırılır
+/// (Tuğrul, 2026-10-27; kartı alta uzatıp düğmeyi alta sabitleme denendi, geri alındı).
+/// Sıra durumlara göre: seni bekleyen, hazır, hazırlanan, yeni.
 class OrdersScreen extends StatefulWidget {
   const OrdersScreen({super.key});
 
@@ -125,14 +124,8 @@ class _OrdersScreenState extends State<OrdersScreen> {
                     children: [
                       Positioned.fill(
                         top: AppSpace.xs,
-                        // Kart en az sayfanın boyu kadar; uzun kart kendi içinde kayar.
-                        child: LayoutBuilder(
-                          builder: (context, box) => SingleChildScrollView(
-                            child: ConstrainedBox(
-                              constraints: BoxConstraints(minHeight: box.maxHeight),
-                              child: PrescriptionCard(order: deck[i].order, showStatus: true, pinAction: true),
-                            ),
-                          ),
+                        child: SingleChildScrollView(
+                          child: PrescriptionCard(order: deck[i].order, showStatus: true),
                         ),
                       ),
                       const Positioned(top: -CounterTop.lip + 3, left: AppSpace.xxl, child: PaperTape(angle: -6)),
