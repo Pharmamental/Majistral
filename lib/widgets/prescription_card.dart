@@ -48,11 +48,10 @@ class PrescriptionCard extends StatelessWidget {
     final status = OrderStatus.of(store, order);
     return Container(
       clipBehavior: Clip.antiAlias,
-      decoration: BoxDecoration(
+      decoration: const ShapeDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(AppRadius.card),
-        border: Border.all(color: AppColors.line),
-        boxShadow: const [BoxShadow(color: Color(0x14000000), blurRadius: 12, offset: Offset(0, 4))],
+        shape: PrescriptionStubBorder(),
+        shadows: [BoxShadow(color: Color(0x14000000), blurRadius: 12, offset: Offset(0, 4))],
       ),
       child: IntrinsicHeight(
         child: Row(
@@ -219,4 +218,52 @@ class _Formula extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Reçete koçanı (Tuğrul, 2026-10-27): üst kenar koçandan koparılmış gibi
+/// yarım daire delikli, alt köşeler yuvarlak. Delikler kenara ortalanır.
+class PrescriptionStubBorder extends ShapeBorder {
+  const PrescriptionStubBorder();
+
+  static const double _pitch = 14;
+  static const double _hole = 4.5;
+  static const double _radius = 16;
+
+  @override
+  EdgeInsetsGeometry get dimensions => EdgeInsets.zero;
+
+  @override
+  Path getInnerPath(Rect rect, {TextDirection? textDirection}) => getOuterPath(rect);
+
+  @override
+  Path getOuterPath(Rect rect, {TextDirection? textDirection}) {
+    final body = Path()
+      ..addRRect(RRect.fromRectAndCorners(
+        rect,
+        bottomLeft: const Radius.circular(_radius),
+        bottomRight: const Radius.circular(_radius),
+      ));
+    final count = (rect.width / _pitch).floor();
+    if (count == 0) return body;
+    final first = rect.left + (rect.width - count * _pitch) / 2 + _pitch / 2;
+    final holes = Path();
+    for (var i = 0; i < count; i++) {
+      holes.addOval(Rect.fromCircle(center: Offset(first + i * _pitch, rect.top), radius: _hole));
+    }
+    return Path.combine(PathOperation.difference, body, holes);
+  }
+
+  @override
+  void paint(Canvas canvas, Rect rect, {TextDirection? textDirection}) {
+    canvas.drawPath(
+      getOuterPath(rect),
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1
+        ..color = AppColors.line,
+    );
+  }
+
+  @override
+  ShapeBorder scale(double t) => this;
 }
