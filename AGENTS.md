@@ -111,6 +111,7 @@ lib/
 - Reçete durum renkleri (2026-10-27): `OrderStatus` (seni bekliyor amber, hazır yeşil, hazırlanıyor
   mor, yeni kobalt); renkler `AppColors` içinde, yazı tonları açık zeminde ≥5,1:1 ölçüldü. Reçeteler
   sekmesi bu sırayla dizilir; kartın başındaki çip ve süren işin göstergeleri durumun rengini taşır; kartta yan şerit yok (Tuğrul, 2026-10-27).
+  Oyuncuyu bekleyen kartta çip ve "Sıra sende: … aletine bas" cümlesi yok; bekleyen adım amber kutuda, altta yalnız "Laboratuvara git" (Tuğrul, 2026-10-28).
   Birincil düğme her zaman kobalt.
 - Duvar ve tezgâh (Tuğrul, 2026-10-27): duvarda gelen reçeteler, tezgâhta elindekiler. Duvarda
   henüz alınmamış reçetelerin küçük fişleri (hekim, ad, süre; hepsi aynı boyda, düz, kobalt

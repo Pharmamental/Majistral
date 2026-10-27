@@ -123,8 +123,10 @@ void main() {
 
     // Alet seçme ekranı yok: duvardan alınan reçete tezgâhta ilk adımı bekler.
     await _take(tester, order.magistralName);
-    expect(find.text('Seni bekliyor'), findsOneWidget); // kartın durumu
-    expect(find.text('Sıra sende: Levigasyon. Laboratuvarda aletine bas.'), findsOneWidget);
+    // Bekleyen kartta çip ve cümle yok; bekleyen adımın kutusu "Sıra sende" der.
+    expect(find.text('Seni bekliyor'), findsNothing);
+    expect(find.textContaining('Laboratuvarda aletine bas'), findsNothing);
+    expect(find.text('Sıra sende'), findsOneWidget);
     expect(find.text('Tartım'), findsNothing); // tartım oyundan çıktı (2026-10-27)
 
     await tester.tap(find.text('Laboratuvara git'));

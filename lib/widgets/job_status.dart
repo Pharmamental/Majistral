@@ -98,7 +98,7 @@ class _JobStatusState extends State<JobStatus> with SecondTick {
             children: [
               _StepStrip(job: job, steps: store.orderOf(job).steps, at: store.now()),
               const SizedBox(height: AppSpace.md),
-              if (run != null)
+              if (run != null) ...[
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.baseline,
                   textBaseline: TextBaseline.alphabetic,
@@ -112,16 +112,11 @@ class _JobStatusState extends State<JobStatus> with SecondTick {
                     const SizedBox(width: AppSpace.sm),
                     Text(next == null ? 'sonra hazır' : 'sonra sıra sende', style: AppText.label(size: 13)),
                   ],
-                )
-              else
-                Text(
-                  'Sıra sende: ${next!.label}. Laboratuvarda aletine bas.',
-                  style: AppText.body(size: 14, weight: FontWeight.w600),
                 ),
-              const SizedBox(height: AppSpace.sm),
-              if (run != null)
-                _RushButton(job: job)
-              else
+                const SizedBox(height: AppSpace.sm),
+                _RushButton(job: job),
+              ] else
+                // Bekleyen adım amber kutuda; altında cümle yok (Tuğrul, 2026-10-28).
                 ChunkyButton(
                   label: 'Laboratuvara git',
                   icon: Icons.science_rounded,

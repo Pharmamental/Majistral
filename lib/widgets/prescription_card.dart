@@ -60,7 +60,9 @@ class PrescriptionCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (showStatus) ...[
+            // Oyuncuyu bekleyen reçetede çip yok; bekleyen adım amber kutuyla belli
+            // (Tuğrul, 2026-10-28).
+            if (showStatus && status != OrderStatus.bekliyor) ...[
               _StatusChip(status: status),
               const SizedBox(height: AppSpace.sm),
             ],
