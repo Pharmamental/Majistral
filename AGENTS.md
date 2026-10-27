@@ -89,8 +89,10 @@ lib/
 - Adımlar gerçek teknikler (Tuğrul, 2026-10-28, "asıl önemlileri koy"): kontrol, etiket ve
   ambalaj adım değil, laboratuvarda ambalaj aleti durmaz (markette Ambalaj grubu şimdilik
   etkisiz). Merhem: Ezme › Levigasyon › Geometrik seyreltme (salisilik asit); Levigasyon ›
-  Geometrik seyreltme (çinko oksit). Krem: Eritme (su banyosu, termometre oyunu) › Su fazı (su
-  banyosu) › Birleştirme (porselen kapsül) › Soğuma (porselen kapsül, buzsuz, karıştırarak).
+  Geometrik seyreltme (çinko oksit). Krem: Eritme (su banyosu, termometre oyunu) › Çözme (su
+  banyosu) › Emülsifikasyon (porselen kapsül) › Soğutma (porselen kapsül, buzsuz, karıştırarak).
+  Adım = eczacının madde üzerinde eliyle, aletle ya da yöntemle yaptığı işlem (ezme, maserasyon,
+  eritme, çözme, soğutma); malzeme ("su fazı") adım olmaz (Tuğrul, 2026-10-28).
   Ezme ve levigasyon havanda ya da merhem taşında spatülle; seyreltme spatülle ya da havanda
   (`PrescriptionStep.orWith`); salisilik asitte çelik spatül hiçbir adımda yok. Kaynak: Fırat Üni.
   merhem beceri kılavuzu, Ankara Üni. föyleri, USP, PTCB. Alet inceleme sayfası (20 alet, kaynaklı):

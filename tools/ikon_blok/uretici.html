@@ -312,8 +312,9 @@ const IKONLAR=[
   {d:rr(13,40,74,9,4.5),c:R.krem},
   {d:rr(35,76,30,9,3.5),c:R.kremKoyu}]},
  // Kremin dört adımı (Ankara Üni. föyleri, USP, 2026-10-28): yağ fazı porselen kapsülde
- // eritilir, su fazı beherde hazırlanır, su fazı kapsüle eklenir, krem soğuyana kadar
- // karıştırılır. Kapsül "Porselen kapsül" alet ikonunun aynısı.
+ // eritilir, su fazının maddeleri beherde çözülür, su fazı kapsüle eklenerek emülsiyon
+ // yapılır, krem soğuyana kadar karıştırılarak soğutulur. Kapsül "Porselen kapsül"
+ // alet ikonunun aynısı.
  {grup:'Adımlar',dosya:'adim_eritme',ad:'Eritme',kutu:'#FFD6C2',parts:[
   {d:'M20,48C28,34 72,34 82,48Z',c:'#F2D27A'},       // eriyen yağ fazı
   {d:cap(72,8,58,50,8),c:'#F4F6F8'},                // termometre
@@ -323,12 +324,12 @@ const IKONLAR=[
   {d:rr(38,75,26,8,3.5),c:R.kremKoyu},
   {d:'M24,63C38,68 64,68 78,63',c:R.mavi,line:1},
   {d:'M61,40L69,14',c:R.kan,line:1}]},              // yükselen kırmızı sıvı
- {grup:'Adımlar',dosya:'adim_su_fazi',ad:'Su fazı',kutu:'#CFE4F7',parts:[
+ {grup:'Adımlar',dosya:'adim_cozme',ad:'Çözme',kutu:'#CFE4F7',parts:[
   {d:rr(22,24,50,60,8),c:R.cam},                    // beher
   {d:rr(26,44,42,36,6),c:R.buz},                    // su fazı
   {d:circ(38,64,2.4),c:'#FFFFFF',flat:1},{d:circ(50,72,2),c:'#FFFFFF',flat:1},{d:circ(44,55,2),c:'#FFFFFF',flat:1}, // çözünen maddeler
   {d:cap(70,8,50,74,5),c:'#F4F6F8'}]},              // cam baget
- {grup:'Adımlar',dosya:'adim_birlestirme',ad:'Birleştirme',kutu:'#D9D2FA',parts:[
+ {grup:'Adımlar',dosya:'adim_emulsifikasyon',ad:'Emülsifikasyon',kutu:'#D9D2FA',parts:[
   {d:'M20,48C28,35 72,35 82,48Z',c:'#F2D27A'},       // yağ fazı
   {d:'M58,10L88,22L78,44L50,32Z',c:R.cam},          // su fazının beheri (eğik)
   {d:'M62,20L82,28L77,39L56,30Z',c:R.buz,flat:1},
@@ -338,8 +339,8 @@ const IKONLAR=[
   {d:rr(8,46,86,9,4.5),c:R.krem},
   {d:rr(38,75,26,8,3.5),c:R.kremKoyu},
   {d:'M24,63C38,68 64,68 78,63',c:R.mavi,line:1}]},
- // Soğuma: krem banyodan alınıp soğuyana kadar karıştırılır; hızlı soğutulmaz (buz yok).
- {grup:'Adımlar',dosya:'adim_soguma',ad:'Soğuma',kutu:'#C9EFE6',parts:[
+ // Soğutma: krem banyodan alınıp soğuyana kadar karıştırılır; hızlı soğutulmaz (buz yok).
+ {grup:'Adımlar',dosya:'adim_sogutma',ad:'Soğutma',kutu:'#C9EFE6',parts:[
   {d:'M24,48C29,30 73,30 78,48Z',c:'#FFFFFF'},       // kıvam alan beyaz krem
   {d:'M36,42C42,36 56,36 60,41',c:R.kremKoyu,line:1}, // karıştırma izi
   {d:cap(58,40,82,14,8),c:R.metal},                 // spatül ağzı

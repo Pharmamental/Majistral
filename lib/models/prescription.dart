@@ -4,16 +4,17 @@
 enum StepTool { havan, karistirma, isitma, kapsul }
 
 /// Her hazırlama adımının kendi oyuncak blok ikonu (tools/ikon_blok, "Adımlar").
-/// Adımlar gerçek tekniklerdir; kontrol ve etiket gibi önemsiz işler adım değil
-/// (Tuğrul, 2026-10-28).
+/// Adım, eczacının madde üzerinde eliyle, bir aletle ya da bir yöntemle yaptığı
+/// işlemdir (ezme, eritme, çözme, soğutma); malzeme ("su fazı") ya da kontrol,
+/// etiket gibi yan işler adım değildir (Tuğrul, 2026-10-28).
 const stepIcons = {
   'Ezme': 'ezme',
   'Levigasyon': 'levigasyon',
   'Geometrik seyreltme': 'karistirma',
   'Eritme': 'eritme',
-  'Su fazı': 'su_fazi',
-  'Birleştirme': 'birlestirme',
-  'Soğuma': 'soguma',
+  'Çözme': 'cozme',
+  'Emülsifikasyon': 'emulsifikasyon',
+  'Soğutma': 'sogutma',
 };
 
 /// Adım adına göre ikon; kayıttaki eski işlerin adımları da böyle bulunur.

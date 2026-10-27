@@ -111,9 +111,9 @@ const List<PrescriptionOrder> prescriptionOrders = [
       // beherde suda çözülüp aynı sıcaklığa getirilir; su fazı yağ fazına kapsülde
       // karıştırılarak eklenir; krem banyodan alınıp soğuyana kadar karıştırılır.
       PrescriptionStep('Eritme', tool: StepTool.isitma, minutes: 6, interactive: true),
-      PrescriptionStep('Su fazı', tool: StepTool.isitma, minutes: 4),
-      PrescriptionStep('Birleştirme', tool: StepTool.kapsul, minutes: 9),
-      PrescriptionStep('Soğuma', tool: StepTool.kapsul, minutes: 8),
+      PrescriptionStep('Çözme', tool: StepTool.isitma, minutes: 4),
+      PrescriptionStep('Emülsifikasyon', tool: StepTool.kapsul, minutes: 9),
+      PrescriptionStep('Soğutma', tool: StepTool.kapsul, minutes: 8),
     ],
   ),
 ];

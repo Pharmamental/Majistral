@@ -218,7 +218,7 @@ void main() {
 
   testWidgets('kremde önce termometre, sonra eritmenin süresi', (tester) async {
     await _tallScreen(tester);
-    final cream = prescriptionOrders[2]; // eritme 6 (oyun), su fazı 4, birleştirme 9, soğuma 8
+    final cream = prescriptionOrders[2]; // eritme 6 (oyun), çözme 4, emülsifikasyon 9, soğutma 8
     final clock = DateTime(2026, 10, 25, 12);
     final store = await _store(now: () => clock);
     await take(store, cream);

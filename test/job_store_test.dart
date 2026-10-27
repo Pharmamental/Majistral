@@ -11,7 +11,7 @@ import 'test_helpers.dart';
 void main() {
   final order = prescriptionOrders.first; // %5 SA: ezme 1, levigasyon 3, geometrik seyreltme 4
   final zno = prescriptionOrders[1]; // levigasyon 5, geometrik seyreltme 7
-  final cream = prescriptionOrders[2]; // eritme 6 (oyun), su fazı 4, birleştirme 9, soğuma 8
+  final cream = prescriptionOrders[2]; // eritme 6 (oyun), çözme 4, emülsifikasyon 9, soğutma 8
   final tools = {for (final t in labTools()) t.name: t};
   final havan = tools['Porselen havan']!;
   final celik = tools['Çelik spatül']!;
@@ -75,7 +75,7 @@ void main() {
     expect(store.whyNot(havan, j), isNull);
   });
 
-  test('kremde yağ fazı eritilir, su fazı hazırlanır, kapsülde birleştirilip soğutulur', () async {
+  test('kremde yağ fazı eritilir, su fazındakiler çözülür, kapsülde emülsiyon yapılıp soğutulur', () async {
     final store = await JobStore.load(now: () => clock);
     var job = await take(store, cream); // eritme 6, su fazı 4, birleştirme 9, soğuma 8
     expect(store.whyNot(plastik, job), 'Bu reçetede bu alete gerek yok.');
@@ -90,7 +90,7 @@ void main() {
     await store.startStep(job.id, kapsul);
     clock = clock.add(const Duration(minutes: 8));
     job = store.job(job.id)!;
-    expect([for (final r in job.runs) r.label], ['Eritme', 'Su fazı', 'Birleştirme', 'Soğuma']);
+    expect([for (final r in job.runs) r.label], ['Eritme', 'Çözme', 'Emülsifikasyon', 'Soğutma']);
     expect([for (final r in job.runs) r.tool],
         ['Ocak ve su banyosu', 'Ocak ve su banyosu', 'Porselen kapsül', 'Porselen kapsül']);
     expect(store.isReady(job), isTrue);
