@@ -6,7 +6,7 @@ import '../theme/tokens.dart';
 import 'chunky_button.dart';
 
 /// Reçetenin ayrıntısı: her maddenin miktarı ve görevi, ürünün ne işe yaradığı
-/// ve neyde kullanıldığı. Süren iş kartındaki "Reçete" düğmesi açar.
+/// ve neyde kullanıldığı. Reçete kartındaki "Reçete" düğmesi açar.
 Future<void> openRecipe(BuildContext context, PrescriptionOrder order) {
   return showModalBottomSheet<void>(
     context: context,

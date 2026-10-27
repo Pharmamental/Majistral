@@ -121,8 +121,9 @@ void main() {
     expect(find.text('Hazırlanıyor'), findsNWidgets(2)); // duvardaki fiş ve kartın durumu
     expect(find.text('sonra hazır'), findsOneWidget); // kartın sayacı
 
-    // Süren işte reçete düğmeyle açılır: miktarlar, görevler, kullanım alanı.
-    await tester.tap(find.text('Reçete'));
+    // Reçete düğmeyle açılır: miktarlar, görevler, kullanım alanı. Süren iş en
+    // öndeki kart; yanındaki kartın düğmesi de görünür.
+    await tester.tap(find.text('Reçete').first);
     await tester.pumpAndSettle();
     expect(find.text(order.usedFor), findsOneWidget);
     expect(find.text(order.ingredients.first.written), findsOneWidget);

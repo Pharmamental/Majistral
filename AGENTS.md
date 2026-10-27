@@ -66,8 +66,10 @@ lib/
 - Birincil aksiyon altta (başparmak bölgesi): kartın en altı ya da ekranın sabit alt çubuğu.
 - Öğrenme ekranı (Hazırlama) sade; kutlama (yıldız animasyonu) yalnız teslimde.
 - Durum yalnız renkle anlatılmaz: seçimde onay işareti, sayaçta ikon + metin.
-- Reçete kartında adım sırası gösterilmez. "Reçete" penceresinde ise "Hazırlık" bölümü adımları
-  ikon ve `›` okuyla sırayla gösterir (Tuğrul, 2026-10-27; adım sırası artık sorulmadığı için).
+- Bütün reçete kartları aynı düzende (Tuğrul, 2026-10-27, "hidrofil merhem tasarımı"): sağ üstte
+  "Reçete" düğmesi, ortada adım kutuları; yeni reçetede kutular silik, süreleriyle, altında toplam
+  süre (`PlannedSteps`), en altta Hazırla. Madde listesi kartta değil, pencerede. "Reçete"
+  penceresinin "Hazırlık" bölümü adımları ikon ve `›` okuyla gösterir; ok şeridi yalnız orada.
 - Aletler (2026-10-25): hazırlamada spatül, havan ve çalışma yüzeyi seçilir; kurallar ASHP
   bülteninden (salisilik asit çelik spatülle tepkir; cam havan toz ezmez; parşömen kremde olmaz).
   Kaç alet yanlış olursa olsun alet hatası tek yıldız. Marketteki basamaklar gerçek aletler
@@ -103,7 +105,7 @@ lib/
   (durum + ad), dokununca o kart gelir; bütün fişler aynı boyda, düz ve durum renginde çerçeveli; gösterilen kartın fişinin altında kısa kobalt çizgi.
   (`CounterTop`, `orders_screen.dart`). Laboratuvar ve Market de tezgâhta:
   başlık (ve Market sekmeleri) duvarda, liste tezgâhın içinde kayar.
-- Süren iş kartı (Tuğrul, 2026-10-27): iş başlayınca madde listesi kartta görünmez; sağ üstte
+- Süren iş kartı (Tuğrul, 2026-10-27): madde listesi kartta görünmez; sağ üstte
   "Reçete" düğmesi pencere açar (miktar, her maddenin marketteki görevi, ne işe yarar `purpose`,
   neyde kullanılır `usedFor`; kaynakları `lib/data/orders.dart` başında). Yerine adım şeridi gelir (biten onaylı, süren mor, oyuncuyu bekleyen amber, sıradaki silik) ve
   büyük "… sonra hazır" sayacı. Acele düğmesinin üstüne bedel satırı ya da şimşek ikonları konmaz.

@@ -342,6 +342,53 @@ class _StepStrip extends StatelessWidget {
   }
 }
 
+/// Başlamamış reçetenin kartında süren işle aynı düzen: adımlar silik kutularda
+/// süreleriyle, altında toplam süre.
+class PlannedSteps extends StatelessWidget {
+  const PlannedSteps({super.key, required this.order});
+
+  final PrescriptionOrder order;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(AppSpace.md),
+      decoration: BoxDecoration(
+        color: AppColors.surfaceMuted,
+        borderRadius: BorderRadius.circular(AppRadius.paper),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                for (final (i, s) in order.steps.indexed) ...[
+                  if (i > 0) const SizedBox(width: AppSpace.sm),
+                  Expanded(child: _StepTile(label: s.label, state: _TileState.next, note: '${s.minutes} dk')),
+                ],
+              ],
+            ),
+          ),
+          const SizedBox(height: AppSpace.md),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.baseline,
+            textBaseline: TextBaseline.alphabetic,
+            children: [
+              const Icon(Icons.hourglass_empty_rounded, size: 20, color: AppColors.inkMuted),
+              const SizedBox(width: AppSpace.xs),
+              Text('${order.prepTime.inMinutes} dk', style: AppText.timer(size: 28, color: AppColors.ink)),
+              const SizedBox(width: AppSpace.sm),
+              Text('sürer', style: AppText.label(size: 13)),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 enum _TileState { done, now, player, next }
 
 class _StepTile extends StatelessWidget {

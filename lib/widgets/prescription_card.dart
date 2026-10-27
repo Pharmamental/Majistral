@@ -32,10 +32,9 @@ enum OrderStatus {
 }
 
 /// Reçete kartı (yan şerit yok, Tuğrul 2026-10-27; durum kartın başındaki çipte).
-/// "Rp." ile majistral, altında hekim ve hasta. Yeni reçetede maddeler gerçek
-/// reçetedeki gibi ad–miktar sütunlarında ve süre başlıkta; iş başlayınca liste
-/// "Reçete" düğmesine iner (pencerede açılır), yerini adım şeridi alır. En
-/// altta kartın tek aksiyonu.
+/// "Rp." ile majistral, altında hekim ve hasta; sağ üstte "Reçete" düğmesi
+/// (maddeler ve miktarlar pencerede). Her durumda aynı düzen (Tuğrul,
+/// 2026-10-27): ortada adım kutuları ve süre, en altta kartın tek aksiyonu.
 class PrescriptionCard extends StatelessWidget {
   const PrescriptionCard({super.key, required this.order, this.showStatus = false});
 
@@ -78,10 +77,6 @@ class PrescriptionCard extends StatelessWidget {
                           Text('Rp.', style: AppText.display(size: 22, color: AppColors.accentText)),
                           const SizedBox(width: AppSpace.sm),
                           Expanded(child: Text(order.magistralName, style: AppText.title(size: 20))),
-                          if (job == null) ...[
-                            const SizedBox(width: AppSpace.sm),
-                            Text('${order.prepTime.inMinutes} dk', style: AppText.label(size: 12)),
-                          ],
                         ],
                       ),
                       Text.rich(
@@ -97,22 +92,16 @@ class PrescriptionCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                if (job != null) ...[
-                  const SizedBox(width: AppSpace.sm),
-                  _RecipeButton(order: order),
-                ],
+                const SizedBox(width: AppSpace.sm),
+                _RecipeButton(order: order),
               ],
             ),
-            if (job == null) ...[
-              const SizedBox(height: AppSpace.xs),
-              Text(order.purpose, style: AppText.body(size: 14, color: AppColors.inkMuted)),
-              const SizedBox(height: AppSpace.md),
-              _Formula(order: order),
-            ],
             const SizedBox(height: AppSpace.lg),
             if (job != null)
               JobStatus(job: job)
-            else
+            else ...[
+              PlannedSteps(order: order),
+              const SizedBox(height: AppSpace.md),
               SizedBox(
                 width: double.infinity,
                 child: ChunkyButton(
@@ -123,6 +112,7 @@ class PrescriptionCard extends StatelessWidget {
                   ),
                 ),
               ),
+            ],
           ],
         ),
       ),
@@ -157,8 +147,7 @@ class _StatusChip extends StatelessWidget {
   }
 }
 
-/// Süren işte reçetenin yerine küçük düğme: maddeler, miktarlar ve kullanım
-/// alanı pencerede açılır.
+/// Maddeler, miktarlar ve kullanım alanı için küçük düğme; pencerede açılır.
 class _RecipeButton extends StatelessWidget {
   const _RecipeButton({required this.order});
 
@@ -186,59 +175,6 @@ class _RecipeButton extends StatelessWidget {
             ),
           ),
         ),
-      ),
-    );
-  }
-}
-
-/// Reçetenin madde satırları: solda ad, sağda reçetede yazan miktar; sayılar
-/// hizalı. Formül başka toplam için yazıldıysa altta not.
-class _Formula extends StatelessWidget {
-  const _Formula({required this.order});
-
-  final PrescriptionOrder order;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AppSpace.md, vertical: AppSpace.sm),
-      decoration: BoxDecoration(
-        color: AppColors.surfaceMuted,
-        borderRadius: BorderRadius.circular(AppRadius.paperInner),
-      ),
-      child: Column(
-        children: [
-          for (final (n, i) in order.ingredients.indexed) ...[
-            if (n > 0) const Divider(height: 1, color: AppColors.line),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: AppSpace.xs),
-              child: Row(
-                children: [
-                  Expanded(child: Text(i.name, style: AppText.body(size: 14))),
-                  Text(
-                    i.written,
-                    style: AppText.body(size: 14, weight: FontWeight.w600).copyWith(
-                      fontFeatures: const [FontFeature.tabularFigures()],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-          if (order.batchNote != null) ...[
-            const Divider(height: 1, color: AppColors.line),
-            Padding(
-              padding: const EdgeInsets.only(top: AppSpace.sm, bottom: AppSpace.xs),
-              child: Row(
-                children: [
-                  const Icon(Icons.info_outline_rounded, size: 16, color: AppColors.accentText),
-                  const SizedBox(width: AppSpace.xs),
-                  Expanded(child: Text(order.batchNote!, style: AppText.label(size: 12, color: AppColors.accentText))),
-                ],
-              ),
-            ),
-          ],
-        ],
       ),
     );
   }
