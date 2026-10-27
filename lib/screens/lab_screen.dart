@@ -7,6 +7,7 @@ import '../logic/job_store.dart';
 import '../theme/tokens.dart';
 import '../widgets/back_pill.dart';
 import '../widgets/counter_top.dart';
+import '../widgets/grow_panel.dart';
 import '../widgets/job_status.dart';
 import '../widgets/tool_sheet.dart';
 
@@ -182,7 +183,7 @@ class _ToolCard extends StatelessWidget {
     return Semantics(
       button: true,
       label: tool.name,
-      child: GestureDetector(onTap: () => openToolSheet(context, tool), child: card),
+      child: GestureDetector(onTap: () => openToolSheet(context, tool, from: rectOf(context)), child: card),
     );
   }
 }

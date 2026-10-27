@@ -4,72 +4,71 @@ import '../data/lab_tools.dart';
 import '../logic/job_store.dart';
 import '../models/prep_job.dart';
 import '../theme/tokens.dart';
+import 'grow_panel.dart';
 import 'heating_sheet.dart';
 import 'job_status.dart';
 
 /// Laboratuvarda bir alete basınca açılan pencere (Tuğrul, 2026-10-27): kabul
 /// edilmiş reçeteler listelenir. Aleti şimdi kullanabilenler vurgulu ve
 /// basılabilir; kullanamayanların altında nedeni yazar. Seçilen reçetenin
-/// sıradaki adımı başlar; mini oyunlu adımda önce oyun açılır.
-Future<void> openToolSheet(BuildContext context, LabTool tool) {
+/// sıradaki adımı başlar; mini oyunlu adımda önce oyun açılır. Pencere alet
+/// kartının yerinden ([from]) büyür; mini oyun da oradan açılır.
+Future<void> openToolSheet(BuildContext context, LabTool tool, {required Rect from}) {
   final store = JobScope.of(context);
-  return showModalBottomSheet<void>(
-    context: context,
-    isScrollControlled: true,
-    backgroundColor: AppColors.background,
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.paper)),
-    ),
+  return openGrowing<void>(
+    context,
+    from: from,
     builder: (sheetContext) => ListenableBuilder(
       listenable: store,
       builder: (context, _) {
-        final jobs = [for (final j in store.jobs) if (!store.isReady(j)) j];
+        final jobs = [
+          for (final j in store.jobs)
+            if (!store.isReady(j)) j,
+        ];
         final busy = store.busyWith(tool);
-        return SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(AppSpace.lg),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Row(
+        return Padding(
+          padding: const EdgeInsets.all(AppSpace.lg),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    width: 52,
+                    height: 52,
+                    alignment: Alignment.center,
+                    decoration: const BoxDecoration(color: AppColors.iconWell, shape: BoxShape.circle),
+                    child: Image.asset(tool.imagePath, width: 44, height: 44),
+                  ),
+                  const SizedBox(width: AppSpace.md),
+                  Expanded(child: Text(tool.name, style: AppText.title(size: 20))),
+                ],
+              ),
+              const SizedBox(height: AppSpace.sm),
+              Text(
+                busy != null
+                    ? 'Şu an ${busy.job.magistralName}: ${busy.run.label}, '
+                          '${formatRemaining(busy.run.end.difference(store.now()))} kaldı.'
+                    : jobs.isEmpty
+                    ? 'Laboratuvarda reçete yok. Reçeteler\'de duvardan bir reçete al.'
+                    : 'Bu aletle hangi reçeteye devam edeceksin?',
+                style: AppText.body(size: 14, color: AppColors.inkMuted),
+              ),
+              const SizedBox(height: AppSpace.md),
+              ConstrainedBox(
+                constraints: BoxConstraints(maxHeight: MediaQuery.sizeOf(context).height * 0.6),
+                child: ListView(
+                  shrinkWrap: true,
                   children: [
-                    Container(
-                      width: 52,
-                      height: 52,
-                      alignment: Alignment.center,
-                      decoration: const BoxDecoration(color: AppColors.iconWell, shape: BoxShape.circle),
-                      child: Image.asset(tool.imagePath, width: 44, height: 44),
-                    ),
-                    const SizedBox(width: AppSpace.md),
-                    Expanded(child: Text(tool.name, style: AppText.title(size: 20))),
+                    for (final job in jobs) ...[
+                      _JobRow(tool: tool, job: job, sheetContext: sheetContext, from: from),
+                      const SizedBox(height: AppSpace.sm),
+                    ],
                   ],
                 ),
-                const SizedBox(height: AppSpace.sm),
-                Text(
-                  busy != null
-                      ? 'Şu an ${busy.job.magistralName}: ${busy.run.label}, '
-                          '${formatRemaining(busy.run.end.difference(store.now()))} kaldı.'
-                      : jobs.isEmpty
-                          ? 'Laboratuvarda reçete yok. Reçeteler\'de bir reçeteye Hazırla de.'
-                          : 'Bu aletle hangi reçeteye devam edeceksin?',
-                  style: AppText.body(size: 14, color: AppColors.inkMuted),
-                ),
-                const SizedBox(height: AppSpace.md),
-                ConstrainedBox(
-                  constraints: BoxConstraints(maxHeight: MediaQuery.sizeOf(context).height * 0.6),
-                  child: ListView(
-                    shrinkWrap: true,
-                    children: [
-                      for (final job in jobs) ...[
-                        _JobRow(tool: tool, job: job, sheetContext: sheetContext),
-                        const SizedBox(height: AppSpace.sm),
-                      ],
-                    ],
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         );
       },
@@ -78,11 +77,12 @@ Future<void> openToolSheet(BuildContext context, LabTool tool) {
 }
 
 class _JobRow extends StatelessWidget {
-  const _JobRow({required this.tool, required this.job, required this.sheetContext});
+  const _JobRow({required this.tool, required this.job, required this.sheetContext, required this.from});
 
   final LabTool tool;
   final PrepJob job;
   final BuildContext sheetContext;
+  final Rect from;
 
   void _pick(BuildContext context) {
     final store = JobScope.of(context);
@@ -94,6 +94,7 @@ class _JobRow extends StatelessWidget {
     if (step.interactive) {
       openHeating(
         navigatorContext,
+        from: from,
         magistralName: job.magistralName,
         onDone: () => store.startStep(job.id, tool),
       );
@@ -124,7 +125,11 @@ class _JobRow extends StatelessWidget {
               children: [
                 Text(
                   job.magistralName,
-                  style: AppText.body(size: 15, weight: FontWeight.w700, color: ok ? AppColors.ink : AppColors.inkMuted),
+                  style: AppText.body(
+                    size: 15,
+                    weight: FontWeight.w700,
+                    color: ok ? AppColors.ink : AppColors.inkMuted,
+                  ),
                 ),
                 const SizedBox(height: 2),
                 Text(

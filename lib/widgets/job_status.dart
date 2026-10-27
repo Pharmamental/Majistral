@@ -8,6 +8,7 @@ import '../models/prescription.dart';
 import '../screens/home_screen.dart';
 import '../theme/tokens.dart';
 import 'chunky_button.dart';
+import 'grow_panel.dart';
 import 'result_view.dart';
 
 /// "02:15" ya da "1 sa 05 dk" biçiminde kalan süre.
@@ -24,28 +25,28 @@ String formatRemaining(Duration d) {
 Future<void> deliverJob(BuildContext context, int id) async {
   // Teslimden sonra düğmenin bulunduğu kart yeniden çizilip kaybolabilir;
   // pencere bu yüzden kalıcı olan gezgin bağlamında açılır.
+  // Pencere "Teslim Et" düğmesinin yerinden büyür.
   final navigatorContext = Navigator.of(context).context;
+  final from = rectOf(context);
   final job = await JobScope.of(context).deliver(id);
   if (job == null || !navigatorContext.mounted) return;
-  await showDialog<void>(
-    context: navigatorContext,
-    builder: (context) => Dialog(
-      insetPadding: const EdgeInsets.all(AppSpace.xxl),
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(AppSpace.xxl, AppSpace.x3, AppSpace.xxl, AppSpace.xxl),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(job.magistralName, textAlign: TextAlign.center, style: AppText.label(size: 14)),
-            const SizedBox(height: AppSpace.md),
-            ResultView(stars: job.stars, notes: job.notes),
-            const SizedBox(height: AppSpace.xxl),
-            SizedBox(
-              width: double.infinity,
-              child: ChunkyButton(label: 'Tamam', onPressed: () => Navigator.of(context).pop()),
-            ),
-          ],
-        ),
+  await openGrowing<void>(
+    navigatorContext,
+    from: from,
+    builder: (context) => Padding(
+      padding: const EdgeInsets.fromLTRB(AppSpace.xxl, AppSpace.x3, AppSpace.xxl, AppSpace.xxl),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(job.magistralName, textAlign: TextAlign.center, style: AppText.label(size: 14)),
+          const SizedBox(height: AppSpace.md),
+          ResultView(stars: job.stars, notes: job.notes),
+          const SizedBox(height: AppSpace.xxl),
+          SizedBox(
+            width: double.infinity,
+            child: ChunkyButton(label: 'Tamam', onPressed: () => Navigator.of(context).pop()),
+          ),
+        ],
       ),
     ),
   );
@@ -160,38 +161,34 @@ class _RushButton extends StatelessWidget {
     final run = store.running(job)!;
     final before = formatRemaining(run.end.difference(store.now()));
     final after = formatRemaining(store.stepLeftAfterRush(job));
-    final yes = await showDialog<bool>(
-      context: context,
-      builder: (context) => Dialog(
-        insetPadding: const EdgeInsets.all(AppSpace.xxl),
-        child: Padding(
-          padding: const EdgeInsets.all(AppSpace.xxl),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const Icon(Icons.bolt_rounded, size: 40, color: AppColors.kobalt),
-              const SizedBox(height: AppSpace.sm),
-              Text('Acele et', textAlign: TextAlign.center, style: AppText.title(size: 22)),
-              const SizedBox(height: AppSpace.md),
-              Text('${run.label}: $before › $after', style: AppText.body(weight: FontWeight.w600)),
-              const SizedBox(height: AppSpace.xs),
-              Text(
-                'Kalite de yarıya iner: aceleyle karıştırılan merhem homojen olmaz.',
-                style: AppText.body(size: 14),
-              ),
-              const SizedBox(height: AppSpace.xs),
-              Text('Bugün ${store.rushesLeft} hakkın var.', style: AppText.label()),
-              const SizedBox(height: AppSpace.xl),
-              ChunkyButton(
-                label: 'Reklam izle',
-                icon: Icons.play_circle_fill_rounded,
-                onPressed: () => Navigator.of(context).pop(true),
-              ),
-              const SizedBox(height: AppSpace.sm),
-              ChunkyButton.secondary(label: 'Vazgeç', onPressed: () => Navigator.of(context).pop(false)),
-            ],
-          ),
+    // Pencere düğmenin yerinden büyür.
+    final yes = await openGrowing<bool>(
+      context,
+      from: rectOf(context),
+      builder: (context) => Padding(
+        padding: const EdgeInsets.all(AppSpace.xxl),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const Icon(Icons.bolt_rounded, size: 40, color: AppColors.kobalt),
+            const SizedBox(height: AppSpace.sm),
+            Text('Acele et', textAlign: TextAlign.center, style: AppText.title(size: 22)),
+            const SizedBox(height: AppSpace.md),
+            Text('${run.label}: $before › $after', style: AppText.body(weight: FontWeight.w600)),
+            const SizedBox(height: AppSpace.xs),
+            Text('Kalite de yarıya iner: aceleyle karıştırılan merhem homojen olmaz.', style: AppText.body(size: 14)),
+            const SizedBox(height: AppSpace.xs),
+            Text('Bugün ${store.rushesLeft} hakkın var.', style: AppText.label()),
+            const SizedBox(height: AppSpace.xl),
+            ChunkyButton(
+              label: 'Reklam izle',
+              icon: Icons.play_circle_fill_rounded,
+              onPressed: () => Navigator.of(context).pop(true),
+            ),
+            const SizedBox(height: AppSpace.sm),
+            ChunkyButton.secondary(label: 'Vazgeç', onPressed: () => Navigator.of(context).pop(false)),
+          ],
         ),
       ),
     );
@@ -231,7 +228,8 @@ class _StepStrip extends StatelessWidget {
             label: s.label,
             state: _TileState.now,
             note: '${formatRemaining(runs[i].end.difference(at))} kaldı',
-            progress: at.difference(runs[i].start).inMilliseconds / runs[i].end.difference(runs[i].start).inMilliseconds,
+            progress:
+                at.difference(runs[i].start).inMilliseconds / runs[i].end.difference(runs[i].start).inMilliseconds,
           )
         else if (i == runs.length && job.runningAt(at) == null)
           _StepTile(label: s.label, state: _TileState.player, note: 'Sıra sende')
@@ -242,10 +240,7 @@ class _StepStrip extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          for (final (i, t) in tiles.indexed) ...[
-            if (i > 0) const SizedBox(width: AppSpace.sm),
-            Expanded(child: t),
-          ],
+          for (final (i, t) in tiles.indexed) ...[if (i > 0) const SizedBox(width: AppSpace.sm), Expanded(child: t)],
         ],
       ),
     );
@@ -303,9 +298,10 @@ class _StepTile extends StatelessWidget {
                 child: Text(
                   note,
                   maxLines: 1,
-                  style: AppText.label(size: 11, color: noteColor).copyWith(
-                    fontFeatures: const [FontFeature.tabularFigures()],
-                  ),
+                  style: AppText.label(
+                    size: 11,
+                    color: noteColor,
+                  ).copyWith(fontFeatures: const [FontFeature.tabularFigures()]),
                 ),
               ),
               if (progress != null) ...[

@@ -66,6 +66,12 @@ lib/
 - Birincil aksiyon altta (başparmak bölgesi): kartın en altı ya da ekranın sabit alt çubuğu.
 - Öğrenme ekranları (Laboratuvar, alet penceresi) sade; kutlama (yıldız animasyonu) yalnız teslimde.
 - Durum yalnız renkle anlatılmaz: seçimde onay işareti, sayaçta ikon + metin.
+- Pencereler alttan gelmez, yerinden büyür (Tuğrul, 2026-10-27, "A"): dokunulan şeyin yerinden
+  büyüyüp ortada kâğıt olarak açılır, arka kararır ama görünür, arkaya dokununca küçülüp yerine
+  döner (`openGrowing`, `widgets/grow_panel.dart`). Reçete penceresi koçan delikli reçete kâğıdı;
+  "Al"a basınca kâğıt tezgâha iner. Alet, termometre, acele ve teslim pencereleri de böyle.
+  `showModalBottomSheet` ve `showDialog` kullanma. Bu projede `dart format` çalıştırma: depo
+  biçimlenmemiş, dokunulmayan dosyaları da değiştirir.
 - Bütün reçete kartları aynı düzende (Tuğrul, 2026-10-27, "hidrofil merhem tasarımı"): sağ üstte
   "Reçete" düğmesi, ortada adım kutuları, en altta kartın tek aksiyonu. Kart yalnız tezgâhta,
   alınmış reçetede çizilir. Madde listesi kartta değil, pencerede. "Reçete"

@@ -4,123 +4,128 @@ import '../data/market_items.dart';
 import '../models/prescription.dart';
 import '../theme/tokens.dart';
 import 'chunky_button.dart';
+import 'grow_panel.dart';
+import 'prescription_card.dart';
 
 /// Reçetenin ayrıntısı: her maddenin miktarı ve görevi, ürünün ne işe yaradığı
 /// ve neyde kullanıldığı. Reçete kartındaki "Reçete" düğmesi açar. Duvardaki
 /// gelen reçete fişi [onTake] ile açar: altta "Al" düğmesi çıkar.
-Future<void> openRecipe(BuildContext context, PrescriptionOrder order, {VoidCallback? onTake}) {
-  return showModalBottomSheet<void>(
-    context: context,
-    isScrollControlled: true,
-    backgroundColor: AppColors.background,
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.paper)),
-    ),
-    builder: (sheetContext) => SafeArea(
-      child: ConstrainedBox(
-        constraints: BoxConstraints(maxHeight: MediaQuery.sizeOf(sheetContext).height * 0.85),
-        child: Padding(
-          padding: const EdgeInsets.all(AppSpace.lg),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Flexible(
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+///
+/// Reçete kâğıdı dokunulan yerden ([from]) büyüyerek ortaya gelir, koçan
+/// delikli. "Al"a basınca kâğıt [takeTo]'ya (tezgâh) iner.
+Future<void> openRecipe(
+  BuildContext context,
+  PrescriptionOrder order, {
+  required Rect from,
+  VoidCallback? onTake,
+  Rect Function()? takeTo,
+}) {
+  return openGrowing<void>(
+    context,
+    from: from,
+    shape: const PrescriptionStubBorder(),
+    builder: (sheetContext) => Padding(
+      padding: const EdgeInsets.fromLTRB(AppSpace.lg, AppSpace.xl, AppSpace.lg, AppSpace.lg),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Flexible(
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.baseline,
+                    textBaseline: TextBaseline.alphabetic,
                     children: [
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.baseline,
-                        textBaseline: TextBaseline.alphabetic,
-                        children: [
-                          Text('Rp.', style: AppText.display(size: 22, color: AppColors.accentText)),
-                          const SizedBox(width: AppSpace.sm),
-                          Expanded(child: Text(order.magistralName, style: AppText.title(size: 20))),
-                        ],
-                      ),
-                      Text(
-                        '${order.doctorName} · ${order.doctorBranch} · Hasta ${order.patientName}',
-                        style: AppText.label(size: 12),
-                      ),
-                      const SizedBox(height: AppSpace.lg),
-                      _Section(
-                        title: 'İçindekiler',
-                        child: Column(
-                          children: [
-                            for (final (n, i) in order.ingredients.indexed) ...[
-                              if (n > 0) const Divider(height: 1, color: AppColors.line),
-                              _IngredientRow(ingredient: i),
-                            ],
-                            if (order.batchNote != null) ...[
-                              const Divider(height: 1, color: AppColors.line),
-                              Padding(
-                                padding: const EdgeInsets.only(top: AppSpace.sm, bottom: AppSpace.xs),
-                                child: Row(
-                                  children: [
-                                    const Icon(Icons.info_outline_rounded, size: 16, color: AppColors.accentText),
-                                    const SizedBox(width: AppSpace.xs),
-                                    Expanded(
-                                      child: Text(
-                                        order.batchNote!,
-                                        style: AppText.label(size: 12, color: AppColors.accentText),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: AppSpace.md),
-                      _Section(
-                        title: 'Hazırlık',
-                        child: Wrap(
-                          crossAxisAlignment: WrapCrossAlignment.center,
-                          runSpacing: AppSpace.sm,
-                          children: [
-                            for (final (n, s) in order.steps.indexed) ...[
-                              if (n > 0)
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: AppSpace.xs),
-                                  child: Text('›', style: AppText.display(size: 22, color: AppColors.inkMuted)),
-                                ),
-                              _StepChip(step: s),
-                            ],
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: AppSpace.md),
-                      _Section(
-                        title: 'Ne işe yarar',
-                        child: Text(order.purpose, style: AppText.body(size: 14)),
-                      ),
-                      const SizedBox(height: AppSpace.md),
-                      _Section(
-                        title: 'Neyde kullanılır',
-                        child: Text(order.usedFor, style: AppText.body(size: 14)),
-                      ),
+                      Text('Rp.', style: AppText.display(size: 22, color: AppColors.accentText)),
+                      const SizedBox(width: AppSpace.sm),
+                      Expanded(child: Text(order.magistralName, style: AppText.title(size: 20))),
                     ],
                   ),
-                ),
+                  Text(
+                    '${order.doctorName} · ${order.doctorBranch} · Hasta ${order.patientName}',
+                    style: AppText.label(size: 12),
+                  ),
+                  const SizedBox(height: AppSpace.lg),
+                  _Section(
+                    title: 'İçindekiler',
+                    child: Column(
+                      children: [
+                        for (final (n, i) in order.ingredients.indexed) ...[
+                          if (n > 0) const Divider(height: 1, color: AppColors.line),
+                          _IngredientRow(ingredient: i),
+                        ],
+                        if (order.batchNote != null) ...[
+                          const Divider(height: 1, color: AppColors.line),
+                          Padding(
+                            padding: const EdgeInsets.only(top: AppSpace.sm, bottom: AppSpace.xs),
+                            child: Row(
+                              children: [
+                                const Icon(Icons.info_outline_rounded, size: 16, color: AppColors.accentText),
+                                const SizedBox(width: AppSpace.xs),
+                                Expanded(
+                                  child: Text(
+                                    order.batchNote!,
+                                    style: AppText.label(size: 12, color: AppColors.accentText),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: AppSpace.md),
+                  _Section(
+                    title: 'Hazırlık',
+                    child: Wrap(
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      runSpacing: AppSpace.sm,
+                      children: [
+                        for (final (n, s) in order.steps.indexed) ...[
+                          if (n > 0)
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: AppSpace.xs),
+                              child: Text('›', style: AppText.display(size: 22, color: AppColors.inkMuted)),
+                            ),
+                          _StepChip(step: s),
+                        ],
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: AppSpace.md),
+                  _Section(
+                    title: 'Ne işe yarar',
+                    child: Text(order.purpose, style: AppText.body(size: 14)),
+                  ),
+                  const SizedBox(height: AppSpace.md),
+                  _Section(
+                    title: 'Neyde kullanılır',
+                    child: Text(order.usedFor, style: AppText.body(size: 14)),
+                  ),
+                ],
               ),
-              const SizedBox(height: AppSpace.lg),
-              if (onTake != null) ...[
-                ChunkyButton(
-                  label: 'Al',
-                  icon: Icons.add_rounded,
-                  onPressed: () {
-                    Navigator.of(sheetContext).pop();
-                    onTake();
-                  },
-                ),
-                const SizedBox(height: AppSpace.sm),
-              ],
-              ChunkyButton.secondary(label: 'Kapat', onPressed: () => Navigator.of(sheetContext).pop()),
-            ],
+            ),
           ),
-        ),
+          const SizedBox(height: AppSpace.lg),
+          if (onTake != null) ...[
+            ChunkyButton(
+              label: 'Al',
+              icon: Icons.add_rounded,
+              onPressed: () {
+                final route = ModalRoute.of(sheetContext);
+                if (route is GrowRoute && takeTo != null) route.origin = takeTo();
+                Navigator.of(sheetContext).pop();
+                onTake();
+              },
+            ),
+            const SizedBox(height: AppSpace.sm),
+          ],
+          ChunkyButton.secondary(label: 'Kapat', onPressed: () => Navigator.of(sheetContext).pop()),
+        ],
       ),
     ),
   );
@@ -204,9 +209,10 @@ class _IngredientRow extends StatelessWidget {
           const SizedBox(width: AppSpace.md),
           Text(
             ingredient.written,
-            style: AppText.body(size: 14, weight: FontWeight.w600).copyWith(
-              fontFeatures: const [FontFeature.tabularFigures()],
-            ),
+            style: AppText.body(
+              size: 14,
+              weight: FontWeight.w600,
+            ).copyWith(fontFeatures: const [FontFeature.tabularFigures()]),
           ),
         ],
       ),

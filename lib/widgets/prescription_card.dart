@@ -4,6 +4,7 @@ import '../logic/job_store.dart';
 import '../models/prep_job.dart';
 import '../models/prescription.dart';
 import '../theme/tokens.dart';
+import 'grow_panel.dart';
 import 'job_status.dart';
 import 'recipe_sheet.dart';
 
@@ -144,7 +145,7 @@ class _RecipeButton extends StatelessWidget {
       shape: const StadiumBorder(side: BorderSide(color: AppColors.line)),
       child: InkWell(
         customBorder: const StadiumBorder(),
-        onTap: () => openRecipe(context, order),
+        onTap: () => openRecipe(context, order, from: rectOf(context)),
         child: ConstrainedBox(
           constraints: const BoxConstraints(minHeight: 44),
           child: Padding(

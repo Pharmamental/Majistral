@@ -7,6 +7,7 @@ import '../models/prep_job.dart';
 import '../models/prescription.dart';
 import '../theme/tokens.dart';
 import '../widgets/counter_top.dart';
+import '../widgets/grow_panel.dart';
 import '../widgets/job_status.dart';
 import '../widgets/paper_tape.dart';
 import '../widgets/prescription_card.dart';
@@ -31,6 +32,18 @@ typedef _DeckEntry = ({PrepJob job, OrderStatus status});
 
 class _OrdersScreenState extends State<OrdersScreen> {
   final _controller = PageController(viewportFraction: 0.88);
+  final _counterKey = GlobalKey();
+
+  /// "Al"a basınca reçete kâğıdının indiği yer: tezgâhta öndeki kartın yeri.
+  Rect _counterSpot() {
+    final counter = rectOf(_counterKey.currentContext!);
+    return Rect.fromCenter(
+      center: Offset(counter.center.dx, counter.top + counter.height * 0.4),
+      width: counter.width * 0.88,
+      height: counter.height * 0.8,
+    );
+  }
+
   Timer? _timer;
 
   @override
@@ -59,10 +72,10 @@ class _OrdersScreenState extends State<OrdersScreen> {
   }
 
   List<_DeckEntry> _hand(JobStore store) => [
-        for (final status in OrderStatus.values)
-          for (final j in store.jobs)
-            if (OrderStatus.of(store, j) == status) (job: j, status: status),
-      ];
+    for (final status in OrderStatus.values)
+      for (final j in store.jobs)
+        if (OrderStatus.of(store, j) == status) (job: j, status: status),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -124,7 +137,13 @@ class _OrdersScreenState extends State<OrdersScreen> {
                       if (i > 0) const SizedBox(width: AppSpace.sm),
                       _Slip(
                         order: store.orderNamed(o.magistralName),
-                        onTap: () => openRecipe(context, store.orderNamed(o.magistralName), onTake: () => _take(o)),
+                        onTap: (from) => openRecipe(
+                          context,
+                          store.orderNamed(o.magistralName),
+                          from: from,
+                          onTake: () => _take(o),
+                          takeTo: _counterSpot,
+                        ),
                       ),
                     ],
                     // Duvarın boş yerleri: sınır görünsün.
@@ -139,37 +158,38 @@ class _OrdersScreenState extends State<OrdersScreen> {
           ),
         ),
         Expanded(
-          child: CounterTop(
-            child: hand.isEmpty
-                ? const _EmptyCounter()
-                // Kartlar raf kenarına bantla asılı: bant raf kenarına taşar, bu
-                // yüzden sayfa kırpılmaz. Kartlar düz durur (Tuğrul, 2026-10-27).
-                : PageView.builder(
-                    controller: _controller,
-                    clipBehavior: Clip.none,
-                    itemCount: hand.length,
-                    itemBuilder: (context, i) => Padding(
-                      padding: EdgeInsets.fromLTRB(
-                        AppSpace.xs + 2,
-                        0,
-                        AppSpace.xs + 2,
-                        AppSpace.md + MediaQuery.paddingOf(context).bottom,
-                      ),
-                      child: Stack(
-                        clipBehavior: Clip.none,
-                        children: [
-                          Positioned.fill(
-                            top: AppSpace.xs,
-                            child: SingleChildScrollView(
-                              child: PrescriptionCard(job: hand[i].job, showStatus: true),
+          child: KeyedSubtree(
+            key: _counterKey,
+            child: CounterTop(
+              child: hand.isEmpty
+                  ? const _EmptyCounter()
+                  // Kartlar raf kenarına bantla asılı: bant raf kenarına taşar, bu
+                  // yüzden sayfa kırpılmaz. Kartlar düz durur (Tuğrul, 2026-10-27).
+                  : PageView.builder(
+                      controller: _controller,
+                      clipBehavior: Clip.none,
+                      itemCount: hand.length,
+                      itemBuilder: (context, i) => Padding(
+                        padding: EdgeInsets.fromLTRB(
+                          AppSpace.xs + 2,
+                          0,
+                          AppSpace.xs + 2,
+                          AppSpace.md + MediaQuery.paddingOf(context).bottom,
+                        ),
+                        child: Stack(
+                          clipBehavior: Clip.none,
+                          children: [
+                            Positioned.fill(
+                              top: AppSpace.xs,
+                              child: SingleChildScrollView(child: PrescriptionCard(job: hand[i].job, showStatus: true)),
                             ),
-                          ),
-                          const Positioned(top: -CounterTop.lip + 3, left: AppSpace.xxl, child: PaperTape(angle: -6)),
-                          const Positioned(top: -CounterTop.lip + 4, right: AppSpace.xxl, child: PaperTape(angle: 5)),
-                        ],
+                            const Positioned(top: -CounterTop.lip + 3, left: AppSpace.xxl, child: PaperTape(angle: -6)),
+                            const Positioned(top: -CounterTop.lip + 4, right: AppSpace.xxl, child: PaperTape(angle: 5)),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
+            ),
           ),
         ),
       ],
@@ -193,10 +213,7 @@ class _EmptyCounter extends StatelessWidget {
           children: [
             Container(
               padding: const EdgeInsets.fromLTRB(AppSpace.xl, AppSpace.xl, AppSpace.xl, AppSpace.lg),
-              decoration: BoxDecoration(
-                color: AppColors.surface,
-                borderRadius: BorderRadius.circular(AppRadius.paper),
-              ),
+              decoration: BoxDecoration(color: AppColors.surface, borderRadius: BorderRadius.circular(AppRadius.paper)),
               child: Text(
                 'Tezgâhın boş. Duvardan bir reçete al.',
                 textAlign: TextAlign.center,
@@ -236,7 +253,7 @@ class _Slip extends StatelessWidget {
   const _Slip({required this.order, required this.onTap});
 
   final PrescriptionOrder order;
-  final VoidCallback onTap;
+  final void Function(Rect from) onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -246,7 +263,7 @@ class _Slip extends StatelessWidget {
       label: '${order.magistralName}, ${order.doctorName}, gelen reçete',
       excludeSemantics: true,
       child: GestureDetector(
-        onTap: onTap,
+        onTap: () => onTap(rectOf(context)),
         child: Stack(
           clipBehavior: Clip.none,
           alignment: Alignment.topCenter,

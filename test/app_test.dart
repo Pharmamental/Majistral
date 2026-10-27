@@ -7,6 +7,7 @@ import 'package:game/data/orders.dart';
 import 'package:game/data/stations.dart';
 import 'package:game/logic/job_store.dart';
 import 'package:game/main.dart';
+import 'package:game/widgets/grow_panel.dart';
 
 import 'test_fonts.dart';
 import 'test_helpers.dart';
@@ -56,7 +57,7 @@ Future<void> _pickTool(WidgetTester tester, String name) async {
 }
 
 /// Açık alet penceresindeki reçete satırı.
-Finder _inSheet(String text) => find.descendant(of: find.byType(BottomSheet), matching: find.text(text));
+Finder _inSheet(String text) => find.descendant(of: find.byType(GrowPanel), matching: find.text(text));
 
 /// Alet penceresini boşluğa dokunarak kapatır.
 Future<void> _closeSheet(WidgetTester tester) async {
