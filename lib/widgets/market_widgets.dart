@@ -261,7 +261,7 @@ class ShopItemTile extends StatelessWidget {
   }
 }
 
-/// Sekme seçici: tam yuvarlak hap biçiminde, seçili olan kiremit dolgu.
+/// Sekme seçici: tam yuvarlak hap biçiminde, seçili olan kobalt dolgu.
 class PillTabs<T> extends StatelessWidget {
   const PillTabs({
     super.key,
@@ -299,7 +299,7 @@ class PillTabs<T> extends StatelessWidget {
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
                       color: value == selected
-                          ? AppColors.kiremitDark
+                          ? AppColors.kobaltDark
                           : Colors.transparent,
                       borderRadius: BorderRadius.circular(AppRadius.pill),
                     ),

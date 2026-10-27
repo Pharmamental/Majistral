@@ -54,8 +54,8 @@ lib/
 ```
 
 ## Arayüz kuralları (2026-10-25, Tasarım Rehberi'nden)
-- Renk 60-30-10: krem zemin, beyaz kart, kiremit yalnız birincil aksiyon. Hazır/teslim yeşil.
-- Yazı: hepsi Nunito (Tuğrul, 2026-10-27), başlık ve düğme en kalın (900); `assets/fonts/`'ta gömülü (OFL).
+- Renk 60-30-10 (Tuğrul, 2026-10-27, "eski eczane"): porselen beyazı zemin, beyaz kart, kobalt mavisi yalnız birincil aksiyon, bal meşesi ahşap tezgâh. Hazır/teslim yeşil. Krem + kiremit ve Nunito "Claude yaptı" diye belli ettiği için bırakıldı; yapay zekânın varsayılan seçimlerine (krem + terracotta, Inter, Nunito, mor-mavi geçiş) dönme, rengi ve yazıyı eczanenin kendi malzemesinden türet.
+- Yazı: hepsi Bitter (eski eczane etiketi gibi tırnaklı), başlık ve düğme en kalın (900); `assets/fonts/`'ta gömülü (OFL).
   Değişken font olduğu için kalınlık `AppText` ile verilir (`fontVariations`); düz
   `TextStyle(fontWeight)` bazı cihazlarda kalın çizmez. Ok için `›` kullan. Yeni font eklemeden önce
   dosyada ş, ğ, İ var mı tara: Fredoka, Lilita One, Titan One, Sniglet'te yok.
@@ -92,9 +92,9 @@ lib/
   Her adımın kendi oyuncak blok ikonu var (`stepIcons`, `ikon_adim_<ad>.png`); yeni adım adı
   eklenirse ikonu da çizilir (`test/quality_test.dart` denetler).
 - Reçete durum renkleri (2026-10-27): `OrderStatus` (seni bekliyor amber, hazır yeşil, hazırlanıyor
-  mavi, yeni kiremit); renkler `AppColors` içinde, yazı tonları açık zeminde ≥5,1:1 ölçüldü. Reçeteler
+  mor, yeni kobalt); renkler `AppColors` içinde, yazı tonları açık zeminde ≥5,1:1 ölçüldü. Reçeteler
   sekmesi bu sırayla dizilir; kartın şeridi ve süren işin göstergeleri durumun rengini taşır.
-  Birincil düğme her zaman kiremit.
+  Birincil düğme her zaman kobalt.
 - Tezgâh (Tuğrul, 2026-10-27): Reçeteler başlığı açık duvarda, reçeteler ahşap tezgâhta yan yana;
   sağa sola kaydırılır (`PageView`, yanındaki kartın kenarı görünür). Kartlar tezgâhın raf kenarına
   iki parça kâğıt bantla asılı, hafif eğik (`PaperTape`); durum kartın başında çipte.
@@ -104,7 +104,7 @@ lib/
   başlık (ve Market sekmeleri) duvarda, liste tezgâhın içinde kayar.
 - Süren iş kartı (Tuğrul, 2026-10-27): iş başlayınca madde listesi kartta görünmez; sağ üstte
   "Reçete" düğmesi pencere açar (miktar, her maddenin marketteki görevi, ne işe yarar `purpose`,
-  neyde kullanılır `usedFor`; kaynakları `lib/data/orders.dart` başında). Yerine adım şeridi gelir (biten onaylı, süren mavi, oyuncuyu bekleyen amber, sıradaki silik) ve
+  neyde kullanılır `usedFor`; kaynakları `lib/data/orders.dart` başında). Yerine adım şeridi gelir (biten onaylı, süren mor, oyuncuyu bekleyen amber, sıradaki silik) ve
   büyük "… sonra hazır" sayacı. Acele düğmesinin üstüne bedel satırı ya da şimşek ikonları konmaz.
   Hekim adı yalnız unvan ve ilk ad ("Dr. Deniz").
 - Reçete kartı koçan biçiminde (Tuğrul, 2026-10-27): üst kenar yarım daire delikli, alt köşeler

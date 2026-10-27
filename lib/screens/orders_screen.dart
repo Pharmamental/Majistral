@@ -179,7 +179,7 @@ class _Slip extends StatelessWidget {
                     shape: const PrescriptionStubBorder(),
                     shadows: [
                       BoxShadow(
-                        color: selected ? status.color.withValues(alpha: 0.45) : const Color(0x1A3A2418),
+                        color: selected ? status.color.withValues(alpha: 0.45) : const Color(0x1A172033),
                         blurRadius: selected ? 0 : 6,
                         spreadRadius: selected ? 2 : 0,
                         offset: selected ? Offset.zero : const Offset(0, 2),

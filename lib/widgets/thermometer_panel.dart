@@ -191,10 +191,10 @@ class _ThermometerPanelState extends State<ThermometerPanel> with SingleTickerPr
                   // Tıknaz düğme gibi: altta koyu gölge, basılı tutunca kaybolur.
                   transform: Matrix4.translationValues(0, _isHolding ? 5 : 0, 0),
                   decoration: BoxDecoration(
-                    color: AppColors.kiremit,
+                    color: AppColors.kobalt,
                     shape: BoxShape.circle,
                     boxShadow: [
-                      if (!_isHolding) const BoxShadow(color: AppColors.kiremitDark, offset: Offset(0, 5)),
+                      if (!_isHolding) const BoxShadow(color: AppColors.kobaltDark, offset: Offset(0, 5)),
                     ],
                   ),
                   child: const Icon(Icons.local_fire_department_rounded, color: Colors.white, size: 44),

@@ -8,7 +8,7 @@ typedef GameTab = ({String label, String image});
 /// Alt çubuk (Tuğrul, 2026-10-27, "ortada laboratuvar"): oyunun kalbi
 /// laboratuvar ortada, çubuktan taşan büyük bir daire; yanlarda Reçeteler ve
 /// Market daha küçük dairelerde. İkon kutuları daire (köşe dili: eşya ikonu).
-/// Seçili sekme kiremit çerçeve ve açık kiremit dolguyla, adı da kiremit yazıyla
+/// Seçili sekme kobalt çerçeve ve açık kobalt dolguyla, adı da kobalt yazıyla
 /// belli olur; seçilmeyen ikonlar soluk durur. Taşan daire çubuğun kendi
 /// alanında kalır, böylece dokunulabilir.
 class GameTabBar extends StatelessWidget {
@@ -44,7 +44,7 @@ class GameTabBar extends StatelessWidget {
               decoration: const BoxDecoration(
                 color: AppColors.surface,
                 border: Border(top: BorderSide(color: AppColors.line)),
-                boxShadow: [BoxShadow(color: Color(0x0F1E1B18), blurRadius: 16, offset: Offset(0, -6))],
+                boxShadow: [BoxShadow(color: Color(0x0F172033), blurRadius: 16, offset: Offset(0, -6))],
               ),
             ),
           ),
@@ -97,12 +97,12 @@ class _TabButton extends StatelessWidget {
       alignment: Alignment.center,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: selected ? AppColors.kiremitSoft : (big ? AppColors.surface : Colors.transparent),
+        color: selected ? AppColors.kobaltSoft : (big ? AppColors.surface : Colors.transparent),
         border: big || selected
-            ? Border.all(color: selected ? AppColors.kiremit : AppColors.line, width: big ? 3 : 2)
+            ? Border.all(color: selected ? AppColors.kobalt : AppColors.line, width: big ? 3 : 2)
             : null,
         boxShadow: big
-            ? [BoxShadow(color: selected ? AppColors.kiremitDark : AppColors.line, offset: const Offset(0, 4))]
+            ? [BoxShadow(color: selected ? AppColors.kobaltDark : AppColors.line, offset: const Offset(0, 4))]
             : null,
       ),
       child: Opacity(

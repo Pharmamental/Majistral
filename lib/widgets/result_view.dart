@@ -39,7 +39,7 @@ class ResultView extends StatelessWidget {
                 children: [
                   const Padding(
                     padding: EdgeInsets.only(top: 2),
-                    child: Icon(Icons.lightbulb_outline_rounded, size: 18, color: AppColors.kiremit),
+                    child: Icon(Icons.lightbulb_outline_rounded, size: 18, color: AppColors.kobalt),
                   ),
                   const SizedBox(width: AppSpace.sm),
                   Expanded(child: Text(note, style: AppText.body(size: 14))),

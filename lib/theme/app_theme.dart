@@ -5,10 +5,10 @@ import 'tokens.dart';
 ThemeData buildAppTheme() {
   final base = ThemeData(
     useMaterial3: true,
-    fontFamily: 'Nunito',
+    fontFamily: 'Bitter',
     colorScheme: ColorScheme.fromSeed(
-      seedColor: AppColors.kiremit,
-      primary: AppColors.kiremit,
+      seedColor: AppColors.kobalt,
+      primary: AppColors.kobalt,
       surface: AppColors.background,
     ),
     scaffoldBackgroundColor: AppColors.background,

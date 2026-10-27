@@ -16,7 +16,7 @@ Future<void> loadAppFonts() async {
     await loader.load();
   }
 
-  await load('Nunito', ['assets/fonts/Nunito.ttf']);
+  await load('Bitter', ['assets/fonts/Bitter.ttf']);
 
   // Material ikonları Flutter SDK'nın içinden.
   final flutterRoot = Platform.environment['FLUTTER_ROOT'];

@@ -11,13 +11,13 @@ class ChunkyButton extends StatefulWidget {
     required this.label,
     required this.onPressed,
     this.icon,
-    this.color = AppColors.kiremit,
-    this.edgeColor = AppColors.kiremitDark,
+    this.color = AppColors.kobalt,
+    this.edgeColor = AppColors.kobaltDark,
     this.foreground = Colors.white,
     this.compact = false,
   });
 
-  /// Kiremit değil, yeşil "hazır / teslim" düğmesi.
+  /// Kobalt değil, yeşil "hazır / teslim" düğmesi.
   const ChunkyButton.success({
     super.key,
     required this.label,
@@ -37,7 +37,7 @@ class ChunkyButton extends StatefulWidget {
     this.compact = false,
   })  : color = AppColors.surface,
         edgeColor = AppColors.line,
-        foreground = AppColors.kiremit;
+        foreground = AppColors.kobalt;
 
   final String label;
   final VoidCallback? onPressed;
@@ -64,9 +64,9 @@ class _ChunkyButtonState extends State<ChunkyButton> {
   @override
   Widget build(BuildContext context) {
     final height = widget.compact ? 44.0 : 56.0;
-    final face = _enabled ? widget.color : const Color(0xFFE4DCCD);
-    final edge = _enabled ? widget.edgeColor : const Color(0xFFE4DCCD);
-    final fg = _enabled ? widget.foreground : const Color(0xFF9A8E80);
+    final face = _enabled ? widget.color : const Color(0xFFE1E6EC);
+    final edge = _enabled ? widget.edgeColor : const Color(0xFFE1E6EC);
+    final fg = _enabled ? widget.foreground : const Color(0xFF6B7586);
     final drop = _pressed ? _edge : 0.0;
 
     return Semantics(

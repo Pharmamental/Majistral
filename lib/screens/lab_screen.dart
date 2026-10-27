@@ -116,7 +116,7 @@ class _StationCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(AppRadius.paper),
-        border: Border.all(color: highlight ? AppColors.kiremit : AppColors.line, width: highlight ? 2 : 1),
+        border: Border.all(color: highlight ? AppColors.kobalt : AppColors.line, width: highlight ? 2 : 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -128,7 +128,7 @@ class _StationCard extends StatelessWidget {
                 height: 52,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: highlight ? AppColors.kiremitSoft : AppColors.surfaceMuted,
+                  color: highlight ? AppColors.kobaltSoft : AppColors.surfaceMuted,
                   shape: BoxShape.circle,
                 ),
                 child: Image.asset(station.imagePath, width: 44, height: 44),
@@ -161,8 +161,8 @@ class _StationCard extends StatelessWidget {
               child: LinearProgressIndicator(
                 minHeight: 8,
                 value: (done / total).clamp(0.0, 1.0),
-                backgroundColor: AppColors.kiremitSoft,
-                valueColor: const AlwaysStoppedAnimation(AppColors.kiremit),
+                backgroundColor: AppColors.kobaltSoft,
+                valueColor: const AlwaysStoppedAnimation(AppColors.kobalt),
               ),
             ),
           ] else if (awaiting.isNotEmpty) ...[

@@ -215,7 +215,7 @@ class _RushButton extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const Icon(Icons.bolt_rounded, size: 40, color: AppColors.kiremit),
+              const Icon(Icons.bolt_rounded, size: 40, color: AppColors.kobalt),
               const SizedBox(height: AppSpace.sm),
               Text('Acele et', textAlign: TextAlign.center, style: AppText.title(size: 22)),
               const SizedBox(height: AppSpace.md),
@@ -285,7 +285,7 @@ class _StepList extends StatelessWidget {
       children: [
         for (final s in job.slots)
           if (waitingForPlayer && identical(s, job.slots.last))
-            _row(Icons.touch_app_rounded, AppColors.kiremit, stepIconPath(s.label), s.label, 'Sıra sende')
+            _row(Icons.touch_app_rounded, AppColors.kobalt, stepIconPath(s.label), s.label, 'Sıra sende')
           else if (!at.isBefore(s.end))
             _row(Icons.check_circle_rounded, AppColors.success, stepIconPath(s.label), s.label, s.station.label)
           else if (!at.isBefore(s.start))

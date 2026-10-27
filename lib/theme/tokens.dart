@@ -1,29 +1,30 @@
 import 'package:flutter/material.dart';
 
 // Tasarım tokenları. Kaynak: Tuğrul'un ikinci beynindeki Tasarım Rehberi.
-// - Renk 60-30-10: krem zemin (60) + beyaz kart (30) + kiremit vurgu (10, yalnız
-//   birincil aksiyon ve önemli bilgi).
+// - Renk 60-30-10: porselen beyazı zemin (60) + beyaz kart (30) + kobalt vurgu (10,
+//   yalnız birincil aksiyon ve önemli bilgi); ahşap tezgâh sıcak karşıtlık.
 // - Boşluk yalnız 4-8-12-16-20-24-32-40-48; köşe kart/buton 20, çip tam yuvarlak.
-// - Yazı: hepsi Nunito (Tuğrul, 2026-10-27); başlık ve düğme en kalın (900), sayaçta sabit genişlikli rakam.
+// - Yazı: hepsi Bitter (eski eczane etiketi gibi tırnaklı); başlık ve düğme en kalın (900),
+//   sayaçta sabit genişlikli rakam.
 
 class AppColors {
   AppColors._();
 
-  // Pharmamental paleti (2026-10-25, "oyuncak blok şimdilik" kararı): kırık beyaz + yanık mercan.
-  static const Color background = Color(0xFFF2EFE9); // kırık beyaz zemin
-  static const Color surface = Color(0xFFFBFAF7); // kartlar
-  static const Color surfaceMuted = Color(0xFFF6F3EE); // kart içi ikinci yüzey
-  static const Color line = Color(0xFFDCD6CC);
+  // Eski eczane paleti (Tuğrul, 2026-10-27): porselen kavanoz beyazı + kobalt mavisi +
+  // ahşap raf. Krem + kiremit yapay zekânın varsayılanı gibi durduğu için bırakıldı.
+  static const Color background = Color(0xFFEEF1F5); // porselen zemin
+  static const Color surface = Color(0xFFFCFDFE); // kartlar
+  static const Color surfaceMuted = Color(0xFFF1F4F8); // kart içi ikinci yüzey
+  static const Color line = Color(0xFFD5DCE4);
 
-  static const Color ink = Color(0xFF1E1B18);
-  static const Color inkMuted = Color(0xFF5E5750);
+  static const Color ink = Color(0xFF172033); // mürekkep laciverti
+  static const Color inkMuted = Color(0xFF545E70);
 
-  // Yanık mercan üzerinde beyaz 3,79:1 (ölçüldü): yalnız büyük kalın yazıya yeter.
-  // Küçük vurgu yazısı [accentText] (5,21:1) kullanır.
-  static const Color kiremit = Color(0xFFD4603F); // birincil aksiyon
-  static const Color kiremitDark = Color(0xFFA9452A); // 3B düğmenin alt kenarı
-  static const Color kiremitSoft = Color(0xFFFADBD0);
-  static const Color accentText = Color(0xFFB04A2E);
+  // Kobalt üzerinde beyaz 7,66:1, açık zeminde kobalt yazı 7,01:1 (ölçüldü).
+  static const Color kobalt = Color(0xFF1F4FA8); // birincil aksiyon
+  static const Color kobaltDark = Color(0xFF163A7D); // 3B düğmenin alt kenarı
+  static const Color kobaltSoft = Color(0xFFDCE6F7);
+  static const Color accentText = kobalt;
 
   static const Color success = Color(0xFF2E7D32); // hazır / teslim
   static const Color successDark = Color(0xFF1F5A23);
@@ -32,18 +33,20 @@ class AppColors {
   static const Color star = Color(0xFFF2A900);
 
   // Tezgâh (Tuğrul, 2026-10-27): başlık açık duvarda, reçeteler ahşap tezgâhta.
-  static const Color wall = Color(0xFFF7F4EE);
-  static const Color counter = Color(0xFFE6DCCB);
-  static const Color counterDeep = Color(0xFFDED2BF);
-  static const Color counterLip = Color(0xFFEFE6D6); // raf kenarının üst yüzü
-  static const Color counterEdge = Color(0xFFC4B49B); // raf kenarının ön yüzü
+  // Ahşap porselenin yanında krem gibi kalmasın diye bal meşesi tonunda (2026-10-27).
+  static const Color wall = Color(0xFFF4F6F9);
+  static const Color counter = Color(0xFFD9BF98);
+  static const Color counterDeep = Color(0xFFCFB289);
+  static const Color counterLip = Color(0xFFE6D2B0); // raf kenarının üst yüzü
+  static const Color counterEdge = Color(0xFFB08E62); // raf kenarının ön yüzü
   static const Color tape = Color(0xE6F2E4C2); // kâğıt bant, hafif saydam
-  static const Color counterGrain = Color(0xFF967855);
+  static const Color counterGrain = Color(0xFF8A6640);
 
   // Reçete durumları (2026-10-27): şerit, açık zemin, yazı. Yazı açık zeminde
   // en az 5,1:1 (ölçüldü); şerit süs, durum her zaman yazıyla da söylenir.
-  static const Color yeni = kiremit, yeniSoft = kiremitSoft, yeniText = Color(0xFF9C3F25);
-  static const Color suruyor = Color(0xFF4C9BE8), suruyorSoft = Color(0xFFDCEBFA), suruyorText = Color(0xFF1D5C96);
+  // Mavi birincil renk olunca "hazırlanıyor" mora geçti.
+  static const Color yeni = kobalt, yeniSoft = kobaltSoft, yeniText = Color(0xFF183F8A);
+  static const Color suruyor = Color(0xFF7B5CC4), suruyorSoft = Color(0xFFECE6F8), suruyorText = Color(0xFF4D3391);
   static const Color bekliyor = Color(0xFFE9A21E), bekliyorSoft = Color(0xFFFCEBC7), bekliyorText = Color(0xFF7A5200);
   static const Color hazir = success, hazirSoft = successSoft, hazirText = successDark;
 
@@ -96,23 +99,23 @@ class AppText {
   }
 
   static TextStyle display({double size = 32, Color color = AppColors.ink}) =>
-      _style('Nunito', size, FontWeight.w900, color, height: 1.1);
+      _style('Bitter', size, FontWeight.w900, color, height: 1.1);
 
   static TextStyle title({double size = 20, Color color = AppColors.ink}) =>
-      _style('Nunito', size, FontWeight.w900, color, height: 1.15);
+      _style('Bitter', size, FontWeight.w900, color, height: 1.15);
 
   static TextStyle button({double size = 18, Color color = Colors.white}) =>
-      _style('Nunito', size, FontWeight.w900, color, height: 1.1);
+      _style('Bitter', size, FontWeight.w900, color, height: 1.1);
 
   static TextStyle body({double size = 15, Color color = AppColors.ink, FontWeight weight = FontWeight.w400}) =>
-      _style('Nunito', size, weight, color, height: 1.4);
+      _style('Bitter', size, weight, color, height: 1.4);
 
   static TextStyle label({double size = 13, Color color = AppColors.inkMuted}) =>
-      _style('Nunito', size, FontWeight.w600, color, height: 1.3);
+      _style('Bitter', size, FontWeight.w600, color, height: 1.3);
 
   /// Sayaç: rakamlar sabit genişlikte, saniye değişince yazı titremesin.
   static TextStyle timer({double size = 16, Color color = AppColors.accentText}) =>
-      _style('Nunito', size, FontWeight.w700, color).copyWith(
+      _style('Bitter', size, FontWeight.w700, color).copyWith(
         fontFeatures: const [FontFeature.tabularFigures()],
       );
 }

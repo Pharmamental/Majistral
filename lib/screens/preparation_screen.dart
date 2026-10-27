@@ -177,7 +177,7 @@ class _RecipeSummary extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Rp.', style: AppText.display(size: 22, color: AppColors.kiremit)),
+          Text('Rp.', style: AppText.display(size: 22, color: AppColors.kobalt)),
           const SizedBox(width: AppSpace.md),
           Expanded(
             child: Column(
@@ -222,7 +222,7 @@ class _Section extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 14,
-                backgroundColor: AppColors.kiremitDark,
+                backgroundColor: AppColors.kobaltDark,
                 child: Text('$number', style: AppText.title(size: 15, color: Colors.white)),
               ),
               const SizedBox(width: AppSpace.sm),
@@ -260,9 +260,9 @@ class _ShelfChip extends StatelessWidget {
           constraints: const BoxConstraints(minHeight: 44),
           padding: const EdgeInsets.symmetric(horizontal: AppSpace.lg, vertical: AppSpace.sm),
           decoration: BoxDecoration(
-            color: selected ? AppColors.kiremitSoft : AppColors.surface,
+            color: selected ? AppColors.kobaltSoft : AppColors.surface,
             borderRadius: BorderRadius.circular(AppRadius.pill),
-            border: Border.all(color: selected ? AppColors.kiremit : AppColors.line, width: 2),
+            border: Border.all(color: selected ? AppColors.kobalt : AppColors.line, width: 2),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -270,7 +270,7 @@ class _ShelfChip extends StatelessWidget {
               Icon(
                 selected ? Icons.check_circle_rounded : Icons.circle_outlined,
                 size: 18,
-                color: selected ? AppColors.kiremit : AppColors.line,
+                color: selected ? AppColors.kobalt : AppColors.line,
               ),
               const SizedBox(width: AppSpace.sm),
               Text(label, style: AppText.body(size: 14, weight: FontWeight.w600)),
