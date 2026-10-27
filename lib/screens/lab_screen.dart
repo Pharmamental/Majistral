@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 
 import '../data/lab_tools.dart';
@@ -9,6 +7,7 @@ import '../widgets/back_pill.dart';
 import '../widgets/counter_top.dart';
 import '../widgets/grow_panel.dart';
 import '../widgets/job_status.dart';
+import '../widgets/second_tick.dart';
 import '../widgets/tool_sheet.dart';
 
 /// Laboratuvar: sahip olunan aletlerin durduğu oda (Tuğrul, 2026-10-27). Oyuncu
@@ -23,20 +22,7 @@ class LabScreen extends StatefulWidget {
   State<LabScreen> createState() => _LabScreenState();
 }
 
-class _LabScreenState extends State<LabScreen> {
-  Timer? _timer;
-
-  @override
-  void initState() {
-    super.initState();
-    _timer = Timer.periodic(const Duration(seconds: 1), (_) => setState(() {}));
-  }
-
-  @override
-  void dispose() {
-    _timer?.cancel();
-    super.dispose();
-  }
+class _LabScreenState extends State<LabScreen> with SecondTick {
 
   @override
   Widget build(BuildContext context) {

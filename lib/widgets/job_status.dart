@@ -1,4 +1,3 @@
-import 'dart:async';
 
 import 'package:flutter/material.dart';
 
@@ -10,6 +9,7 @@ import '../theme/tokens.dart';
 import 'chunky_button.dart';
 import 'grow_panel.dart';
 import 'result_view.dart';
+import 'second_tick.dart';
 
 /// "02:15" ya da "1 sa 05 dk" biçiminde kalan süre.
 String formatRemaining(Duration d) {
@@ -65,20 +65,7 @@ class JobStatus extends StatefulWidget {
   State<JobStatus> createState() => _JobStatusState();
 }
 
-class _JobStatusState extends State<JobStatus> {
-  Timer? _timer;
-
-  @override
-  void initState() {
-    super.initState();
-    _timer = Timer.periodic(const Duration(seconds: 1), (_) => setState(() {}));
-  }
-
-  @override
-  void dispose() {
-    _timer?.cancel();
-    super.dispose();
-  }
+class _JobStatusState extends State<JobStatus> with SecondTick {
 
   @override
   Widget build(BuildContext context) {

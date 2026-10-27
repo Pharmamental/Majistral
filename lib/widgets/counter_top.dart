@@ -25,9 +25,32 @@ class CounterTop extends StatelessWidget {
         Expanded(
           child: ColoredBox(
             color: AppColors.counterPlanks.first,
-            child: CustomPaint(painter: _WalnutPainter(), child: child),
+            child: _Backdrop(painter: _WalnutPainter(), child: child),
           ),
         ),
+      ],
+    );
+  }
+}
+
+/// Tezgâh dokusu kendi katmanında bir kez çizilir ve saklanır; üstündeki
+/// içerik (saniyede bir yenilenen sayaçlar, kaydırılan kartlar) değişince doku
+/// yeniden çizilmez. Telefonda tarayıcıda kasmanın sebebi buydu (2026-10-28).
+class _Backdrop extends StatelessWidget {
+  const _Backdrop({required this.painter, required this.child});
+
+  final CustomPainter painter;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    // Kartların bandı raf kenarına taşar; kırpılmaz.
+    return Stack(
+      fit: StackFit.expand,
+      clipBehavior: Clip.none,
+      children: [
+        RepaintBoundary(child: CustomPaint(painter: painter, isComplex: true)),
+        RepaintBoundary(child: child),
       ],
     );
   }
@@ -50,7 +73,7 @@ class LabBench extends StatelessWidget {
         Expanded(
           child: ColoredBox(
             color: AppColors.labBench,
-            child: CustomPaint(painter: _SlatePainter(), child: child),
+            child: _Backdrop(painter: _SlatePainter(), child: child),
           ),
         ),
       ],
@@ -106,7 +129,7 @@ class MarketStall extends StatelessWidget {
       child: Stack(
         children: [
           Positioned.fill(
-            child: CustomPaint(
+            child: _Backdrop(
               painter: _KraftPainter(),
               child: Padding(padding: const EdgeInsets.only(top: _awningBody + AppSpace.sm), child: child),
             ),
@@ -116,7 +139,7 @@ class MarketStall extends StatelessWidget {
             right: 0,
             top: 0,
             height: _awningBody + 16,
-            child: CustomPaint(painter: _AwningPainter(body: _awningBody)),
+            child: RepaintBoundary(child: CustomPaint(painter: _AwningPainter(body: _awningBody))),
           ),
         ],
       ),

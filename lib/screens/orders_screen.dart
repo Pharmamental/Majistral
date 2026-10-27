@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 
 import '../logic/job_store.dart';
@@ -12,6 +10,7 @@ import '../widgets/job_status.dart';
 import '../widgets/paper_tape.dart';
 import '../widgets/prescription_card.dart';
 import '../widgets/recipe_sheet.dart';
+import '../widgets/second_tick.dart';
 
 /// Reçeteler sekmesi (ana döngünün başladığı yer), duvar ve tezgâh (Tuğrul,
 /// 2026-10-27). Duvarda hekimlerden gelen, henüz alınmamış reçetelerin küçük
@@ -30,7 +29,7 @@ class OrdersScreen extends StatefulWidget {
 
 typedef _DeckEntry = ({PrepJob job, OrderStatus status});
 
-class _OrdersScreenState extends State<OrdersScreen> {
+class _OrdersScreenState extends State<OrdersScreen> with SecondTick {
   final _controller = PageController(viewportFraction: 0.88);
   final _counterKey = GlobalKey();
 
@@ -44,18 +43,9 @@ class _OrdersScreenState extends State<OrdersScreen> {
     );
   }
 
-  Timer? _timer;
-
-  @override
-  void initState() {
-    super.initState();
-    // Gelecek reçetenin sayacı ve gelişi saniyede bir yenilenir.
-    _timer = Timer.periodic(const Duration(seconds: 1), (_) => setState(() {}));
-  }
 
   @override
   void dispose() {
-    _timer?.cancel();
     _controller.dispose();
     super.dispose();
   }
