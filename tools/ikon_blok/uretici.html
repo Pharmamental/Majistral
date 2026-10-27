@@ -301,28 +301,54 @@ const IKONLAR=[
   {d:'M36,58C38,49 58,49 59,55C60,62 46,63 45,57',c:R.altinKoyu,line:1}, // karışan etkin madde
   {d:cap(58,56,82,30,8),c:R.metal},                 // spatül ağzı
   {d:cap(80,32,90,20,8),c:R.kahve}]},               // sap
- {grup:'Adımlar',dosya:'adim_isitma',ad:'Isıtma',kutu:'#FFD6C2',parts:[
-  {d:cap(66,10,50,62,8),c:'#F4F6F8'},               // termometre
-  {d:rr(20,30,52,54,8),c:R.cam},                    // beher
-  {d:rr(24,52,44,28,6),c:'#F6E7B0'},                // eriyen yağ fazı
-  {d:circ(51,64,5),c:R.kan,flat:1},                 // termometrenin haznesi
-  {d:'M54,54L64,20',c:R.kan,line:1}]},              // yükselen kırmızı sıvı
- {grup:'Adımlar',dosya:'adim_emulsifikasyon',ad:'Emülsifikasyon',kutu:'#D9D2FA',parts:[
-  {d:'M56,12L86,24L76,46L48,34Z',c:R.cam},          // su fazının beheri (eğik)
-  {d:'M60,22L80,30L75,41L54,32Z',c:R.buz,flat:1},
-  {d:'M50,34C44,44 40,52 38,62',c:R.mavi,w:6},      // yağ fazına dökülen su
-  {d:rr(12,48,52,36,8),c:R.cam},                    // yağ fazının beheri
-  {d:rr(16,60,44,20,6),c:'#F6E7B0'}]},
- {grup:'Adımlar',dosya:'adim_soguma',ad:'Soğuma',kutu:'#CFE4F7',parts:[
-  {d:rr(34,10,32,44,6),c:R.cam},                    // kremli beher
-  {d:rr(37,22,26,22,4),c:R.krem},
-  {d:'M12,52H88C88,70 72,82 50,82C28,82 12,70 12,52Z',c:R.mavi}, // soğuk su kabı
-  {d:rr(10,46,80,9,4.5),c:R.mavi},
-  {d:rr(14,34,16,16,4),c:R.buz},{d:rr(70,34,16,16,4),c:R.buz}]}, // buz küpleri
- {grup:'Adımlar',dosya:'adim_etiket',ad:'Etiket',kutu:'#FFE3A6',parts:[
-  {d:'M22,28H78C82,28 86,32 86,36V60L68,78H22C18,78 14,74 14,70V36C14,32 18,28 22,28Z',c:R.kan}, // kırmızı majistral etiketi
-  {d:'M86,60L68,78L71,63Z',c:R.krem},               // kalkan köşe
-  {d:'M26,42H72M26,52H64M26,62H52',c:R.krem,line:1}]},
+ // Ezme: kristaller havanda ince toz edilir (Fırat Üni. kılavuzu, 2026-10-28). Havan ve el
+ // levigasyon ikonundan, kristaller salisilik asit ikonunun iğne prizmalarından.
+ {grup:'Adımlar',dosya:'adim_ezme',ad:'Ezme',kutu:'#FFE3A6',parts:[
+  {d:'M28,47L27,30L32,22L37,30L36,47Z',c:'#8FC3E8'},  // kristaller
+  {d:'M41,47L40,24L46,14L52,24L51,47Z',c:'#8FC3E8'},
+  {d:'M55,47L56,32L61,25L65,33L62,47Z',c:'#8FC3E8'},
+  {d:cap(84,10,66,38,11),c:R.kremKoyu},             // kristali ezen havan eli
+  {d:'M17,46H83C83,66 68,80 50,80C32,80 17,66 17,46Z',c:R.krem}, // havan
+  {d:rr(13,40,74,9,4.5),c:R.krem},
+  {d:rr(35,76,30,9,3.5),c:R.kremKoyu}]},
+ // Kremin dört adımı (Ankara Üni. föyleri, USP, 2026-10-28): yağ fazı porselen kapsülde
+ // eritilir, su fazı beherde hazırlanır, su fazı kapsüle eklenir, krem soğuyana kadar
+ // karıştırılır. Kapsül "Porselen kapsül" alet ikonunun aynısı.
+ {grup:'Adımlar',dosya:'adim_eritme',ad:'Eritme',kutu:'#FFD6C2',parts:[
+  {d:'M20,48C28,34 72,34 82,48Z',c:'#F2D27A'},       // eriyen yağ fazı
+  {d:cap(72,8,58,50,8),c:'#F4F6F8'},                // termometre
+  {d:'M12,52H90C88,68 72,78 51,78C30,78 14,68 12,52Z',c:R.krem}, // kapsül
+  {d:'M2,38C7,39 13,43 17,46V55H11C6,52 3,46 2,38Z',c:R.krem},
+  {d:rr(8,46,86,9,4.5),c:R.krem},
+  {d:rr(38,75,26,8,3.5),c:R.kremKoyu},
+  {d:'M24,63C38,68 64,68 78,63',c:R.mavi,line:1},
+  {d:'M61,40L69,14',c:R.kan,line:1}]},              // yükselen kırmızı sıvı
+ {grup:'Adımlar',dosya:'adim_su_fazi',ad:'Su fazı',kutu:'#CFE4F7',parts:[
+  {d:rr(22,24,50,60,8),c:R.cam},                    // beher
+  {d:rr(26,44,42,36,6),c:R.buz},                    // su fazı
+  {d:circ(38,64,2.4),c:'#FFFFFF',flat:1},{d:circ(50,72,2),c:'#FFFFFF',flat:1},{d:circ(44,55,2),c:'#FFFFFF',flat:1}, // çözünen maddeler
+  {d:cap(70,8,50,74,5),c:'#F4F6F8'}]},              // cam baget
+ {grup:'Adımlar',dosya:'adim_birlestirme',ad:'Birleştirme',kutu:'#D9D2FA',parts:[
+  {d:'M20,48C28,35 72,35 82,48Z',c:'#F2D27A'},       // yağ fazı
+  {d:'M58,10L88,22L78,44L50,32Z',c:R.cam},          // su fazının beheri (eğik)
+  {d:'M62,20L82,28L77,39L56,30Z',c:R.buz,flat:1},
+  {d:'M52,32C48,38 46,42 44,47',c:R.buz,w:6},       // kapsüle dökülen su fazı
+  {d:'M12,52H90C88,68 72,78 51,78C30,78 14,68 12,52Z',c:R.krem}, // kapsül
+  {d:'M2,38C7,39 13,43 17,46V55H11C6,52 3,46 2,38Z',c:R.krem},
+  {d:rr(8,46,86,9,4.5),c:R.krem},
+  {d:rr(38,75,26,8,3.5),c:R.kremKoyu},
+  {d:'M24,63C38,68 64,68 78,63',c:R.mavi,line:1}]},
+ // Soğuma: krem banyodan alınıp soğuyana kadar karıştırılır; hızlı soğutulmaz (buz yok).
+ {grup:'Adımlar',dosya:'adim_soguma',ad:'Soğuma',kutu:'#C9EFE6',parts:[
+  {d:'M24,48C29,30 73,30 78,48Z',c:'#FFFFFF'},       // kıvam alan beyaz krem
+  {d:'M36,42C42,36 56,36 60,41',c:R.kremKoyu,line:1}, // karıştırma izi
+  {d:cap(58,40,82,14,8),c:R.metal},                 // spatül ağzı
+  {d:cap(80,16,90,6,8),c:R.kahve},                  // sap
+  {d:'M12,52H90C88,68 72,78 51,78C30,78 14,68 12,52Z',c:R.krem}, // kapsül
+  {d:'M2,38C7,39 13,43 17,46V55H11C6,52 3,46 2,38Z',c:R.krem},
+  {d:rr(8,46,86,9,4.5),c:R.krem},
+  {d:rr(38,75,26,8,3.5),c:R.kremKoyu},
+  {d:'M24,63C38,68 64,68 78,63',c:R.mavi,line:1}]},
  // ===== Alt çubuk sekmeleri (2026-10-27). Laboratuvar sekmesi porselen havanı kullanır.
  {grup:'Sekmeler',dosya:'sekme_receteler',ad:'Reçeteler (reçete koçanı)',kutu:'#CFE4F7',parts:[
   {d:rr(20,22,60,64,6),c:R.krem},                    // kâğıt

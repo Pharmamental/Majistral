@@ -20,12 +20,16 @@ import '../models/prescription.dart';
 //
 // Alet kuralları ASHP nonsteril majistral bülteninden: cam havan kaygan ve
 // toz ezmez (sıvı, boyayan madde için); porselen ve Wedgwood toz/kristal için.
-// Salisilik asit çelikle tepkimeye girer. Karıştırma merhem taşı üstünde
+// Salisilik asit çelikle tepkimeye girer. Seyreltme merhem taşı üstünde
 // spatülle yapılır; Unguator ya da değirmen alınınca o makineyle.
 
-// Levigasyon havanda ya da merhem taşında spatülle yapılır (Fırat Üni. beceri
-// kılavuzu, PTCB rehberi; 2026-10-28). Toz ezildiği için cam havan kullanılamaz.
-const _levigasyon = {StepTool.karistirma};
+// Adımlar gerçek teknikler (Tuğrul, 2026-10-28; Fırat Üni. merhem beceri kılavuzu,
+// Ankara Üni. föyleri, PTCB): katı etkin madde ezilir, sıvıyla macun yapılır
+// (levigasyon), baz azar azar ve eşit miktarlarla katılır (geometrik seyreltme).
+// Ezme ve levigasyon havanda ya da merhem taşında spatülle; seyreltme spatülle
+// ya da havan eliyle. Toz ezildiği için cam havan ezme ve levigasyonda kullanılamaz.
+const _levhada = {StepTool.karistirma};
+const _havanda = {StepTool.havan};
 const _tozHavani = {'Cam havan': 'Cam havan kaygandır, tozu ezmez.'};
 const _celikSA = 'Salisilik asit çelikle tepkimeye girer; plastik spatül kullanılır.';
 
@@ -44,14 +48,26 @@ const List<PrescriptionOrder> prescriptionOrders = [
     ],
     steps: [
       PrescriptionStep(
+        'Ezme',
+        tool: StepTool.havan,
+        orWith: _levhada,
+        minutes: 1,
+        notWith: {..._tozHavani, 'Çelik spatül': _celikSA},
+      ),
+      PrescriptionStep(
         'Levigasyon',
         tool: StepTool.havan,
-        orWith: _levigasyon,
+        orWith: _levhada,
         minutes: 3,
         notWith: {..._tozHavani, 'Çelik spatül': _celikSA},
       ),
-      PrescriptionStep('Karıştırma', tool: StepTool.karistirma, minutes: 4, notWith: {'Çelik spatül': _celikSA}),
-      PrescriptionStep('Etiket', tool: StepTool.ambalaj, minutes: 1),
+      PrescriptionStep(
+        'Geometrik seyreltme',
+        tool: StepTool.karistirma,
+        orWith: _havanda,
+        minutes: 4,
+        notWith: {'Çelik spatül': _celikSA},
+      ),
     ],
   ),
   PrescriptionOrder(
@@ -67,9 +83,9 @@ const List<PrescriptionOrder> prescriptionOrders = [
       Ingredient('Beyaz Vazelin', 'ad 60 g'),
     ],
     steps: [
-      PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levigasyon, minutes: 4, notWith: _tozHavani),
-      PrescriptionStep('Karıştırma', tool: StepTool.karistirma, minutes: 6),
-      PrescriptionStep('Etiket', tool: StepTool.ambalaj, minutes: 2),
+      // Çinko oksit ince tozdur; ezilmeden sıvı parafinle levige edilir (USP).
+      PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 5, notWith: _tozHavani),
+      PrescriptionStep('Geometrik seyreltme', tool: StepTool.karistirma, orWith: _havanda, minutes: 7),
     ],
   ),
   PrescriptionOrder(
@@ -90,10 +106,13 @@ const List<PrescriptionOrder> prescriptionOrders = [
     ],
     batchNote: 'Formül 1000 g için yazılmış; sen 100 g hazırla.',
     steps: [
-      PrescriptionStep('Isıtma', tool: StepTool.isitma, minutes: 10, interactive: true),
-      // Su fazı yağ fazına porselen kapsülde karıştırılarak eklenir, krem soğuyana
-      // kadar kapsülde karıştırılır (Ankara Üni. föyleri, USP; 2026-10-28).
-      PrescriptionStep('Emülsifikasyon', tool: StepTool.kapsul, minutes: 9),
+      // Ankara Üni. föyleri ve USP (2026-10-28): stearil alkol ve vazelin porselen
+      // kapsülde su banyosunda eritilir (70–72 °C, termometre oyunu); diğer maddeler
+      // beherde suda çözülüp aynı sıcaklığa getirilir; su fazı yağ fazına kapsülde
+      // karıştırılarak eklenir; krem banyodan alınıp soğuyana kadar karıştırılır.
+      PrescriptionStep('Eritme', tool: StepTool.isitma, minutes: 6, interactive: true),
+      PrescriptionStep('Su fazı', tool: StepTool.isitma, minutes: 4),
+      PrescriptionStep('Birleştirme', tool: StepTool.kapsul, minutes: 9),
       PrescriptionStep('Soğuma', tool: StepTool.kapsul, minutes: 8),
     ],
   ),

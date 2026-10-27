@@ -85,12 +85,15 @@ lib/
   ayrı (`Station.upgradePath = false`); kademeli gruplarda (merhem taşı → Unguator → merhem
   değirmeni, su banyosu, ambalaj) yalnız sahip olunan en yükseği. Merhem taşında karıştırma
   spatülle; Unguator ya da değirmen alınınca karıştırma adımları ona geçer. Satın alma yokken
-  sahip olunan = ücretsiz kademe (`isOwned`). Adım → alet: levigasyon havan ya da merhem taşında
-  spatül (Tuğrul, 2026-10-28; `PrescriptionStep.orWith`; salisilik asitte çelik spatül yine yok),
-  karıştırma spatül,
-  ısıtma su banyosu, kremde emülsifikasyon ve soğuma porselen kapsül (Tuğrul, 2026-10-28; Ankara
-  föyleri ve USP: su fazı yağ fazına kapsülde karıştırılarak eklenir, soğuyana kadar karıştırılır;
-  markette "Kaplar" grubu), etiket ambalaj. Alet inceleme sayfası (20 alet, kaynaklı):
+  sahip olunan = ücretsiz kademe (`isOwned`).
+- Adımlar gerçek teknikler (Tuğrul, 2026-10-28, "asıl önemlileri koy"): kontrol, etiket ve
+  ambalaj adım değil, laboratuvarda ambalaj aleti durmaz (markette Ambalaj grubu şimdilik
+  etkisiz). Merhem: Ezme › Levigasyon › Geometrik seyreltme (salisilik asit); Levigasyon ›
+  Geometrik seyreltme (çinko oksit). Krem: Eritme (su banyosu, termometre oyunu) › Su fazı (su
+  banyosu) › Birleştirme (porselen kapsül) › Soğuma (porselen kapsül, buzsuz, karıştırarak).
+  Ezme ve levigasyon havanda ya da merhem taşında spatülle; seyreltme spatülle ya da havanda
+  (`PrescriptionStep.orWith`); salisilik asitte çelik spatül hiçbir adımda yok. Kaynak: Fırat Üni.
+  merhem beceri kılavuzu, Ankara Üni. föyleri, USP, PTCB. Alet inceleme sayfası (20 alet, kaynaklı):
   https://claude.ai/artifact/RSKXpt9XPG4epnxApKCk7h Kurallar ASHP bülteninden
   (salisilik asit çelikle tepkir, cam havan toz ezmez) adımın `notWith`'inde; parşömen çıktı.
   Kaynak listesi: C:\YZ\knowledge\concepts\majistral-alet-ve-makineler.md.
@@ -100,10 +103,10 @@ lib/
   gerek yok", alet kuralı, alet dolu). Bir alet aynı anda tek reçetede çalışır; farklı aletler
   aynı anda farklı reçetelerde. Adım bitince reçete sıradakini bekler ("seni bekliyor"), kendi
   kendine ilerlemez. Yanlış alet seçilemediği için alet hatası ve yıldız kaybı yok.
-- Oyuncu adımı (Tuğrul, 2026-10-27): `interactive: true` adımda önce oyun, sonra süre (kremde su
-  banyosu: termometreyi 70–75°'de tut, `widgets/heating_sheet.dart`); süre oyun bitince başlar.
+- Oyuncu adımı (Tuğrul, 2026-10-27): `interactive: true` adımda önce oyun, sonra süre (kremde
+  eritme: termometreyi 70–75°'de tut, `widgets/heating_sheet.dart`); süre oyun bitince başlar.
 - Tartım yok (Tuğrul, 2026-10-27): tartım adımı, terazi istasyonu ve markette terazi kaldırıldı;
-  iş levigasyon ya da ısıtmayla başlar. Reçete miktarları kartta yazılı kalır. Formüller ve
+  iş ezme, levigasyon ya da eritmeyle başlar. Reçete miktarları kartta yazılı kalır. Formüller ve
   kaynakları `lib/data/orders.dart` başında. Kayıt anahtarları `prep_jobs_v3` ve `wall_v1`; kimliksiz eski
   kayıtlar (v1, v2) okunmaz.
 - Acele et (Tuğrul, 2026-10-26): her basış çalışan adımın kalan süresini yarıya, kaliteyi de

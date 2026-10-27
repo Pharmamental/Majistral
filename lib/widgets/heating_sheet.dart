@@ -25,13 +25,13 @@ Future<void> openHeating(
           Text(magistralName, style: AppText.label(size: 14)),
           const SizedBox(height: AppSpace.xs),
           Text(
-            'Termometreyi 70–75°\'de tut; tutunca ısıtma başlar.',
+            'Termometreyi 70–75°\'de tut; tutunca eritme başlar.',
             textAlign: TextAlign.center,
             style: AppText.body(size: 14, color: AppColors.inkMuted),
           ),
           const SizedBox(height: AppSpace.md),
           ThermometerPanel(
-            title: 'Fazları ısıt',
+            title: 'Yağ fazını erit',
             idealMin: 70,
             idealMax: 75,
             onSuccess: () {

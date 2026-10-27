@@ -34,6 +34,5 @@ List<LabTool> labTools({bool Function(ShopItem item) owns = isOwned}) {
       tool(mixers.last, StepTool.karistirma),
     tool(_owned('Isıtma', owns).last, StepTool.isitma),
     for (final i in _owned('Kaplar', owns)) tool(i, StepTool.kapsul),
-    tool(_owned('Ambalaj', owns).last, StepTool.ambalaj),
   ];
 }
