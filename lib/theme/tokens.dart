@@ -52,6 +52,12 @@ class AppColors {
   static const Color counterGrain = Color(0xFF3E2716); // koyu damar
   static const Color counterGrainLight = Color(0xFF8C6446); // açık damar
 
+  // Laboratuvar tezgâhı (Tuğrul, 2026-10-27, "G1"): koyu gri arduvaz, ince benekli;
+  // Reçeteler'in ceviz tezgâhından ayrı bir oda.
+  static const Color labBench = Color(0xFF4B535C);
+  static const Color labBenchLip = Color(0xFF6B747D); // kenarın üst yüzü
+  static const Color labBenchEdge = Color(0xFF343A41); // kenarın ön yüzü
+
   // Reçete durumları (2026-10-27): şerit, açık zemin, yazı. Yazı açık zeminde
   // en az 5,1:1 (ölçüldü); şerit süs, durum her zaman yazıyla da söylenir.
   // Mavi birincil renk olunca "hazırlanıyor" mora geçti.

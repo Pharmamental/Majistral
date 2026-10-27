@@ -48,7 +48,7 @@ class _LabScreenState extends State<LabScreen> {
       if (waiting > 0) '$waiting iş seni bekliyor',
     ].join(' · ');
 
-    // Başlık duvarda, istasyonlar tezgâhta (Tuğrul, 2026-10-27); liste tezgâhın
+    // Başlık duvarda, istasyonlar gri laboratuvar tezgâhında (Tuğrul, 2026-10-27); liste tezgâhın
     // içinde kayar, tezgâh çizgisi yerinde kalır.
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -58,7 +58,7 @@ class _LabScreenState extends State<LabScreen> {
           child: TabHeader(title: 'Laboratuvar', subtitle: status.isEmpty ? 'Bütün istasyonlar boş' : status),
         ),
         Expanded(
-          child: CounterTop(
+          child: LabBench(
             child: ListView(
               padding: EdgeInsets.fromLTRB(
                 AppSpace.lg,

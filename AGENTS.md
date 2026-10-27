@@ -105,7 +105,8 @@ lib/
   Kartı tezgâhın altına uzatıp düğmeyi alta sabitlemek denendi, Tuğrul geri aldırdı. Duvarda bütün reçetelerin küçük fişleri
   (durum + ad), dokununca o kart gelir; bütün fişler aynı boyda, düz ve durum renginde çerçeveli; gösterilen kartın fişinin altında kısa kobalt çizgi.
   (`CounterTop`, `orders_screen.dart`). Laboratuvar ve Market de tezgâhta:
-  başlık (ve Market sekmeleri) duvarda, liste tezgâhın içinde kayar.
+  başlık (ve Market sekmeleri) duvarda, liste tezgâhın içinde kayar. Laboratuvarın tezgâhı ayrı
+  bir oda gibi koyu gri arduvaz (`LabBench`, `AppColors.labBench`; Tuğrul 2026-10-27, "G1").
 - Süren iş kartı (Tuğrul, 2026-10-27): madde listesi kartta görünmez; sağ üstte
   "Reçete" düğmesi pencere açar (miktar, her maddenin marketteki görevi, ne işe yarar `purpose`,
   neyde kullanılır `usedFor`; kaynakları `lib/data/orders.dart` başında). Yerine adım şeridi gelir (biten onaylı, süren mor, oyuncuyu bekleyen amber, sıradaki silik) ve

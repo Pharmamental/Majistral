@@ -33,6 +33,62 @@ class CounterTop extends StatelessWidget {
   }
 }
 
+/// Laboratuvarın koyu gri arduvaz tezgâhı: ceviz tezgâhla aynı kenar, üstü
+/// ince benekli taş (Tuğrul, 2026-10-27).
+class LabBench extends StatelessWidget {
+  const LabBench({super.key, required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Container(height: 5, color: AppColors.labBenchLip),
+        Container(height: CounterTop.lip - 5, color: AppColors.labBenchEdge),
+        Expanded(
+          child: ColoredBox(
+            color: AppColors.labBench,
+            child: CustomPaint(painter: _SlatePainter(), child: child),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// Taşın benekleri: açık ve koyu küçük noktalar, sabit tohumla; üstte kenarın
+/// gölgesi.
+class _SlatePainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final rnd = math.Random(5);
+    final dot = Paint();
+    for (var i = 0; i < size.width * size.height / 40; i++) {
+      dot.color = (rnd.nextBool() ? Colors.white : Colors.black).withValues(alpha: 0.04 + rnd.nextDouble() * 0.06);
+      canvas.drawCircle(
+        Offset(rnd.nextDouble() * size.width, rnd.nextDouble() * size.height),
+        0.6 + rnd.nextDouble(),
+        dot,
+      );
+    }
+    final shade = Rect.fromLTWH(0, 0, size.width, 12);
+    canvas.drawRect(
+      shade,
+      Paint()
+        ..shader = LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [Colors.black.withValues(alpha: 0.25), Colors.black.withValues(alpha: 0)],
+        ).createShader(shade),
+    );
+  }
+
+  @override
+  bool shouldRepaint(_SlatePainter oldDelegate) => false;
+}
+
 /// Yatay tahtalar, her biri biraz farklı tonda; tahta aralarında koyu derz,
 /// içinde düzensiz dalgalı damarlar. Desen sabit tohumla çizilir, her karede
 /// aynı kalır.
