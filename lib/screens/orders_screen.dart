@@ -1,10 +1,13 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
-import '../data/orders.dart';
 import '../logic/job_store.dart';
+import '../models/prep_job.dart';
 import '../models/prescription.dart';
 import '../theme/tokens.dart';
 import '../widgets/counter_top.dart';
+import '../widgets/job_status.dart';
 import '../widgets/paper_tape.dart';
 import '../widgets/prescription_card.dart';
 import '../widgets/recipe_sheet.dart';
@@ -15,8 +18,8 @@ import '../widgets/recipe_sheet.dart';
 /// Tezgâhta elindeki reçeteler raf kenarına bantla asılı, yan yana durur ve
 /// sağa sola kaydırılır (kartı alta uzatıp düğmeyi alta sabitleme denendi,
 /// geri alındı). Tezgâhta sıra durumlara göre: seni bekleyen, hazır,
-/// hazırlanan. Teslim edilen reçete tezgâhtan kalkar, duvara geri döner.
-/// Elde tutma sınırı ve reçetenin kaybolması yok.
+/// hazırlanan. Duvarda en fazla [JobStore.wallSize] reçete birikir; yenisi
+/// sayaçla gelir, boş yerler silik çerçeveyle görünür. Reçete kaybolmaz.
 class OrdersScreen extends StatefulWidget {
   const OrdersScreen({super.key});
 
@@ -24,40 +27,53 @@ class OrdersScreen extends StatefulWidget {
   State<OrdersScreen> createState() => _OrdersScreenState();
 }
 
-typedef _DeckEntry = ({PrescriptionOrder order, OrderStatus status});
+typedef _DeckEntry = ({PrepJob job, OrderStatus status});
 
 class _OrdersScreenState extends State<OrdersScreen> {
   final _controller = PageController(viewportFraction: 0.88);
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    // Gelecek reçetenin sayacı ve gelişi saniyede bir yenilenir.
+    _timer = Timer.periodic(const Duration(seconds: 1), (_) => setState(() {}));
+  }
 
   @override
   void dispose() {
+    _timer?.cancel();
     _controller.dispose();
     super.dispose();
   }
 
   /// Gelen reçeteyi alır; tezgâh yeniden çizilince yeni kart öne gelir.
-  Future<void> _take(PrescriptionOrder order) async {
+  Future<void> _take(IncomingOrder incoming) async {
     final store = JobScope.of(context);
-    await store.accept(order);
+    await store.accept(incoming);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted || !_controller.hasClients) return;
-      final i = _hand(store).indexWhere((e) => e.order == order);
+      final i = _hand(store).indexWhere((e) => e.job.id == incoming.id);
       if (i >= 0) _controller.animateToPage(i, duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
     });
   }
 
   List<_DeckEntry> _hand(JobStore store) => [
         for (final status in OrderStatus.values)
-          if (status != OrderStatus.yeni)
-            for (final o in prescriptionOrders)
-              if (OrderStatus.of(store, o) == status) (order: o, status: status),
+          for (final j in store.jobs)
+            if (OrderStatus.of(store, j) == status) (job: j, status: status),
       ];
 
   @override
   Widget build(BuildContext context) {
     final store = JobScope.of(context);
     final hand = _hand(store);
-    final incoming = [for (final o in prescriptionOrders) if (store.jobFor(o.magistralName) == null) o];
+    final incoming = store.wall;
+    final next = store.untilNextArrival;
+    final wallLine = [
+      'Gelen reçeteler · ${incoming.length}/${JobStore.wallSize}',
+      next == null ? 'duvar dolu' : 'yenisi ${formatRemaining(next)} sonra',
+    ].join(' · ');
     int count(OrderStatus s) => hand.where((e) => e.status == s).length;
     final parts = [
       '${hand.length} elinde',
@@ -95,10 +111,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
               ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(AppSpace.xl, AppSpace.sm, AppSpace.xl, 0),
-                child: Text(
-                  incoming.isEmpty ? 'Şimdilik yeni reçete yok' : 'Gelen reçeteler · ${incoming.length}',
-                  style: AppText.label(size: 12, color: AppColors.ink),
-                ),
+                child: Text(wallLine, style: AppText.label(size: 12, color: AppColors.ink)),
               ),
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
@@ -109,7 +122,15 @@ class _OrdersScreenState extends State<OrdersScreen> {
                   children: [
                     for (final (i, o) in incoming.indexed) ...[
                       if (i > 0) const SizedBox(width: AppSpace.sm),
-                      _Slip(order: o, onTap: () => openRecipe(context, o, onTake: () => _take(o))),
+                      _Slip(
+                        order: store.orderNamed(o.magistralName),
+                        onTap: () => openRecipe(context, store.orderNamed(o.magistralName), onTake: () => _take(o)),
+                      ),
+                    ],
+                    // Duvarın boş yerleri: sınır görünsün.
+                    for (var i = incoming.length; i < JobStore.wallSize; i++) ...[
+                      if (i > 0) const SizedBox(width: AppSpace.sm),
+                      const _EmptySlip(),
                     ],
                   ],
                 ),
@@ -140,7 +161,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                           Positioned.fill(
                             top: AppSpace.xs,
                             child: SingleChildScrollView(
-                              child: PrescriptionCard(order: hand[i].order, showStatus: true),
+                              child: PrescriptionCard(job: hand[i].job, showStatus: true),
                             ),
                           ),
                           const Positioned(top: -CounterTop.lip + 3, left: AppSpace.xxl, child: PaperTape(angle: -6)),
@@ -186,6 +207,25 @@ class _EmptyCounter extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// Duvarda boş yer: silik çerçeve ve kum saati, fiş genişliğinde.
+class _EmptySlip extends StatelessWidget {
+  const _EmptySlip();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 112,
+      height: 92,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(AppRadius.paper),
+        border: Border.all(color: AppColors.line, width: 1.5),
+      ),
+      child: const Icon(Icons.hourglass_empty_rounded, size: 20, color: AppColors.inkMuted),
     );
   }
 }

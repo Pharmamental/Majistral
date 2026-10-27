@@ -90,8 +90,8 @@ lib/
   banyosu: termometreyi 70–75°'de tut, `widgets/heating_sheet.dart`); süre oyun bitince başlar.
 - Tartım yok (Tuğrul, 2026-10-27): tartım adımı, terazi istasyonu ve markette terazi kaldırıldı;
   iş levigasyon ya da ısıtmayla başlar. Reçete miktarları kartta yazılı kalır. Formüller ve
-  kaynakları `lib/data/orders.dart` başında. Kayıt anahtarı `prep_jobs_v2`; alet seçimli eski
-  kayıtlar (v1) okunmaz.
+  kaynakları `lib/data/orders.dart` başında. Kayıt anahtarları `prep_jobs_v3` ve `wall_v1`; kimliksiz eski
+  kayıtlar (v1, v2) okunmaz.
 - Acele et (Tuğrul, 2026-10-26): her basış çalışan adımın kalan süresini yarıya, kaliteyi de
   yarıya indirir, yıldız yukarı yuvarlanır (3 → 2 → 1, en düşük 1). Günde 5 hak (`JobStore.rush`).
   Adım çalışmıyorsa (reçete oyuncuyu bekliyor) basılamaz. Reklam henüz bağlı değil, onay penceresi yerini tutuyor.
@@ -106,8 +106,13 @@ lib/
 - Duvar ve tezgâh (Tuğrul, 2026-10-27): duvarda gelen reçeteler, tezgâhta elindekiler. Duvarda
   henüz alınmamış reçetelerin küçük fişleri (hekim, ad, süre; hepsi aynı boyda, düz, kobalt
   çerçeveli); dokununca reçete penceresi açılır, altta "Al". Alınan reçete duvardan kalkar,
-  tezgâha iner ve öne gelir; teslim edilince duvara geri döner. Elde tutma sınırı ve
-  reçetenin kaybolması yok (yeni reçetenin gelişi henüz tasarlanmadı). Tezgâhta kartlar yan
+  tezgâha iner ve öne gelir. Duvar sınırı (Tuğrul, 2026-10-27): duvarda en fazla 3 reçete
+  birikir (`JobStore.wallSize`), boş yerler silik çerçeve; yenisi her 10 dakikada gelir
+  (`arrivalEvery`, yer tutucu), sayaç geldiği anda yeniden başlar. Duvar doluyken sayaç
+  dolsa da gelmez; reçete alınca süre çoktan dolmuşsa yenisi hemen gelir, sayaç o andan
+  başlar. Uygulama kapalıyken de gelir. Reçeteler sırayla döner, aynı reçete yeniden gelebilir
+  (her gelişin kimliği `IncomingOrder.id`, iş de bu kimlikle tutulur). Elde tutma sınırı yok,
+  reçete kaybolmaz; ilk açılışta duvar dolu. Tezgâhta kartlar yan
   yana, sağa sola kaydırılır (`PageView`, yanındaki kartın kenarı görünür), raf kenarına iki
   parça kâğıt bantla asılı, düz (eğiklik Tuğrul isteğiyle kalktı, `PaperTape`); durum kartın
   başında çipte. Tezgâh boşken bantlı küçük not. Kartı tezgâhın altına uzatıp düğmeyi alta

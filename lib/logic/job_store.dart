@@ -8,7 +8,13 @@ import '../data/orders.dart';
 import '../models/prep_job.dart';
 import '../models/prescription.dart';
 
-/// Kabul edilmiş reçeteleri tutar ve telefona kaydeder.
+/// Duvardaki gelen reçeteleri ve kabul edilmiş reçeteleri tutar, telefona
+/// kaydeder.
+///
+/// Duvar (Tuğrul, 2026-10-27): en fazla [wallSize] reçete birikir; yenisi her
+/// [arrivalEvery]'de bir gelir ve sayaç geldiği anda yeniden başlar. Duvar
+/// doluyken sayaç dolsa da reçete gelmez, bekletilir; oyuncu bir reçete alınca
+/// süre çoktan dolmuşsa yenisi hemen gelir ve sayaç o andan başlar.
 ///
 /// Her adımı oyuncu başlatır (Tuğrul, 2026-10-27): laboratuvarda bir alete
 /// basar, reçeteyi seçer; mini oyunlu adımda önce oyun, sonra süre. Adım
@@ -18,46 +24,114 @@ import '../models/prescription.dart';
 /// Saat şimdilik cihaz saatinden okunur ([now]). Tasarım belgesi saat hilesine
 /// karşı sunucu saatini istiyor; sunucu gelince yalnız [now] değişecek.
 class JobStore extends ChangeNotifier {
-  JobStore._(this._prefs, this.now, this._jobs, this._orders);
+  JobStore._(this._prefs, this.now, this._jobs, this._orders, this._wall, this._nextId, this._due);
 
-  // Alet seçimiyle planlanan eski kayıtlar (v1) bu düzene çevrilmez, okunmaz.
-  static const _key = 'prep_jobs_v2';
+  // Kimliksiz eski kayıtlar (v1, v2) bu düzene çevrilmez, okunmaz.
+  static const _key = 'prep_jobs_v3';
+  static const _wallKey = 'wall_v1';
+
+  /// Duvarda en fazla birikecek reçete.
+  static const wallSize = 3;
+
+  /// İki reçetenin gelişi arasındaki süre. Yer tutucu; kapalı testte ayarlanacak.
+  static const arrivalEvery = Duration(minutes: 10);
 
   final SharedPreferences _prefs;
   final DateTime Function() now;
   final List<PrepJob> _jobs;
   final List<PrescriptionOrder> _orders;
+  final List<IncomingOrder> _wall;
+
+  /// Bir sonraki gelişin kimliği; reçeteler [_orders] sırasıyla döner.
+  int _nextId;
+
+  /// Sayacın dolduğu an: duvarda yer varsa yeni reçete bu anda gelir.
+  DateTime _due;
 
   static Future<JobStore> load({DateTime Function()? now, List<PrescriptionOrder>? orders}) async {
     final prefs = await SharedPreferences.getInstance();
-    final raw = prefs.getString(_key);
+    final clock = now ?? DateTime.now;
     final known = orders ?? prescriptionOrders;
+    bool isKnown(String name) => known.any((o) => o.magistralName == name);
     final jobs = <PrepJob>[];
-    if (raw != null) {
-      try {
-        for (final item in jsonDecode(raw) as List) {
-          final job = PrepJob.fromJson(item as Map<String, dynamic>);
-          // Oyundan çıkarılmış reçetenin kaydı atlanır.
-          if (known.any((o) => o.magistralName == job.magistralName)) jobs.add(job);
-        }
-      } on Object {
-        // Bozuk kayıt oyunu açılmaz hâle getirmesin; boş başla.
-        jobs.clear();
+    final wall = <IncomingOrder>[];
+    int? nextId;
+    DateTime? due;
+    try {
+      for (final item in jsonDecode(prefs.getString(_key) ?? '[]') as List) {
+        final job = PrepJob.fromJson(item as Map<String, dynamic>);
+        // Oyundan çıkarılmış reçetenin kaydı atlanır.
+        if (isKnown(job.magistralName)) jobs.add(job);
       }
+      final raw = prefs.getString(_wallKey);
+      if (raw != null) {
+        final saved = jsonDecode(raw) as Map<String, dynamic>;
+        for (final item in saved['wall'] as List) {
+          final o = IncomingOrder.fromJson(item as Map<String, dynamic>);
+          if (isKnown(o.magistralName)) wall.add(o);
+        }
+        nextId = saved['nextId'] as int;
+        due = DateTime.fromMillisecondsSinceEpoch(saved['due'] as int);
+      }
+    } on Object {
+      // Bozuk kayıt oyunu açılmaz hâle getirmesin; boş başla.
+      jobs.clear();
+      wall.clear();
+      nextId = null;
     }
-    return JobStore._(prefs, now ?? DateTime.now, jobs, known);
+    final store = JobStore._(prefs, clock, jobs, known, wall, nextId ?? 0, due ?? clock().add(arrivalEvery));
+    // İlk açılış: duvar dolu başlar, sayaç şimdi başlar.
+    if (nextId == null) {
+      while (store._wall.length < wallSize) {
+        store._arrive();
+      }
+      await store._save();
+    }
+    return store;
   }
 
   List<PrepJob> get jobs => List.unmodifiable(_jobs);
 
-  PrepJob? jobFor(String magistralName) {
-    for (final job in _jobs) {
-      if (job.magistralName == magistralName) return job;
+  /// Duvardaki gelen reçeteler; sırası gelmiş olanlar burada duvara asılır.
+  List<IncomingOrder> get wall {
+    _catchUp();
+    return List.unmodifiable(_wall);
+  }
+
+  /// Bir sonraki reçeteye kalan süre; duvar doluysa null.
+  Duration? get untilNextArrival {
+    _catchUp();
+    if (_wall.length >= wallSize) return null;
+    return _due.difference(now());
+  }
+
+  void _arrive() {
+    final order = _orders[_nextId % _orders.length];
+    _wall.add(IncomingOrder(id: _nextId++, magistralName: order.magistralName));
+  }
+
+  /// Uygulama kapalıyken dolan sayaçlar da sayılır: her geliş kendi anında
+  /// olur ve sayaç o andan başlar. Duvar dolunca geliş bekletilir.
+  void _catchUp() {
+    var changed = false;
+    while (_wall.length < wallSize && !now().isBefore(_due)) {
+      _arrive();
+      _due = _due.add(arrivalEvery);
+      changed = true;
+    }
+    if (changed) _save();
+  }
+
+  PrepJob? job(int id) {
+    for (final j in _jobs) {
+      if (j.id == id) return j;
     }
     return null;
   }
 
-  PrescriptionOrder orderOf(PrepJob job) => _orders.firstWhere((o) => o.magistralName == job.magistralName);
+  PrescriptionOrder orderNamed(String magistralName) => _orders.firstWhere((o) => o.magistralName == magistralName);
+
+  PrescriptionOrder orderOf(PrepJob job) => orderNamed(job.magistralName);
 
   /// Sırası gelen ama başlatılmamış adım; bütün adımlar başlatıldıysa null.
   PrescriptionStep? nextStep(PrepJob job) {
@@ -111,21 +185,31 @@ class JobStore extends ChangeNotifier {
     return null;
   }
 
-  /// Reçeteyi kabul eder; adımlarını oyuncu laboratuvarda başlatır.
-  Future<PrepJob> accept(PrescriptionOrder order) async {
-    final job = PrepJob(magistralName: order.magistralName, acceptedAt: now(), stars: 3, notes: const []);
-    _jobs
-      ..removeWhere((j) => j.magistralName == order.magistralName)
-      ..add(job);
+  /// Duvardaki reçeteyi alır, tezgâha indirir; adımlarını oyuncu laboratuvarda
+  /// başlatır. Duvar doluyken sayaç dolmuşsa yeni reçete hemen gelir.
+  Future<PrepJob?> accept(IncomingOrder incoming) async {
+    _catchUp();
+    if (!_wall.any((o) => o.id == incoming.id)) return null;
+    if (_wall.length >= wallSize && !now().isBefore(_due)) _due = now();
+    _wall.removeWhere((o) => o.id == incoming.id);
+    final job = PrepJob(
+      id: incoming.id,
+      magistralName: incoming.magistralName,
+      acceptedAt: now(),
+      stars: 3,
+      notes: const [],
+    );
+    _jobs.add(job);
+    _catchUp();
     await _save();
     notifyListeners();
     return job;
   }
 
-  /// Reçetenin sıradaki adımını [tool] ile şimdi başlatır. Mini oyunlu adımda
-  /// bu, oyun bittikten sonra çağrılır. Alet uygun değilse hiçbir şey yapmaz.
-  Future<void> startStep(String magistralName, LabTool tool) async {
-    final job = jobFor(magistralName);
+  /// İşin sıradaki adımını [tool] ile şimdi başlatır. Mini oyunlu adımda bu,
+  /// oyun bittikten sonra çağrılır. Alet uygun değilse hiçbir şey yapmaz.
+  Future<void> startStep(int id, LabTool tool) async {
+    final job = this.job(id);
     if (job == null || whyNot(tool, job) != null) return;
     final step = nextStep(job)!;
     final start = now();
@@ -164,8 +248,8 @@ class JobStore extends ChangeNotifier {
 
   /// Acele et (Tuğrul, 2026-10-26): çalışan adımın kalan süresi yarıya iner,
   /// kalite de yarıya iner ve yukarı yuvarlanır (3 → 2 → 1, en düşük 1).
-  Future<void> rush(String magistralName) async {
-    final job = jobFor(magistralName);
+  Future<void> rush(int id) async {
+    final job = this.job(id);
     if (job == null || !canRush(job)) return;
     const note = 'Acele edildi: her acele kaliteyi yarıya indirir.';
     final run = running(job)!;
@@ -180,8 +264,8 @@ class JobStore extends ChangeNotifier {
   }
 
   /// Hazır işi teslim eder ve listeden çıkarır. Hazır değilse hiçbir şey yapmaz.
-  Future<PrepJob?> deliver(String magistralName) async {
-    final job = jobFor(magistralName);
+  Future<PrepJob?> deliver(int id) async {
+    final job = this.job(id);
     if (job == null || !isReady(job)) return null;
     _jobs.remove(job);
     await _save();
@@ -189,8 +273,17 @@ class JobStore extends ChangeNotifier {
     return job;
   }
 
-  Future<void> _save() =>
-      _prefs.setString(_key, jsonEncode([for (final j in _jobs) j.toJson()]));
+  Future<void> _save() async {
+    await _prefs.setString(_key, jsonEncode([for (final j in _jobs) j.toJson()]));
+    await _prefs.setString(
+      _wallKey,
+      jsonEncode({
+        'wall': [for (final o in _wall) o.toJson()],
+        'nextId': _nextId,
+        'due': _due.millisecondsSinceEpoch,
+      }),
+    );
+  }
 }
 
 /// Ağaçtaki her ekranın [JobStore]'a ulaşmasını sağlar; depo değişince

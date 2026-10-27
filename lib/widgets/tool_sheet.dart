@@ -95,10 +95,10 @@ class _JobRow extends StatelessWidget {
       openHeating(
         navigatorContext,
         magistralName: job.magistralName,
-        onDone: () => store.startStep(job.magistralName, tool),
+        onDone: () => store.startStep(job.id, tool),
       );
     } else {
-      store.startStep(job.magistralName, tool);
+      store.startStep(job.id, tool);
     }
   }
 

@@ -29,11 +29,26 @@ class StepRun {
       );
 }
 
+/// Duvarda bekleyen, henüz alınmamış reçete. Aynı reçete birden çok kez
+/// gelebilir; her gelişin kendi kimliği ([id]) var, alınınca işin kimliği olur.
+class IncomingOrder {
+  const IncomingOrder({required this.id, required this.magistralName});
+
+  final int id;
+  final String magistralName;
+
+  Map<String, Object> toJson() => {'id': id, 'magistralName': magistralName};
+
+  factory IncomingOrder.fromJson(Map<String, dynamic> json) =>
+      IncomingOrder(id: json['id'] as int, magistralName: json['magistralName'] as String);
+}
+
 /// Kabul edilmiş bir reçete: başlatılan adımları ([runs], reçetedeki sırayla)
 /// ve teslimde gösterilecek sonuç. Telefonda saklanır ki uygulama kapanınca da
 /// süre devam etsin.
 class PrepJob {
   const PrepJob({
+    required this.id,
     required this.magistralName,
     required this.acceptedAt,
     required this.stars,
@@ -41,6 +56,8 @@ class PrepJob {
     this.runs = const [],
   });
 
+  /// Duvardan gelişinin kimliği; aynı reçetenin iki işi bununla ayrılır.
+  final int id;
   final String magistralName;
   final DateTime acceptedAt;
 
@@ -53,6 +70,7 @@ class PrepJob {
   StepRun? runningAt(DateTime at) => runs.isNotEmpty && runs.last.runningAt(at) ? runs.last : null;
 
   PrepJob copyWith({List<StepRun>? runs, int? stars, List<String>? notes}) => PrepJob(
+        id: id,
         magistralName: magistralName,
         acceptedAt: acceptedAt,
         runs: runs ?? this.runs,
@@ -61,6 +79,7 @@ class PrepJob {
       );
 
   Map<String, Object> toJson() => {
+        'id': id,
         'magistralName': magistralName,
         'acceptedAt': acceptedAt.millisecondsSinceEpoch,
         'runs': [for (final r in runs) r.toJson()],
@@ -69,6 +88,7 @@ class PrepJob {
       };
 
   factory PrepJob.fromJson(Map<String, dynamic> json) => PrepJob(
+        id: json['id'] as int,
         magistralName: json['magistralName'] as String,
         acceptedAt: DateTime.fromMillisecondsSinceEpoch(json['acceptedAt'] as int),
         runs: [for (final r in json['runs'] as List) StepRun.fromJson(r as Map<String, dynamic>)],

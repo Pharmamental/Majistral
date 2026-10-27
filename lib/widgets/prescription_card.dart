@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../logic/job_store.dart';
+import '../models/prep_job.dart';
 import '../models/prescription.dart';
 import '../theme/tokens.dart';
 import 'job_status.dart';
@@ -20,9 +21,8 @@ enum OrderStatus {
   final Color soft;
   final Color text;
 
-  static OrderStatus of(JobStore store, PrescriptionOrder order) {
-    final job = store.jobFor(order.magistralName);
-    if (job == null) return yeni;
+  /// Alınmış reçetenin durumu; duvardaki gelen reçete her zaman [yeni].
+  static OrderStatus of(JobStore store, PrepJob job) {
     if (store.needsAction(job)) return bekliyor;
     if (store.isReady(job)) return hazir;
     return suruyor;
@@ -35,9 +35,9 @@ enum OrderStatus {
 /// 2026-10-27): ortada adım kutuları ve süre, en altta kartın tek aksiyonu.
 /// Yalnız tezgâhtaki, alınmış reçeteler için.
 class PrescriptionCard extends StatelessWidget {
-  const PrescriptionCard({super.key, required this.order, this.showStatus = false});
+  const PrescriptionCard({super.key, required this.job, this.showStatus = false});
 
-  final PrescriptionOrder order;
+  final PrepJob job;
 
   /// Kartın başında durum çipi (tezgâhta asılı kartlarda).
   final bool showStatus;
@@ -45,8 +45,8 @@ class PrescriptionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final store = JobScope.of(context);
-    final job = store.jobFor(order.magistralName);
-    final status = OrderStatus.of(store, order);
+    final order = store.orderOf(job);
+    final status = OrderStatus.of(store, job);
     return Container(
       clipBehavior: Clip.antiAlias,
       decoration: const ShapeDecoration(
@@ -96,8 +96,7 @@ class PrescriptionCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: AppSpace.lg),
-            // Kart yalnız tezgâhta, alınmış reçetede çizilir; gelen reçete duvarda fiştir.
-            if (job != null) JobStatus(job: job),
+            JobStatus(job: job),
           ],
         ),
       ),

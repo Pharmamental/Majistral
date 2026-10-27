@@ -21,11 +21,11 @@ String formatRemaining(Duration d) {
 }
 
 /// Hazır işi teslim eder ve sonucu kutlama penceresinde gösterir.
-Future<void> deliverJob(BuildContext context, String magistralName) async {
+Future<void> deliverJob(BuildContext context, int id) async {
   // Teslimden sonra düğmenin bulunduğu kart yeniden çizilip kaybolabilir;
   // pencere bu yüzden kalıcı olan gezgin bağlamında açılır.
   final navigatorContext = Navigator.of(context).context;
-  final job = await JobScope.of(context).deliver(magistralName);
+  final job = await JobScope.of(context).deliver(id);
   if (job == null || !navigatorContext.mounted) return;
   await showDialog<void>(
     context: navigatorContext,
@@ -89,7 +89,7 @@ class _JobStatusState extends State<JobStatus> {
         child: ChunkyButton.success(
           label: 'Hazır · Teslim Et',
           icon: Icons.check_circle_rounded,
-          onPressed: () => deliverJob(context, job.magistralName),
+          onPressed: () => deliverJob(context, job.id),
         ),
       );
     }
@@ -195,7 +195,7 @@ class _RushButton extends StatelessWidget {
         ),
       ),
     );
-    if (yes == true) await store.rush(job.magistralName);
+    if (yes == true) await store.rush(job.id);
   }
 
   @override
