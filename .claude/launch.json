@@ -12,6 +12,12 @@
       "runtimeExecutable": "python",
       "runtimeArgs": ["-m", "http.server", "5960", "--directory", "build/web"],
       "port": 5960
+    },
+    {
+      "name": "flutter-web-telefon",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "5961", "--bind", "0.0.0.0", "--directory", "build/web"],
+      "port": 5961
     }
   ]
 }
