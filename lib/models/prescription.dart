@@ -82,6 +82,7 @@ class PrescriptionOrder {
     required this.usedFor,
     required this.ingredients,
     required this.steps,
+    required this.formula,
     this.batchNote,
   });
 
@@ -90,6 +91,10 @@ class PrescriptionOrder {
 
   /// Formül başka bir toplam için yazıldıysa ne kadar hazırlanacağı.
   final String? batchNote;
+
+  /// Formül kitabındaki karşılığı (data/formulary); profildeki koleksiyon
+  /// teslim edilen reçeteyi bununla işaretler (2026-10-28).
+  final String formula;
 
   /// Adım sürelerinin toplamı (tasarım belgesi, bölüm 7: küçük 5–15 dk, krem
   /// 20–45 dk). Her adımı oyuncu başlattığı için iş arada beklerse uzar.

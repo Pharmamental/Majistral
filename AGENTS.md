@@ -159,7 +159,7 @@ lib/
   yuvarlak (`PrescriptionStubBorder`).
 - Alt çubuk (Tuğrul, 2026-10-28): soldan sağa Reçeteler (reçete koçanı), Laboratuvar (çubuktan
   taşan büyük daire, porselen havan; `HomeScreen.lab` = 1, `GameTabBar.big`), Market (tenteli
-  dükkân), Profil (eczacı önlüğü, şimdilik boş), Diğer (çekmece dolabı; içinde Kaynaklar).
+  dükkân), Profil (eczacı önlüğü), Diğer (çekmece dolabı; içinde Kaynaklar).
   Formüller sekmesi kaldırıldı (ekranı git geçmişinde); formül verisi duruyor
   (`GameTabBar`). Seçim her yerde aynı: adı kobalt yazı + altında kısa kobalt çizgi (`SelectionMark`); alt çubukta çizgi sekmeden sekmeye kayar, yolda uzayıp yerinde kısalır (`_SlidingMark`, Tuğrul 2026-10-27); daire seçimle renk değiştirmez. İkonlar `uretici.html` "Sekmeler" grubunda.
 - Market hammaddeleri (2026-10-26): `chemicalGroups`, 6 rol grubunda 31 madde; liste ve kaynakları
@@ -184,6 +184,14 @@ lib/
   aleti (`Cam eşya`, `Toz aletleri`). Yeni reçeteler: çinko oksitli nişasta pudrası, HEC jeli,
   folik asit kapsülü; markete hidroksietilselüloz, laktoz, folik asit eklendi. Bir adım formüllerin
   %10'undan fazlasında geçiyorsa laboratuvarda yapılabilmeli (`test/formulary_test.dart`).
+- Profil (Tuğrul, 2026-10-28, "Diploma + ustalık + koleksiyon"): duvarda ceviz çerçeveli eczacılık
+  diploması (ad, eczane adı, kalemle değişir; avatar halkası ve unvan teslim sayısıyla yükselir:
+  Stajyer eczacı 0, Eczacı 10, Uzman eczacı 30, Mesul müdür 60; eşikler yer tutucu). Altta
+  `PillTabs`: Ustalık (laboratuvardaki her adım kaç teslimde, ortalama kaç yıldız) ve Koleksiyon
+  (formül kitabından teslim edilenler, kategori başına ilerleme). Hepsi teslim kaydından
+  (`JobStore.deliveries`, anahtar `deliveries_v1`; adlar `profile_v1`). Her oyun reçetesinin formül
+  kitabındaki karşılığı `PrescriptionOrder.formula`. Liderlik tablosu ve satılık çerçeve yok.
+  Sonraya: reçete defteri, seri (onarma haklı), kazanılan çizimli avatar çerçeveleri.
 - Testler gerçek fontu `test/test_fonts.dart` ile yükler; taşma testleri böyle gerçeği yansıtır.
 - Süren işler `shared_preferences` ile telefona kaydedilir; saat şimdilik cihaz saati
   (`JobStore.now`). Sunucu saati gelene kadar saat hilesi mümkün; kapanmamış bir açık.

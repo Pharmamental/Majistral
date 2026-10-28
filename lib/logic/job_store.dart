@@ -29,6 +29,8 @@ class JobStore extends ChangeNotifier {
   // Kimliksiz eski kayıtlar (v1, v2) bu düzene çevrilmez, okunmaz.
   static const _key = 'prep_jobs_v3';
   static const _wallKey = 'wall_v1';
+  static const _deliveriesKey = 'deliveries_v1';
+  static const _profileKey = 'profile_v1';
 
   /// Duvarda en fazla birikecek reçete.
   static const wallSize = 3;
@@ -80,6 +82,21 @@ class JobStore extends ChangeNotifier {
       nextId = null;
     }
     final store = JobStore._(prefs, clock, jobs, known, wall, nextId ?? 0, due ?? clock().add(arrivalEvery));
+    // Teslim kaydı ve profil ayrı anahtarlarda; bozulursa yalnız onlar boş başlar.
+    try {
+      for (final item in jsonDecode(prefs.getString(_deliveriesKey) ?? '[]') as List) {
+        store._deliveries.add(Delivery.fromJson(item as Map<String, dynamic>));
+      }
+    } on Object {
+      store._deliveries.clear();
+    }
+    try {
+      final profile = jsonDecode(prefs.getString(_profileKey) ?? '{}') as Map<String, dynamic>;
+      store._playerName = profile['name'] as String? ?? store._playerName;
+      store._pharmacyName = profile['pharmacy'] as String? ?? store._pharmacyName;
+    } on Object {
+      // Varsayılan adlarla devam.
+    }
     // İlk açılış: duvar dolu başlar, sayaç şimdi başlar.
     if (nextId == null) {
       while (store._wall.length < wallSize) {
@@ -91,6 +108,24 @@ class JobStore extends ChangeNotifier {
   }
 
   List<PrepJob> get jobs => List.unmodifiable(_jobs);
+
+  /// Teslim edilen reçeteler, eskiden yeniye (profil: unvan, ustalık, koleksiyon).
+  List<Delivery> get deliveries => List.unmodifiable(_deliveries);
+  final List<Delivery> _deliveries = [];
+
+  /// Profildeki diploma: oyuncunun ve eczanesinin adı.
+  String get playerName => _playerName;
+  String get pharmacyName => _pharmacyName;
+  String _playerName = 'Eczacı';
+  String _pharmacyName = 'Majistral Eczanesi';
+
+  /// Diplomadaki adları değiştirir; boş ad yazılırsa eskisi kalır.
+  Future<void> rename({required String player, required String pharmacy}) async {
+    if (player.trim().isNotEmpty) _playerName = player.trim();
+    if (pharmacy.trim().isNotEmpty) _pharmacyName = pharmacy.trim();
+    await _prefs.setString(_profileKey, jsonEncode({'name': _playerName, 'pharmacy': _pharmacyName}));
+    notifyListeners();
+  }
 
   /// Duvardaki gelen reçeteler; sırası gelmiş olanlar burada duvara asılır.
   List<IncomingOrder> get wall {
@@ -262,11 +297,19 @@ class JobStore extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Hazır işi teslim eder ve listeden çıkarır. Hazır değilse hiçbir şey yapmaz.
+  /// Hazır işi teslim eder, listeden çıkarır ve teslim kaydına yazar. Hazır
+  /// değilse hiçbir şey yapmaz.
   Future<PrepJob?> deliver(int id) async {
     final job = this.job(id);
     if (job == null || !isReady(job)) return null;
     _jobs.remove(job);
+    _deliveries.add(Delivery(
+      magistralName: job.magistralName,
+      stars: job.stars,
+      at: now(),
+      steps: [for (final s in orderOf(job).steps) s.label],
+    ));
+    await _prefs.setString(_deliveriesKey, jsonEncode([for (final d in _deliveries) d.toJson()]));
     await _save();
     notifyListeners();
     return job;

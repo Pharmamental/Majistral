@@ -39,6 +39,7 @@ const List<PrescriptionOrder> prescriptionOrders = [
     doctorBranch: 'Dermatoloji',
     patientName: 'M. Yılmaz',
     magistralName: '%5 Salisilik Asitli Vazelin',
+    formula: 'Salisilik asitli vazelin %5',
     purpose: 'Kalınlaşmış, nasırlı deriyi yumuşatma',
     usedFor: 'Nasır, kallus ve siğil gibi kalınlaşmış deride',
     ingredients: [
@@ -75,6 +76,7 @@ const List<PrescriptionOrder> prescriptionOrders = [
     doctorBranch: 'Aile Hekimi',
     patientName: 'A. Demir',
     magistralName: 'Çinko Oksit Merhemi',
+    formula: 'Çinko oksit merhemi %20 (USP)',
     purpose: 'Cildi koruyan, kurutan bariyer merhem',
     usedFor: 'Pişik, sürtünme tahrişi ve hafif deri tahrişlerinde',
     ingredients: [
@@ -93,6 +95,7 @@ const List<PrescriptionOrder> prescriptionOrders = [
     doctorBranch: 'Dermatoloji',
     patientName: 'E. Şahin',
     magistralName: 'Hidrofil Merhem',
+    formula: 'Hidrofil merhem (USP, yağ-su krem bazı)',
     purpose: 'Suyla yıkanabilen krem tipi baz',
     usedFor: 'Etkin maddeleri taşıyan baz olarak; suyla kolay temizlenmesi istenen kremlerde',
     ingredients: [
@@ -124,6 +127,7 @@ const List<PrescriptionOrder> prescriptionOrders = [
     doctorBranch: 'Çocuk Hastalıkları',
     patientName: 'B. Kaya',
     magistralName: 'Çinko Oksitli Nişasta Pudrası',
+    formula: 'Talksız çinko oksitli nişasta pudrası %10',
     purpose: 'Bez bölgesini kuru tutan, talksız koruyucu pudra',
     usedFor: 'Bebeklerde pişik ve nemli deride; yüze sürülmez',
     ingredients: [
@@ -141,6 +145,7 @@ const List<PrescriptionOrder> prescriptionOrders = [
     doctorBranch: 'Dermatoloji',
     patientName: 'S. Aksoy',
     magistralName: 'Hidroksietilselüloz Jeli %2,5',
+    formula: 'Hidroksietilselüloz jeli %2,5',
     purpose: 'Serinletici, yağsız sulu jel bazı',
     usedFor: 'Etkin madde katılacak jellerde baz olarak; yağsız ürün istenen deride',
     ingredients: [
@@ -161,6 +166,7 @@ const List<PrescriptionOrder> prescriptionOrders = [
     doctorBranch: 'Kadın Hastalıkları',
     patientName: 'N. Çelik',
     magistralName: 'Folik Asit Kapsülü 1 mg',
+    formula: 'Folik asit kapsülü 1 mg',
     purpose: 'Folat eksikliğini gideren vitamin kapsülü',
     usedFor: 'Folat eksikliği anemisinde ve gebelik öncesi destekte',
     ingredients: [

@@ -96,3 +96,30 @@ class PrepJob {
         notes: [for (final n in json['notes'] as List) n as String],
       );
 }
+
+/// Teslim edilen bir reçetenin kaydı (Tuğrul, 2026-10-28): profildeki unvan,
+/// ustalık ve koleksiyon bu kayıttan hesaplanır.
+class Delivery {
+  const Delivery({required this.magistralName, required this.stars, required this.at, required this.steps});
+
+  final String magistralName;
+  final int stars;
+  final DateTime at;
+
+  /// Reçetenin adımları, teslim anındaki sırasıyla.
+  final List<String> steps;
+
+  Map<String, Object> toJson() => {
+        'magistralName': magistralName,
+        'stars': stars,
+        'at': at.millisecondsSinceEpoch,
+        'steps': steps,
+      };
+
+  factory Delivery.fromJson(Map<String, dynamic> json) => Delivery(
+        magistralName: json['magistralName'] as String,
+        stars: json['stars'] as int,
+        at: DateTime.fromMillisecondsSinceEpoch(json['at'] as int),
+        steps: [for (final s in json['steps'] as List) s as String],
+      );
+}

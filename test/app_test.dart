@@ -293,7 +293,7 @@ void main() {
 
     await tester.tap(find.text('Profil').last);
     await tester.pumpAndSettle();
-    expect(find.text('Profil sayfası henüz hazır değil.'), findsOneWidget);
+    expect(find.text('ECZACILIK DİPLOMASI'), findsOneWidget);
 
     await tester.tap(find.text('Diğer').last);
     await tester.pumpAndSettle();
