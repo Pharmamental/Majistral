@@ -33,6 +33,17 @@ int stepCount(String step, List<Delivery> deliveries) => deliveries.where((d) =>
 /// [count] kez yapılan tekniğin kademe sırası; hiç yapılmadıysa -1.
 int tierIndex(int count) => tiers.lastIndexWhere((t) => count >= t.from);
 
+/// Son teslimle Bronz, Gümüş ya da Altın'a çıkan teknikler (başarım kutucuğu).
+/// [deliveries] son teslimi de içerir; "Başladın" kutucuk çıkarmaz.
+List<({String step, int tier, int count})> tierUps(List<Delivery> deliveries) {
+  if (deliveries.isEmpty) return const [];
+  return [
+    for (final step in deliveries.last.steps.toSet())
+      if (stepCount(step, deliveries) case final count when tierIndex(count) > 0 && tiers[tierIndex(count)].from == count)
+        (step: step, tier: tierIndex(count), count: count),
+  ];
+}
+
 /// Teslim edilmiş reçetelerin formül kitabındaki adları (koleksiyon).
 Set<String> preparedFormulas(List<Delivery> deliveries, List<PrescriptionOrder> orders) => {
       for (final d in deliveries)

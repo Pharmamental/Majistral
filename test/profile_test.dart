@@ -13,6 +13,7 @@ import 'package:game/main.dart';
 import 'package:game/models/formula.dart';
 import 'package:game/models/prep_job.dart';
 import 'package:game/screens/profile_screen.dart';
+import 'package:game/widgets/achievement_toast.dart';
 import 'package:game/widgets/grow_panel.dart';
 
 import 'test_fonts.dart';
@@ -83,6 +84,30 @@ void main() {
     expect(tiers[tierIndex(400)].title, 'Altın');
     expect(preparedFormulas([Delivery(magistralName: order.magistralName, stars: 3, at: at, steps: const [])],
         prescriptionOrders), {order.formula});
+  });
+
+  testWidgets('Başarım: 5. ezmede Bronz kutucuğu iner, kendiliğinden kalkar', (tester) async {
+    await loadAppFonts();
+    final at = DateTime(2026);
+    Delivery d(List<String> steps) => Delivery(magistralName: 'a', stars: 3, at: at, steps: steps);
+    final four = [for (var i = 0; i < 4; i++) d(const ['Ezme', 'Levigasyon'])];
+    expect(tierUps(four), isEmpty);
+    expect(tierUps([d(const ['Ezme'])]), isEmpty, reason: 'Başladın kutucuk çıkarmaz');
+    final ups = tierUps([...four, d(const ['Ezme', 'Ezme'])]);
+    expect(ups, [(step: 'Ezme', tier: 1, count: 5)]);
+
+    await tester.pumpWidget(MaterialApp(
+      home: Builder(builder: (context) {
+        return TextButton(onPressed: () => showAchievements(context, ups), child: const Text('aç'));
+      }),
+    ));
+    await tester.tap(find.text('aç'));
+    await tester.pump(const Duration(milliseconds: 1500));
+    expect(find.text('Ezme · Bronz'), findsOneWidget);
+    expect(find.text('5 kez hazırladın'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+    await tester.pump(const Duration(seconds: 4));
+    expect(find.text('Ezme · Bronz'), findsNothing);
   });
 
   testWidgets('Profil boşken ad yer tutucusu ve ilk adım; "yapılmadı" duvarı yok', (tester) async {

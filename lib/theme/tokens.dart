@@ -80,6 +80,10 @@ class AppColors {
   static const List<Color> medalDark = [Color(0xFF9AA3B0), Color(0xFF7E5126), Color(0xFF66717E), Color(0xFF9A7208)];
   static const List<Color> medalLight = [Color(0x00000000), Color(0xFFDDAA74), Color(0xFFDCE3EA), Color(0xFFF6D768)];
 
+  // Başarım kutucuğundaki kapsül (Tuğrul, 2026-10-28): koyu kırmızı-beyaz.
+  static const Color capsuleRed = Color(0xFF8E1B26);
+  static const Color capsuleRedDark = Color(0xFF5C0F17);
+
   // İstasyon kademeleri.
   static const Color rusty = Color(0xFF8D6E52);
   static const Color goodCondition = Color(0xFF607D8B);

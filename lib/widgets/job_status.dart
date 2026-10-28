@@ -2,10 +2,12 @@
 import 'package:flutter/material.dart';
 
 import '../logic/job_store.dart';
+import '../logic/profile_stats.dart';
 import '../models/prep_job.dart';
 import '../models/prescription.dart';
 import '../screens/home_screen.dart';
 import '../theme/tokens.dart';
+import 'achievement_toast.dart';
 import 'chunky_button.dart';
 import 'grow_panel.dart';
 import 'result_view.dart';
@@ -28,8 +30,11 @@ Future<void> deliverJob(BuildContext context, int id) async {
   // Pencere "Teslim Et" düğmesinin yerinden büyür.
   final navigatorContext = Navigator.of(context).context;
   final from = rectOf(context);
-  final job = await JobScope.of(context).deliver(id);
+  final store = JobScope.of(context);
+  final job = await store.deliver(id);
   if (job == null || !navigatorContext.mounted) return;
+  // Ustalıkta seviye atlandıysa üstte başarım kutucuğu; teslim penceresiyle birlikte.
+  showAchievements(navigatorContext, tierUps(store.deliveries));
   await openGrowing<void>(
     navigatorContext,
     from: from,
