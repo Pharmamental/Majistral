@@ -19,6 +19,7 @@ import 'test_fonts.dart';
 import 'test_helpers.dart';
 
 void main() {
+  group('vitrin', showcaseTests);
   setUpAll(loadAppFonts);
   final order = prescriptionOrders.first; // %5 SA: ezme 1, levigasyon 3, geometrik seyreltme 4
   late DateTime clock;
@@ -113,6 +114,9 @@ void main() {
     expect(find.text('ECZACILIK DİPLOMASI'), findsOneWidget);
     expect(find.text('1 reçete teslim edildi'), findsOneWidget);
     expect(find.text('Eczacı unvanına 9 reçete'), findsOneWidget);
+    expect(find.text('Vitrin'), findsOneWidget);
+    await scrollPage(tester, up: true); // diploma ve raf kayar, sekmeler üstte kalır
+    expect(find.text('Koleksiyon'), findsOneWidget);
     expect(find.text('×1'), findsNWidgets(3)); // yalnız denenen üç teknik
     expect(find.text('Bronz için 4 kez daha'), findsNWidgets(3));
     expect(find.text('Laboratuvarda henüz denemediğin ${labTools().length - 3} teknik daha var.'), findsOneWidget);
@@ -131,6 +135,7 @@ void main() {
     await tester.tap(find.text('Kapat'));
     await tester.pumpAndSettle();
 
+    await scrollPage(tester, up: false);
     await tester.tap(find.byTooltip('Adları değiştir'));
     await tester.pumpAndSettle();
     await tester.enterText(find.byType(TextField).first, 'Tuğrul');
@@ -168,6 +173,7 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.text('Defter'));
     await tester.pumpAndSettle();
+    await scrollPage(tester, up: true);
 
     expect(find.text('Son teslimlerin'), findsOneWidget);
     expect(find.text(names[3]), findsOneWidget); // en yeni üstte
@@ -187,3 +193,59 @@ void main() {
 
 /// Formül kitabında bu adda formül var mı?
 bool referenceFormula(String name) => formulary.any((f) => f.name == name);
+
+/// Profil sayfasını kaydırır: yukarı (diploma ve raf gider) ya da aşağı (geri gelir).
+Future<void> scrollPage(WidgetTester tester, {required bool up}) async {
+  await tester.drag(find.byType(NestedScrollView), Offset(0, up ? -600 : 600));
+  await tester.pumpAndSettle();
+}
+
+void showcaseTests() {
+  setUpAll(loadAppFonts);
+  late DateTime clock;
+  final order = prescriptionOrders.first;
+  final saved = jsonEncode([
+    Delivery(magistralName: order.magistralName, stars: 3, at: DateTime(2026, 10, 28, 9), steps: const []).toJson(),
+  ]);
+
+  setUp(() {
+    SharedPreferences.setMockInitialValues({'deliveries_v1': saved});
+    clock = DateTime(2026, 10, 28, 12);
+  });
+
+  test('vitrine yalnız teslim edilen ürün konur; aynı ürün iki yerde durmaz; kayıtta kalır', () async {
+    final store = await JobStore.load(now: () => clock);
+    await store.setShowcase(0, prescriptionOrders[1].magistralName); // teslim edilmedi
+    expect(store.showcase, [null, null, null]);
+    await store.setShowcase(0, order.magistralName);
+    await store.setShowcase(2, order.magistralName); // 0'dan 2'ye taşınır
+    expect(store.showcase, [null, null, order.magistralName]);
+    final reopened = await JobStore.load(now: () => clock);
+    expect(reopened.showcase, [null, null, order.magistralName]);
+    await reopened.setShowcase(2, null);
+    expect(reopened.showcase, [null, null, null]);
+  });
+
+  testWidgets('Vitrin: boş yere basınca teslim edilenler çıkar, seçilen rafa konur, kaldırılır', (tester) async {
+    tester.view.physicalSize = const Size(1080, 2340);
+    tester.view.devicePixelRatio = 3;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(MajistralApp(store: await JobStore.load(now: () => clock)));
+    await tester.tap(find.text('Profil').last);
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.bySemanticsLabel('Vitrinde boş yer, ürün koy').first);
+    await tester.pumpAndSettle();
+    expect(find.text('Vitrine ne koyalım?'), findsOneWidget);
+    expect(find.text('1 kez teslim edildi'), findsOneWidget);
+    await tester.tap(find.descendant(of: find.byType(GrowPanel), matching: find.text(order.magistralName)));
+    await tester.pumpAndSettle();
+    expect(find.bySemanticsLabel('Vitrinde ${order.magistralName}'), findsOneWidget);
+
+    await tester.tap(find.bySemanticsLabel('Vitrinde ${order.magistralName}'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Raftan kaldır'));
+    await tester.pumpAndSettle();
+    expect(find.bySemanticsLabel('Vitrinde boş yer, ürün koy'), findsNWidgets(3));
+  });
+}

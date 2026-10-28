@@ -128,6 +128,21 @@ const IKONLAR=[
   {d:rr(24,18,52,17,6),c:R.kahve},
   {d:rr(29,46,42,27,5),c:R.krem,flat:1},
   {d:'M36,56H64M40,64H60',c:R.kremKoyu,line:1}]},
+ // Profildeki vitrin rafı (2026-10-28): eski eczanenin kobalt bantlı porselen kavanozu
+ // (albarello; merhem, krem, jel) ve kobalt kapaklı amber cam şişe (toz, kapsül, sıvı).
+ {grup:'Ambalaj',dosya:'vitrin_albarello',ad:'Porselen eczane kavanozu',kutu:'#CFE4F7',parts:[
+  // gövde: geniş omuz ve taban, içe kavisli bel (albarello)
+  {d:'M30,30C22,34 21,42 25,48C29,55 29,61 25,68C21,76 26,86 36,86H64C74,86 79,76 75,68C71,61 71,55 75,48C79,42 78,34 70,30Z',c:'#F4F6F8'},
+  {d:'M27,50H73C71,55 71,59 71,64H29C29,59 29,55 27,50Z',c:'#2F5FB8',flat:1},   // kobalt bant
+  {d:'M33,57H67',c:'#F4F6F8',line:1},               // bandın süs çizgisi
+  {d:rr(32,18,36,14,6),c:'#F4F6F8'},                // kapak
+  {d:circ(50,15,5),c:'#2F5FB8'}]},                  // kapak topuzu
+ {grup:'Ambalaj',dosya:'vitrin_sise',ad:'Amber cam şişe',kutu:'#FFE3A6',parts:[
+  {d:rr(24,30,52,56,14),c:R.amber},                 // gövde
+  {d:rr(40,18,20,16,4),c:R.amber},                  // boyun
+  {d:rr(36,8,28,14,5),c:'#2F5FB8'},                 // kobalt kapak
+  {d:rr(30,48,40,24,4),c:R.krem,flat:1},            // etiket
+  {d:'M36,56H64M40,64H60',c:R.kremKoyu,line:1}]},
  {grup:'Ambalaj',dosya:'tup',ad:'Tüp doldurma ve kıvırma aleti',kutu:'#FFE3A6',rot:-18,parts:[
   {d:rr(26,10,48,9,3),c:R.metal},                   // kıvrık uç
   {d:'M28,17H72L66,66H34Z',c:R.krem},               // tüp

@@ -94,6 +94,12 @@ class JobStore extends ChangeNotifier {
       final profile = jsonDecode(prefs.getString(_profileKey) ?? '{}') as Map<String, dynamic>;
       store._playerName = profile['name'] as String? ?? store._playerName;
       store._pharmacyName = profile['pharmacy'] as String? ?? store._pharmacyName;
+      final shelf = profile['showcase'] as List?;
+      if (shelf != null && shelf.length == showcaseSize) {
+        for (var i = 0; i < showcaseSize; i++) {
+          store._showcase[i] = shelf[i] as String?;
+        }
+      }
     } on Object {
       // Varsayılan adlarla devam.
     }
@@ -124,7 +130,31 @@ class JobStore extends ChangeNotifier {
   Future<void> rename({required String player, required String pharmacy}) async {
     if (player.trim().isNotEmpty) _playerName = player.trim();
     if (pharmacy.trim().isNotEmpty) _pharmacyName = pharmacy.trim();
-    await _prefs.setString(_profileKey, jsonEncode({'name': _playerName, 'pharmacy': _pharmacyName}));
+    await _saveProfile();
+  }
+
+  /// Profildeki vitrin rafı (Tuğrul, 2026-10-28): oyuncunun seçtiği, teslim
+  /// edilmiş ürünler; boş yer null.
+  static const showcaseSize = 3;
+  List<String?> get showcase => List.unmodifiable(_showcase);
+  final List<String?> _showcase = List.filled(showcaseSize, null);
+
+  /// [slot]. yere [magistralName]'i koyar (null: rafı boşaltır). Yalnız teslim
+  /// edilmiş ürün konur; başka yerdeyse oradan alınır, aynı ürün iki kez durmaz.
+  Future<void> setShowcase(int slot, String? magistralName) async {
+    if (magistralName != null && !_deliveries.any((d) => d.magistralName == magistralName)) return;
+    for (var i = 0; i < showcaseSize; i++) {
+      if (_showcase[i] == magistralName) _showcase[i] = null;
+    }
+    _showcase[slot] = magistralName;
+    await _saveProfile();
+  }
+
+  Future<void> _saveProfile() async {
+    await _prefs.setString(
+      _profileKey,
+      jsonEncode({'name': _playerName, 'pharmacy': _pharmacyName, 'showcase': _showcase}),
+    );
     notifyListeners();
   }
 

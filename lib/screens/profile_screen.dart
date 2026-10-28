@@ -42,46 +42,280 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Diploma ve vitrin rafı sayfayla birlikte kayar, sekmeler üstte sabit kalır
+    // (2026-10-28): raf eklenince duvar ekranın yarısını alıyordu.
+    return ColoredBox(
+      color: AppColors.background,
+      child: NestedScrollView(
+        headerSliverBuilder: (context, _) => [
+          const SliverToBoxAdapter(
+            child: ColoredBox(
+              color: AppColors.wall,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // Unvan yalnız diplomada yazar; başlıkta tekrar etmez (2026-10-28).
+                  TabHeader(title: 'Profil', subtitle: 'Diploman ve ilerlemen'),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(AppSpace.lg, 0, AppSpace.lg, AppSpace.lg),
+                    child: _Diploma(),
+                  ),
+                  _ShowcaseShelf(),
+                ],
+              ),
+            ),
+          ),
+          SliverPersistentHeader(
+            pinned: true,
+            delegate: _TabsHeader(
+              PillTabs<_ProfileTab>(
+                values: _ProfileTab.values,
+                selected: _tab,
+                labelOf: (t) => t.label,
+                onChanged: (t) => setState(() => _tab = t),
+              ),
+            ),
+          ),
+        ],
+        body: switch (_tab) {
+          _ProfileTab.ustalik => const _MasteryList(),
+          _ProfileTab.koleksiyon => const _CollectionList(),
+          _ProfileTab.defter => const _Ledger(),
+        },
+      ),
+    );
+  }
+}
+
+/// Sekmeler: sayfa kayarken üstte sabit durur.
+class _TabsHeader extends SliverPersistentHeaderDelegate {
+  _TabsHeader(this.tabs);
+
+  final Widget tabs;
+
+  // PillTabs: 44 dokunma alanı + 2 × 4 iç boşluk + 2 × 1 çerçeve = 54.
+  static const double _height = AppSpace.md + 54 + AppSpace.md + 1;
+
+  @override
+  double get minExtent => _height;
+
+  @override
+  double get maxExtent => _height;
+
+  @override
+  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return ColoredBox(
+      color: AppColors.wall,
+      child: Column(
+        children: [
+          Padding(padding: const EdgeInsets.fromLTRB(AppSpace.lg, AppSpace.md, AppSpace.lg, AppSpace.md), child: tabs),
+          const Divider(height: 1, color: AppColors.line),
+        ],
+      ),
+    );
+  }
+
+  @override
+  bool shouldRebuild(_TabsHeader old) => true;
+}
+
+/// Ürün türüne göre kap: yarı katılar porselen eczane kavanozunda, toz,
+/// kapsül ve sıvılar amber cam şişede.
+String _containerOf(String magistralName) {
+  final order = prescriptionOrders.where((o) => o.magistralName == magistralName).firstOrNull;
+  final category = formulary.where((f) => f.name == order?.formula).firstOrNull?.category;
+  return switch (category) {
+    FormulaCategory.merhem || FormulaCategory.krem || FormulaCategory.jel || null =>
+      'assets/images/ikon/ikon_vitrin_albarello.png',
+    _ => 'assets/images/ikon/ikon_vitrin_sise.png',
+  };
+}
+
+/// Vitrin rafı (Tuğrul, 2026-10-28): diplomanın altında ceviz rafta üç yer.
+/// Oyuncu teslim ettiği ürünlerden seçip koyar (Chess.com, Steam, Clash
+/// Royale'deki "kendi seçtiğin vitrin"). Boş yere basınca seçme penceresi.
+class _ShowcaseShelf extends StatelessWidget {
+  const _ShowcaseShelf();
+
+  @override
+  Widget build(BuildContext context) {
+    final store = JobScope.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        ColoredBox(
-          color: AppColors.wall,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: AppSpace.lg),
+          child: Text('Vitrin', style: AppText.title(size: 16)),
+        ),
+        const SizedBox(height: AppSpace.sm),
+        // Ceviz dolap içi: beyaz porselen kavanoz açık duvarda kayboluyordu.
+        Container(
+          color: AppColors.counterPlanks[1],
+          padding: const EdgeInsets.fromLTRB(AppSpace.xl, AppSpace.sm, AppSpace.xl, 0),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              // Unvan yalnız diplomada yazar; başlıkta tekrar etmez (2026-10-28).
-              const TabHeader(title: 'Profil', subtitle: 'Diploman ve ilerlemen'),
-              const Padding(
-                padding: EdgeInsets.fromLTRB(AppSpace.lg, 0, AppSpace.lg, AppSpace.lg),
-                child: _Diploma(),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(AppSpace.lg, 0, AppSpace.lg, AppSpace.lg),
-                child: PillTabs<_ProfileTab>(
-                  values: _ProfileTab.values,
-                  selected: _tab,
-                  labelOf: (t) => t.label,
-                  onChanged: (t) => setState(() => _tab = t),
-                ),
-              ),
+              for (var i = 0; i < JobStore.showcaseSize; i++)
+                Expanded(child: _ShowcaseSlot(slot: i, product: store.showcase[i])),
             ],
           ),
         ),
-        const Divider(height: 1, color: AppColors.line),
-        Expanded(
-          child: ColoredBox(
-            color: AppColors.background,
-            child: switch (_tab) {
-              _ProfileTab.ustalik => const _MasteryList(),
-              _ProfileTab.koleksiyon => const _CollectionList(),
-              _ProfileTab.defter => const _Ledger(),
-            },
-          ),
-        ),
+        // Raf tahtası: tezgâhla aynı ceviz, açık üst yüz ve koyu ön yüz.
+        Container(height: 6, color: AppColors.counterLip),
+        Container(height: 10, color: AppColors.counterEdge),
       ],
     );
   }
+}
+
+class _ShowcaseSlot extends StatelessWidget {
+  const _ShowcaseSlot({required this.slot, required this.product});
+
+  final int slot;
+  final String? product;
+
+  @override
+  Widget build(BuildContext context) {
+    final name = product;
+    return Semantics(
+      button: true,
+      label: name == null ? 'Vitrinde boş yer, ürün koy' : 'Vitrinde $name',
+      excludeSemantics: true,
+      child: Builder(
+        builder: (slotContext) => GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () => _openShowcasePicker(slotContext, slot, from: rectOf(slotContext)),
+          child: SizedBox(
+            height: 112,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                if (name != null) ...[
+                  Image.asset(_containerOf(name), width: 64, height: 64),
+                  const SizedBox(height: AppSpace.xs),
+                  Text(
+                    name,
+                    maxLines: 2,
+                    textAlign: TextAlign.center,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppText.label(size: 11, color: AppColors.surface),
+                  ),
+                ] else
+                  // Boş yer: kesik çizgili değil, silik daire ve artı; duvar sınırındaki boş yer gibi.
+                  Container(
+                    width: 56,
+                    height: 56,
+                    margin: const EdgeInsets.only(bottom: AppSpace.lg),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(color: AppColors.counterGrainLight, width: 2),
+                    ),
+                    child: const Icon(Icons.add_rounded, color: AppColors.counterGrainLight),
+                  ),
+                const SizedBox(height: AppSpace.xs),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Vitrine ürün seçme penceresi: teslim edilen ürünler, en yeniden. Dolu yerde
+/// "Raftan kaldır" da çıkar.
+Future<void> _openShowcasePicker(BuildContext context, int slot, {required Rect from}) {
+  final store = JobScope.of(context);
+  return openGrowing<void>(
+    context,
+    from: from,
+    builder: (sheetContext) {
+      final current = store.showcase[slot];
+      final counts = <String, int>{};
+      for (final d in store.deliveries.reversed) {
+        counts[d.magistralName] = (counts[d.magistralName] ?? 0) + 1;
+      }
+      return Padding(
+        padding: const EdgeInsets.all(AppSpace.lg),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text('Vitrine ne koyalım?', style: AppText.title(size: 20)),
+            const SizedBox(height: AppSpace.xs),
+            Text(
+              counts.isEmpty
+                  ? 'Rafa yalnız teslim ettiğin ürünler konur. Önce bir reçete hazırlayıp teslim et.'
+                  : 'Teslim ettiğin ürünlerden birini seç.',
+              style: AppText.body(size: 14, color: AppColors.inkMuted),
+            ),
+            const SizedBox(height: AppSpace.md),
+            Flexible(
+              child: ListView(
+                shrinkWrap: true,
+                children: [
+                  for (final MapEntry(key: name, value: n) in counts.entries)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: AppSpace.sm),
+                      child: Material(
+                        color: name == current ? AppColors.kobaltSoft : AppColors.surface,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(AppRadius.paper),
+                          side: BorderSide(
+                            color: name == current ? AppColors.kobalt : AppColors.line,
+                            width: name == current ? 2 : 1,
+                          ),
+                        ),
+                        clipBehavior: Clip.antiAlias,
+                        child: InkWell(
+                          onTap: () {
+                            store.setShowcase(slot, name);
+                            Navigator.of(sheetContext).pop();
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(AppSpace.sm),
+                            child: Row(
+                              children: [
+                                Image.asset(_containerOf(name), width: 40, height: 40),
+                                const SizedBox(width: AppSpace.md),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(name, style: AppText.body(size: 14, weight: FontWeight.w700)),
+                                      Text('$n kez teslim edildi', style: AppText.label(size: 12)),
+                                    ],
+                                  ),
+                                ),
+                                // Seçili olan yalnız renkle değil, onay işaretiyle de belli.
+                                if (name == current)
+                                  const Icon(Icons.check_circle_rounded, color: AppColors.kobalt),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+            const SizedBox(height: AppSpace.md),
+            if (current != null) ...[
+              ChunkyButton.secondary(
+                label: 'Raftan kaldır',
+                onPressed: () {
+                  store.setShowcase(slot, null);
+                  Navigator.of(sheetContext).pop();
+                },
+              ),
+              const SizedBox(height: AppSpace.sm),
+            ],
+            ChunkyButton.secondary(label: 'Kapat', onPressed: () => Navigator.of(sheetContext).pop()),
+          ],
+        ),
+      );
+    },
+  );
 }
 
 /// Duvarda asılı diploma: ceviz çerçeve, içinde kâğıt.
