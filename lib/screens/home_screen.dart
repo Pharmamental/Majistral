@@ -2,15 +2,16 @@ import 'package:flutter/material.dart';
 
 import '../logic/job_store.dart';
 import '../widgets/game_tab_bar.dart';
+import 'garden_screen.dart';
 import 'lab_screen.dart';
 import 'market_screen.dart';
 import 'more_screen.dart';
 import 'orders_screen.dart';
 import 'profile_screen.dart';
 
-/// Uygulamanın kabuğu: beş ana bölüm alt gezinme çubuğunda (Tasarım Rehberi,
-/// Navigasyon: 3–5 üst düzey hedef için alt çubuk; başparmak bölgesinde):
-/// Reçeteler, Laboratuvar, Market, Profil, Diğer ([GameTabBar]).
+/// Uygulamanın kabuğu: ana bölümler alt gezinme çubuğunda, başparmak bölgesinde:
+/// Reçeteler, Laboratuvar, Market, Bahçe, Profil, Diğer ([GameTabBar]). Bahçe
+/// 2026-10-29'da altıncı sekme olarak eklendi (Tasarım Rehberi 3–5 öneriyor).
 /// Hazır ya da oyuncuyu bekleyen iş varsa Reçeteler simgesinde rozet görünür.
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -51,6 +52,7 @@ class _HomeScreenState extends State<HomeScreen> {
               OrdersScreen(),
               LabScreen(),
               MarketScreen(),
+              GardenScreen(),
               ProfileScreen(),
               MoreScreen(),
             ].indexed)
@@ -67,6 +69,7 @@ class _HomeScreenState extends State<HomeScreen> {
           (label: 'Reçeteler', image: 'assets/images/ikon/ikon_sekme_receteler.png'),
           (label: 'Laboratuvar', image: 'assets/images/ikon/ikon_havan_porselen.png'),
           (label: 'Market', image: 'assets/images/ikon/ikon_sekme_market.png'),
+          (label: 'Bahçe', image: 'assets/images/ikon/ikon_sekme_bahce.png'),
           (label: 'Profil', image: 'assets/images/ikon/ikon_sekme_profil.png'),
           (label: 'Diğer', image: 'assets/images/ikon/ikon_sekme_diger.png'),
         ],

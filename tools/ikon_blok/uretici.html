@@ -566,7 +566,15 @@ const IKONLAR=[
   {d:rr(14,16,72,70,6),c:R.kahve},                   // dolap
   ...[[20,22],[52,22],[20,53],[52,53]].map(([x,y])=>({d:rr(x,y,28,27,3),c:'#B07A50',flat:1})), // çekmeceler
   ...[[27,27],[59,27],[27,58],[59,58]].map(([x,y])=>({d:rr(x,y,14,7,2),c:R.krem,flat:1})),     // etiketler
-  ...[[34,42],[66,42],[34,73],[66,73]].map(([x,y])=>({d:circ(x,y,3),c:R.altin,flat:1}))]}       // tutamaklar
+  ...[[34,42],[66,42],[34,73],[66,73]].map(([x,y])=>({d:circ(x,y,3),c:R.altin,flat:1}))]},      // tutamaklar
+ // Bahçe sekmesi (2026-10-29): tıbbi bitki bahçesinin sulama kabı.
+ {grup:'Sekmeler',dosya:'sekme_bahce',ad:'Bahçe (sulama kabı)',kutu:'#E3F1E3',parts:[
+  {d:'M22,48C6,48 6,76 20,78',c:D(R.yesil,.25),w:6}, // arka sap
+  {d:cap(60,72,84,38,7),c:R.yesil},                  // uzun ağız borusu
+  {d:'M78,34L92,24L98,36L86,44Z',c:D(R.yesil,.15)},  // süzgeç başı
+  {d:'M22,42H62C64,56 66,70 66,84H18C18,70 20,56 22,42Z',c:R.yesil}, // gövde
+  {d:rr(18,36,48,10,5),c:D(R.yesil,.15)},            // ağız kenarı
+  {d:rr(27,58,30,9,4),c:L(R.yesil,.55),flat:1}]},    // gövde bandı
 ];
 
 // ===== Vitrin: fanusta tıbbi bitki kurusu (Tuğrul, 2026-10-28, "çooook iyi").

@@ -173,10 +173,18 @@ class _TabButton extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: AppSpace.xs),
-              Text(
-                tab.label,
-                maxLines: 1,
-                style: AppText.label(size: 12, color: selected ? AppColors.accentText : AppColors.inkMuted),
+              // Altı sekmede (Bahçe, 2026-10-29) dar telefonda "Laboratuvar" sığmıyor:
+              // ad kesilmez, yalnız sığmadığında küçülür.
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 2),
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    tab.label,
+                    maxLines: 1,
+                    style: AppText.label(size: 12, color: selected ? AppColors.accentText : AppColors.inkMuted),
+                  ),
+                ),
               ),
               // Kayan seçim çizgisinin yeri ([_SlidingMark] çubuğun üstünde çizer).
               const SizedBox(height: 3 + 4),

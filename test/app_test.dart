@@ -290,10 +290,17 @@ void main() {
     addTearDown(tester.view.reset);
     await tester.pumpWidget(MajistralApp(store: await _store()));
 
-    final labels = ['Reçeteler', 'Laboratuvar', 'Market', 'Profil', 'Diğer'];
+    final labels = ['Reçeteler', 'Laboratuvar', 'Market', 'Bahçe', 'Profil', 'Diğer'];
     final xs = [for (final l in labels) tester.getCenter(find.text(l).last).dx];
     expect(xs, [...xs]..sort());
     expect(find.text('Formüller'), findsNothing);
+
+    // Bahçe (2026-10-29): 3 açık, 3 kilitli parsel; 360 genişlikte taşma yok.
+    await tester.tap(find.text('Bahçe').last);
+    await tester.pumpAndSettle();
+    expect(find.text('Tıbbi bitki yetiştir, kurut, vitrine koy'), findsOneWidget);
+    expect(find.text('Parsel 1 · boş'), findsOneWidget);
+    expect(find.byIcon(Icons.lock_rounded), findsWidgets);
 
     await tester.tap(find.text('Profil').last);
     await tester.pumpAndSettle();

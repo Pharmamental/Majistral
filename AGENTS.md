@@ -161,7 +161,22 @@ lib/
   yuvarlak (`PrescriptionStubBorder`).
 - Alt çubuk (Tuğrul, 2026-10-28): soldan sağa Reçeteler (reçete koçanı), Laboratuvar (çubuktan
   taşan büyük daire, porselen havan; `HomeScreen.lab` = 1, `GameTabBar.big`), Market (tenteli
-  dükkân), Profil (eczacı önlüğü), Diğer (çekmece dolabı; içinde Kaynaklar).
+  dükkân), Bahçe (sulama kabı; 2026-10-29), Profil (eczacı önlüğü), Diğer (çekmece dolabı;
+  içinde Kaynaklar). Altı sekmede dar telefonda ad kesilmez, yalnız sığmadığında küçülür
+  (`FittedBox`).
+- Bahçe (Tuğrul, 2026-10-29): eczanenin arka bahçesi; başlık duvarda, altında badanalı tahta
+  çit ve soluk zeytin yeşili çimen (`GardenGround`), ceviz çerçeveli yükseltilmiş toprak
+  parseller (`GardenBed`, `widgets/garden_widgets.dart`): 3 açık, 3 kilitli (çimende kesik
+  çerçeve + kilit + kâğıt etiket). Şimdilik yalnız sahne. Kararlaşan mekanik (henüz kodda
+  yok): tıbbi bitki gerçek zamanda büyür, bozulmaz, parsel dolunca durur; bitki satılmaz,
+  vitrin fanusunu açar. Vitrindeki fanus küçük oyun etkisi verir, aynı gruptan iki fanus
+  toplanmaz, en güçlüsü sayılır: çaylar duvar (Papatya +1, Ihlamur/Rezene +2, Mürver +3),
+  boğaz acele hakkı (Adaçayı +1, Kekik/Hatmi +2, Gelincik +3), cilt teslim parası (Aynısefa
+  %5, Lavanta/Defne %10, Kantaron %15), ferahlatıcı bahçe hızı (Nane %10, Biberiye/Okaliptüs
+  %20, Ekinezya %30). Tohum teslimde şansla düşer (sık %50, iki orta %20'şer, nadir %10;
+  "A", Tuğrul 2026-10-29) ve 10 teslimde nadir çıkmazsa 11.'de garanti; fazla tohum sonraki
+  ekimi hızlandırır. Bahçe gelince vitrin için `unlockAll` kalkar. Etkiler ekranda "oyun
+  etkisi" diye yazar, sahte farmakoloji kurulmaz.
   Formüller sekmesi kaldırıldı (ekranı git geçmişinde); formül verisi duruyor
   (`GameTabBar`). Seçim her yerde aynı: adı kobalt yazı + altında kısa kobalt çizgi (`SelectionMark`); alt çubukta çizgi sekmeden sekmeye kayar, yolda uzayıp yerinde kısalır (`_SlidingMark`, Tuğrul 2026-10-27); daire seçimle renk değiştirmez. İkonlar `uretici.html` "Sekmeler" grubunda.
 - Market hammaddeleri (2026-10-26): `chemicalGroups`, 6 rol grubunda; liste ve kaynakları

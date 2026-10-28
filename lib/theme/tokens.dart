@@ -66,6 +66,18 @@ class AppColors {
   static const Color marketBench = Color(0xFFC4B08F);
   static const Color marketBenchFleck = Color(0xFF7A6446);
 
+  // Bahçe (2026-10-29): eczanenin arka bahçesi. Badanalı tahta çit, soluk zeytin
+  // yeşili çimen, ceviz çerçeveli yükseltilmiş parsellerde koyu toprak. Çimen
+  // doygun değil; durum renkleriyle (hazır yeşili) karışmasın.
+  static const Color gardenGrass = Color(0xFF9AAB78);
+  static const Color gardenGrassDark = Color(0xFF63764A); // çimen teli
+  static const Color gardenGrassLight = Color(0xFFC9D4A8);
+  static const Color gardenSoil = Color(0xFF5E4130);
+  static const Color gardenSoilDark = Color(0xFF3E2A1E); // karık
+  static const Color gardenSoilLight = Color(0xFF7E5C45); // karık sırtı
+  static const Color fence = awningLight;
+  static const Color fenceShade = Color(0xFFD8CFBF);
+
   // Reçete durumları (2026-10-27): şerit, açık zemin, yazı. Yazı açık zeminde
   // en az 5,1:1 (ölçüldü); şerit süs, durum her zaman yazıyla da söylenir.
   // Mavi birincil renk olunca "hazırlanıyor" mora geçti.
