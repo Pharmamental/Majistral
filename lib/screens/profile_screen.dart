@@ -139,21 +139,63 @@ class _ShowcaseShelf extends StatelessWidget {
           child: Text('Vitrin', style: AppText.title(size: 16)),
         ),
         const SizedBox(height: AppSpace.sm),
-        // Ceviz dolap içi: beyaz porselen kavanoz açık duvarda kayboluyordu.
-        Container(
-          color: AppColors.counterPlanks[1],
-          padding: const EdgeInsets.fromLTRB(AppSpace.xl, AppSpace.sm, AppSpace.xl, 0),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              for (var i = 0; i < JobStore.showcaseSize; i++)
-                Expanded(child: _ShowcaseSlot(slot: i, product: store.showcase[i])),
-            ],
+        // Ceviz dolap: fanuslar havada duruyordu (Tuğrul, 2026-10-28); şimdi
+        // doğrudan raf tahtasına oturur, altlarında gölge, adları rafın ön
+        // yüzündeki kâğıt etikette.
+        Stack(
+          children: [
+            const Positioned.fill(child: _ShelfCabinet()),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: AppSpace.xl),
+              child: Row(
+                children: [
+                  for (var i = 0; i < JobStore.showcaseSize; i++)
+                    Expanded(child: _ShowcaseSlot(slot: i, product: store.showcase[i])),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+/// Vitrin dolabının ölçüleri: içerisi, raf tahtasının üst yüzü, ön yüzü.
+const double _cabinetInside = 124, _shelfTop = 8, _shelfFront = 26;
+
+/// Dolabın kendisi: üstü kararan ceviz iç duvar, iki yanda dikme, açık üst
+/// yüzlü raf tahtası ve koyu ön yüz.
+class _ShelfCabinet extends StatelessWidget {
+  const _ShelfCabinet();
+
+  @override
+  Widget build(BuildContext context) {
+    // İç duvar fanus tabanından (#60402A) koyu: aynı tonda taban kayboluyor,
+    // fanus havada duruyor gibi görünüyordu.
+    return Column(
+      children: [
+        Expanded(
+          child: Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [Color(0xFF26170D), AppColors.counterGrain, AppColors.counterEdge],
+                stops: [0, .45, 1],
+              ),
+              border: Border.symmetric(vertical: BorderSide(color: Color(0xFF5A3A26), width: 10)),
+            ),
           ),
         ),
-        // Raf tahtası: tezgâhla aynı ceviz, açık üst yüz ve koyu ön yüz.
-        Container(height: 6, color: AppColors.counterLip),
-        Container(height: 10, color: AppColors.counterEdge),
+        Container(
+          height: _shelfTop,
+          decoration: const BoxDecoration(
+            color: AppColors.counterLip,
+            border: Border(top: BorderSide(color: AppColors.counterGrainLight, width: 1.5)),
+          ),
+        ),
+        Container(height: _shelfFront, color: AppColors.counterEdge),
       ],
     );
   }
@@ -176,39 +218,99 @@ class _ShowcaseSlot extends StatelessWidget {
         builder: (slotContext) => GestureDetector(
           behavior: HitTestBehavior.opaque,
           onTap: () => _openShowcasePicker(slotContext, slot, from: rectOf(slotContext)),
-          child: SizedBox(
-            height: 128,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                if (name != null) ...[
-                  // Fanusun içindeki bitki 64'te seçilmiyordu; 80'e büyütüldü.
-                  Image.asset(driedPlantNamed(name)!.imagePath, width: 80, height: 80),
-                  const SizedBox(height: 2),
-                  Text(
-                    name,
-                    maxLines: 2,
-                    textAlign: TextAlign.center,
-                    overflow: TextOverflow.ellipsis,
-                    style: AppText.label(size: 11, color: AppColors.surface),
-                  ),
-                ] else
-                  // Boş yer: kesik çizgili değil, silik daire ve artı; duvar sınırındaki boş yer gibi.
-                  Container(
-                    width: 56,
-                    height: 56,
-                    margin: const EdgeInsets.only(bottom: AppSpace.lg),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(color: AppColors.counterGrainLight, width: 2),
-                    ),
-                    child: const Icon(Icons.add_rounded, color: AppColors.counterGrainLight),
-                  ),
-                const SizedBox(height: AppSpace.xs),
-              ],
-            ),
+          child: Column(
+            children: [
+              SizedBox(
+                height: _cabinetInside,
+                child: Stack(
+                  alignment: Alignment.bottomCenter,
+                  clipBehavior: Clip.none,
+                  children: [
+                    if (name != null) ...[
+                      // Tahtaya değen gölge: fanus rafta durur, havada değil.
+                      Positioned(
+                        bottom: -3,
+                        child: Container(
+                          width: 66,
+                          height: 9,
+                          decoration: BoxDecoration(
+                            borderRadius: const BorderRadius.all(Radius.elliptical(33, 4.5)),
+                            gradient: RadialGradient(
+                              colors: [AppColors.counterEdge.withValues(alpha: .85), AppColors.counterEdge.withValues(alpha: 0)],
+                            ),
+                          ),
+                        ),
+                      ),
+                      // Görselin altında 16/288'lik boşluk var; aşağı kaydırılınca
+                      // taban doğrudan tahtaya oturur.
+                      Transform.translate(
+                        offset: const Offset(0, 92 * 16 / 288),
+                        child: Image.asset(driedPlantNamed(name)!.imagePath, width: 92, height: 92),
+                      ),
+                    ] else
+                      // Boş yer: silik daire ve artı, rafın üstünde.
+                      Container(
+                        width: 56,
+                        height: 56,
+                        margin: const EdgeInsets.only(bottom: AppSpace.md),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(color: AppColors.counterGrainLight, width: 2),
+                        ),
+                        child: const Icon(Icons.add_rounded, color: AppColors.counterGrainLight),
+                      ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: _shelfTop),
+              SizedBox(
+                height: _shelfFront,
+                child: Center(child: name == null ? null : _ShelfLabel(name)),
+              ),
+            ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// Rafın ön yüzüne iki pirinç çiviyle tutturulmuş kâğıt etiket: fanusun adı.
+class _ShelfLabel extends StatelessWidget {
+  const _ShelfLabel(this.name);
+
+  final String name;
+
+  @override
+  Widget build(BuildContext context) {
+    const pin = SizedBox(
+      width: 4,
+      height: 4,
+      child: DecoratedBox(decoration: BoxDecoration(color: Color(0xFFB8924A), shape: BoxShape.circle)),
+    );
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF3EAD6),
+        borderRadius: BorderRadius.circular(AppRadius.paperInner / 2),
+        boxShadow: const [BoxShadow(color: Color(0x66000000), offset: Offset(0, 1), blurRadius: 1.5)],
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          pin,
+          const SizedBox(width: 5),
+          Flexible(
+            child: Text(
+              name,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: AppText.label(size: 11, color: AppColors.ink),
+            ),
+          ),
+          const SizedBox(width: 5),
+          pin,
+        ],
       ),
     );
   }
