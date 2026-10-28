@@ -8,9 +8,9 @@ import '../theme/tokens.dart';
 /// Alt çubuktaki bir bölüm: adı ve oyuncak blok ikonu.
 typedef GameTab = ({String label, String image});
 
-/// Alt çubuk (Tuğrul, 2026-10-27, "ortada laboratuvar"): oyunun kalbi
-/// laboratuvar ortada, çubuktan taşan büyük porselen daire; yanlarda Reçeteler,
-/// Formüller, Market ve Kaynaklar (2026-10-28). Seçili sekme adının kobalt yazısı ve altındaki kısa kobalt
+/// Alt çubuk: oyunun kalbi laboratuvar çubuktan taşan büyük porselen daire
+/// ([big]). Sıra soldan sağa Reçeteler, Laboratuvar, Market, Profil, Diğer
+/// (Tuğrul, 2026-10-28). Seçili sekme adının kobalt yazısı ve altındaki kısa kobalt
 /// çizgiyle belli olur; çizgi sekmeden sekmeye kayar ([_SlidingMark]), daire
 /// seçimle değişmez; seçilmeyen ikonlar soluk durur. Taşan daire çubuğun kendi
 /// alanında kalır, böylece dokunulabilir.
@@ -20,11 +20,14 @@ class GameTabBar extends StatelessWidget {
     required this.tabs,
     required this.index,
     required this.onSelect,
+    required this.big,
     this.badges = const {},
   });
 
-  /// Bölümler (tek sayıda); ortadaki büyük çizilir.
   final List<GameTab> tabs;
+
+  /// Büyük daireyle çizilen bölümün sırası.
+  final int big;
   final int index;
   final ValueChanged<int> onSelect;
 
@@ -34,10 +37,8 @@ class GameTabBar extends StatelessWidget {
   static const double _barHeight = 76;
   static const double _lift = 30;
 
-  int get _center => tabs.length ~/ 2;
-
-  /// Ortadaki bölüm biraz geniş.
-  int _flex(int i) => i == _center ? 11 : 10;
+  /// Büyük bölüm biraz geniş.
+  int _flex(int i) => i == big ? 11 : 10;
 
   /// Her bölümün ortası, çubuk genişliğinin oranı olarak (0–1).
   List<double> _centers() {
@@ -79,7 +80,7 @@ class GameTabBar extends StatelessWidget {
                     flex: _flex(i),
                     child: _TabButton(
                       tab: tab,
-                      big: i == _center,
+                      big: i == big,
                       selected: i == index,
                       badge: badges[i] ?? 0,
                       onTap: () => onSelect(i),

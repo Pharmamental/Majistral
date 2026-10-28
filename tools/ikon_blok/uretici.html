@@ -467,7 +467,21 @@ const IKONLAR=[
   {d:rr(68,53,13,10,2),c:R.krem,flat:1},
   {d:rr(16,34,62,16,4),c:R.mercan},
   {d:rr(62,37,13,10,2),c:R.krem,flat:1},
-  {d:'M24,42H50',c:R.altin,line:1}]}                 // sırt yazısı
+  {d:'M24,42H50',c:R.altin,line:1}]},                // sırt yazısı
+ // Profil ve Diğer sekmeleri (2026-10-28): eczacının beyaz önlüğü; eczane çekmece dolabı.
+ {grup:'Sekmeler',dosya:'sekme_profil',ad:'Profil (eczacı önlüğü)',kutu:'#CFE4F7',parts:[
+  {d:'M30,20L43,15L50,30L57,15L70,20C80,24 85,32 85,44V86H15V44C15,32 20,24 30,20Z',c:'#DCE5EE'}, // önlük
+  {d:'M43,15H57L50,40Z',c:R.mavi},                   // gömlek
+  {d:'M43,15L50,48L57,15',c:R.kremKoyu,line:1},      // yakalar
+  {d:rr(60,56,15,13,2),c:R.kremKoyu,flat:1},         // cep
+  {d:cap(67,48,67,58,4),c:R.mavi},                   // cepteki kalem
+  {d:circ(50,60,2.4),c:R.kremKoyu,flat:1},
+  {d:circ(50,72,2.4),c:R.kremKoyu,flat:1}]},
+ {grup:'Sekmeler',dosya:'sekme_diger',ad:'Diğer (çekmece dolabı)',kutu:'#FFE3A6',parts:[
+  {d:rr(14,16,72,70,6),c:R.kahve},                   // dolap
+  ...[[20,22],[52,22],[20,53],[52,53]].map(([x,y])=>({d:rr(x,y,28,27,3),c:'#B07A50',flat:1})), // çekmeceler
+  ...[[27,27],[59,27],[27,58],[59,58]].map(([x,y])=>({d:rr(x,y,14,7,2),c:R.krem,flat:1})),     // etiketler
+  ...[[34,42],[66,42],[34,73],[66,73]].map(([x,y])=>({d:circ(x,y,3),c:R.altin,flat:1}))]}       // tutamaklar
 ];
 
 // ---- çizim (Pharmamental üreticisinden aynen)

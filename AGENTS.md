@@ -48,8 +48,8 @@ lib/
 │                      formulary/<kategori>.dart (300 formül, 6 × 50)
 ├── logic/             job_store (kabul edilen reçeteler, adım başlatma, acele, telefona kayıt,
 │                      JobScope ile ekranlara verilir)
-├── screens/           home (alt çubuklu kabuk), orders (Reçeteler), formulary (Formüller),
-│                      lab (Laboratuvar), market, references (Kaynaklar)
+├── screens/           home (alt çubuklu kabuk), orders (Reçeteler), lab (Laboratuvar), market,
+│                      profile (Profil), more (Diğer), references (Kaynaklar, Diğer'in içinde)
 └── widgets/           chunky_button (3B düğme), game_tab_bar (alt çubuk), back_pill, prescription_card,
                        job_status, tool_sheet (alet → reçete), heating_sheet, result_view,
                        market_widgets, thermometer_panel/painter
@@ -157,9 +157,10 @@ lib/
   Hekim adı yalnız unvan ve ilk ad ("Dr. Deniz").
 - Reçete kartı koçan biçiminde (Tuğrul, 2026-10-27): üst kenar yarım daire delikli, alt köşeler
   yuvarlak (`PrescriptionStubBorder`).
-- Alt çubuk (Tuğrul, 2026-10-27): ortada laboratuvar, çubuktan taşan büyük daire (porselen havan);
-  yanlarda Reçeteler (reçete koçanı), Formüller (açık kitap), Market (tenteli dükkân) ve Kaynaklar
-  (kitap yığını) oyuncak blok ikonları
+- Alt çubuk (Tuğrul, 2026-10-28): soldan sağa Reçeteler (reçete koçanı), Laboratuvar (çubuktan
+  taşan büyük daire, porselen havan; `HomeScreen.lab` = 1, `GameTabBar.big`), Market (tenteli
+  dükkân), Profil (eczacı önlüğü, şimdilik boş), Diğer (çekmece dolabı; içinde Kaynaklar).
+  Formüller sekmesi kaldırıldı (ekranı git geçmişinde); formül verisi duruyor
   (`GameTabBar`). Seçim her yerde aynı: adı kobalt yazı + altında kısa kobalt çizgi (`SelectionMark`); alt çubukta çizgi sekmeden sekmeye kayar, yolda uzayıp yerinde kısalır (`_SlidingMark`, Tuğrul 2026-10-27); daire seçimle renk değiştirmez. İkonlar `uretici.html` "Sekmeler" grubunda.
 - Market hammaddeleri (2026-10-26): `chemicalGroups`, 6 rol grubunda 31 madde; liste ve kaynakları
   beyinde (`knowledge/concepts/majistral-hammaddeler.md`). Reçeteye yeni madde girerse markete de
@@ -176,8 +177,7 @@ lib/
   kortikosteroid, retinoid, NIOSH tehlikeli ilaçlar, antiaritmikler, klorokin türevleri, triklosan,
   kurşun/cıva/borik asit/kloroform, sistemik antibiyotik. İçerik taslak: alt ajanlar formüllerin
   bir kısmını bellekten yazdı (özellikle kapsül dolgu miktarları ve bazı bazlar); yayından önce
-  öğretim üyesi onayı şart. Alt çubuk beş sekme: Reçeteler, Formüller, Laboratuvar (ortada),
-  Market, Kaynaklar (`HomeScreen.lab` = 2).
+  öğretim üyesi onayı şart.
 - Laboratuvarın yeni adımları (2026-10-28): formül kitabında en sık geçen ve laboratuvarda olmayan
   adımlar eklendi: Hacme tamamlama (146), Karıştırma (96), Elekten geçirme (78), Şişirme (53),
   Kapsül doldurma (28, temel teknik diye). Aletler: Beher ve baget, Mezür, Elek, Kapsül doldurma
