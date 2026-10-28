@@ -221,10 +221,11 @@ lib/
   hacimde menisküsün alt kenarı, kapsülde tozu yayıp bastırma. Eritme kendi termometre oyunu.
   Hata kaliteyi düşürür, oyun hep biter; kalite şimdilik yıldızı etkilemez (karar açık).
   Görseller yer tutucu çizim. Testler adım akışını `miniGamesEnabled = false` ile sınar.
-- Avatarlar (Tuğrul, 2026-10-28): önlüklü hayvan eczacılar. Oyuncak blok tarzında çizilmez
-  ("oyuncak blok gibi çizme"). Dörtte üç açıdan (45° yandan), kalın koyu kontur, düz renk + uzak
-  yanda tek ton gölge; aşırı sade de değil ("bu kadar da basit çizme"): tüy dokusu, kaş, renkli
-  göz, önlükte cep ve yaka kartı gibi ayrıntılar olur. Yüz sevimli kalır, kaşlar V çatmaz.
+- Avatarlar (Tuğrul, 2026-10-28): hayvan eczacılar bırakıldı ("hayvanlar olmadı"); avatar önlüklü
+  genç eczacı (kız ve erkek), kâğıt kesik tarzında (her parça ayrı kâğıt, altında yumuşak gölge).
+  Yüz canlı ve karizmatik olur ("gözler ve ağız hiç canlı durmuyor"): badem göz, renkli iris,
+  kalın üst kirpik çizgisi, şekilli dolu kaş, dişli ya da yan gülüş; nokta göz ve tek çizgi ağız
+  yok. Oyuncak blok tarzında çizilmez. Taslaklar: scratchpad `eczaci/kagit.html` (seçim bekliyor).
 - Testler gerçek fontu `test/test_fonts.dart` ile yükler; taşma testleri böyle gerçeği yansıtır.
 - Süren işler `shared_preferences` ile telefona kaydedilir; saat şimdilik cihaz saati
   (`JobStore.now`). Sunucu saati gelene kadar saat hilesi mümkün; kapanmamış bir açık.
