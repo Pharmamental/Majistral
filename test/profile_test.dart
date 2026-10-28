@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -10,6 +12,7 @@ import 'package:game/logic/profile_stats.dart';
 import 'package:game/main.dart';
 import 'package:game/models/formula.dart';
 import 'package:game/models/prep_job.dart';
+import 'package:game/screens/profile_screen.dart';
 import 'package:game/widgets/grow_panel.dart';
 
 import 'test_fonts.dart';
@@ -135,7 +138,52 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Tuğrul'), findsOneWidget);
   });
+
+  test('defterde gün adı: bugün, dün, tarih; başka yılsa yıl da', () {
+    final now = DateTime(2026, 10, 28, 9);
+    expect(dayLabel(DateTime(2026, 10, 28, 1), now), 'Bugün');
+    expect(dayLabel(DateTime(2026, 10, 27, 23), now), 'Dün');
+    expect(dayLabel(DateTime(2026, 10, 3), now), '3 Ekim');
+    expect(dayLabel(DateTime(2025, 12, 31), now), '31 Aralık 2025');
+  });
+
+  testWidgets('Defter: profilde son 3 teslim, tamamı güne göre gruplu açılır', (tester) async {
+    tester.view.physicalSize = const Size(1080, 2340);
+    tester.view.devicePixelRatio = 3;
+    addTearDown(tester.view.reset);
+    final names = [for (final o in prescriptionOrders) o.magistralName];
+    // Dört teslim: ikisi dün, ikisi bugün; en yenisi listenin sonunda.
+    final saved = [
+      for (final (i, at) in [
+        DateTime(2026, 10, 27, 10),
+        DateTime(2026, 10, 27, 15),
+        DateTime(2026, 10, 28, 9),
+        DateTime(2026, 10, 28, 11, 5),
+      ].indexed)
+        Delivery(magistralName: names[i], stars: i == 1 ? 2 : 3, at: at, steps: const []).toJson(),
+    ];
+    SharedPreferences.setMockInitialValues({'deliveries_v1': jsonEncode(saved)});
+    await tester.pumpWidget(MajistralApp(store: await JobStore.load(now: () => clock)));
+    await tester.tap(find.text('Profil').last);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Defter'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Son teslimlerin'), findsOneWidget);
+    expect(find.text(names[3]), findsOneWidget); // en yeni üstte
+    expect(find.text(names[0]), findsNothing); // en eski profilde görünmez
+    expect(find.text('11:05'), findsOneWidget);
+    expect(find.text(prescriptionOrders[3].doctorName), findsOneWidget);
+
+    await tester.tap(find.text('Defterin tamamı (4 reçete) ›'));
+    await tester.pumpAndSettle();
+    final inPanel = find.byType(GrowPanel);
+    expect(find.descendant(of: inPanel, matching: find.text('Bugün')), findsOneWidget);
+    expect(find.descendant(of: inPanel, matching: find.text('Dün')), findsOneWidget);
+    expect(find.descendant(of: inPanel, matching: find.text(names[0])), findsOneWidget);
+  });
 }
+
 
 /// Formül kitabında bu adda formül var mı?
 bool referenceFormula(String name) => formulary.any((f) => f.name == name);

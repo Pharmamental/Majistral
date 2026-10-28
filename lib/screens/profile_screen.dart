@@ -6,6 +6,7 @@ import '../data/orders.dart';
 import '../logic/job_store.dart';
 import '../logic/profile_stats.dart';
 import '../models/formula.dart';
+import '../models/prep_job.dart';
 import '../theme/tokens.dart';
 import 'home_screen.dart';
 import '../widgets/back_pill.dart';
@@ -13,13 +14,22 @@ import '../widgets/chunky_button.dart';
 import '../widgets/grow_panel.dart';
 import '../widgets/market_widgets.dart';
 
-enum _ProfileTab { ustalik, koleksiyon }
+enum _ProfileTab {
+  ustalik('Ustalık'),
+  koleksiyon('Koleksiyon'),
+  defter('Defter');
+
+  const _ProfileTab(this.label);
+
+  final String label;
+}
 
 /// Profil sekmesi (Tuğrul, 2026-10-28, "Diploma + ustalık + koleksiyon"):
 /// duvarda çerçeveli eczacılık diploması (ad, eczane, teslim sayısıyla yükselen
 /// unvan); altta Ustalık (denenen teknikler, kaç kez ve kademesi: bronz,
-/// gümüş, altın) ve Koleksiyon (oyunda hazırlanabilen formüllerden
-/// hazırladıkların, kategori kategori). Hepsi teslim kaydından hesaplanır.
+/// gümüş, altın), Koleksiyon (oyunda hazırlanabilen formüllerden
+/// hazırladıkların, kategori kategori) ve Defter (eczanedeki majistral defteri
+/// gibi: son 3 teslim, tamamı bir dokunuşla). Hepsi teslim kaydından hesaplanır.
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
@@ -51,7 +61,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: PillTabs<_ProfileTab>(
                   values: _ProfileTab.values,
                   selected: _tab,
-                  labelOf: (t) => t == _ProfileTab.ustalik ? 'Ustalık' : 'Koleksiyon',
+                  labelOf: (t) => t.label,
                   onChanged: (t) => setState(() => _tab = t),
                 ),
               ),
@@ -62,7 +72,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
         Expanded(
           child: ColoredBox(
             color: AppColors.background,
-            child: _tab == _ProfileTab.ustalik ? const _MasteryList() : const _CollectionList(),
+            child: switch (_tab) {
+              _ProfileTab.ustalik => const _MasteryList(),
+              _ProfileTab.koleksiyon => const _CollectionList(),
+              _ProfileTab.defter => const _Ledger(),
+            },
           ),
         ),
       ],
@@ -495,6 +509,177 @@ Future<void> _openCategory(
                       ],
                     ),
                   ),
+              ],
+            ),
+          ),
+          const SizedBox(height: AppSpace.lg),
+          ChunkyButton.secondary(label: 'Kapat', onPressed: () => Navigator.of(sheetContext).pop()),
+        ],
+      ),
+    ),
+  );
+}
+
+/// Reçete defteri (Tuğrul, 2026-10-28): eczanedeki majistral defteri gibi.
+/// Profilde son 3 teslim; altında "Defterin tamamı" bütün geçmişi güne göre
+/// gruplanmış açar. Kayıt hiçbir teslimi silmez.
+class _Ledger extends StatelessWidget {
+  const _Ledger();
+
+  static const _recent = 3;
+
+  @override
+  Widget build(BuildContext context) {
+    final deliveries = JobScope.of(context).deliveries;
+    if (deliveries.isEmpty) return const _EmptyState();
+    final newest = deliveries.reversed.toList();
+    return ListView(
+      padding: _listPadding(context),
+      children: [
+        Text('Son teslimlerin', style: AppText.title(size: 16)),
+        const SizedBox(height: AppSpace.sm),
+        _LedgerPage(entries: newest.take(_recent).toList(), withDay: true),
+        if (newest.length > _recent) ...[
+          const SizedBox(height: AppSpace.md),
+          Builder(
+            builder: (buttonContext) => ChunkyButton.secondary(
+              label: 'Defterin tamamı (${newest.length} reçete) ›',
+              onPressed: () => _openLedger(buttonContext, newest, from: rectOf(buttonContext)),
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+}
+
+/// Defter sayfası: kâğıtta satır satır teslimler.
+class _LedgerPage extends StatelessWidget {
+  const _LedgerPage({required this.entries, this.withDay = false});
+
+  final List<Delivery> entries;
+
+  /// Satırda günü de yaz (profildeki kısa liste); tam defterde gün başlıkta.
+  final bool withDay;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(AppRadius.paper),
+        border: Border.all(color: AppColors.line),
+      ),
+      child: Column(
+        children: [
+          for (final (i, d) in entries.indexed) ...[
+            if (i > 0) const Divider(height: 1, color: AppColors.line),
+            _LedgerRow(delivery: d, withDay: withDay),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _LedgerRow extends StatelessWidget {
+  const _LedgerRow({required this.delivery, required this.withDay});
+
+  final Delivery delivery;
+  final bool withDay;
+
+  @override
+  Widget build(BuildContext context) {
+    final at = delivery.at;
+    final time = '${at.hour.toString().padLeft(2, '0')}:${at.minute.toString().padLeft(2, '0')}';
+    // Kayıttaki reçete oyundan çıkarıldıysa hekim yazılmaz.
+    final doctor = prescriptionOrders.where((o) => o.magistralName == delivery.magistralName).firstOrNull?.doctorName;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: AppSpace.md, vertical: AppSpace.sm),
+      child: Row(
+        children: [
+          SizedBox(
+            width: withDay ? 64 : 44,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (withDay) Text(dayLabel(at, JobScope.of(context).now()), style: AppText.label(size: 12)),
+                Text(time, style: AppText.label(size: 12)),
+              ],
+            ),
+          ),
+          const SizedBox(width: AppSpace.sm),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(delivery.magistralName, style: AppText.body(size: 14, weight: FontWeight.w700)),
+                if (doctor != null) Text(doctor, style: AppText.label(size: 12)),
+              ],
+            ),
+          ),
+          Semantics(
+            label: '${delivery.stars} yıldız',
+            excludeSemantics: true,
+            child: Row(
+              children: [
+                for (var s = 0; s < 3; s++)
+                  Icon(
+                    s < delivery.stars ? Icons.star_rounded : Icons.star_outline_rounded,
+                    size: 16,
+                    color: s < delivery.stars ? AppColors.star : AppColors.line,
+                  ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+const _months = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
+
+/// Gün adı: "Bugün", "Dün" ya da "26 Ekim" (başka yılsa yıl da yazar).
+String dayLabel(DateTime at, DateTime now) {
+  final day = DateTime(at.year, at.month, at.day);
+  final today = DateTime(now.year, now.month, now.day);
+  final diff = today.difference(day).inDays;
+  if (diff == 0) return 'Bugün';
+  if (diff == 1) return 'Dün';
+  return '${at.day} ${_months[at.month - 1]}${at.year == now.year ? '' : ' ${at.year}'}';
+}
+
+/// Defterin tamamı: en yeniden eskiye, güne göre gruplanmış.
+Future<void> _openLedger(BuildContext context, List<Delivery> newest, {required Rect from}) {
+  final now = JobScope.of(context).now();
+  final days = <String, List<Delivery>>{};
+  for (final d in newest) {
+    days.putIfAbsent(dayLabel(d.at, now), () => []).add(d);
+  }
+  return openGrowing<void>(
+    context,
+    from: from,
+    builder: (sheetContext) => Padding(
+      padding: const EdgeInsets.all(AppSpace.lg),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text('Reçete defteri', style: AppText.title(size: 20)),
+          Text('${newest.length} reçete', style: AppText.label(size: 12)),
+          const SizedBox(height: AppSpace.md),
+          Flexible(
+            child: ListView(
+              shrinkWrap: true,
+              children: [
+                for (final MapEntry(key: day, value: entries) in days.entries) ...[
+                  Padding(
+                    padding: const EdgeInsets.only(top: AppSpace.sm, bottom: AppSpace.xs),
+                    child: Text(day, style: AppText.title(size: 15)),
+                  ),
+                  _LedgerPage(entries: entries),
+                ],
               ],
             ),
           ),
