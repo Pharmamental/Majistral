@@ -552,9 +552,6 @@ class _MasteryRow extends StatelessWidget {
   final String image;
   final int count;
 
-  // Kademe rengi süs; kademe her zaman yazıyla da söylenir.
-  static const _tierColors = [AppColors.inkMuted, AppColors.rusty, AppColors.goodCondition, AppColors.star];
-
   @override
   Widget build(BuildContext context) {
     final tier = tierIndex(count);
@@ -568,17 +565,7 @@ class _MasteryRow extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Container(
-            width: 44,
-            height: 44,
-            padding: const EdgeInsets.all(AppSpace.xs),
-            decoration: BoxDecoration(
-              color: AppColors.iconWell,
-              shape: BoxShape.circle,
-              border: Border.all(color: _tierColors[tier], width: 3),
-            ),
-            child: Image.asset(image),
-          ),
+          _Medal(tier: tier, image: image),
           const SizedBox(width: AppSpace.md),
           Expanded(
             child: Column(
@@ -599,6 +586,89 @@ class _MasteryRow extends StatelessWidget {
               Text('×$count', style: AppText.title(size: 16)),
               Text(tiers[tier].title, style: AppText.label(size: 12, color: AppColors.ink)),
             ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Ustalık madalyası (Tuğrul, 2026-10-28, "A"): ikon metal halkada; halka seviyeyle
+/// bronz, gümüş, altın olur, alttaki dört çentik seviyeyi sayar. Renk süs; seviye
+/// satırda yazıyla da söylenir.
+class _Medal extends StatelessWidget {
+  const _Medal({required this.tier, required this.image});
+
+  final int tier;
+  final String image;
+
+  @override
+  Widget build(BuildContext context) {
+    final dark = AppColors.medalDark[tier];
+    // Başladın'da metal yok: ince gri halka, ikon dairesi büyük.
+    final well = tier == 0 ? 48.0 : 42.0;
+    return SizedBox(
+      width: 56,
+      height: 60,
+      child: Stack(
+        clipBehavior: Clip.none,
+        alignment: Alignment.topCenter,
+        children: [
+          Container(
+            width: 56,
+            height: 56,
+            decoration: BoxDecoration(
+              color: AppColors.medal[tier],
+              shape: BoxShape.circle,
+              border: Border.all(color: dark, width: 2),
+            ),
+          ),
+          Positioned(
+            top: 5,
+            child: Container(
+              width: 46,
+              height: 46,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: AppColors.medalLight[tier], width: 1.5),
+              ),
+            ),
+          ),
+          Positioned(
+            top: (56 - well) / 2,
+            child: Container(
+              width: well,
+              height: well,
+              padding: const EdgeInsets.all(AppSpace.xs + 1),
+              decoration: const BoxDecoration(color: AppColors.iconWell, shape: BoxShape.circle),
+              child: Image.asset(image),
+            ),
+          ),
+          Positioned(
+            bottom: 0,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+              decoration: BoxDecoration(
+                color: AppColors.surface,
+                borderRadius: BorderRadius.circular(AppRadius.pill),
+                border: Border.all(color: AppColors.line),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  for (var i = 0; i < tiers.length; i++)
+                    Container(
+                      width: 6,
+                      height: 6,
+                      margin: EdgeInsets.only(left: i == 0 ? 0 : 3),
+                      decoration: BoxDecoration(
+                        color: i <= tier ? dark : AppColors.line,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                ],
+              ),
+            ),
           ),
         ],
       ),

@@ -74,6 +74,12 @@ class AppColors {
   static const Color bekliyor = Color(0xFFE9A21E), bekliyorSoft = Color(0xFFFCEBC7), bekliyorText = Color(0xFF7A5200);
   static const Color hazir = success, hazirSoft = successSoft, hazirText = successDark;
 
+  // Ustalık madalyaları (Tuğrul, 2026-10-28, "A"): her seviye için ana ton, koyu dış
+  // kenar, açık iç çizgi; geçiş yok, düz tonlar. Sıra: Başladın, Bronz, Gümüş, Altın.
+  static const List<Color> medal = [Color(0xFFC9D0DA), Color(0xFFB07A45), Color(0xFF9AA6B3), Color(0xFFD9A514)];
+  static const List<Color> medalDark = [Color(0xFF9AA3B0), Color(0xFF7E5126), Color(0xFF66717E), Color(0xFF9A7208)];
+  static const List<Color> medalLight = [Color(0x00000000), Color(0xFFDDAA74), Color(0xFFDCE3EA), Color(0xFFF6D768)];
+
   // İstasyon kademeleri.
   static const Color rusty = Color(0xFF8D6E52);
   static const Color goodCondition = Color(0xFF607D8B);
