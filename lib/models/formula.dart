@@ -55,6 +55,7 @@ class Formula {
     required this.ingredients,
     required this.steps,
     required this.refs,
+    this.shelfLife,
   });
 
   final String name;
@@ -71,4 +72,8 @@ class Formula {
 
   /// Formülün dayandığı kaynakların kimlikleri (data/references.dart).
   final List<String> refs;
+
+  /// Raf ömrü ve saklama, kaynağın verdiği gibi ("60 gün, buzdolabında").
+  /// Henüz kontrol edilmemiş formüllerde boş.
+  final String? shelfLife;
 }

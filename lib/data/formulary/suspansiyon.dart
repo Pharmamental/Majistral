@@ -27,7 +27,7 @@ const suspansiyonRefs = <Reference>[
     kind: ReferenceKind.makale,
     citation: 'Allen LV Jr, Erickson MA. Stability of baclofen, captopril, diltiazem hydrochloride, '
         'dipyridamole, and flecainide acetate in extemporaneously compounded oral liquids. '
-        'Am J Health-Syst Pharm 1996;53:2179-84.',
+        'Am J Health-Syst Pharm 1996;53(18):2179-84.',
   ),
   Reference(
     id: 'suspansiyon-allen-1996c',
@@ -41,7 +41,7 @@ const suspansiyonRefs = <Reference>[
     kind: ReferenceKind.makale,
     citation: 'Allen LV Jr, Erickson MA. Stability of labetalol hydrochloride, metoprolol tartrate, verapamil '
         'hydrochloride, and spironolactone with hydrochlorothiazide in extemporaneously compounded oral liquids. '
-        'Am J Health-Syst Pharm 1996;53:2304-9.',
+        'Am J Health-Syst Pharm 1996;53(19):2304-9.',
   ),
   Reference(
     id: 'suspansiyon-allen-1998a',
@@ -55,7 +55,7 @@ const suspansiyonRefs = <Reference>[
     kind: ReferenceKind.makale,
     citation: 'Allen LV Jr, Erickson MA. Stability of bethanechol chloride, pyrazinamide, quinidine sulfate, '
         'rifampin, and tetracycline hydrochloride in extemporaneously compounded oral liquids. '
-        'Am J Health-Syst Pharm 1998;55.',
+        'Am J Health-Syst Pharm 1998;55(17):1804-9.',
   ),
   Reference(
     id: 'suspansiyon-nahata-amlodipin',
@@ -130,7 +130,7 @@ const suspansiyonRefs = <Reference>[
     kind: ReferenceKind.makale,
     citation: 'Ensom MHH, Kendrick J, Rudolph S, Decarie D. Stability of propranolol in extemporaneously '
         'compounded suspensions. Can J Hosp Pharm 2013;66(2):118-24.',
-    url: 'https://cjhp-online.ca',
+    url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC3633496/',
   ),
   Reference(
     id: 'suspansiyon-skillman-klopidogrel',
@@ -168,20 +168,66 @@ const suspansiyonRefs = <Reference>[
     kind: ReferenceKind.devlet,
     citation: 'Prinivil / Zestril (lisinopril) ürün bilgisi, "Preparation of Suspension" bölümü. ABD Gıda ve '
         'İlaç Dairesi (FDA) onaylı etiket.',
-    url: 'https://www.accessdata.fda.gov/scripts/cder/daf/',
+    url: 'https://dailymed.nlm.nih.gov/dailymed/search.cfm?query=lisinopril',
   ),
   Reference(
     id: 'suspansiyon-fda-losartan',
     kind: ReferenceKind.devlet,
     citation: 'Cozaar (losartan potasyum) ürün bilgisi, "Preparation of Suspension" bölümü. ABD Gıda ve İlaç '
         'Dairesi (FDA) onaylı etiket.',
-    url: 'https://www.accessdata.fda.gov/scripts/cder/daf/',
+    url: 'https://dailymed.nlm.nih.gov/dailymed/search.cfm?query=cozaar',
   ),
   Reference(
     id: 'suspansiyon-bauer',
     kind: ReferenceKind.kitap,
     citation: 'Bauer KH, Frömming KH, Führer C. Lehrbuch der Pharmazeutischen Technologie, 9. baskı. '
         'Wissenschaftliche Verlagsgesellschaft, Stuttgart, 2012.',
+  ),
+  Reference(
+    id: 'suspansiyon-saeyoon-sildenafil',
+    kind: ReferenceKind.makale,
+    citation: 'Sae Yoon A, Sawatdee S, Woradechakul C, Sae Chee K, Atipairin A. Physicochemical and microbiological '
+        'stability of the extemporaneous sildenafil citrate oral suspension. Sci Pharm 2015;83(4):659-70.',
+    url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC4727739/',
+  ),
+  Reference(
+    id: 'suspansiyon-usp-lansoprazol',
+    kind: ReferenceKind.farmakope,
+    citation: 'USP–NF, Lansoprazole Compounded Oral Suspension monografı. United States Pharmacopeial Convention.',
+    url: 'https://www.usp.org',
+  ),
+  Reference(
+    id: 'suspansiyon-morrison-lansoprazol',
+    kind: ReferenceKind.makale,
+    citation: 'Morrison JT, Lugo RA, Thigpen JC, Brown SD. Stability of extemporaneously prepared lansoprazole '
+        'suspension at two temperatures. J Pediatr Pharmacol Ther 2013;18(2):122-7.',
+    url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC3668940/',
+  ),
+  Reference(
+    id: 'suspansiyon-usp-pantoprazol',
+    kind: ReferenceKind.farmakope,
+    citation: 'USP–NF, Pantoprazole Oral Suspension monografı. United States Pharmacopeial Convention.',
+    url: 'https://www.usp.org',
+  ),
+  Reference(
+    id: 'suspansiyon-usp-sumatriptan',
+    kind: ReferenceKind.farmakope,
+    citation: 'USP–NF, Sumatriptan Succinate Oral Suspension monografı. United States Pharmacopeial Convention.',
+    url: 'https://www.usp.org',
+  ),
+  Reference(
+    id: 'suspansiyon-iwk-baklofen',
+    kind: ReferenceKind.universite,
+    citation: 'IWK Health Centre Pharmacy. Compounding Formula: Baclofen Oral Suspension 10 mg/mL. Halifax, 2017 '
+        '(dayanak: Int J Pharm Compd 1997;1(5):321).',
+    url: 'https://iwkhealth.ca/sites/default/files/2022-10/baclofen1.pdf',
+  ),
+  Reference(
+    id: 'suspansiyon-nahata-lamotrijin',
+    kind: ReferenceKind.makale,
+    citation: 'Nahata MC, Morosco RS, Hipple TF. Stability of lamotrigine in two extemporaneously prepared oral '
+        'suspensions at 4 and 25 °C. Am J Health-Syst Pharm 1999;56(3):240-2.',
+    url: 'https://pubmed.ncbi.nlm.nih.gov/10030509/',
   ),
 ];
 
@@ -202,6 +248,7 @@ const suspansiyonFormulas = <Formula>[
       FormulaStep('Hacme tamamlama', 'Havanı taşıyıcıyla çalkalayıp şişeye aktarın ve 100 mL\'ye tamamlayın.'),
     ],
     refs: ['suspansiyon-allen-1996a', 'trissel'],
+    shelfLife: '60 gün, buzdolabında ya da oda sıcaklığında; ışıktan koru',
   ),
   Formula(
     name: 'Allopürinol oral süspansiyonu 20 mg/mL',
@@ -218,27 +265,29 @@ const suspansiyonFormulas = <Formula>[
       FormulaStep('Hacme tamamlama', 'Karışımı şişeye alın, havanı yıkayan taşıyıcıyla 100 mL\'ye tamamlayın.'),
     ],
     refs: ['suspansiyon-allen-1996a', 'trissel'],
+    shelfLife: '60 gün, buzdolabında ya da oda sıcaklığında; ışıktan koru',
   ),
   Formula(
-    name: 'Kaptopril oral süspansiyonu 0,75 mg/mL',
+    name: 'Baklofen oral süspansiyonu 10 mg/mL',
     category: FormulaCategory.suspansiyon,
-    use: 'Bebek ve çocuklarda yüksek tansiyon ve kalp yetmezliğinde küçük dozları ölçebilmek için.',
+    use: 'Çocuklarda serebral palsi ve omurilik hastalıklarında kas sertliğini (spastisite) çözen baklofeni ölçülü dozla vermek için.',
     ingredients: [
-      Ingredient('Kaptopril tableti (25 mg)', '3 tablet (75 mg)'),
+      Ingredient('Baklofen tableti (25 mg)', '40 tablet (1 g)'),
       Ingredient('Süspansiyon bazı + tatlandırılmış baz (1:1)', 'ad 100 mL'),
     ],
     steps: [
-      FormulaStep('Ezme', 'Üç tableti havanda iyice ezin.'),
+      FormulaStep('Ezme', 'Tabletleri havanda iyice ezin.'),
       FormulaStep('Levigasyon', 'Tozu birkaç damla taşıyıcıyla akıcı olmayan bir macuna çevirin.'),
       FormulaStep('Geometrik seyreltme', 'Taşıyıcıyı yavaş yavaş ekleyerek macunu açın.'),
       FormulaStep('Hacme tamamlama', 'Şişeye aktarıp taşıyıcıyla 100 mL\'ye tamamlayın.'),
     ],
-    refs: ['suspansiyon-allen-1996b', 'trissel'],
+    refs: ['suspansiyon-allen-1996b', 'suspansiyon-iwk-baklofen'],
+    shelfLife: '60 gün, buzdolabında ya da oda sıcaklığında; ışıktan koru',
   ),
   Formula(
     name: 'Diltiazem oral süspansiyonu 12 mg/mL',
     category: FormulaCategory.suspansiyon,
-    use: 'Tablet yutamayan hastada göğüs ağrısı ve ritim bozukluğu tedavisi için.',
+    use: 'Tablet yutamayan hastada göğüs ağrısı ve yüksek tansiyon tedavisi için.',
     ingredients: [
       Ingredient('Diltiazem HCl tableti (60 mg)', '20 tablet (1,2 g)'),
       Ingredient('Süspansiyon bazı + tatlandırılmış baz (1:1)', 'ad 100 mL'),
@@ -250,6 +299,7 @@ const suspansiyonFormulas = <Formula>[
       FormulaStep('Hacme tamamlama', 'Şişeye alıp taşıyıcıyla 100 mL\'ye tamamlayın.'),
     ],
     refs: ['suspansiyon-allen-1996b', 'trissel'],
+    shelfLife: '60 gün, buzdolabında ya da oda sıcaklığında; ışıktan koru',
   ),
   Formula(
     name: 'Dipiridamol oral süspansiyonu 10 mg/mL',
@@ -266,6 +316,7 @@ const suspansiyonFormulas = <Formula>[
       FormulaStep('Hacme tamamlama', 'Şişeye aktarın ve taşıyıcıyla 100 mL\'ye getirin.'),
     ],
     refs: ['suspansiyon-allen-1996b', 'trissel'],
+    shelfLife: '60 gün, buzdolabında ya da oda sıcaklığında; ışıktan koru',
   ),
   Formula(
     name: 'Metolazon oral süspansiyonu 1 mg/mL',
@@ -282,6 +333,7 @@ const suspansiyonFormulas = <Formula>[
       FormulaStep('Hacme tamamlama', 'Şişeye aktarıp taşıyıcıyla 100 mL\'ye tamamlayın.'),
     ],
     refs: ['suspansiyon-allen-1996c', 'trissel'],
+    shelfLife: '60 gün, buzdolabında ya da oda sıcaklığında; ışıktan koru',
   ),
   Formula(
     name: 'Enalapril oral süspansiyonu 1 mg/mL',
@@ -298,22 +350,24 @@ const suspansiyonFormulas = <Formula>[
       FormulaStep('Hacme tamamlama', 'Şişeye aktarıp taşıyıcıyla 100 mL\'ye tamamlayın.'),
     ],
     refs: ['suspansiyon-allen-1998a', 'trissel'],
+    shelfLife: '60 gün, buzdolabında ya da oda sıcaklığında; ışıktan koru',
   ),
   Formula(
-    name: 'Spironolakton oral süspansiyonu 25 mg/mL',
+    name: 'Lamotrijin oral süspansiyonu 1 mg/mL',
     category: FormulaCategory.suspansiyon,
-    use: 'Çocuklarda ödemde ve kalp yetmezliğinde potasyum tutan idrar söktürücüyü ölçülü dozda vermek için.',
+    use: 'Tablet yutamayan çocuklarda epilepside lamotrijini küçük, ölçülebilir dozlarla vermek için.',
     ingredients: [
-      Ingredient('Spironolakton tableti (100 mg)', '25 tablet (2,5 g)'),
+      Ingredient('Lamotrijin tableti (100 mg)', '1 tablet (100 mg)'),
       Ingredient('Süspansiyon bazı + tatlandırılmış baz (1:1)', 'ad 100 mL'),
     ],
     steps: [
-      FormulaStep('Ezme', 'Tabletleri havanda ince toz olana dek ezin.'),
+      FormulaStep('Ezme', 'Tableti havanda ince toz olana dek ezin.'),
       FormulaStep('Levigasyon', 'Tozu az taşıyıcıyla sürterek macun yapın.'),
       FormulaStep('Geometrik seyreltme', 'Taşıyıcıyı azar azar ekleyip karıştırın.'),
       FormulaStep('Hacme tamamlama', 'Şişeye alıp taşıyıcıyla 100 mL\'ye tamamlayın.'),
     ],
-    refs: ['suspansiyon-allen-1996c', 'trissel'],
+    refs: ['suspansiyon-nahata-lamotrijin', 'trissel'],
+    shelfLife: '91 gün, buzdolabında ya da oda sıcaklığında; ışıktan koru',
   ),
   Formula(
     name: 'Labetalol oral süspansiyonu 40 mg/mL',
@@ -330,11 +384,12 @@ const suspansiyonFormulas = <Formula>[
       FormulaStep('Hacme tamamlama', 'Şişeye aktarıp taşıyıcıyla 100 mL\'ye tamamlayın.'),
     ],
     refs: ['suspansiyon-allen-1996d', 'trissel'],
+    shelfLife: '60 gün, buzdolabında ya da oda sıcaklığında; ışıktan koru',
   ),
   Formula(
     name: 'Metoprolol tartrat oral süspansiyonu 10 mg/mL',
     category: FormulaCategory.suspansiyon,
-    use: 'Çocuklarda yüksek tansiyon ve ritim bozukluğunda metoprolol vermek için.',
+    use: 'Çocuklarda yüksek tansiyonda metoprolol vermek için.',
     ingredients: [
       Ingredient('Metoprolol tartrat tableti (100 mg)', '10 tablet (1 g)'),
       Ingredient('Süspansiyon bazı + tatlandırılmış baz (1:1)', 'ad 100 mL'),
@@ -346,22 +401,24 @@ const suspansiyonFormulas = <Formula>[
       FormulaStep('Hacme tamamlama', 'Şişeye aktarıp taşıyıcıyla 100 mL\'ye tamamlayın.'),
     ],
     refs: ['suspansiyon-allen-1996d', 'trissel'],
+    shelfLife: '60 gün, buzdolabında ya da oda sıcaklığında; ışıktan koru',
   ),
   Formula(
     name: 'Verapamil oral süspansiyonu 50 mg/mL',
     category: FormulaCategory.suspansiyon,
     use: 'Çocuklarda ritim bozukluğunda verapamili sıvı olarak vermek için.',
     ingredients: [
-      Ingredient('Verapamil HCl (hızlı salımlı tablet)', '5 g'),
-      Ingredient('Süspansiyon bazı + tatlandırılmış baz (1:1)', 'ad 100 mL'),
+      Ingredient('Verapamil HCl tableti (80 mg, hızlı salımlı)', '25 tablet (2 g)'),
+      Ingredient('Süspansiyon bazı + tatlandırılmış baz (1:1)', 'ad 40 mL'),
     ],
     steps: [
       FormulaStep('Ezme', 'Hızlı salımlı tabletleri havanda ince toz olana dek ezin.'),
       FormulaStep('Levigasyon', 'Tozu biraz taşıyıcıyla sürterek macun yapın.'),
       FormulaStep('Geometrik seyreltme', 'Taşıyıcıyı porsiyon porsiyon ekleyip karıştırın.'),
-      FormulaStep('Hacme tamamlama', 'Şişeye alıp taşıyıcıyla 100 mL\'ye tamamlayın.'),
+      FormulaStep('Hacme tamamlama', 'Şişeye alıp taşıyıcıyla 40 mL\'ye tamamlayın.'),
     ],
     refs: ['suspansiyon-allen-1996d', 'trissel'],
+    shelfLife: '60 gün, buzdolabında ya da oda sıcaklığında; ışıktan koru',
   ),
   Formula(
     name: 'Betanekol oral süspansiyonu 5 mg/mL',
@@ -378,6 +435,7 @@ const suspansiyonFormulas = <Formula>[
       FormulaStep('Hacme tamamlama', 'Şişeye aktarıp taşıyıcıyla 100 mL\'ye tamamlayın.'),
     ],
     refs: ['suspansiyon-allen-1998b', 'trissel'],
+    shelfLife: '60 gün, buzdolabında ya da oda sıcaklığında; ışıktan koru',
   ),
   Formula(
     name: 'Amlodipin oral süspansiyonu 1 mg/mL',
@@ -394,6 +452,7 @@ const suspansiyonFormulas = <Formula>[
       FormulaStep('Hacme tamamlama', 'Şişeye aktarıp taşıyıcıyla 100 mL\'ye tamamlayın.'),
     ],
     refs: ['suspansiyon-nahata-amlodipin', 'trissel'],
+    shelfLife: 'Buzdolabında 91 gün, oda sıcaklığında 56 gün; ışıktan koru',
   ),
   Formula(
     name: 'Amlodipin oral süspansiyonu 1 mg/mL (metilselüloz–şurup)',
@@ -413,6 +472,7 @@ const suspansiyonFormulas = <Formula>[
       FormulaStep('Hacme tamamlama', 'Şişeye aktarıp basit şurupla 100 mL\'ye tamamlayın.'),
     ],
     refs: ['suspansiyon-nahata-amlodipin', 'trissel'],
+    shelfLife: 'Buzdolabında 91 gün, oda sıcaklığında 56 gün',
   ),
   Formula(
     name: 'Sildenafil oral süspansiyonu 2,5 mg/mL',
@@ -429,6 +489,7 @@ const suspansiyonFormulas = <Formula>[
       FormulaStep('Hacme tamamlama', 'Şişeye aktarıp taşıyıcıyla 100 mL\'ye tamamlayın.'),
     ],
     refs: ['suspansiyon-nahata-sildenafil', 'trissel'],
+    shelfLife: '91 gün, buzdolabında ya da oda sıcaklığında',
   ),
   Formula(
     name: 'Sildenafil oral süspansiyonu 2,5 mg/mL (metilselüloz–şurup)',
@@ -447,24 +508,27 @@ const suspansiyonFormulas = <Formula>[
       FormulaStep('Geometrik seyreltme', 'Kalan jeli, sonra şurubu azar azar katıp karıştırın.'),
       FormulaStep('Hacme tamamlama', 'Şişeye aktarıp basit şurupla 100 mL\'ye tamamlayın.'),
     ],
-    refs: ['suspansiyon-nahata-sildenafil', 'trissel'],
+    refs: ['suspansiyon-nahata-sildenafil', 'trissel', 'suspansiyon-saeyoon-sildenafil'],
+    shelfLife: '90 gün, buzdolabında ya da oda sıcaklığında; ışıktan koru',
   ),
   Formula(
     name: 'Ursodeoksikolik asit oral süspansiyonu 25 mg/mL',
     category: FormulaCategory.suspansiyon,
     use: 'Bebeklerde safra akışı bozukluğunda ursodiolü sıvı olarak vermek için.',
     ingredients: [
-      Ingredient('Ursodeoksikolik asit (kapsül içeriği)', '2,5 g'),
-      Ingredient('Gliserin', '10 mL'),
-      Ingredient('Süspansiyon taşıyıcısı', 'ad 100 mL'),
+      Ingredient('Ursodeoksikolik asit kapsülü (250 mg)', '10 kapsül içeriği (2,5 g)'),
+      Ingredient('Gliserin', '8 mL'),
+      Ingredient('Süspansiyon bazı', '50 mL'),
+      Ingredient('Portakal şurubu', 'ad 100 mL'),
     ],
     steps: [
       FormulaStep('Ezme', 'Kapsülleri açıp tozu havanda inceltin.'),
       FormulaStep('Levigasyon', 'Suyu sevmeyen tozu gliserinle sürterek ıslak bir macun yapın.'),
-      FormulaStep('Geometrik seyreltme', 'Taşıyıcıyı küçük paylarla ekleyip karıştırın.'),
-      FormulaStep('Hacme tamamlama', 'Şişeye aktarıp taşıyıcıyla 100 mL\'ye tamamlayın.'),
+      FormulaStep('Geometrik seyreltme', 'Süspansiyon bazını küçük paylarla ekleyip karıştırın.'),
+      FormulaStep('Hacme tamamlama', 'Şişeye aktarıp portakal şurubuyla 100 mL\'ye tamamlayın.'),
     ],
     refs: ['suspansiyon-mallett-ursodiol', 'trissel'],
+    shelfLife: '60 gün, oda sıcaklığında ya da buzdolabında; ışıktan koru',
   ),
   // Mide asidi baskılayıcılar.
   Formula(
@@ -482,6 +546,7 @@ const suspansiyonFormulas = <Formula>[
       FormulaStep('Hacme tamamlama', 'Bikarbonat çözeltisiyle 100 mL\'ye tamamlayın.'),
     ],
     refs: ['suspansiyon-digiacinto-ppi', 'trissel'],
+    shelfLife: '45 gün, buzdolabında (oda sıcaklığında 14 gün); ışıktan koru',
   ),
   Formula(
     name: 'Lansoprazol oral süspansiyonu 3 mg/mL (sodyum bikarbonatlı)',
@@ -489,15 +554,17 @@ const suspansiyonFormulas = <Formula>[
     use: 'Çocuklarda ve sondalı hastada reflü ve ülser tedavisi için.',
     ingredients: [
       Ingredient('Lansoprazol kapsülü (30 mg)', '10 kapsül (300 mg)'),
-      Ingredient('Sodyum bikarbonat', '8,4 g'),
-      Ingredient('Arıtılmış su', 'ad 100 mL'),
+      Ingredient('Sodyum bikarbonat', '4,2 g'),
+      Ingredient('Arıtılmış su', 'ad 50 mL'),
+      Ingredient('Süspansiyon bazı + tatlandırılmış baz (1:1)', 'ad 100 mL'),
     ],
     steps: [
-      FormulaStep('Çözme', 'Sodyum bikarbonatı suda çözerek %8,4\'lük çözelti yapın.'),
+      FormulaStep('Çözme', 'Sodyum bikarbonatı suda çözerek 50 mL %8,4\'lük çözelti yapın.'),
       FormulaStep('Karıştırma', 'Kapsül içindeki granülleri çözeltiye boşaltıp tamamen dağılana dek karıştırın.'),
-      FormulaStep('Hacme tamamlama', 'Bikarbonat çözeltisiyle 100 mL\'ye tamamlayın.'),
+      FormulaStep('Hacme tamamlama', 'Süspansiyon bazı ve tatlandırılmış baz karışımıyla 100 mL\'ye tamamlayın.'),
     ],
-    refs: ['suspansiyon-digiacinto-ppi', 'trissel'],
+    refs: ['suspansiyon-usp-lansoprazol', 'suspansiyon-morrison-lansoprazol', 'trissel'],
+    shelfLife: '90 gün, buzdolabında ya da oda sıcaklığında; ışıktan koru',
   ),
   Formula(
     name: 'Pantoprazol oral süspansiyonu 2 mg/mL (sodyum bikarbonatlı)',
@@ -515,7 +582,8 @@ const suspansiyonFormulas = <Formula>[
       FormulaStep('Geometrik seyreltme', 'Çözeltiyi azar azar ekleyip karıştırın.'),
       FormulaStep('Hacme tamamlama', 'Bikarbonat çözeltisiyle 100 mL\'ye tamamlayın.'),
     ],
-    refs: ['suspansiyon-ferron-pantoprazol', 'trissel'],
+    refs: ['suspansiyon-ferron-pantoprazol', 'trissel', 'suspansiyon-usp-pantoprazol'],
+    shelfLife: '14 gün, buzdolabında; ışıktan koru',
   ),
   Formula(
     name: 'Famotidin oral süspansiyonu 8 mg/mL',
@@ -532,12 +600,13 @@ const suspansiyonFormulas = <Formula>[
       FormulaStep('Hacme tamamlama', 'Şişeye aktarıp taşıyıcıyla 100 mL\'ye tamamlayın.'),
     ],
     refs: ['suspansiyon-dentinger-famotidin', 'trissel'],
+    shelfLife: '95 gün, buzdolabında; ışıktan koru',
   ),
   // Diğer pediatrik oral süspansiyonlar.
   Formula(
     name: 'Propranolol oral süspansiyonu 2 mg/mL',
     category: FormulaCategory.suspansiyon,
-    use: 'Bebeklerde hemanjiyom ve ritim bozukluğunda propranololü küçük dozlarla vermek için.',
+    use: 'Bebeklerde hemanjiyom tedavisinde propranololü küçük dozlarla vermek için.',
     ingredients: [
       Ingredient('Propranolol HCl tableti (40 mg)', '5 tablet (200 mg)'),
       Ingredient('Şekersiz hazır süspansiyon taşıyıcısı', 'ad 100 mL'),
@@ -549,6 +618,7 @@ const suspansiyonFormulas = <Formula>[
       FormulaStep('Hacme tamamlama', 'Şişeye aktarıp taşıyıcıyla 100 mL\'ye tamamlayın.'),
     ],
     refs: ['suspansiyon-ensom-propranolol', 'trissel'],
+    shelfLife: '120 gün, buzdolabında ya da oda sıcaklığında; ışıktan koru',
   ),
   Formula(
     name: 'Lisinopril oral süspansiyonu 1 mg/mL',
@@ -565,6 +635,7 @@ const suspansiyonFormulas = <Formula>[
       FormulaStep('Hacme tamamlama', 'Tatlandırılmış bazla 100 mL\'ye tamamlayıp iyice çalkalayın.'),
     ],
     refs: ['suspansiyon-fda-lisinopril', 'trissel'],
+    shelfLife: '4 hafta, 25 °C\'nin altında',
   ),
   Formula(
     name: 'Losartan oral süspansiyonu 2,5 mg/mL',
@@ -580,6 +651,7 @@ const suspansiyonFormulas = <Formula>[
       FormulaStep('Hacme tamamlama', 'Taşıyıcı karışımını ekleyip 100 mL\'ye tamamlayın ve çalkalayın.'),
     ],
     refs: ['suspansiyon-fda-losartan', 'trissel'],
+    shelfLife: '4 hafta, buzdolabında (2–8 °C)',
   ),
   Formula(
     name: 'Klopidogrel oral süspansiyonu 5 mg/mL',
@@ -596,6 +668,7 @@ const suspansiyonFormulas = <Formula>[
       FormulaStep('Hacme tamamlama', 'Şişeye aktarıp taşıyıcıyla 60 mL\'ye tamamlayın.'),
     ],
     refs: ['suspansiyon-skillman-klopidogrel', 'trissel'],
+    shelfLife: '60 gün, buzdolabında ya da oda sıcaklığında; ışıktan koru',
   ),
   Formula(
     name: 'Ondansetron oral süspansiyonu 0,8 mg/mL',
@@ -612,6 +685,7 @@ const suspansiyonFormulas = <Formula>[
       FormulaStep('Hacme tamamlama', 'Şişeye aktarıp taşıyıcıyla 100 mL\'ye tamamlayın.'),
     ],
     refs: ['suspansiyon-williams-ondansetron', 'trissel'],
+    shelfLife: '42 gün, buzdolabında; ışıktan koru',
   ),
   Formula(
     name: 'Selekoksib oral süspansiyonu 10 mg/mL',
@@ -628,6 +702,7 @@ const suspansiyonFormulas = <Formula>[
       FormulaStep('Hacme tamamlama', 'Şişeye aktarıp taşıyıcıyla 100 mL\'ye tamamlayın.'),
     ],
     refs: ['suspansiyon-donnelly-selekoksib', 'trissel'],
+    shelfLife: '93 gün, buzdolabında ya da oda sıcaklığında; ışıktan koru',
   ),
   Formula(
     name: 'Terbinafin oral süspansiyonu 25 mg/mL',
@@ -644,6 +719,7 @@ const suspansiyonFormulas = <Formula>[
       FormulaStep('Hacme tamamlama', 'Şişeye aktarıp taşıyıcıyla 100 mL\'ye tamamlayın.'),
     ],
     refs: ['suspansiyon-abdelrahman-terbinafin', 'trissel'],
+    shelfLife: '42 gün, buzdolabında ya da oda sıcaklığında',
   ),
   Formula(
     name: 'Sumatriptan oral süspansiyonu 5 mg/mL',
@@ -659,7 +735,8 @@ const suspansiyonFormulas = <Formula>[
       FormulaStep('Geometrik seyreltme', 'Taşıyıcıyı porsiyonlarla ekleyip karıştırın.'),
       FormulaStep('Hacme tamamlama', 'Şişeye aktarıp taşıyıcıyla 100 mL\'ye tamamlayın.'),
     ],
-    refs: ['suspansiyon-fish-sumatriptan', 'trissel'],
+    refs: ['suspansiyon-fish-sumatriptan', 'trissel', 'suspansiyon-usp-sumatriptan'],
+    shelfLife: '14 gün, buzdolabında; ışıktan koru',
   ),
   Formula(
     name: 'Allopürinol oral süspansiyonu 20 mg/mL (vişne şurubu)',
@@ -676,6 +753,7 @@ const suspansiyonFormulas = <Formula>[
       FormulaStep('Hacme tamamlama', 'Şişeye aktarıp vişne şurubuyla 100 mL\'ye tamamlayın.'),
     ],
     refs: ['suspansiyon-allen-1996a', 'trissel'],
+    shelfLife: '60 gün, buzdolabında ya da oda sıcaklığında; ışıktan koru',
   ),
   Formula(
     name: 'Ursodeoksikolik asit oral süspansiyonu 60 mg/mL',
@@ -693,6 +771,7 @@ const suspansiyonFormulas = <Formula>[
       FormulaStep('Hacme tamamlama', 'Şişeye aktarıp şurupla 100 mL\'ye tamamlayın.'),
     ],
     refs: ['suspansiyon-johnson-ursodiol', 'trissel'],
+    shelfLife: '35 gün, buzdolabında, amber cam şişede, karanlıkta',
   ),
   Formula(
     name: 'Tadalafil oral süspansiyonu 5 mg/mL',
@@ -708,7 +787,8 @@ const suspansiyonFormulas = <Formula>[
       FormulaStep('Geometrik seyreltme', 'Taşıyıcıyı azar azar ekleyip karıştırın.'),
       FormulaStep('Hacme tamamlama', 'Şişeye aktarıp taşıyıcıyla 60 mL\'ye tamamlayın.'),
     ],
-    refs: ['suspansiyon-pettit-tadalafil', 'suspansiyon-uspharmacist-tadalafil'],
+    refs: ['suspansiyon-pettit-tadalafil', 'suspansiyon-uspharmacist-tadalafil', 'trissel'],
+    shelfLife: '91 gün, oda sıcaklığında, amber şişede',
   ),
   Formula(
     name: 'Granisetron oral süspansiyonu 0,2 mg/mL',
@@ -726,6 +806,7 @@ const suspansiyonFormulas = <Formula>[
       FormulaStep('Hacme tamamlama', 'Şişeye aktarıp vişne şurubuyla 60 mL\'ye tamamlayın.'),
     ],
     refs: ['suspansiyon-quercia-granisetron', 'trissel'],
+    shelfLife: '14 gün, buzdolabında ya da oda sıcaklığında',
   ),
   // Klasik oral karışımlar (BP/BPC).
   Formula(

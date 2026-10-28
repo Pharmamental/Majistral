@@ -32,6 +32,39 @@ const tozRefs = <Reference>[
         'Publications, Londra.',
     url: 'https://bnfc.nice.org.uk',
   ),
+  Reference(
+    id: 'toz-allen-2016',
+    kind: ReferenceKind.makale,
+    citation: 'Allen LV Jr. Basics of Compounding: Capsules. Int J Pharm Compd 2016;20(2):125-34.',
+    url: 'https://ijpc.com/Abstracts/Abstract.cfm?ABS=4114',
+  ),
+  Reference(
+    id: 'toz-haywood-2009',
+    kind: ReferenceKind.makale,
+    citation: 'Haywood A, Mangan M, Grant G, Glass B. Stability of melatonin in an extemporaneously compounded '
+        'sublingual solution and hard gelatin capsule. Int J Pharm Compd 2009;13(2):170-4.',
+    url: 'https://pubmed.ncbi.nlm.nih.gov/23970011/',
+  ),
+  Reference(
+    id: 'toz-allen-ursodiol',
+    kind: ReferenceKind.makale,
+    citation: 'Allen LV Jr. Ursodiol 150-mg Capsules. Int J Pharm Compd 2003;7(5):382.',
+    url: 'https://ijpc.com/Abstracts/Abstract_basic.cfm?ABS=1568',
+  ),
+  Reference(
+    id: 'toz-klinger-2021',
+    kind: ReferenceKind.makale,
+    citation: 'Klinger J, Daniels R. Assessing a mass-based method for the preparation of low-dosed paediatric '
+        'capsules with baclofen and spironolactone. Pharmacy (Basel) 2021;9(1):56.',
+    url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC8005994/',
+  ),
+  Reference(
+    id: 'toz-yeow-2011',
+    kind: ReferenceKind.makale,
+    citation: 'Yeow ST ve ark. Askorbik asit ve laktozun yığın ve vurgulu yoğunluk ölçümleri. Drug Des Devel Ther '
+        '2011;5:465-9.',
+    url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC3232173/',
+  ),
 ];
 
 const tozFormulas = <Formula>[
@@ -383,15 +416,16 @@ const tozFormulas = <Formula>[
     use: 'Uyanıklığı artırmak ve bazı baş ağrılarında yardımcı olarak kullanılır.',
     ingredients: [
       Ingredient('Kafein (susuz)', '3 g (30 kapsül için)'),
-      Ingredient('Laktoz monohidrat', 'ad 30 kapsül (1 numara)'),
+      Ingredient('Laktoz monohidrat', 'ad 30 kapsül (0 numara)'),
     ],
     steps: [
       FormulaStep('Ezme', 'Kafein havanda ince toz hâline getirilir.'),
       FormulaStep('Geometrik seyreltme', 'Kafein laktozla eşit parçalar hâlinde karıştırılır.'),
       FormulaStep('Elekten geçirme', 'Karışım elekten geçirilip tek düze yapılır.'),
-      FormulaStep('Kapsül doldurma', 'Toz 30 adet 1 numara kapsüle zımbalama yöntemiyle doldurulur.'),
+      FormulaStep('Kapsül doldurma', 'Toz 30 adet 0 numara kapsüle zımbalama yöntemiyle doldurulur.'),
     ],
-    refs: ['martindale', 'allen'],
+    refs: ['martindale', 'allen', 'usp-795', 'toz-allen-2016'],
+    shelfLife: '180 gün, oda sıcaklığında, kuru yerde',
   ),
   Formula(
     name: 'Melatonin kapsülü 3 mg',
@@ -407,7 +441,8 @@ const tozFormulas = <Formula>[
       FormulaStep('Elekten geçirme', 'Karışım elekten geçirilip doz dağılımı eşitlenir.'),
       FormulaStep('Kapsül doldurma', 'Toz 30 adet 3 numara kapsüle kapsül makinesiyle doldurulur.'),
     ],
-    refs: ['martindale', 'allen', 'toz-bnfc'],
+    refs: ['martindale', 'allen', 'toz-bnfc', 'toz-haywood-2009', 'usp-795'],
+    shelfLife: '180 gün, oda sıcaklığında, ışıktan korunarak, kuru yerde',
   ),
   Formula(
     name: 'Melatonin kapsülü 1 mg',
@@ -423,7 +458,8 @@ const tozFormulas = <Formula>[
       FormulaStep('Elekten geçirme', 'Karışım elekten geçirilir.'),
       FormulaStep('Kapsül doldurma', 'Toz 30 adet 3 numara kapsüle kapsül makinesiyle doldurulur.'),
     ],
-    refs: ['martindale', 'toz-bnfc'],
+    refs: ['martindale', 'toz-bnfc', 'toz-haywood-2009', 'usp-795'],
+    shelfLife: '180 gün, oda sıcaklığında, ışıktan korunarak, kuru yerde',
   ),
   Formula(
     name: 'Sodyum klorür kapsülü 500 mg',
@@ -437,7 +473,8 @@ const tozFormulas = <Formula>[
       FormulaStep('Elekten geçirme', 'Toz elekten geçirilip akışı düzeltilir.'),
       FormulaStep('Kapsül doldurma', 'Her kapsüle 500 mg gelecek biçimde 30 adet 0 numara kapsül doldurulur.'),
     ],
-    refs: ['martindale', 'toz-bnf'],
+    refs: ['martindale', 'toz-bnf', 'usp-795', 'toz-allen-2016'],
+    shelfLife: '180 gün, oda sıcaklığında, sıkı kapalı ve kuru yerde',
   ),
   Formula(
     name: 'Sodyum bikarbonat kapsülü 500 mg',
@@ -451,7 +488,8 @@ const tozFormulas = <Formula>[
       FormulaStep('Elekten geçirme', 'Toz elekten geçirilir.'),
       FormulaStep('Kapsül doldurma', 'Toz 30 adet 0 numara kapsüle zımbalama yöntemiyle doldurulur.'),
     ],
-    refs: ['martindale', 'toz-bnf'],
+    refs: ['martindale', 'toz-bnf', 'usp-795', 'toz-allen-2016'],
+    shelfLife: '180 gün, oda sıcaklığında, sıkı kapalı ve kuru yerde',
   ),
   Formula(
     name: 'Riboflavin kapsülü 200 mg',
@@ -459,15 +497,16 @@ const tozFormulas = <Formula>[
     use: 'Migren önlemede günde iki kapsül alınan B2 vitaminidir.',
     ingredients: [
       Ingredient('Riboflavin', '6 g (30 kapsül için)'),
-      Ingredient('Mikrokristalin selüloz', 'ad 30 kapsül (0 numara)'),
+      Ingredient('Mikrokristalin selüloz', 'ad 30 kapsül (000 numara)'),
     ],
     steps: [
       FormulaStep('Ezme', 'Riboflavin ışıktan korunarak havanda ince toz hâline getirilir.'),
       FormulaStep('Geometrik seyreltme', 'Riboflavin selülozla eşit parçalar hâlinde karıştırılır.'),
       FormulaStep('Elekten geçirme', 'Karışım elekten geçirilir, renk tek düze olur.'),
-      FormulaStep('Kapsül doldurma', 'Toz 30 adet 0 numara opak kapsüle doldurulur.'),
+      FormulaStep('Kapsül doldurma', 'Toz 30 adet 000 numara opak kapsüle doldurulur.'),
     ],
-    refs: ['martindale', 'allen'],
+    refs: ['martindale', 'allen', 'usp-795', 'toz-allen-2016'],
+    shelfLife: '180 gün, oda sıcaklığında, ışıktan korunarak, kuru yerde',
   ),
   Formula(
     name: 'Koenzim Q10 kapsülü 100 mg',
@@ -483,7 +522,8 @@ const tozFormulas = <Formula>[
       FormulaStep('Elekten geçirme', 'Karışım elekten geçirilir.'),
       FormulaStep('Kapsül doldurma', 'Toz 30 adet 1 numara opak kapsüle doldurulur.'),
     ],
-    refs: ['martindale', 'allen'],
+    refs: ['martindale', 'allen', 'usp-795', 'toz-allen-2016'],
+    shelfLife: '180 gün, 25 °C altında, ışıktan korunarak, kuru yerde',
   ),
   Formula(
     name: 'Nikotinamid kapsülü 500 mg',
@@ -495,9 +535,10 @@ const tozFormulas = <Formula>[
     steps: [
       FormulaStep('Ezme', 'Nikotinamid kristalleri havanda ince toz hâline getirilir.'),
       FormulaStep('Elekten geçirme', 'Toz elekten geçirilir.'),
-      FormulaStep('Kapsül doldurma', 'Toz 30 adet 0 numara kapsüle zımbalama yöntemiyle doldurulur.'),
+      FormulaStep('Kapsül doldurma', 'Toz 30 adet 000 numara kapsüle zımbalama yöntemiyle doldurulur.'),
     ],
-    refs: ['martindale', 'toz-bnf'],
+    refs: ['martindale', 'toz-bnf', 'usp-795', 'toz-allen-2016'],
+    shelfLife: '180 gün, oda sıcaklığında, sıkı kapalı ve kuru yerde',
   ),
   Formula(
     name: 'Folik asit kapsülü 1 mg',
@@ -513,7 +554,8 @@ const tozFormulas = <Formula>[
       FormulaStep('Elekten geçirme', 'Karışım elekten geçirilir.'),
       FormulaStep('Kapsül doldurma', 'Toz 30 adet 3 numara kapsüle kapsül makinesiyle doldurulur.'),
     ],
-    refs: ['martindale', 'toz-bnf'],
+    refs: ['martindale', 'toz-bnf', 'usp-795', 'toz-allen-2016'],
+    shelfLife: '180 gün, oda sıcaklığında, ışıktan korunarak, kuru yerde',
   ),
   Formula(
     name: 'Kolekalsiferol kapsülü 1000 IU',
@@ -528,7 +570,8 @@ const tozFormulas = <Formula>[
       FormulaStep('Elekten geçirme', 'Karışım elekten geçirilip doz eşitlenir.'),
       FormulaStep('Kapsül doldurma', 'Toz 30 adet 3 numara opak kapsüle doldurulur.'),
     ],
-    refs: ['martindale', 'toz-bnf'],
+    refs: ['martindale', 'toz-bnf', 'usp-795', 'toz-allen-2016'],
+    shelfLife: '180 gün, 25 °C altında, ışıktan korunarak, sıkı kapalı',
   ),
   Formula(
     name: 'Piridoksin kapsülü 50 mg',
@@ -544,7 +587,8 @@ const tozFormulas = <Formula>[
       FormulaStep('Elekten geçirme', 'Karışım elekten geçirilir.'),
       FormulaStep('Kapsül doldurma', 'Toz 30 adet 2 numara kapsüle doldurulur.'),
     ],
-    refs: ['martindale', 'toz-bnf'],
+    refs: ['martindale', 'toz-bnf', 'usp-795', 'toz-allen-2016'],
+    shelfLife: '180 gün, oda sıcaklığında, ışıktan korunarak, kuru yerde',
   ),
   Formula(
     name: 'Tiamin kapsülü 100 mg',
@@ -560,7 +604,8 @@ const tozFormulas = <Formula>[
       FormulaStep('Elekten geçirme', 'Karışım elekten geçirilir.'),
       FormulaStep('Kapsül doldurma', 'Toz 30 adet 2 numara kapsüle doldurulur.'),
     ],
-    refs: ['martindale', 'toz-bnf'],
+    refs: ['martindale', 'toz-bnf', 'usp-795', 'toz-allen-2016'],
+    shelfLife: '180 gün, oda sıcaklığında, sıkı kapalı ve kuru yerde',
   ),
   Formula(
     name: 'Ursodeoksikolik asit kapsülü 150 mg',
@@ -576,7 +621,8 @@ const tozFormulas = <Formula>[
       FormulaStep('Elekten geçirme', 'Karışım elekten geçirilir.'),
       FormulaStep('Kapsül doldurma', 'Toz 30 adet 1 numara kapsüle zımbalama yöntemiyle doldurulur.'),
     ],
-    refs: ['ijpc', 'martindale'],
+    refs: ['ijpc', 'martindale', 'toz-allen-ursodiol', 'usp-795'],
+    shelfLife: '180 gün, oda sıcaklığında, kuru yerde',
   ),
   Formula(
     name: 'Allopurinol kapsülü 50 mg',
@@ -592,7 +638,8 @@ const tozFormulas = <Formula>[
       FormulaStep('Elekten geçirme', 'Karışım elekten geçirilir.'),
       FormulaStep('Kapsül doldurma', 'Toz 30 adet 2 numara kapsüle doldurulur.'),
     ],
-    refs: ['martindale', 'toz-bnfc'],
+    refs: ['martindale', 'toz-bnfc', 'usp-795', 'toz-allen-2016'],
+    shelfLife: '180 gün ya da tabletin son kullanma tarihi (hangisi önceyse), oda sıcaklığında, kuru yerde',
   ),
   Formula(
     name: 'Propranolol kapsülü 5 mg',
@@ -608,7 +655,8 @@ const tozFormulas = <Formula>[
       FormulaStep('Elekten geçirme', 'Karışım elekten geçirilir.'),
       FormulaStep('Kapsül doldurma', 'Toz 30 adet 3 numara kapsüle kapsül makinesiyle doldurulur.'),
     ],
-    refs: ['martindale', 'toz-bnfc'],
+    refs: ['martindale', 'toz-bnfc', 'toz-klinger-2021', 'usp-795'],
+    shelfLife: '180 gün (tabletin son kullanma tarihini geçmez), oda sıcaklığında, kuru ve ışıksız',
   ),
   Formula(
     name: 'Hidroklorotiyazid kapsülü 5 mg',
@@ -624,37 +672,40 @@ const tozFormulas = <Formula>[
       FormulaStep('Elekten geçirme', 'Karışım elekten geçirilir.'),
       FormulaStep('Kapsül doldurma', 'Toz 30 adet 3 numara kapsüle kapsül makinesiyle doldurulur.'),
     ],
-    refs: ['nrf', 'martindale'],
+    refs: ['nrf', 'martindale', 'usp-795'],
+    shelfLife: '180 gün, oda sıcaklığında, kuru ve ışıksız',
   ),
   Formula(
     name: 'Furosemid kapsülü 6 mg',
     category: FormulaCategory.toz,
     use: 'Çocuklarda ödem ve kalp yetmezliğinde düşük doz idrar söktürücü olarak kullanılır.',
     ingredients: [
-      Ingredient('Furosemid 40 mg tablet', '4,5 tablet (30 kapsül için)'),
+      Ingredient('Furosemid', '180 mg (30 kapsül için)'),
       Ingredient('Laktoz monohidrat', 'ad 30 kapsül (3 numara)'),
     ],
     steps: [
-      FormulaStep('Ezme', 'Tabletler ışıktan korunarak havanda ince toz hâline getirilir.'),
-      FormulaStep('Geometrik seyreltme', 'Tablet tozu laktozla eşit parçalar hâlinde seyreltilir.'),
+      FormulaStep('Ezme', 'Furosemid ışıktan korunarak havanda ince toz hâline getirilir.'),
+      FormulaStep('Geometrik seyreltme', 'Etken madde laktozla eşit parçalar hâlinde seyreltilir.'),
       FormulaStep('Elekten geçirme', 'Karışım elekten geçirilir.'),
       FormulaStep('Kapsül doldurma', 'Toz 30 adet 3 numara opak kapsüle doldurulur.'),
     ],
-    refs: ['fna', 'martindale', 'toz-bnfc'],
+    refs: ['fna', 'martindale', 'toz-bnfc', 'usp-795'],
+    shelfLife: '180 gün, oda sıcaklığında, ışıktan korunarak, kuru yerde',
   ),
   Formula(
     name: 'Kalsiyum karbonat kapsülü 500 mg',
     category: FormulaCategory.toz,
     use: 'Kalsiyum desteği olarak ya da yemekle alınan fosfat bağlayıcı olarak kullanılır.',
     ingredients: [
-      Ingredient('Kalsiyum karbonat', '15 g (30 kapsül için)'),
+      Ingredient('Ağır kalsiyum karbonat', '15 g (30 kapsül için)'),
     ],
     steps: [
       FormulaStep('Ezme', 'Kalsiyum karbonat havanda topaksız toz hâline getirilir.'),
       FormulaStep('Elekten geçirme', 'Toz elekten geçirilir.'),
       FormulaStep('Kapsül doldurma', 'Toz 30 adet 00 numara kapsüle zımbalama yöntemiyle doldurulur.'),
     ],
-    refs: ['martindale', 'toz-bnf'],
+    refs: ['martindale', 'toz-bnf', 'usp-795'],
+    shelfLife: '180 gün, oda sıcaklığında, sıkı kapalı, kuru ve ışıksız',
   ),
   Formula(
     name: 'Magnezyum oksit kapsülü 250 mg',
@@ -662,15 +713,16 @@ const tozFormulas = <Formula>[
     use: 'Magnezyum eksikliğinde ve kabızlıkta kullanılan magnezyum desteğidir.',
     ingredients: [
       Ingredient('Ağır magnezyum oksit', '7,5 g (30 kapsül için)'),
-      Ingredient('Mikrokristalin selüloz', 'ad 30 kapsül (0 numara)'),
+      Ingredient('Mikrokristalin selüloz', 'ad 30 kapsül (00 numara)'),
     ],
     steps: [
       FormulaStep('Ezme', 'Magnezyum oksit havanda topaksız toz hâline getirilir.'),
       FormulaStep('Karıştırma', 'Magnezyum oksit ve selüloz havanda birlikte karıştırılır.'),
       FormulaStep('Elekten geçirme', 'Karışım elekten geçirilir.'),
-      FormulaStep('Kapsül doldurma', 'Toz 30 adet 0 numara kapsüle doldurulur.'),
+      FormulaStep('Kapsül doldurma', 'Toz 30 adet 00 numara kapsüle doldurulur.'),
     ],
-    refs: ['martindale', 'toz-bnf'],
+    refs: ['martindale', 'toz-bnf', 'usp-795'],
+    shelfLife: '180 gün, oda sıcaklığında, sıkı kapalı (nem ve karbondioksit çeker)',
   ),
   Formula(
     name: 'Çinko sülfat kapsülü 220 mg',
@@ -686,7 +738,8 @@ const tozFormulas = <Formula>[
       FormulaStep('Elekten geçirme', 'Karışım elekten geçirilir.'),
       FormulaStep('Kapsül doldurma', 'Toz 30 adet 1 numara kapsüle doldurulur.'),
     ],
-    refs: ['martindale', 'toz-bnf'],
+    refs: ['martindale', 'toz-bnf', 'usp-795'],
+    shelfLife: '180 gün, oda sıcaklığında, sıkı kapalı',
   ),
   Formula(
     name: 'Askorbik asit kapsülü 500 mg',
@@ -700,7 +753,8 @@ const tozFormulas = <Formula>[
       FormulaStep('Elekten geçirme', 'Toz elekten geçirilir.'),
       FormulaStep('Kapsül doldurma', 'Toz 30 adet 00 numara kapsüle zımbalama yöntemiyle doldurulur.'),
     ],
-    refs: ['martindale', 'toz-bnf'],
+    refs: ['martindale', 'toz-bnf', 'toz-yeow-2011', 'usp-795'],
+    shelfLife: '180 gün, oda sıcaklığında, sıkı kapalı, kuru ve ışıksız',
   ),
   Formula(
     name: 'Plasebo kapsülü',
@@ -713,23 +767,25 @@ const tozFormulas = <Formula>[
       FormulaStep('Elekten geçirme', 'Laktoz elekten geçirilip topakları dağıtılır.'),
       FormulaStep('Kapsül doldurma', 'Toz 30 adet 1 numara kapsüle etkin kapsüllerle aynı görünüşte doldurulur.'),
     ],
-    refs: ['allen', 'fna'],
+    refs: ['allen', 'fna', 'toz-klinger-2021', 'usp-795'],
+    shelfLife: '180 gün, oda sıcaklığında, sıkı kapalı, kuru ve ışıksız',
   ),
   Formula(
     name: 'Parasetamol kapsülü 250 mg',
     category: FormulaCategory.toz,
-    use: 'Tablet yutamayan ya da ara doz gereken hastalarda ağrı ve ateş için kullanılır.',
+    use: 'Ara doz gereken hastalarda ağrı ve ateş için kullanılır.',
     ingredients: [
       Ingredient('Parasetamol', '7,5 g (30 kapsül için)'),
-      Ingredient('Mikrokristalin selüloz', 'ad 30 kapsül (1 numara)'),
+      Ingredient('Mikrokristalin selüloz', 'ad 30 kapsül (00 numara)'),
     ],
     steps: [
       FormulaStep('Ezme', 'Parasetamol havanda ince toz hâline getirilir.'),
       FormulaStep('Geometrik seyreltme', 'Parasetamol selülozla eşit parçalar hâlinde karıştırılır.'),
       FormulaStep('Elekten geçirme', 'Karışım elekten geçirilir.'),
-      FormulaStep('Kapsül doldurma', 'Toz 30 adet 1 numara kapsüle doldurulur.'),
+      FormulaStep('Kapsül doldurma', 'Toz 30 adet 00 numara kapsüle doldurulur.'),
     ],
-    refs: ['martindale', 'toz-bnfc'],
+    refs: ['martindale', 'toz-bnfc', 'usp-795'],
+    shelfLife: '180 gün, oda sıcaklığında, sıkı kapalı, kuru ve ışıksız',
   ),
   Formula(
     name: 'Ursodeoksikolik asit kapsülü 250 mg',
@@ -745,7 +801,8 @@ const tozFormulas = <Formula>[
       FormulaStep('Elekten geçirme', 'Karışım elekten geçirilir.'),
       FormulaStep('Kapsül doldurma', 'Toz 30 adet 0 numara kapsüle zımbalama yöntemiyle doldurulur.'),
     ],
-    refs: ['martindale', 'toz-bnf'],
+    refs: ['martindale', 'toz-bnf', 'usp-795'],
+    shelfLife: '180 gün, oda sıcaklığında, sıkı kapalı, kuru ve ışıksız',
   ),
   Formula(
     name: 'Riboflavin kapsülü 50 mg',
@@ -761,7 +818,8 @@ const tozFormulas = <Formula>[
       FormulaStep('Elekten geçirme', 'Karışım elekten geçirilir, renk tek düze olur.'),
       FormulaStep('Kapsül doldurma', 'Toz 30 adet 2 numara opak kapsüle doldurulur.'),
     ],
-    refs: ['martindale', 'toz-bnfc'],
+    refs: ['martindale', 'toz-bnfc', 'usp-795'],
+    shelfLife: '180 gün, oda sıcaklığında, ışıksız ve kuru',
   ),
   Formula(
     name: 'Kurutulmuş demir(II) sülfat kapsülü 200 mg',
@@ -777,7 +835,8 @@ const tozFormulas = <Formula>[
       FormulaStep('Elekten geçirme', 'Karışım elekten geçirilir.'),
       FormulaStep('Kapsül doldurma', 'Toz 30 adet 1 numara kapsüle doldurulur.'),
     ],
-    refs: ['martindale', 'toz-bnf', 'who-mf'],
+    refs: ['martindale', 'toz-bnf', 'who-mf', 'usp-795'],
+    shelfLife: '180 gün, oda sıcaklığında, sıkı kapalı ve kuru (nemde oksitlenir)',
   ),
   Formula(
     name: 'Biotin kapsülü 10 mg',
@@ -793,22 +852,24 @@ const tozFormulas = <Formula>[
       FormulaStep('Elekten geçirme', 'Karışım elekten geçirilir.'),
       FormulaStep('Kapsül doldurma', 'Toz 30 adet 3 numara kapsüle doldurulur.'),
     ],
-    refs: ['martindale', 'toz-bnfc'],
+    refs: ['martindale', 'toz-bnfc', 'toz-klinger-2021', 'usp-795'],
+    shelfLife: '180 gün, oda sıcaklığında, sıkı kapalı, kuru ve ışıksız',
   ),
   Formula(
-    name: 'Spironolakton kapsülü 5 mg',
+    name: 'Baklofen kapsülü 2,5 mg',
     category: FormulaCategory.toz,
-    use: 'Çocuklarda ödemde potasyum tutan idrar söktürücüyü düşük dozda vermek için kullanılır.',
+    use: 'Çocuklarda kas sertliğini (spastisite) azaltmak için düşük dozda verilen kas gevşeticidir.',
     ingredients: [
-      Ingredient('Spironolakton', '150 mg (30 kapsül için)'),
-      Ingredient('Mikrokristalin selüloz', 'ad 30 kapsül (3 numara)'),
+      Ingredient('Baklofen', '75 mg (30 kapsül için)'),
+      Ingredient('Laktoz monohidrat (%0,5 kolloidal silisyum dioksitli)', 'ad 30 kapsül (1 numara)'),
     ],
     steps: [
-      FormulaStep('Ezme', 'Spironolakton havanda ince toz hâline getirilir.'),
-      FormulaStep('Geometrik seyreltme', 'Etken madde selülozla birkaç basamakta eşit parçalar hâlinde seyreltilir.'),
+      FormulaStep('Ezme', 'Baklofen havanda ince toz hâline getirilir.'),
+      FormulaStep('Geometrik seyreltme', 'Etken madde laktozla birkaç basamakta eşit parçalar hâlinde seyreltilir.'),
       FormulaStep('Elekten geçirme', 'Karışım elekten geçirilir.'),
-      FormulaStep('Kapsül doldurma', 'Toz 30 adet 3 numara kapsüle doldurulur.'),
+      FormulaStep('Kapsül doldurma', 'Toz 30 adet 1 numara kapsüle doldurulur.'),
     ],
-    refs: ['martindale', 'toz-bnfc'],
+    refs: ['toz-klinger-2021', 'toz-bnfc', 'usp-795'],
+    shelfLife: '180 gün, oda sıcaklığında, kuru ve ışıksız',
   ),
 ];

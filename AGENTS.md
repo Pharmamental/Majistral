@@ -177,7 +177,10 @@ lib/
   kortikosteroid, retinoid, NIOSH tehlikeli ilaçlar, antiaritmikler, klorokin türevleri, triklosan,
   kurşun/cıva/borik asit/kloroform, sistemik antibiyotik. İçerik taslak: alt ajanlar formüllerin
   bir kısmını bellekten yazdı (özellikle kapsül dolgu miktarları ve bazı bazlar); yayından önce
-  öğretim üyesi onayı şart.
+  öğretim üyesi onayı şart. Raf ömrü `Formula.shelfLife` (kaynağın verdiği; kapsülde USP <795>
+  180 gün). 2026-10-28'de 28 kapsül ve 33 tabletten süspansiyon kaynakla tek tek kontrol edildi;
+  NIOSH 2024 listesindeki ilaç (ör. spironolakton) kitaba girmez. Kontrol kaydı beyinde
+  `knowledge/concepts/majistral-formul-dogrulama.md`.
 - Laboratuvarın yeni adımları (2026-10-28): formül kitabında en sık geçen ve laboratuvarda olmayan
   adımlar eklendi: Hacme tamamlama (146), Karıştırma (96), Elekten geçirme (78), Şişirme (53),
   Kapsül doldurma (28, temel teknik diye). Aletler: Beher ve baget, Mezür, Elek, Kapsül doldurma
