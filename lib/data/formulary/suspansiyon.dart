@@ -101,12 +101,6 @@ const suspansiyonRefs = <Reference>[
     url: 'https://dmd-browser.nhsbsa.nhs.uk/vmp/view/2610',
   ),
   Reference(
-    id: 'suspansiyon-abdelrahman-terbinafin',
-    kind: ReferenceKind.makale,
-    citation: 'Abdel-Rahman SM, Nahata MC. Stability of terbinafine hydrochloride in an extemporaneously '
-        'prepared oral suspension at 25 and 4 °C. Am J Health-Syst Pharm 1999;56(3):243-5.',
-  ),
-  Reference(
     id: 'suspansiyon-digiacinto-ppi',
     kind: ReferenceKind.makale,
     citation: 'DiGiacinto JL, Olsen KM, Bergman KL, Hoie EB. Stability of suspension formulations of '
@@ -124,13 +118,6 @@ const suspansiyonRefs = <Reference>[
     kind: ReferenceKind.makale,
     citation: 'Dentinger PJ, Swenson CF, Anaizi NH. Stability of famotidine in an extemporaneously compounded '
         'oral liquid. Am J Health-Syst Pharm 2000;57(14):1340-2.',
-  ),
-  Reference(
-    id: 'suspansiyon-ensom-propranolol',
-    kind: ReferenceKind.makale,
-    citation: 'Ensom MHH, Kendrick J, Rudolph S, Decarie D. Stability of propranolol in extemporaneously '
-        'compounded suspensions. Can J Hosp Pharm 2013;66(2):118-24.',
-    url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC3633496/',
   ),
   Reference(
     id: 'suspansiyon-skillman-klopidogrel',
@@ -229,6 +216,67 @@ const suspansiyonRefs = <Reference>[
         'suspensions at 4 and 25 °C. Am J Health-Syst Pharm 1999;56(3):240-2.',
     url: 'https://pubmed.ncbi.nlm.nih.gov/10030509/',
   ),
+  Reference(
+    id: 'suspansiyon-cober-glikopirolat',
+    kind: ReferenceKind.makale,
+    citation: 'Cober MP, Johnson CE, Sudekum D, Penprase K. Stability of extemporaneously prepared glycopyrrolate oral '
+        'suspensions. Am J Health-Syst Pharm 2011;68(9):843-5.',
+    url: 'https://pubmed.ncbi.nlm.nih.gov/21515869/',
+  ),
+  Reference(
+    id: 'suspansiyon-nahata-2016',
+    kind: ReferenceKind.makale,
+    citation: 'Nahata MC. Long-term stability of zonisamide, amitriptyline, and glycopyrrolate in extemporaneously '
+        'prepared liquid-dosage forms at two temperatures. Int J Pharm Compd 2016;20(2):164-6.',
+    url: 'https://pubmed.ncbi.nlm.nih.gov/27323428/',
+  ),
+  Reference(
+    id: 'suspansiyon-ensom-levetirasetam',
+    kind: ReferenceKind.makale,
+    citation: 'Ensom MH, Decarie D, Rudolph S. Stability of levetiracetam in extemporaneously compounded suspensions. '
+        'Can J Hosp Pharm 2011;64(3):207-11.',
+    url: 'https://pubmed.ncbi.nlm.nih.gov/22479056/',
+  ),
+  Reference(
+    id: 'suspansiyon-chusj-levetirasetam',
+    kind: ReferenceKind.universite,
+    citation: 'CHU Sainte-Justine Pharmacie. Lévétiracétam 50 mg/mL suspension orale, ürün kaydı 360768. Montréal.',
+    url: 'https://www.chusj.org/getattachment/abe1ff7c-036e-4845-a0e3-cef433193dad',
+  ),
+  Reference(
+    id: 'suspansiyon-lingertat-domperidon',
+    kind: ReferenceKind.makale,
+    citation: 'Lingertat-Walsh K, Law S, Walker SE. Stability of extemporaneously compounded domperidone 5 mg/mL '
+        'suspension in Oral Mix in plastic and glass bottles and plastic syringes. Can J Hosp Pharm 2018;71(3):165-72.',
+    url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC6019088/',
+  ),
+  Reference(
+    id: 'suspansiyon-sickkids-domperidon',
+    kind: ReferenceKind.universite,
+    citation: 'The Hospital for Sick Children (SickKids) Pharmacy. Domperidone 5 mg/mL compounding recipe. Toronto, 2020.',
+    url: 'https://www.sickkids.ca/siteassets/care--services/for-health-care-providers/compounding-recipes/domperidone-5mgml-pharmacy-compounding-recipe.pdf',
+  ),
+  Reference(
+    id: 'suspansiyon-abdelrahman-pentoksifilin',
+    kind: ReferenceKind.makale,
+    citation: 'Abdel-Rahman SM, Nahata MC. Stability of pentoxifylline in an extemporaneously prepared oral suspension. '
+        'Am J Health-Syst Pharm 1997;54(11):1301-3.',
+    url: 'https://pubmed.ncbi.nlm.nih.gov/9179352/',
+  ),
+  Reference(
+    id: 'suspansiyon-nationwide',
+    kind: ReferenceKind.universite,
+    citation: 'Nationwide Children\'s Hospital Pharmacy. Compounding master formulas (Pentoxifylline 20 mg/mL, '
+        'Clonidine 20 mcg/mL oral). Columbus, Ohio.',
+    url: 'https://www.nationwidechildrens.org/for-medical-professionals/education-and-training/pharmacy/compounding-formulas',
+  ),
+  Reference(
+    id: 'suspansiyon-sauberan-klonidin',
+    kind: ReferenceKind.makale,
+    citation: 'Sauberan JB, Phuong P, Ilog ND, Rossi SS. Stability and osmolality of extemporaneously prepared clonidine '
+        'oral liquid for neonates. Ann Pharmacother 2016;50(3):243-4.',
+    url: 'https://pubmed.ncbi.nlm.nih.gov/26728366/',
+  ),
 ];
 
 const suspansiyonFormulas = <Formula>[
@@ -285,21 +333,21 @@ const suspansiyonFormulas = <Formula>[
     shelfLife: '60 gün, buzdolabında ya da oda sıcaklığında; ışıktan koru',
   ),
   Formula(
-    name: 'Diltiazem oral süspansiyonu 12 mg/mL',
+    name: 'Glikopirolat oral süspansiyonu 0,5 mg/mL',
     category: FormulaCategory.suspansiyon,
-    use: 'Tablet yutamayan hastada göğüs ağrısı ve yüksek tansiyon tedavisi için.',
+    use: 'Çocuklarda aşırı salya akmasını azaltmak için glikopirolatı sıvı olarak vermek için.',
     ingredients: [
-      Ingredient('Diltiazem HCl tableti (60 mg)', '20 tablet (1,2 g)'),
+      Ingredient('Glikopirolat tableti (1 mg)', '50 tablet (50 mg)'),
       Ingredient('Süspansiyon bazı + tatlandırılmış baz (1:1)', 'ad 100 mL'),
     ],
     steps: [
-      FormulaStep('Ezme', 'Film kaplı tabletleri havanda kaplama parçası kalmayacak kadar ezin.'),
-      FormulaStep('Levigasyon', 'Tozu biraz taşıyıcıyla ıslatıp macun yapın.'),
-      FormulaStep('Geometrik seyreltme', 'Taşıyıcıyı porsiyon porsiyon ekleyip homojen hâle getirin.'),
-      FormulaStep('Hacme tamamlama', 'Şişeye alıp taşıyıcıyla 100 mL\'ye tamamlayın.'),
+      FormulaStep('Ezme', 'Tabletleri havanda ince toz olana dek ezin.'),
+      FormulaStep('Levigasyon', 'Tozu birkaç mL taşıyıcıyla pürüzsüz bir macun yapın.'),
+      FormulaStep('Geometrik seyreltme', 'Taşıyıcıyı eşit porsiyonlarla katıp her seferinde karıştırın.'),
+      FormulaStep('Hacme tamamlama', 'Şişeye aktarıp taşıyıcıyla 100 mL\'ye tamamlayın.'),
     ],
-    refs: ['suspansiyon-allen-1996b', 'trissel'],
-    shelfLife: '60 gün, buzdolabında ya da oda sıcaklığında; ışıktan koru',
+    refs: ['suspansiyon-cober-glikopirolat', 'suspansiyon-nahata-2016'],
+    shelfLife: '90 gün, oda sıcaklığında; amber şişede, ışıktan koru',
   ),
   Formula(
     name: 'Dipiridamol oral süspansiyonu 10 mg/mL',
@@ -387,38 +435,38 @@ const suspansiyonFormulas = <Formula>[
     shelfLife: '60 gün, buzdolabında ya da oda sıcaklığında; ışıktan koru',
   ),
   Formula(
-    name: 'Metoprolol tartrat oral süspansiyonu 10 mg/mL',
+    name: 'Levetirasetam oral süspansiyonu 50 mg/mL',
     category: FormulaCategory.suspansiyon,
-    use: 'Çocuklarda yüksek tansiyonda metoprolol vermek için.',
+    use: 'Tablet yutamayan çocukta sara (epilepsi) nöbetlerini önlemek için levetirasetam vermek için.',
     ingredients: [
-      Ingredient('Metoprolol tartrat tableti (100 mg)', '10 tablet (1 g)'),
+      Ingredient('Levetirasetam tableti (500 mg, film kaplı)', '10 tablet (5 g)'),
       Ingredient('Süspansiyon bazı + tatlandırılmış baz (1:1)', 'ad 100 mL'),
     ],
     steps: [
-      FormulaStep('Ezme', 'Tabletleri havanda ince toz hâline getirin.'),
-      FormulaStep('Levigasyon', 'Tozu az taşıyıcıyla ıslatıp macun yapın.'),
-      FormulaStep('Geometrik seyreltme', 'Taşıyıcıyı azar azar katarak karıştırın.'),
+      FormulaStep('Ezme', 'Film kaplı tabletleri havanda kaplama parçası kalmayana dek ezin.'),
+      FormulaStep('Levigasyon', 'Tozu az taşıyıcıyla ıslatıp koyu bir macun yapın.'),
+      FormulaStep('Geometrik seyreltme', 'Taşıyıcıyı azar azar katarak macunu açın.'),
       FormulaStep('Hacme tamamlama', 'Şişeye aktarıp taşıyıcıyla 100 mL\'ye tamamlayın.'),
     ],
-    refs: ['suspansiyon-allen-1996d', 'trissel'],
-    shelfLife: '60 gün, buzdolabında ya da oda sıcaklığında; ışıktan koru',
+    refs: ['suspansiyon-ensom-levetirasetam', 'suspansiyon-chusj-levetirasetam'],
+    shelfLife: '91 gün, buzdolabında ya da oda sıcaklığında; çalkalayarak kullan',
   ),
   Formula(
-    name: 'Verapamil oral süspansiyonu 50 mg/mL',
+    name: 'Domperidon oral süspansiyonu 5 mg/mL',
     category: FormulaCategory.suspansiyon,
-    use: 'Çocuklarda ritim bozukluğunda verapamili sıvı olarak vermek için.',
+    use: 'Bulantı ve kusmayı azaltmak için domperidonu sıvı olarak vermek için.',
     ingredients: [
-      Ingredient('Verapamil HCl tableti (80 mg, hızlı salımlı)', '25 tablet (2 g)'),
-      Ingredient('Süspansiyon bazı + tatlandırılmış baz (1:1)', 'ad 40 mL'),
+      Ingredient('Domperidon tableti (10 mg)', '50 tablet (500 mg)'),
+      Ingredient('Tek bileşenli hazır süspansiyon taşıyıcısı', 'ad 100 mL'),
     ],
     steps: [
-      FormulaStep('Ezme', 'Hızlı salımlı tabletleri havanda ince toz olana dek ezin.'),
-      FormulaStep('Levigasyon', 'Tozu biraz taşıyıcıyla sürterek macun yapın.'),
-      FormulaStep('Geometrik seyreltme', 'Taşıyıcıyı porsiyon porsiyon ekleyip karıştırın.'),
-      FormulaStep('Hacme tamamlama', 'Şişeye alıp taşıyıcıyla 40 mL\'ye tamamlayın.'),
+      FormulaStep('Ezme', 'Tabletleri havanda ince toz hâline getirin.'),
+      FormulaStep('Levigasyon', 'Tozu az taşıyıcıyla ıslatıp bir süre beklettikten sonra macun yapın.'),
+      FormulaStep('Geometrik seyreltme', 'Taşıyıcıyı küçük porsiyonlarla ekleyip karıştırın.'),
+      FormulaStep('Hacme tamamlama', 'Amber şişeye aktarıp taşıyıcıyla 100 mL\'ye tamamlayın.'),
     ],
-    refs: ['suspansiyon-allen-1996d', 'trissel'],
-    shelfLife: '60 gün, buzdolabında ya da oda sıcaklığında; ışıktan koru',
+    refs: ['suspansiyon-lingertat-domperidon', 'suspansiyon-sickkids-domperidon'],
+    shelfLife: '70 gün, oda sıcaklığında ya da buzdolabında; amber şişede, ışıktan koru',
   ),
   Formula(
     name: 'Betanekol oral süspansiyonu 5 mg/mL',
@@ -604,21 +652,21 @@ const suspansiyonFormulas = <Formula>[
   ),
   // Diğer pediatrik oral süspansiyonlar.
   Formula(
-    name: 'Propranolol oral süspansiyonu 2 mg/mL',
+    name: 'Pentoksifilin oral süspansiyonu 20 mg/mL',
     category: FormulaCategory.suspansiyon,
-    use: 'Bebeklerde hemanjiyom tedavisinde propranololü küçük dozlarla vermek için.',
+    use: 'Kanın akışkanlığını artırıp dolaşımı rahatlatmak için pentoksifilini sıvı olarak vermek için.',
     ingredients: [
-      Ingredient('Propranolol HCl tableti (40 mg)', '5 tablet (200 mg)'),
-      Ingredient('Şekersiz hazır süspansiyon taşıyıcısı', 'ad 100 mL'),
+      Ingredient('Pentoksifilin tableti (400 mg, uzatılmış salımlı)', '5 tablet (2 g)'),
+      Ingredient('Arıtılmış su', 'ad 100 mL'),
     ],
     steps: [
-      FormulaStep('Ezme', 'Tabletleri havanda ince toz hâline getirin.'),
-      FormulaStep('Levigasyon', 'Tozu birkaç mL taşıyıcıyla macun yapın.'),
-      FormulaStep('Geometrik seyreltme', 'Taşıyıcıyı azar azar ekleyip karıştırın.'),
-      FormulaStep('Hacme tamamlama', 'Şişeye aktarıp taşıyıcıyla 100 mL\'ye tamamlayın.'),
+      FormulaStep('Ezme', 'Tabletleri havanda ince toz olana dek ezin; ezilen tablet yavaş salımını kaybeder.'),
+      FormulaStep('Levigasyon', 'Tozu az suyla ıslatıp akışkan, pürüzsüz bir macun yapın.'),
+      FormulaStep('Geometrik seyreltme', 'Suyu porsiyonlarla katıp her eklemede iyice karıştırın.'),
+      FormulaStep('Hacme tamamlama', 'Mezüre aktarıp havanı suyla çalkalayın, 100 mL\'ye tamamlayın.'),
     ],
-    refs: ['suspansiyon-ensom-propranolol', 'trissel'],
-    shelfLife: '120 gün, buzdolabında ya da oda sıcaklığında; ışıktan koru',
+    refs: ['suspansiyon-abdelrahman-pentoksifilin', 'suspansiyon-nationwide'],
+    shelfLife: '90 gün, buzdolabında ya da oda sıcaklığında; ışıktan koru, çalkalayarak kullan',
   ),
   Formula(
     name: 'Lisinopril oral süspansiyonu 1 mg/mL',
@@ -705,21 +753,21 @@ const suspansiyonFormulas = <Formula>[
     shelfLife: '93 gün, buzdolabında ya da oda sıcaklığında; ışıktan koru',
   ),
   Formula(
-    name: 'Terbinafin oral süspansiyonu 25 mg/mL',
+    name: 'Klonidin oral süspansiyonu 20 mikrogram/mL',
     category: FormulaCategory.suspansiyon,
-    use: 'Çocuklarda saçlı deri mantarında terbinafini sıvı vermek için.',
+    use: 'Yoğun bakımdaki bebek ve çocuklarda sakinleştirme ve yoksunluk belirtilerini azaltmak için çok küçük dozlarla.',
     ingredients: [
-      Ingredient('Terbinafin HCl tableti (250 mg)', '10 tablet (2,5 g)'),
-      Ingredient('Süspansiyon bazı + tatlandırılmış baz (1:1)', 'ad 100 mL'),
+      Ingredient('Klonidin tableti (0,2 mg)', '10 tablet (2 mg)'),
+      Ingredient('Basit şurup', 'ad 100 mL'),
     ],
     steps: [
       FormulaStep('Ezme', 'Tabletleri havanda ince toz hâline getirin.'),
-      FormulaStep('Levigasyon', 'Tozu biraz taşıyıcıyla sürterek macun yapın.'),
-      FormulaStep('Geometrik seyreltme', 'Taşıyıcıyı azar azar ekleyip karıştırın.'),
-      FormulaStep('Hacme tamamlama', 'Şişeye aktarıp taşıyıcıyla 100 mL\'ye tamamlayın.'),
+      FormulaStep('Levigasyon', 'Tozu bir iki mL şurupla macun yapın.'),
+      FormulaStep('Geometrik seyreltme', 'Şurubu azar azar katıp karıştırın.'),
+      FormulaStep('Hacme tamamlama', 'Şişeye aktarıp şurupla 100 mL\'ye tamamlayın.'),
     ],
-    refs: ['suspansiyon-abdelrahman-terbinafin', 'trissel'],
-    shelfLife: '42 gün, buzdolabında ya da oda sıcaklığında',
+    refs: ['suspansiyon-sauberan-klonidin', 'suspansiyon-nationwide'],
+    shelfLife: '35 gün, buzdolabında',
   ),
   Formula(
     name: 'Sumatriptan oral süspansiyonu 5 mg/mL',

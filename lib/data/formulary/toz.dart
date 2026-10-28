@@ -39,13 +39,6 @@ const tozRefs = <Reference>[
     url: 'https://ijpc.com/Abstracts/Abstract.cfm?ABS=4114',
   ),
   Reference(
-    id: 'toz-haywood-2009',
-    kind: ReferenceKind.makale,
-    citation: 'Haywood A, Mangan M, Grant G, Glass B. Stability of melatonin in an extemporaneously compounded '
-        'sublingual solution and hard gelatin capsule. Int J Pharm Compd 2009;13(2):170-4.',
-    url: 'https://pubmed.ncbi.nlm.nih.gov/23970011/',
-  ),
-  Reference(
     id: 'toz-allen-ursodiol',
     kind: ReferenceKind.makale,
     citation: 'Allen LV Jr. Ursodiol 150-mg Capsules. Int J Pharm Compd 2003;7(5):382.',
@@ -64,6 +57,41 @@ const tozRefs = <Reference>[
     citation: 'Yeow ST ve ark. Askorbik asit ve laktozun yığın ve vurgulu yoğunluk ölçümleri. Drug Des Devel Ther '
         '2011;5:465-9.',
     url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC3232173/',
+  ),
+  Reference(
+    id: 'toz-taketomo-kaptopril',
+    kind: ReferenceKind.makale,
+    citation: 'Taketomo CK, Chu SA, Cheng MH, Corpuz RP. Stability of captopril in powder papers under three storage '
+        'conditions. Am J Hosp Pharm 1990;47(8):1799-801.',
+    url: 'https://pubmed.ncbi.nlm.nih.gov/2202207/',
+  ),
+  Reference(
+    id: 'toz-smpc-kaptopril',
+    kind: ReferenceKind.devlet,
+    citation: 'Captopril 5 mg/5 ml Oral Solution, ürün bilgisi (SmPC) bölüm 4.2. electronic medicines compendium, '
+        'Birleşik Krallık.',
+    url: 'https://www.medicines.org.uk/emc/product/5249/smpc',
+  ),
+  Reference(
+    id: 'toz-wasilewski-klonidin',
+    kind: ReferenceKind.makale,
+    citation: 'Wasilewski M, Curti C, Panuccio C ve ark. Pre-formulation and stability study of 20-mcg clonidine '
+        'hydrochloride pediatric capsules. J Pediatr Pharmacol Ther 2022;27(7):625-31.',
+    url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC9514770/',
+  ),
+  Reference(
+    id: 'toz-anmf',
+    kind: ReferenceKind.devlet,
+    citation: 'Australasian Neonatal Medicines Formulary (ANMF): Clonidine (v5.0, 2024) ve Nifedipine (v1.0, 2024) '
+        'monografları. South Eastern Sydney Local Health District, Avustralya.',
+    url: 'https://www.seslhd.health.nsw.gov.au/royal-hospital-for-women/australasian-neonatal-medicines-formulary-anmf',
+  ),
+  Reference(
+    id: 'toz-helin-tanninen-nifedipin',
+    kind: ReferenceKind.makale,
+    citation: 'Helin-Tanninen M, Naaranlahti T, Kontra K, Savolainen K. Nifedipine capsules may provide a viable '
+        'alternative to oral powders for paediatric patients. J Clin Pharm Ther 2007;32(1):49-55.',
+    url: 'http://urn.fi/URN:ISBN:978-952-61-1291-6',
   ),
 ];
 
@@ -428,38 +456,38 @@ const tozFormulas = <Formula>[
     shelfLife: '180 gün, oda sıcaklığında, kuru yerde',
   ),
   Formula(
-    name: 'Melatonin kapsülü 3 mg',
+    name: 'Kaptopril kapsülü 2,5 mg',
     category: FormulaCategory.toz,
-    use: 'Uyku başlangıcı sorununda ve jet lag\'de yatmadan önce alınır.',
+    use: 'Bebek ve çocuklarda yüksek tansiyon ve kalp yetmezliğinde düşük dozda verilen tansiyon ilacıdır.',
     ingredients: [
-      Ingredient('Melatonin', '90 mg (30 kapsül için)'),
-      Ingredient('Mikrokristalin selüloz', 'ad 30 kapsül (3 numara)'),
+      Ingredient('Kaptopril 25 mg tablet', '3 tablet (30 kapsül için)'),
+      Ingredient('Laktoz monohidrat', 'ad 30 kapsül (3 numara)'),
     ],
     steps: [
-      FormulaStep('Ezme', 'Melatonin havanda ince toz hâline getirilir.'),
-      FormulaStep('Geometrik seyreltme', 'Az olan melatonin selülozla adım adım eşit parçalar hâlinde seyreltilir.'),
-      FormulaStep('Elekten geçirme', 'Karışım elekten geçirilip doz dağılımı eşitlenir.'),
+      FormulaStep('Ezme', 'Tabletler havanda ince toz hâline getirilir.'),
+      FormulaStep('Geometrik seyreltme', 'Tablet tozu laktozla birkaç basamakta eşit parçalar hâlinde seyreltilir.'),
+      FormulaStep('Elekten geçirme', 'Karışım elekten geçirilip tek düze yapılır.'),
       FormulaStep('Kapsül doldurma', 'Toz 30 adet 3 numara kapsüle kapsül makinesiyle doldurulur.'),
     ],
-    refs: ['martindale', 'allen', 'toz-bnfc', 'toz-haywood-2009', 'usp-795'],
-    shelfLife: '180 gün, oda sıcaklığında, ışıktan korunarak, kuru yerde',
+    refs: ['toz-taketomo-kaptopril', 'toz-smpc-kaptopril', 'usp-795'],
+    shelfLife: '24 hafta (tabletin son kullanma tarihini geçmez), sıkı kapalı kapta, oda sıcaklığında, kuru yerde',
   ),
   Formula(
-    name: 'Melatonin kapsülü 1 mg',
+    name: 'Klonidin kapsülü 20 mikrogram',
     category: FormulaCategory.toz,
-    use: 'Çocuklarda ve hassas hastalarda düşük dozla uyku düzenine yardım eder.',
+    use: 'Yoğun bakımdaki yenidoğan ve bebeklerde sakinleştirmek ve yoksunluk belirtilerini azaltmak için çok küçük dozda verilir.',
     ingredients: [
-      Ingredient('Melatonin', '30 mg (30 kapsül için)'),
-      Ingredient('Mikrokristalin selüloz', 'ad 30 kapsül (3 numara)'),
+      Ingredient('Klonidin hidroklorür 0,15 mg tablet', '4 tablet (30 kapsül için)'),
+      Ingredient('Mikrokristalin selüloz', 'ad 30 kapsül (4 numara)'),
     ],
     steps: [
-      FormulaStep('Ezme', 'Melatonin havanda ince toz hâline getirilir.'),
-      FormulaStep('Geometrik seyreltme', 'Melatonin selülozla birkaç basamakta eşit parçalar hâlinde seyreltilir.'),
-      FormulaStep('Elekten geçirme', 'Karışım elekten geçirilir.'),
-      FormulaStep('Kapsül doldurma', 'Toz 30 adet 3 numara kapsüle kapsül makinesiyle doldurulur.'),
+      FormulaStep('Ezme', 'Tabletler havanda ince toz hâline getirilir.'),
+      FormulaStep('Geometrik seyreltme', 'Tablet tozu selülozla birkaç basamakta eşit parçalar hâlinde seyreltilir.'),
+      FormulaStep('Karıştırma', 'Karışım küçük havanda spatülle iyice karıştırılıp tek düze yapılır.'),
+      FormulaStep('Kapsül doldurma', 'Toz 30 adet 4 numara kapsüle kapsül makinesiyle doldurulur.'),
     ],
-    refs: ['martindale', 'toz-bnfc', 'toz-haywood-2009', 'usp-795'],
-    shelfLife: '180 gün, oda sıcaklığında, ışıktan korunarak, kuru yerde',
+    refs: ['toz-wasilewski-klonidin', 'toz-anmf', 'usp-795'],
+    shelfLife: '180 gün (tabletin son kullanma tarihini geçmez), oda sıcaklığında, ışıktan korunarak, kuru yerde',
   ),
   Formula(
     name: 'Sodyum klorür kapsülü 500 mg',
@@ -642,21 +670,21 @@ const tozFormulas = <Formula>[
     shelfLife: '180 gün ya da tabletin son kullanma tarihi (hangisi önceyse), oda sıcaklığında, kuru yerde',
   ),
   Formula(
-    name: 'Propranolol kapsülü 5 mg',
+    name: 'Nifedipin kapsülü 1 mg',
     category: FormulaCategory.toz,
-    use: 'Düşük doz gereken hastalarda kalp hızını yavaşlatmak ve titremeyi azaltmak için kullanılır.',
+    use: 'Bebek ve çocuklarda yüksek tansiyonu düşürmek için düşük dozda verilen damar genişletici ilaçtır.',
     ingredients: [
-      Ingredient('Propranolol hidroklorür 10 mg tablet', '15 tablet (30 kapsül için)'),
+      Ingredient('Nifedipin', '30 mg (30 kapsül için)'),
       Ingredient('Laktoz monohidrat', 'ad 30 kapsül (3 numara)'),
     ],
     steps: [
-      FormulaStep('Ezme', 'Tabletler havanda ince toz hâline getirilir.'),
-      FormulaStep('Geometrik seyreltme', 'Tablet tozu laktozla eşit parçalar hâlinde seyreltilir.'),
-      FormulaStep('Elekten geçirme', 'Karışım elekten geçirilir.'),
-      FormulaStep('Kapsül doldurma', 'Toz 30 adet 3 numara kapsüle kapsül makinesiyle doldurulur.'),
+      FormulaStep('Ezme', 'Nifedipin loş ışıkta havanda ince toz hâline getirilir; gün ışığında hızla bozunur.'),
+      FormulaStep('Geometrik seyreltme', 'Etken madde laktozla birkaç basamakta eşit parçalar hâlinde seyreltilir.'),
+      FormulaStep('Karıştırma', 'Karışım birkaç dakika karıştırılıp tek düze yapılır.'),
+      FormulaStep('Kapsül doldurma', 'Toz loş ışıkta 30 adet 3 numara opak kapsüle doldurulur.'),
     ],
-    refs: ['martindale', 'toz-bnfc', 'toz-klinger-2021', 'usp-795'],
-    shelfLife: '180 gün (tabletin son kullanma tarihini geçmez), oda sıcaklığında, kuru ve ışıksız',
+    refs: ['toz-helin-tanninen-nifedipin', 'toz-anmf', 'usp-795'],
+    shelfLife: '180 gün, oda sıcaklığında, ışıktan korunarak (karanlık torbada), kuru yerde',
   ),
   Formula(
     name: 'Hidroklorotiyazid kapsülü 5 mg',
