@@ -148,7 +148,8 @@ const kremFormulas = <Formula>[
       FormulaStep('Emülsifikasyon', 'Sıcak sulu çözeltiyi eriyik yağ fazına karıştırarak ekle.'),
       FormulaStep('Soğutma', 'Kütle donana kadar karıştırmayı sürdür.'),
     ],
-    refs: ['usp-nf', 'remington', 'ansel'],
+    refs: ['usp-nf', 'remington', 'ansel', 'usp-795'],
+    shelfLife: '35 gün, oda sıcaklığında ya da buzdolabında (sulu, koruyuculu)',
   ),
   Formula(
     name: 'Soğutucu krem (DAB)',

@@ -335,7 +335,8 @@ const merhemFormulas = <Formula>[
       FormulaStep('Levigasyon', 'Toz, sıvı parafinle havanda pürüzsüz bir hamur olana kadar ezilir.'),
       FormulaStep('Geometrik seyreltme', 'Beyaz merhem hamura eşit parçalar hâlinde katılarak karıştırılır.'),
     ],
-    refs: ['usp-nf', 'ansel', 'remington'],
+    refs: ['usp-nf', 'ansel', 'remington', 'usp-795'],
+    shelfLife: '180 gün, oda sıcaklığında, sıkı kapalı',
   ),
   Formula(
     name: 'Çinko merhemi %15 (BP)',
@@ -504,6 +505,7 @@ const merhemFormulas = <Formula>[
       FormulaStep('Geometrik seyreltme', 'Vazelin hamura eşit parçalar hâlinde eklenerek karıştırılır.'),
     ],
     refs: ['fn-es', 'nrf', 'merhem-altmeyer', 'martindale'],
+    shelfLife: '3 ay, oda sıcaklığında',
   ),
   Formula(
     name: 'Salisilik asitli vazelin %10',

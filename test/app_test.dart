@@ -96,6 +96,7 @@ void main() {
     await tester.tap(find.text(prescriptionOrders.first.magistralName));
     await tester.pumpAndSettle();
     expect(find.text(prescriptionOrders.first.usedFor), findsOneWidget);
+    expect(find.text('Raf ömrü'), findsOneWidget);
     await tester.tap(find.text('Kapat'));
     await tester.pumpAndSettle();
     expect(find.text('Gelen reçeteler · 3/3 · duvar dolu'), findsOneWidget);

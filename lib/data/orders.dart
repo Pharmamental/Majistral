@@ -10,8 +10,9 @@ import '../models/prescription.dart';
 //   %15 mineral yağ). USP bazı "beyaz merhem" (vazelin + %5 beyaz balmumu);
 //   oyunda beyaz vazelin kullanıldı, bu bir uyarlamadır (Tuğrul'un kararı,
 //   2026-10-26; USP'ye çevirme).
-// - Salisilik asitli vazelin: Prag Charles Üni. föyündeki %1 formülün
-//   levigasyon oranı (asidin yarısı kadar sıvı parafin) %5'e uygulandı.
+// - Salisilik asitli vazelin: İspanya Formulario Nacional FN/2003/PO/032
+//   (salisilik asit 5 g, sıvı parafin 3 g, vazelin ad 100 g) 50 g'a indirildi;
+//   2026-10-28 formül kontrolünden önce Prag Charles Üni. föyünün oranıydı.
 //
 // Kullanım alanları (usedFor, 2026-10-27): salisilik asit Drugs.com (AHFS)
 // monografı ve beyindeki majistral-ilaclar notu; çinko oksit merhemi
@@ -44,7 +45,7 @@ const List<PrescriptionOrder> prescriptionOrders = [
     usedFor: 'Nasır, kallus ve siğil gibi kalınlaşmış deride',
     ingredients: [
       Ingredient('Salisilik Asit', '%5'),
-      Ingredient('Sıvı Parafin', '1,25 g'),
+      Ingredient('Sıvı Parafin', '1,5 g'),
       Ingredient('Beyaz Vazelin', 'ad 50 g'),
     ],
     steps: [

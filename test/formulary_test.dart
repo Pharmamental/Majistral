@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:game/data/formulary.dart';
 import 'package:game/data/lab_tools.dart';
+import 'package:game/data/orders.dart';
 import 'package:game/models/formula.dart';
 import 'package:game/models/prescription.dart';
 
@@ -53,6 +54,14 @@ void main() {
     expect(common, isNotEmpty);
     for (final name in common) {
       expect(inLab, contains(name), reason: name);
+    }
+  });
+
+  test('oyundaki her reçetenin formül kitabında karşılığı ve raf ömrü var', () {
+    for (final o in prescriptionOrders) {
+      final f = formulary.where((f) => f.name == o.formula).firstOrNull;
+      expect(f, isNotNull, reason: o.magistralName);
+      expect(f!.shelfLife, isNotNull, reason: o.magistralName);
     }
   });
 }

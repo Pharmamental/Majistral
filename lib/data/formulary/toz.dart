@@ -281,7 +281,8 @@ const tozFormulas = <Formula>[
       FormulaStep('Geometrik seyreltme', 'Çinko oksit nişastayla eşit parçalar hâlinde karıştırılır.'),
       FormulaStep('Elekten geçirme', 'Karışım ince elekten geçirilir.'),
     ],
-    refs: ['martindale', 'allen'],
+    refs: ['martindale', 'allen', 'usp-795'],
+    shelfLife: '180 gün, oda sıcaklığında, kuru yerde',
   ),
   Formula(
     name: 'Ekonazol nitrat pudrası %1',

@@ -88,7 +88,8 @@ const jelFormulas = <Formula>[
       FormulaStep('Şişirme', 'Su azar azar eklenir, jel berraklaşana kadar bir süre bekletilerek şişirilir.'),
       FormulaStep('Hacme tamamlama', 'Su ile 100 g\'a tamamlanıp hava kabarcığı katmadan yavaşça karıştırılır.'),
     ],
-    refs: ['nrf', 'allen'],
+    refs: ['nrf', 'allen', 'usp-795'],
+    shelfLife: '14 gün, buzdolabında (sulu, koruyucusuz)',
   ),
   Formula(
     name: 'Sulu karbomer jeli %0,5',

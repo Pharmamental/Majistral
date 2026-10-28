@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../data/formulary.dart';
 import '../data/market_items.dart';
 import '../models/prescription.dart';
 import '../theme/tokens.dart';
@@ -106,6 +107,13 @@ Future<void> openRecipe(
                     title: 'Neyde kullanılır',
                     child: Text(order.usedFor, style: AppText.body(size: 14)),
                   ),
+                  if (_shelfLife(order) case final shelf?) ...[
+                    const SizedBox(height: AppSpace.md),
+                    _Section(
+                      title: 'Raf ömrü',
+                      child: Text(shelf, style: AppText.body(size: 14)),
+                    ),
+                  ],
                 ],
               ),
             ),
@@ -130,6 +138,10 @@ Future<void> openRecipe(
     ),
   );
 }
+
+/// Reçetenin formül kitabındaki karşılığının raf ömrü ve saklama koşulu.
+String? _shelfLife(PrescriptionOrder order) =>
+    formulary.where((f) => f.name == order.formula).firstOrNull?.shelfLife;
 
 class _Section extends StatelessWidget {
   const _Section({required this.title, required this.child});
