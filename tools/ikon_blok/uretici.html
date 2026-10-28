@@ -288,6 +288,52 @@ const IKONLAR=[
   {d:rr(28,26,44,58,16),c:R.krem},                  // losyon şişesi
   {d:rr(34,44,32,26,5),c:R.mavi,flat:1},
   {d:'M40,57H60',c:R.krem,line:1}]},
+ // Laboratuvarın yeni reçetelerindeki maddeler (2026-10-28).
+ // Hidroksietilselüloz pamuk selülozundan yapılır: açmış pamuk kozası.
+ {grup:'Kimyasal',dosya:'hidroksietilseluloz',ad:'Hidroksietilselüloz',kutu:'#C9EFE6',parts:[
+  {d:'M14,60L36,58L28,82Z',c:R.kahve},              // kozanın açılmış çanak yaprakları
+  {d:'M86,60L64,58L72,82Z',c:R.kahve},
+  {d:'M38,68L50,90L62,68Z',c:R.kahve},
+  {d:circ(32,50,16),c:'#FFFFFF'},{d:circ(68,50,16),c:'#FFFFFF'},
+  {d:circ(50,34,16),c:'#FFFFFF'},{d:circ(50,58,16),c:'#FFFFFF'}]},
+ // Laktoz süt şekeridir: süt şişesi.
+ {grup:'Kimyasal',dosya:'laktoz',ad:'Laktoz',kutu:'#CFE4F7',parts:[
+  {d:rr(38,8,24,10,4),c:R.mavi},                    // kapak
+  {d:'M40,16H60V28C72,34 74,42 74,52V78C74,84 70,88 64,88H36C30,88 26,84 26,78V52C26,42 28,34 40,28Z',c:R.cam},
+  {d:'M28,46H72V78C72,83 69,86 64,86H36C31,86 28,83 28,78Z',c:'#FFFFFF'}]}, // süt
+ // Folik asit sarı-turuncu kristal tozdur.
+ {grup:'Kimyasal',dosya:'folik_asit',ad:'Folik Asit',kutu:'#FFE3A6',parts:[
+  {d:'M10,60H90C84,74 68,80 50,80C32,80 16,74 10,60Z',c:R.cam},   // saat camı
+  {d:'M22,62C28,38 72,38 78,62Z',c:'#F2A23A'}]},                   // toz yığını
+ // Karıştırma (sıvı, jel): beherde cam bagetle döndürerek.
+ {grup:'Adımlar',dosya:'adim_karistirma_sivi',ad:'Karıştırma',kutu:'#C9EFE6',parts:[
+  {d:rr(20,28,58,58,8),c:R.cam},                    // beher
+  {d:rr(24,46,50,36,6),c:R.buz},                    // sıvı
+  {d:'M32,58C40,52 58,52 64,58C58,66 42,66 36,60',c:'#FFFFFF',line:1}, // girdap
+  {d:cap(80,8,52,72,5),c:'#F4F6F8'}]},              // cam baget
+ // ===== Formül kitabından gelen aletler (2026-10-28): sıvı, jel ve toz işleri.
+ {grup:'Sıvı ve toz aletleri',dosya:'beher_baget',ad:'Beher ve baget',kutu:'#CFE4F7',parts:[
+  {d:rr(22,26,54,60,8),c:R.cam},                    // beher
+  {d:'M18,24H36V32H22Z',c:R.cam},                   // ağız
+  {d:rr(26,58,46,24,6),c:R.buz},                    // su
+  {d:'M30,48H44M30,40H40',c:D(R.cam,.45),line:1},   // çizgiler
+  {d:cap(78,8,58,78,5),c:'#F4F6F8'}]},              // cam baget
+ {grup:'Sıvı ve toz aletleri',dosya:'mezur',ad:'Mezür',kutu:'#C9EFE6',parts:[
+  {d:rr(22,80,56,8,4),c:R.cam},                     // ayak
+  {d:rr(34,8,32,76,6),c:R.cam},
+  {d:'M30,12H40V18H34Z',c:R.cam},                   // ağız
+  {d:rr(38,48,24,32,4),c:R.buz},
+  {d:'M38,20H46M38,30H50M38,40H46M38,50H50M38,60H46M38,70H50',c:D(R.cam,.45),line:1}]},
+ {grup:'Sıvı ve toz aletleri',dosya:'elek',ad:'Elek',kutu:'#FFE3A6',parts:[
+  {d:'M8,52A42,18 0 1 0 92,52A42,18 0 1 0 8,52Z',c:R.kahve},   // ahşap çerçeve
+  {d:'M17,50A33,12 0 1 0 83,50A33,12 0 1 0 17,50Z',c:'#DDE3EB',flat:1}, // tel
+  {d:'M30,40V60M40,38V62M50,38V62M60,38V62M70,40V60M18,50H82M22,44H78M22,56H78',c:D(R.metal,.35),line:1}]},
+ {grup:'Sıvı ve toz aletleri',dosya:'kapsul_makinesi',ad:'Kapsül doldurma aleti',kutu:'#FFD6C2',parts:[
+  {d:rr(8,52,84,28,6),c:'#F4F6F8'},                 // delikli plaka
+  ...[20,35,50,65,80].map(x=>({d:circ(x,66,4.2),c:D(R.metal,.35),flat:1})), // boş delikler
+  {d:'M14,54V40C14,32 26,32 26,40V54Z',c:R.mavi},   // deliklere oturmuş kapsüller
+  {d:'M29,54V40C29,32 41,32 41,40V54Z',c:R.mavi},
+  {d:'M44,54V40C44,32 56,32 56,40V54Z',c:R.mavi}]},
  // ===== Hazırlama adımları (2026-10-27): her adımda gerçekte yapılan iş
  {grup:'Adımlar',dosya:'adim_levigasyon',ad:'Levigasyon',kutu:'#CFE4F7',parts:[
   {d:'M24,44C28,28 72,28 76,44Z',c:'#F2D27A'},      // tozla sıvı parafinin macunu
@@ -350,6 +396,48 @@ const IKONLAR=[
   {d:rr(8,46,86,9,4.5),c:R.krem},
   {d:rr(38,75,26,8,3.5),c:R.kremKoyu},
   {d:'M24,63C38,68 64,68 78,63',c:R.mavi,line:1}]},
+ // Formül kitabındaki öteki adımlar (2026-10-28).
+ // Elekten geçirme: toz elekten geçip altta yığılır.
+ {grup:'Adımlar',dosya:'adim_elek',ad:'Elekten geçirme',kutu:'#FFE3A6',parts:[
+  {d:'M26,88C32,72 68,72 74,88Z',c:'#FFFFFF'},       // elenmiş toz yığını
+  {d:'M38,50V78M50,50V76M62,50V78',c:'#FFFFFF',w:3}, // ince ince dökülen toz
+  {d:rr(8,30,84,22,6),c:R.kahve},                   // elek çerçevesi (ahşap)
+  {d:rr(15,35,70,12,3),c:'#DDE3EB',flat:1},         // tel
+  {d:'M22,35V47M32,35V47M42,35V47M52,35V47M62,35V47M72,35V47M15,41H85',c:D(R.metal,.35),line:1},
+  {d:'M28,36C32,24 62,22 70,36Z',c:'#FFFFFF'}]},    // elekteki toz
+ // Şişirme: jel yapıcı suyun üstüne serpilir, şişip kabarır.
+ {grup:'Adımlar',dosya:'adim_sisirme',ad:'Şişirme',kutu:'#C9EFE6',parts:[
+  {d:rr(20,28,60,58,8),c:R.cam},                    // beher
+  {d:rr(24,52,52,30,6),c:'#BFE6D6'},                // jel
+  {d:'M26,54C28,36 72,36 74,54Z',c:'#BFE6D6'},      // kabaran jel
+  {d:circ(40,44,2.4),c:'#FFFFFF',flat:1},{d:circ(52,41,2.4),c:'#FFFFFF',flat:1},{d:circ(62,45,2.4),c:'#FFFFFF',flat:1}]}, // serpilen toz
+ // Nötralleştirme: karbomer jeline damlalıkla baz damlatılır, jel koyulaşır.
+ {grup:'Adımlar',dosya:'adim_notrallestirme',ad:'Nötralleştirme',kutu:'#D9D2FA',parts:[
+  {d:rr(14,42,56,44,8),c:R.cam},                    // beher
+  {d:rr(18,56,48,26,6),c:'#BFE6D6'},                // jel
+  {d:'M47,46C43,52 43,56 47,57C51,56 51,52 47,46Z',c:'#8FC3E8'}, // damla
+  {d:cap(78,14,50,46,7),c:'#F4F6F8'},               // damlalık camı
+  {d:circ(80,12,8),c:R.kirmizi}]},                  // lastik puar
+ // Süzme: sıvı süzgeç kâğıtlı huniden behere süzülür.
+ {grup:'Adımlar',dosya:'adim_suzme',ad:'Süzme',kutu:'#CFE4F7',parts:[
+  {d:rr(24,60,52,28,7),c:R.cam},                    // beher
+  {d:rr(28,72,44,12,5),c:R.buz},                    // süzüntü
+  {d:rr(45,48,10,18,3),c:R.cam},                    // huni sapı
+  {d:'M14,18H86L57,52H43Z',c:R.cam},                // huni
+  {d:'M23,21H77L54,46H46Z',c:'#FFFFFF'},            // süzgeç kâğıdı
+  {d:'M30,24H70L61,34H39Z',c:'#F2D27A',flat:1}]},   // süzülen sıvı
+ // Hacme tamamlama: mezürde çizgiye kadar sıvı eklenir.
+ {grup:'Adımlar',dosya:'adim_hacim',ad:'Hacme tamamlama',kutu:'#CFE4F7',parts:[
+  {d:rr(22,80,56,8,4),c:R.cam},                     // ayak
+  {d:rr(34,8,32,76,6),c:R.cam},                     // mezür
+  {d:rr(38,30,24,50,4),c:R.buz},                    // sıvı
+  {d:'M38,20H46M38,40H50M38,50H46M38,60H50M38,70H46',c:D(R.cam,.45),line:1},
+  {d:'M30,30H70',c:R.kan,line:1}]},                 // tamamlama çizgisi
+ // Kapsül doldurma: açık kapsül gövdesi tozla doldurulur, kapağı yanında.
+ {grup:'Adımlar',dosya:'adim_kapsul_doldurma',ad:'Kapsül doldurma',kutu:'#FFD6C2',parts:[
+  {d:'M26,40H52V74C52,84 26,84 26,74Z',c:R.krem},   // kapsül gövdesi
+  {d:'M26,42C29,30 49,30 52,42Z',c:'#FFFFFF'},      // gövdedeki toz
+  {d:'M54,40L72,24C78,19 88,28 82,34L64,50Z',c:R.mavi}]}, // gövdeye yaslanan kapak
  // ===== Alt çubuk sekmeleri (2026-10-27). Laboratuvar sekmesi porselen havanı kullanır.
  {grup:'Sekmeler',dosya:'sekme_receteler',ad:'Reçeteler (reçete koçanı)',kutu:'#CFE4F7',parts:[
   {d:rr(20,22,60,64,6),c:R.krem},                    // kâğıt
@@ -364,7 +452,22 @@ const IKONLAR=[
   {d:'M32,25H50V42A9,9 0 0 1 32,42Z',c:R.krem,flat:1},
   {d:'M68,25H86V42A9,9 0 0 1 68,42Z',c:R.krem,flat:1},
   {d:rr(27,58,22,16,3),c:R.cam,flat:1},              // vitrin
-  {d:rr(56,58,16,26,3),c:R.mavi,flat:1}]}            // kapı
+  {d:rr(56,58,16,26,3),c:R.mavi,flat:1}]},           // kapı
+ // Formüller ve Kaynaklar sekmeleri (2026-10-28): açık formül kitabı; üst üste yatan kitaplar.
+ {grup:'Sekmeler',dosya:'sekme_formuller',ad:'Formüller (açık formül kitabı)',kutu:'#CFE4F7',parts:[
+  {d:'M8,32C24,26 40,28 50,34C60,28 76,26 92,32V82C76,76 60,76 50,82C40,76 24,76 8,82Z',c:'#2F5FB8'}, // kap
+  {d:'M13,30C26,24 40,26 50,32V78C40,72 26,70 13,76Z',c:R.krem},   // sol sayfa
+  {d:'M87,30C74,24 60,26 50,32V78C60,72 74,70 87,76Z',c:R.krem},   // sağ sayfa
+  {d:'M20,40C28,37 37,38 43,41M20,50C28,47 37,48 43,51M20,60C28,57 37,58 43,61',c:R.kremKoyu,line:1},
+  {d:'M57,41C63,38 72,37 80,40M57,51C63,48 72,47 80,50M57,61C63,58 72,57 80,60',c:R.kremKoyu,line:1}]},
+ {grup:'Sekmeler',dosya:'sekme_kaynaklar',ad:'Kaynaklar (kitap yığını)',kutu:'#FFE3A6',parts:[
+  {d:rr(12,66,74,16,4),c:R.kahve},                   // alttaki kitap
+  {d:rr(70,69,13,10,2),c:R.krem,flat:1},             // sayfa kenarı
+  {d:rr(20,50,64,16,4),c:'#2F5FB8'},
+  {d:rr(68,53,13,10,2),c:R.krem,flat:1},
+  {d:rr(16,34,62,16,4),c:R.mercan},
+  {d:rr(62,37,13,10,2),c:R.krem,flat:1},
+  {d:'M24,42H50',c:R.altin,line:1}]}                 // sırt yazısı
 ];
 
 // ---- çizim (Pharmamental üreticisinden aynen)

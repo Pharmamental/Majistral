@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:game/data/formulary.dart';
 import 'package:game/data/lab_tools.dart';
 import 'package:game/data/orders.dart';
+import 'package:game/data/references.dart';
 import 'package:game/data/stations.dart';
 import 'package:game/logic/job_store.dart';
 import 'package:game/main.dart';
+import 'package:game/models/formula.dart';
 import 'package:game/widgets/grow_panel.dart';
 
 import 'test_fonts.dart';
@@ -68,7 +71,7 @@ Future<void> _closeSheet(WidgetTester tester) async {
 void main() {
   setUpAll(loadAppFonts);
 
-  testWidgets('alt çubukla üç bölüm arasında geçilir', (tester) async {
+  testWidgets('alt çubukla bölümler arasında geçilir', (tester) async {
     await tester.pumpWidget(MajistralApp(store: await _store()));
     expect(find.text('0 elinde'), findsOneWidget);
 
@@ -99,7 +102,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Gelen reçeteler · 3/3 · duvar dolu'), findsOneWidget);
 
-    for (final o in prescriptionOrders) {
+    for (final o in prescriptionOrders.take(JobStore.wallSize)) {
       await _take(tester, o.magistralName);
     }
     expect(find.textContaining('Gelen reçeteler · 0/3 · yenisi'), findsOneWidget);
@@ -279,5 +282,36 @@ void main() {
     await tester.pump(const Duration(milliseconds: 500));
     expect(find.byIcon(Icons.star_rounded), findsNWidgets(2));
     expect(find.text('Acele edildi: her acele kaliteyi yarıya indirir.'), findsOneWidget);
+  });
+
+  testWidgets('Formüller: kategori › formül › pencere; arama; Kaynaklar listesi (telefon genişliği)', (tester) async {
+    tester.view.physicalSize = const Size(1080, 2340); // 360 × 780
+    tester.view.devicePixelRatio = 3;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(MajistralApp(store: await _store()));
+
+    await tester.tap(find.text('Formüller'));
+    await tester.pumpAndSettle();
+    expect(find.text('300 majistral, 6 kategori'), findsOneWidget);
+    await tester.tap(find.text('Jeller'));
+    await tester.pumpAndSettle();
+    final gel = formulasOf(FormulaCategory.jel).first;
+    await tester.tap(find.text(gel.name));
+    await tester.pumpAndSettle();
+    for (final title in ['Ne işe yarar', 'Hangi maddeler', 'Nasıl yapılır', 'Kaynaklar']) {
+      expect(find.descendant(of: find.byType(GrowPanel), matching: find.text(title)), findsOneWidget);
+    }
+    await tester.tap(find.text('Kapat'));
+    await tester.pumpAndSettle();
+
+    await tester.enterText(find.byType(TextField), 'çinko oksit');
+    await tester.pumpAndSettle();
+    expect(find.textContaining(' sonuç'), findsOneWidget);
+    expect(find.text('0 sonuç'), findsNothing);
+
+    await tester.tap(find.text('Kaynaklar').last);
+    await tester.pumpAndSettle();
+    expect(find.text('${allReferences.length} güvenilir kaynak'), findsOneWidget);
+    expect(find.text(ReferenceKind.farmakope.title), findsOneWidget);
   });
 }

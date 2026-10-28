@@ -116,4 +116,63 @@ const List<PrescriptionOrder> prescriptionOrders = [
       PrescriptionStep('Soğutma', tool: StepTool.kapsul, minutes: 8),
     ],
   ),
+  // Formül kitabından (2026-10-28): en sık adımlar laboratuvarda. Elekten
+  // geçirme (pudra, kapsül), karıştırma, şişirme ve hacme tamamlama (jel),
+  // kapsül doldurma. Formül ve kaynaklar data/formulary/ içinde.
+  PrescriptionOrder(
+    doctorName: 'Dr. Ayşe',
+    doctorBranch: 'Çocuk Hastalıkları',
+    patientName: 'B. Kaya',
+    magistralName: 'Çinko Oksitli Nişasta Pudrası',
+    purpose: 'Bez bölgesini kuru tutan, talksız koruyucu pudra',
+    usedFor: 'Bebeklerde pişik ve nemli deride; yüze sürülmez',
+    ingredients: [
+      Ingredient('Çinko Oksit', '10 g'),
+      Ingredient('Nişasta', 'ad 100 g'),
+    ],
+    steps: [
+      PrescriptionStep('Ezme', tool: StepTool.havan, minutes: 2, notWith: _tozHavani),
+      PrescriptionStep('Geometrik seyreltme', tool: StepTool.havan, minutes: 4, notWith: _tozHavani),
+      PrescriptionStep('Elekten geçirme', tool: StepTool.elek, minutes: 3),
+    ],
+  ),
+  PrescriptionOrder(
+    doctorName: 'Dr. Murat',
+    doctorBranch: 'Dermatoloji',
+    patientName: 'S. Aksoy',
+    magistralName: 'Hidroksietilselüloz Jeli %2,5',
+    purpose: 'Serinletici, yağsız sulu jel bazı',
+    usedFor: 'Etkin madde katılacak jellerde baz olarak; yağsız ürün istenen deride',
+    ingredients: [
+      Ingredient('Hidroksietilselüloz', '2,5 g'),
+      Ingredient('Gliserin', '10 g'),
+      Ingredient('Distile Su', 'ad 100 g'),
+    ],
+    steps: [
+      // DAB/NRF: toz gliserinle ıslatılır (topak olmasın), su eklenip şişmeye
+      // bırakılır, sonra suyla tamamlanır.
+      PrescriptionStep('Karıştırma', tool: StepTool.beher, minutes: 2),
+      PrescriptionStep('Şişirme', tool: StepTool.beher, minutes: 10),
+      PrescriptionStep('Hacme tamamlama', tool: StepTool.mezur, minutes: 2),
+    ],
+  ),
+  PrescriptionOrder(
+    doctorName: 'Dr. Leyla',
+    doctorBranch: 'Kadın Hastalıkları',
+    patientName: 'N. Çelik',
+    magistralName: 'Folik Asit Kapsülü 1 mg',
+    purpose: 'Folat eksikliğini gideren vitamin kapsülü',
+    usedFor: 'Folat eksikliği anemisinde ve gebelik öncesi destekte',
+    ingredients: [
+      Ingredient('Folik Asit', '30 mg'),
+      Ingredient('Laktoz', 'ad 30 kapsül'),
+    ],
+    batchNote: '30 kapsül (3 numara) hazırla.',
+    steps: [
+      PrescriptionStep('Ezme', tool: StepTool.havan, minutes: 1, notWith: _tozHavani),
+      PrescriptionStep('Geometrik seyreltme', tool: StepTool.havan, minutes: 4, notWith: _tozHavani),
+      PrescriptionStep('Elekten geçirme', tool: StepTool.elek, minutes: 2),
+      PrescriptionStep('Kapsül doldurma', tool: StepTool.kapsulAleti, minutes: 6),
+    ],
+  ),
 ];

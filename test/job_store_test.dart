@@ -218,7 +218,8 @@ void main() {
 
   test('ilk açılışta duvar 3 reçeteyle dolu; doluyken yeni reçete gelmez', () async {
     final store = await JobStore.load(now: () => clock);
-    expect([for (final w in store.wall) w.magistralName], [for (final o in prescriptionOrders) o.magistralName]);
+    expect([for (final w in store.wall) w.magistralName],
+        [for (final o in prescriptionOrders.take(JobStore.wallSize)) o.magistralName]);
     expect(store.untilNextArrival, isNull);
     clock = clock.add(const Duration(hours: 2));
     expect(store.wall, hasLength(JobStore.wallSize));
@@ -229,7 +230,7 @@ void main() {
     clock = clock.add(const Duration(minutes: 15)); // sayaç 10. dakikada doldu, duvar dolu
     await take(store, order);
     expect(store.wall, hasLength(3)); // yerine hemen yenisi geldi
-    expect(store.wall.last.magistralName, order.magistralName); // reçeteler sırayla döner
+    expect(store.wall.last.magistralName, prescriptionOrders[JobStore.wallSize].magistralName); // sırayla döner
 
     await take(store, zno);
     expect(store.wall, hasLength(2));
@@ -248,7 +249,7 @@ void main() {
 
   test('kapalıyken de reçete gelir ama duvar 3\'ü geçmez; kayıtta kalır', () async {
     final store = await JobStore.load(now: () => clock);
-    for (final o in prescriptionOrders) {
+    for (final o in prescriptionOrders.take(JobStore.wallSize)) {
       await take(store, o);
     }
     expect(store.wall, isEmpty);
@@ -261,7 +262,8 @@ void main() {
   });
 
   test('aynı reçete ikinci kez gelince iki iş ayrı tutulur', () async {
-    final store = await JobStore.load(now: () => clock);
+    // Üç reçetelik dönüşte salisilik asit 10 dakika sonra yeniden gelir.
+    final store = await JobStore.load(now: () => clock, orders: prescriptionOrders.take(3).toList());
     final first = await take(store, order);
     clock = clock.add(const Duration(minutes: 10));
     final second = await take(store, order); // dönüşte yeniden gelen salisilik asit

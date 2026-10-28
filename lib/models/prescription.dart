@@ -1,7 +1,9 @@
 /// Bir adımın hangi tür aletle yapıldığı. Laboratuvarda o türün sahip olunan
 /// aletleri durur (data/lab_tools.dart); oyuncu alete basıp reçeteyi seçer
 /// (Tuğrul, 2026-10-27).
-enum StepTool { havan, karistirma, isitma, kapsul }
+/// Beher, mezür, elek ve kapsül doldurma aleti formül kitabının en sık
+/// adımları için eklendi (2026-10-28).
+enum StepTool { havan, karistirma, isitma, kapsul, beher, mezur, elek, kapsulAleti }
 
 /// Her hazırlama adımının kendi oyuncak blok ikonu (tools/ikon_blok, "Adımlar").
 /// Adım, eczacının madde üzerinde eliyle, bir aletle ya da bir yöntemle yaptığı
@@ -15,6 +17,14 @@ const stepIcons = {
   'Çözme': 'cozme',
   'Emülsifikasyon': 'emulsifikasyon',
   'Soğutma': 'sogutma',
+  // Formül kitabındaki öteki adımlar (2026-10-28). Karıştırma beherde bagetle.
+  'Karıştırma': 'karistirma_sivi',
+  'Elekten geçirme': 'elek',
+  'Şişirme': 'sisirme',
+  'Nötralleştirme': 'notrallestirme',
+  'Süzme': 'suzme',
+  'Hacme tamamlama': 'hacim',
+  'Kapsül doldurma': 'kapsul_doldurma',
 };
 
 /// Adım adına göre ikon; kayıttaki eski işlerin adımları da böyle bulunur.

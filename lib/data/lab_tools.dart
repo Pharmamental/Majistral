@@ -34,5 +34,10 @@ List<LabTool> labTools({bool Function(ShopItem item) owns = isOwned}) {
       tool(mixers.last, StepTool.karistirma),
     tool(_owned('Isıtma', owns).last, StepTool.isitma),
     for (final i in _owned('Kaplar', owns)) tool(i, StepTool.kapsul),
+    // Formül kitabının en sık adımları (2026-10-28).
+    for (final i in _owned('Cam eşya', owns))
+      tool(i, i.name == 'Mezür' ? StepTool.mezur : StepTool.beher),
+    for (final i in _owned('Toz aletleri', owns))
+      tool(i, i.name == 'Elek' ? StepTool.elek : StepTool.kapsulAleti),
   ];
 }

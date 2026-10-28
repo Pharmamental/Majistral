@@ -122,6 +122,49 @@ const List<Station> stations = [
       ),
     ],
   ),
+  // Formül kitabında en sık geçen adımların aletleri (2026-10-28): karıştırma ve
+  // şişirme beherde bagetle, hacme tamamlama mezürde, elekten geçirme elekte,
+  // kapsül doldurma delikli plakada (Allen; Aulton; Ph. Eur. kapsül monografı).
+  Station(
+    name: 'Cam eşya',
+    upgradePath: false,
+    tiers: [
+      ShopItem(
+        name: 'Beher ve baget',
+        imagePath: 'assets/images/ikon/ikon_beher_baget.png',
+        description: 'Sıvıları karıştırma, jel yapıcıyı suda şişirme.',
+        icon: Icons.science_outlined,
+        color: AppColors.rusty,
+      ),
+      ShopItem(
+        name: 'Mezür',
+        imagePath: 'assets/images/ikon/ikon_mezur.png',
+        description: 'Çözelti, jel ve süspansiyonu çizgiye kadar tamamlama.',
+        icon: Icons.straighten_rounded,
+        color: AppColors.rusty,
+      ),
+    ],
+  ),
+  Station(
+    name: 'Toz aletleri',
+    upgradePath: false,
+    tiers: [
+      ShopItem(
+        name: 'Elek',
+        imagePath: 'assets/images/ikon/ikon_elek.png',
+        description: 'Toz karışımını topaksız, aynı incelikte yapar.',
+        icon: Icons.grid_on_rounded,
+        color: AppColors.rusty,
+      ),
+      ShopItem(
+        name: 'Kapsül doldurma aleti',
+        imagePath: 'assets/images/ikon/ikon_kapsul_makinesi.png',
+        description: 'Delikli plaka: tozu aynı anda birçok kapsüle eşit doldurur.',
+        icon: Icons.medication_outlined,
+        color: AppColors.rusty,
+      ),
+    ],
+  ),
   Station(
     name: 'Ambalaj',
     tiers: [

@@ -120,7 +120,7 @@ class _JobStatusState extends State<JobStatus> with SecondTick {
                 ChunkyButton(
                   label: 'Laboratuvara git',
                   icon: Icons.science_rounded,
-                  onPressed: () => HomeScreen.showTab(context, 1),
+                  onPressed: () => HomeScreen.showTab(context, HomeScreen.lab),
                 ),
             ],
           ),

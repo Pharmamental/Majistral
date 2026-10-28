@@ -60,6 +60,7 @@ final List<ChemicalGroup> chemicalGroups = [
       _chem('Sodyum Lauril Sülfat', 'Anyonik emülgatör (HLB 40), hidrofil merhemde', 80, 'sodyum_lauril_sulfat', _mavi),
       _chem('Polisorbat 80', 'Tween 80, HLB 15; Span 80 ile karıştırılıp HLB ayarlanır', 90, 'polisorbat_80', _yesil),
       _chem('Sorbitan Monooleat', 'Span 80, HLB 4,3; Tween 80 ile karıştırılır', 90, 'sorbitan_monooleat', _altin),
+      _chem('Hidroksietilselüloz', 'Jel yapıcı; suda şişip berrak jel olur', 90, 'hidroksietilseluloz', _yesil),
     ],
   ),
   (
@@ -84,6 +85,7 @@ final List<ChemicalGroup> chemicalGroups = [
     subtitle: 'Pastaların toz kısmı',
     items: [
       _chem('Nişasta', 'Pastada toz kısım; USP çinko oksit pastasında %25', 40, 'nisasta', _yesil),
+      _chem('Laktoz', 'Kapsülde dolgu: az miktardaki etkin maddeyi seyreltir', 40, 'laktoz', _mavi),
     ],
   ),
   (
@@ -100,6 +102,7 @@ final List<ChemicalGroup> chemicalGroups = [
       _chem('Mentol', 'Serinletir, kaşıntıyı giderir', 120, 'mentol', _altin),
       _chem('Kafur', 'Kaşıntı giderir, hafif uyuşturur', 110, 'kafur', _mor),
       _chem('Benzil Benzoat', 'Uyuz tedavisinde', 130, 'benzil_benzoat', _mercan),
+      _chem('Folik Asit', 'B9 vitamini; folat eksikliği anemisinde', 110, 'folik_asit', _altin),
     ],
   ),
 ];

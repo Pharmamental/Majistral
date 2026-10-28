@@ -2,16 +2,21 @@ import 'package:flutter/material.dart';
 
 import '../logic/job_store.dart';
 import '../widgets/game_tab_bar.dart';
+import 'formulary_screen.dart';
 import 'lab_screen.dart';
 import 'market_screen.dart';
 import 'orders_screen.dart';
+import 'references_screen.dart';
 
-/// Uygulamanın kabuğu: üç ana bölüm alt gezinme çubuğunda (Tasarım Rehberi,
+/// Uygulamanın kabuğu: beş ana bölüm alt gezinme çubuğunda (Tasarım Rehberi,
 /// Navigasyon: 3–5 üst düzey hedef için alt çubuk; başparmak bölgesinde),
 /// ortada laboratuvar ([GameTabBar]).
 /// Hazır ya da oyuncuyu bekleyen iş varsa Reçeteler simgesinde rozet görünür.
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  /// Laboratuvar sekmesinin sırası (ortada).
+  static const lab = 2;
 
   /// Alt çubuktaki [index]. sekmeye geçer (kartın "Laboratuvara git" düğmesi).
   static void showTab(BuildContext context, int index) =>
@@ -42,7 +47,13 @@ class _HomeScreenState extends State<HomeScreen> {
           index: _index,
           children: [
             // Görünmeyen sekmenin animasyonları (termometre) dursun.
-            for (final (i, tab) in const [OrdersScreen(), LabScreen(), MarketScreen()].indexed)
+            for (final (i, tab) in const [
+              OrdersScreen(),
+              FormularyScreen(),
+              LabScreen(),
+              MarketScreen(),
+              ReferencesScreen(),
+            ].indexed)
               TickerMode(enabled: i == _index, child: tab),
           ],
         ),
@@ -53,8 +64,10 @@ class _HomeScreenState extends State<HomeScreen> {
         badges: {0: ready},
         tabs: const [
           (label: 'Reçeteler', image: 'assets/images/ikon/ikon_sekme_receteler.png'),
+          (label: 'Formüller', image: 'assets/images/ikon/ikon_sekme_formuller.png'),
           (label: 'Laboratuvar', image: 'assets/images/ikon/ikon_havan_porselen.png'),
           (label: 'Market', image: 'assets/images/ikon/ikon_sekme_market.png'),
+          (label: 'Kaynaklar', image: 'assets/images/ikon/ikon_sekme_kaynaklar.png'),
         ],
       ),
     );

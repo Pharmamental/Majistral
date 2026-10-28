@@ -42,12 +42,14 @@ asistan yönetir.
 lib/
 ├── main.dart          Uygulama girişi (MajistralApp)
 ├── theme/             tokens (renk, boşluk, köşe, AppText yazı stilleri), app_theme
-├── models/            shop_item (ShopItem, Station), prescription, prep_job
+├── models/            shop_item (ShopItem, Station), prescription, prep_job, formula (formül kitabı)
 ├── data/              stations, lab_tools (laboratuvardaki aletler), market_items, orders
-│                      (taslak içerik, doğrulanmadı)
+│                      (taslak içerik, doğrulanmadı), references (kaynaklar), formulary +
+│                      formulary/<kategori>.dart (300 formül, 6 × 50)
 ├── logic/             job_store (kabul edilen reçeteler, adım başlatma, acele, telefona kayıt,
 │                      JobScope ile ekranlara verilir)
-├── screens/           home (alt çubuklu kabuk), orders (Reçeteler), lab (Laboratuvar), market
+├── screens/           home (alt çubuklu kabuk), orders (Reçeteler), formulary (Formüller),
+│                      lab (Laboratuvar), market, references (Kaynaklar)
 └── widgets/           chunky_button (3B düğme), game_tab_bar (alt çubuk), back_pill, prescription_card,
                        job_status, tool_sheet (alet → reçete), heating_sheet, result_view,
                        market_widgets, thermometer_panel/painter
@@ -149,13 +151,32 @@ lib/
 - Reçete kartı koçan biçiminde (Tuğrul, 2026-10-27): üst kenar yarım daire delikli, alt köşeler
   yuvarlak (`PrescriptionStubBorder`).
 - Alt çubuk (Tuğrul, 2026-10-27): ortada laboratuvar, çubuktan taşan büyük daire (porselen havan);
-  yanlarda Reçeteler (reçete koçanı) ve Market (tenteli dükkân) oyuncak blok ikonları
+  yanlarda Reçeteler (reçete koçanı), Formüller (açık kitap), Market (tenteli dükkân) ve Kaynaklar
+  (kitap yığını) oyuncak blok ikonları
   (`GameTabBar`). Seçim her yerde aynı: adı kobalt yazı + altında kısa kobalt çizgi (`SelectionMark`); alt çubukta çizgi sekmeden sekmeye kayar, yolda uzayıp yerinde kısalır (`_SlidingMark`, Tuğrul 2026-10-27); daire seçimle renk değiştirmez. İkonlar `uretici.html` "Sekmeler" grubunda.
 - Market hammaddeleri (2026-10-26): `chemicalGroups`, 6 rol grubunda 31 madde; liste ve kaynakları
   beyinde (`knowledge/concepts/majistral-hammaddeler.md`). Reçeteye yeni madde girerse markete de
   eklenir; her maddenin oyuncak blok ikonu olur (`test/market_items_test.dart` ikisini de denetler).
   İkonlar `tools/ikon_blok/uretici.html`'de; görünüşte benzer kardeş maddeler (Tween/Span, setil/
   stearil, iki paraben) aynı kapta çizilir, kapak rengiyle ayrılır.
+- Formül kitabı (Tuğrul, 2026-10-28, /goal): 6 kategori farmasötik şekle göre (USP <1151>, Ph. Eur.
+  şekil monografları): merhem ve patlar, kremler, jeller, çözeltiler, süspansiyonlar, tozlar ve
+  kapsüller; her birinde 50, toplam 300 (`lib/data/formulary/`). Her formül üç soruyu cevaplar: ne
+  işe yarar (`use`), hangi maddeler, nasıl yapılır (adımlar `formulaStepNames` içinden, her adımın
+  ikonu var). Her formül en az iki kaynağa dayanır (`refs` → `data/references.dart`); yalnız
+  farmakope, devlet kurumu, ders kitabı, makale, üniversite kaynağı; blog ve ticari site yok; metin
+  kendi sözlerimizle, alıntı yok. Dışarıda: kırmızı/yeşil/turuncu/mor reçeteli ilaçlar, hormon,
+  kortikosteroid, retinoid, NIOSH tehlikeli ilaçlar, antiaritmikler, klorokin türevleri, triklosan,
+  kurşun/cıva/borik asit/kloroform, sistemik antibiyotik. İçerik taslak: alt ajanlar formüllerin
+  bir kısmını bellekten yazdı (özellikle kapsül dolgu miktarları ve bazı bazlar); yayından önce
+  öğretim üyesi onayı şart. Alt çubuk beş sekme: Reçeteler, Formüller, Laboratuvar (ortada),
+  Market, Kaynaklar (`HomeScreen.lab` = 2).
+- Laboratuvarın yeni adımları (2026-10-28): formül kitabında en sık geçen ve laboratuvarda olmayan
+  adımlar eklendi: Hacme tamamlama (146), Karıştırma (96), Elekten geçirme (78), Şişirme (53),
+  Kapsül doldurma (28, temel teknik diye). Aletler: Beher ve baget, Mezür, Elek, Kapsül doldurma
+  aleti (`Cam eşya`, `Toz aletleri`). Yeni reçeteler: çinko oksitli nişasta pudrası, HEC jeli,
+  folik asit kapsülü; markete hidroksietilselüloz, laktoz, folik asit eklendi. Bir adım formüllerin
+  %10'undan fazlasında geçiyorsa laboratuvarda yapılabilmeli (`test/formulary_test.dart`).
 - Testler gerçek fontu `test/test_fonts.dart` ile yükler; taşma testleri böyle gerçeği yansıtır.
 - Süren işler `shared_preferences` ile telefona kaydedilir; saat şimdilik cihaz saati
   (`JobStore.now`). Sunucu saati gelene kadar saat hilesi mümkün; kapanmamış bir açık.

@@ -9,8 +9,8 @@ import '../theme/tokens.dart';
 typedef GameTab = ({String label, String image});
 
 /// Alt çubuk (Tuğrul, 2026-10-27, "ortada laboratuvar"): oyunun kalbi
-/// laboratuvar ortada, çubuktan taşan büyük porselen daire; yanlarda Reçeteler
-/// ve Market. Seçili sekme adının kobalt yazısı ve altındaki kısa kobalt
+/// laboratuvar ortada, çubuktan taşan büyük porselen daire; yanlarda Reçeteler,
+/// Formüller, Market ve Kaynaklar (2026-10-28). Seçili sekme adının kobalt yazısı ve altındaki kısa kobalt
 /// çizgiyle belli olur; çizgi sekmeden sekmeye kayar ([_SlidingMark]), daire
 /// seçimle değişmez; seçilmeyen ikonlar soluk durur. Taşan daire çubuğun kendi
 /// alanında kalır, böylece dokunulabilir.
@@ -23,7 +23,7 @@ class GameTabBar extends StatelessWidget {
     this.badges = const {},
   });
 
-  /// Üç bölüm; ortadaki büyük çizilir.
+  /// Bölümler (tek sayıda); ortadaki büyük çizilir.
   final List<GameTab> tabs;
   final int index;
   final ValueChanged<int> onSelect;
@@ -34,8 +34,10 @@ class GameTabBar extends StatelessWidget {
   static const double _barHeight = 76;
   static const double _lift = 30;
 
+  int get _center => tabs.length ~/ 2;
+
   /// Ortadaki bölüm biraz geniş.
-  static int _flex(int i) => i == 1 ? 11 : 10;
+  int _flex(int i) => i == _center ? 11 : 10;
 
   /// Her bölümün ortası, çubuk genişliğinin oranı olarak (0–1).
   List<double> _centers() {
@@ -77,7 +79,7 @@ class GameTabBar extends StatelessWidget {
                     flex: _flex(i),
                     child: _TabButton(
                       tab: tab,
-                      big: i == 1,
+                      big: i == _center,
                       selected: i == index,
                       badge: badges[i] ?? 0,
                       onTap: () => onSelect(i),
