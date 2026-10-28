@@ -228,7 +228,9 @@ lib/
 - Testler gerçek fontu `test/test_fonts.dart` ile yükler; taşma testleri böyle gerçeği yansıtır.
 - Süren işler `shared_preferences` ile telefona kaydedilir; saat şimdilik cihaz saati
   (`JobStore.now`). Sunucu saati gelene kadar saat hilesi mümkün; kapanmamış bir açık.
-- Ekonomi, reklam ve bildirim henüz yok; satın alma düğmeleri bilerek boş.
+- Ekonomi, reklam ve bildirim henüz yok; satın alma düğmeleri bilerek boş. Ekonomi önerisi
+  (2026-10-28, onay bekliyor): teslim = hammadde bedeli + adım başına işçilik × yıldız, kimyasal
+  gramla harcanır, paketle alınır, depo veresiyesi; beyinde `knowledge/concepts/majistral-ekonomi.md`.
 - Eski deneme (Temmuz 2026, tek dosya) git geçmişinde: ilk commit `0bd231c`. 2026-10-25'te market
   düzeni, istasyon kademeleri, reçete kartı, termometre ve görseller oradan seçilerek taşındı.
   Taşınmayan görseller (`Capsule`, `Kalıp_ikon`, `Maserasyon_ikon`, `Oyun_tick`, `Carpi`)
