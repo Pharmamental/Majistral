@@ -495,15 +495,15 @@ const merhemFormulas = <Formula>[
     use: 'Kalın pullu sedef ve nasırlı ciltte pulları yumuşatıp kaldırmak için kullanılır.',
     ingredients: [
       Ingredient('Salisilik asit', '5 g'),
-      Ingredient('Sıvı parafin', '5 g'),
+      Ingredient('Sıvı parafin', '3 g'),
       Ingredient('Beyaz vazelin', 'ad 100 g'),
     ],
     steps: [
       FormulaStep('Ezme', 'Salisilik asit porselen havanda ince toz olana kadar ezilir; metal spatül kullanılmaz.'),
-      FormulaStep('Levigasyon', 'Toz eşit miktar sıvı parafinle pürüzsüz bir hamur yapılır.'),
+      FormulaStep('Levigasyon', 'Toz sıvı parafinle pürüzsüz bir hamur yapılır.'),
       FormulaStep('Geometrik seyreltme', 'Vazelin hamura eşit parçalar hâlinde eklenerek karıştırılır.'),
     ],
-    refs: ['nrf', 'merhem-altmeyer', 'martindale'],
+    refs: ['fn-es', 'nrf', 'merhem-altmeyer', 'martindale'],
   ),
   Formula(
     name: 'Salisilik asitli vazelin %10',

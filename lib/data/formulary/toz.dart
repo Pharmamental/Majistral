@@ -120,14 +120,14 @@ const tozFormulas = <Formula>[
     use: 'Kaşıntılı ve terleyen deride serinlik veren, kaşıntıyı azaltan pudradır.',
     ingredients: [
       Ingredient('Mentol', '1 g'),
-      Ingredient('Çinko, nişasta ve talk pudrası', 'ad 100 g'),
+      Ingredient('Talk (asbestsiz, saflaştırılmış)', 'ad 100 g'),
     ],
     steps: [
       FormulaStep('Ezme', 'Mentol kristalleri birkaç damla alkolle havanda ezilerek çok ince dağıtılır.'),
-      FormulaStep('Geometrik seyreltme', 'Mentol pudra tabanına eşit parçalar hâlinde katılır.'),
+      FormulaStep('Geometrik seyreltme', 'Mentol talka eşit parçalar hâlinde katılır.'),
       FormulaStep('Elekten geçirme', 'Pudra elekten geçirilir, mentol topağı kalmaz.'),
     ],
-    refs: ['martindale', 'remington'],
+    refs: ['fn-es', 'martindale', 'remington'],
   ),
   Formula(
     name: 'Kâfurlu mentollü pudra',
@@ -698,7 +698,7 @@ const tozFormulas = <Formula>[
     steps: [
       FormulaStep('Ezme', 'Askorbik asit kristalleri havanda ince toz hâline getirilir; metal spatülden kaçınılır.'),
       FormulaStep('Elekten geçirme', 'Toz elekten geçirilir.'),
-      FormulaStep('Kapsül doldurma', 'Toz 30 adet 0 numara kapsüle zımbalama yöntemiyle doldurulur.'),
+      FormulaStep('Kapsül doldurma', 'Toz 30 adet 00 numara kapsüle zımbalama yöntemiyle doldurulur.'),
     ],
     refs: ['martindale', 'toz-bnf'],
   ),
@@ -796,18 +796,18 @@ const tozFormulas = <Formula>[
     refs: ['martindale', 'toz-bnfc'],
   ),
   Formula(
-    name: 'L-karnitin kapsülü 250 mg',
+    name: 'Spironolakton kapsülü 5 mg',
     category: FormulaCategory.toz,
-    use: 'Karnitin eksikliğinde ve bazı metabolizma hastalıklarında kullanılan destektir.',
+    use: 'Çocuklarda ödemde potasyum tutan idrar söktürücüyü düşük dozda vermek için kullanılır.',
     ingredients: [
-      Ingredient('Levokarnitin', '7,5 g (30 kapsül için)'),
-      Ingredient('Mikrokristalin selüloz', 'ad 30 kapsül (0 numara)'),
+      Ingredient('Spironolakton', '150 mg (30 kapsül için)'),
+      Ingredient('Mikrokristalin selüloz', 'ad 30 kapsül (3 numara)'),
     ],
     steps: [
-      FormulaStep('Ezme', 'Nem çeken levokarnitin kuru havanda hızlıca ince toz hâline getirilir.'),
-      FormulaStep('Geometrik seyreltme', 'Levokarnitin selülozla eşit parçalar hâlinde karıştırılır.'),
+      FormulaStep('Ezme', 'Spironolakton havanda ince toz hâline getirilir.'),
+      FormulaStep('Geometrik seyreltme', 'Etken madde selülozla birkaç basamakta eşit parçalar hâlinde seyreltilir.'),
       FormulaStep('Elekten geçirme', 'Karışım elekten geçirilir.'),
-      FormulaStep('Kapsül doldurma', 'Toz 30 adet 0 numara kapsüle hemen doldurulur.'),
+      FormulaStep('Kapsül doldurma', 'Toz 30 adet 3 numara kapsüle doldurulur.'),
     ],
     refs: ['martindale', 'toz-bnfc'],
   ),

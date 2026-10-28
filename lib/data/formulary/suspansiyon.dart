@@ -300,11 +300,11 @@ const suspansiyonFormulas = <Formula>[
     refs: ['suspansiyon-allen-1998a', 'trissel'],
   ),
   Formula(
-    name: 'Hidralazin oral süspansiyonu 4 mg/mL',
+    name: 'Spironolakton oral süspansiyonu 25 mg/mL',
     category: FormulaCategory.suspansiyon,
-    use: 'Çocuklarda yüksek tansiyonda hidralazini ölçülü dozda vermek için.',
+    use: 'Çocuklarda ödemde ve kalp yetmezliğinde potasyum tutan idrar söktürücüyü ölçülü dozda vermek için.',
     ingredients: [
-      Ingredient('Hidralazin HCl tableti (50 mg)', '8 tablet (400 mg)'),
+      Ingredient('Spironolakton tableti (100 mg)', '25 tablet (2,5 g)'),
       Ingredient('Süspansiyon bazı + tatlandırılmış baz (1:1)', 'ad 100 mL'),
     ],
     steps: [
@@ -313,7 +313,7 @@ const suspansiyonFormulas = <Formula>[
       FormulaStep('Geometrik seyreltme', 'Taşıyıcıyı azar azar ekleyip karıştırın.'),
       FormulaStep('Hacme tamamlama', 'Şişeye alıp taşıyıcıyla 100 mL\'ye tamamlayın.'),
     ],
-    refs: ['suspansiyon-allen-1998a', 'trissel'],
+    refs: ['suspansiyon-allen-1996c', 'trissel'],
   ),
   Formula(
     name: 'Labetalol oral süspansiyonu 40 mg/mL',

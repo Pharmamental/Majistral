@@ -79,7 +79,7 @@ const jelFormulas = <Formula>[
     category: FormulaCategory.jel,
     use: 'Etken madde katılabilen, iyonik olmayan, serinletici sulu jel temelidir.',
     ingredients: [
-      Ingredient('Hidroksietilselüloz 250', '2,5 g'),
+      Ingredient('Hidroksietilselüloz 10000', '2,5 g'),
       Ingredient('Gliserol %85', '10 g'),
       Ingredient('Saf su', 'ad 100 g'),
     ],

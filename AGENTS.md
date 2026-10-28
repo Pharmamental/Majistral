@@ -197,8 +197,10 @@ lib/
   (`JobStore.deliveries`, anahtar `deliveries_v1`; adlar `profile_v1`). Her oyun reçetesinin formül
   kitabındaki karşılığı `PrescriptionOrder.formula`. Liderlik tablosu ve satılık çerçeve yok.
   Sonraya: reçete defteri, seri (onarma haklı), kazanılan çizimli avatar çerçeveleri.
-- Avatarlar (Tuğrul, 2026-10-28): önlüklü hayvan eczacılar, çizgi film sadeliğinde. Oyuncak blok
-  tarzında çizilmez ("oyuncak blok gibi çizme"); stil 10 baykuş örneği arasından seçilecek.
+- Avatarlar (Tuğrul, 2026-10-28): önlüklü hayvan eczacılar. Oyuncak blok tarzında çizilmez
+  ("oyuncak blok gibi çizme"). Dörtte üç açıdan (45° yandan), kalın koyu kontur, düz renk + uzak
+  yanda tek ton gölge; aşırı sade de değil ("bu kadar da basit çizme"): tüy dokusu, kaş, renkli
+  göz, önlükte cep ve yaka kartı gibi ayrıntılar olur. Yüz sevimli kalır, kaşlar V çatmaz.
 - Testler gerçek fontu `test/test_fonts.dart` ile yükler; taşma testleri böyle gerçeği yansıtır.
 - Süren işler `shared_preferences` ile telefona kaydedilir; saat şimdilik cihaz saati
   (`JobStore.now`). Sunucu saati gelene kadar saat hilesi mümkün; kapanmamış bir açık.

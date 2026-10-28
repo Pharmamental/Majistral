@@ -338,7 +338,7 @@ const kremFormulas = <Formula>[
       Ingredient('Üre', '5 g'),
       Ingredient('Laktik asit', '1 g'),
       Ingredient('Sodyum laktat çözeltisi %50', '4 g'),
-      Ingredient('Anyonik hidrofil krem (DAB)', '90 g'),
+      Ingredient('Koruyuculu anyonik hidrofil krem (sorbik asitli)', '90 g'),
     ],
     steps: [
       FormulaStep('Ezme', 'Üre kristallerini havanda ince toz hâline getir.'),
@@ -355,7 +355,7 @@ const kremFormulas = <Formula>[
       Ingredient('Üre', '10 g'),
       Ingredient('Laktik asit', '1 g'),
       Ingredient('Sodyum laktat çözeltisi %50', '4 g'),
-      Ingredient('Anyonik hidrofil krem (DAB)', '85 g'),
+      Ingredient('Koruyuculu anyonik hidrofil krem (sorbik asitli)', '85 g'),
     ],
     steps: [
       FormulaStep('Ezme', 'Üreyi havanda ince toz hâline getir.'),

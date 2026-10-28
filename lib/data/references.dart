@@ -85,6 +85,13 @@ const coreReferences = <Reference>[
     url: 'https://dacnrf.pharmazeutische-zeitung.de',
   ),
   Reference(
+    id: 'fn-es',
+    kind: ReferenceKind.farmakope,
+    citation: 'Formulario Nacional (İspanya ulusal formüleri), 2. baskı ve güncellemeleri. Agencia Española de '
+        'Medicamentos y Productos Sanitarios (AEMPS), Madrid.',
+    url: 'https://www.aemps.gob.es',
+  ),
+  Reference(
     id: 'fna',
     kind: ReferenceKind.farmakope,
     citation: 'Formularium der Nederlandse Apothekers (FNA). Koninklijke Nederlandse Maatschappij ter '
