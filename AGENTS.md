@@ -175,7 +175,9 @@ lib/
   farmakope, devlet kurumu, ders kitabı, makale, üniversite kaynağı; blog ve ticari site yok; metin
   kendi sözlerimizle, alıntı yok. Dışarıda: kırmızı/yeşil/turuncu/mor reçeteli ilaçlar, hormon,
   kortikosteroid, retinoid, NIOSH tehlikeli ilaçlar, antiaritmikler, klorokin türevleri, triklosan,
-  kurşun/cıva/borik asit/kloroform, sistemik antibiyotik. İçerik taslak: alt ajanlar formüllerin
+  kurşun/cıva/borik asit/kloroform, sistemik antibiyotik. Sınırda kalan da dışarıda (Tuğrul,
+  2026-10-28, "hepsini çıkar"): melatonin, ritim ilacı sayılan beta bloker ve kalsiyum kanal
+  blokerleri (propranolol, metoprolol, verapamil, diltiazem), ağızdan antifungal (terbinafin). İçerik taslak: alt ajanlar formüllerin
   bir kısmını bellekten yazdı (özellikle kapsül dolgu miktarları ve bazı bazlar); yayından önce
   öğretim üyesi onayı şart. Raf ömrü `Formula.shelfLife` (kaynağın verdiği; kapsülde USP <795>
   180 gün). 2026-10-28'de 28 kapsül ve 33 tabletten süspansiyon kaynakla tek tek kontrol edildi;
