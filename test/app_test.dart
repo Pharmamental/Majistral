@@ -53,13 +53,13 @@ Future<void> _take(WidgetTester tester, String magistralName) async {
   await tester.pumpAndSettle();
 }
 
-/// Laboratuvarda alete basar, reçete penceresini açar.
+/// Laboratuvarda adım kartına basar, reçete penceresini açar.
 Future<void> _pickTool(WidgetTester tester, String name) async {
   await tester.tap(find.text(name));
   await tester.pumpAndSettle();
 }
 
-/// Açık alet penceresindeki reçete satırı.
+/// Açık adım penceresindeki reçete satırı.
 Finder _inSheet(String text) => find.descendant(of: find.byType(GrowPanel), matching: find.text(text));
 
 /// Alet penceresini boşluğa dokunarak kapatır.
@@ -78,7 +78,7 @@ void main() {
     await tester.tap(find.text('Laboratuvar'));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
-    expect(find.text('Bütün aletler boş'), findsOneWidget);
+    expect(find.text('Hiçbir adım çalışmıyor'), findsOneWidget);
     for (final t in labTools()) {
       expect(find.text(t.name), findsOneWidget);
     }
@@ -117,7 +117,7 @@ void main() {
     expect(find.text('Dr. Selin · Dermatoloji · Hasta M. Yılmaz', findRichText: true), findsOneWidget);
   });
 
-  testWidgets('hazırla reçeteyi kabul eder, her adım laboratuvarda aletten başlatılır', (tester) async {
+  testWidgets('hazırla reçeteyi kabul eder, her adım laboratuvarda kendi kartından başlatılır', (tester) async {
     await _tallScreen(tester);
     final order = prescriptionOrders.first;
     var clock = DateTime(2026, 10, 25, 12);
@@ -137,25 +137,25 @@ void main() {
     await tester.pump(const Duration(milliseconds: 300));
     expect(find.text('1 reçete seni bekliyor'), findsOneWidget);
 
-    // Su banyosuna basınca reçete sönük, nedeni yazılı.
-    await _pickTool(tester, 'Ocak ve su banyosu');
-    expect(find.text('Bu reçetede bu alete gerek yok.'), findsOneWidget);
+    // Eritme kartına basınca reçete sönük, nedeni yazılı.
+    await _pickTool(tester, 'Eritme');
+    expect(find.text('Bu reçetede bu adım yok.'), findsOneWidget);
     await tester.tap(_inSheet(order.magistralName));
     await tester.pump();
     expect(jobOf(store, order)!.runs, isEmpty);
     await _closeSheet(tester);
 
-    // Havanda reçete vurgulu; basınca ezme başlar.
-    await _pickTool(tester, 'Porselen havan');
+    // Ezme kartında reçete vurgulu; basınca ezme başlar.
+    await _pickTool(tester, 'Ezme');
     expect(find.text('Sıradaki adım: Ezme · 1 dk'), findsOneWidget);
     await tester.tap(_inSheet(order.magistralName));
     await tester.pumpAndSettle();
-    expect(find.text('1 alet çalışıyor'), findsOneWidget);
+    expect(find.text('1 adım çalışıyor'), findsOneWidget);
     clock = clock.add(const Duration(minutes: 1));
     await tester.pump(const Duration(seconds: 1));
 
-    // Levigasyon da havanda.
-    await _pickTool(tester, 'Porselen havan');
+    // Levigasyon kendi kartında.
+    await _pickTool(tester, 'Levigasyon');
     expect(find.text('Sıradaki adım: Levigasyon · 3 dk'), findsOneWidget);
     await tester.tap(_inSheet(order.magistralName));
     await tester.pumpAndSettle();
@@ -176,16 +176,14 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('1 elinde · 1 hazırlanıyor'), findsOneWidget);
 
-    // Levigasyon bitti: geometrik seyreltmede çelik spatül sönük, plastik uygun.
+    // Levigasyon bitti: geometrik seyreltme kartında çelik spatül uyarısı görünür.
     clock = clock.add(const Duration(minutes: 3));
     await tester.tap(find.text('Laboratuvar'));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
-    await _pickTool(tester, 'Çelik spatül');
-    expect(find.textContaining('çelikle tepkimeye girer'), findsOneWidget);
-    await _closeSheet(tester);
-    await _pickTool(tester, 'Plastik spatül');
+    await _pickTool(tester, 'Geometrik seyreltme');
     expect(find.text('Sıradaki adım: Geometrik seyreltme · 4 dk'), findsOneWidget);
+    expect(find.textContaining('çelikle tepkimeye girer'), findsOneWidget);
     await tester.tap(_inSheet(order.magistralName));
     await tester.pumpAndSettle();
     clock = clock.add(const Duration(minutes: 4));
@@ -231,7 +229,7 @@ void main() {
     await tester.tap(find.text('Laboratuvar'));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
-    await _pickTool(tester, 'Ocak ve su banyosu');
+    await _pickTool(tester, 'Eritme');
     await tester.tap(_inSheet(cream.magistralName));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 400));
@@ -249,7 +247,7 @@ void main() {
     final run = jobOf(store, cream)!.runs.single;
     expect(run.label, 'Eritme');
     expect(run.end, clock.add(const Duration(minutes: 6)));
-    expect(find.text('1 alet çalışıyor'), findsOneWidget);
+    expect(find.text('1 adım çalışıyor'), findsOneWidget);
   });
 
   testWidgets('acele et reklamdan sonra adımın süresini yarılar, teslimde 2 yıldız', (tester) async {
@@ -259,7 +257,7 @@ void main() {
     final store = await _store(now: () => clock);
     final tools = {for (final t in labTools()) t.name: t};
     await take(store, order);
-    await store.startStep(jobOf(store, order)!.id, tools['Porselen havan']!);
+    await store.startStep(jobOf(store, order)!.id, tools['Levigasyon']!);
     await tester.pumpWidget(MajistralApp(store: store));
     expect(find.text('05:00'), findsOneWidget);
 
@@ -274,7 +272,7 @@ void main() {
     expect(find.text('Acele et · 4 hak'), findsOneWidget);
 
     clock = clock.add(const Duration(minutes: 3));
-    await store.startStep(jobOf(store, order)!.id, tools['Plastik spatül']!);
+    await store.startStep(jobOf(store, order)!.id, tools['Geometrik seyreltme']!);
     clock = clock.add(const Duration(minutes: 7));
     await tester.pump(const Duration(seconds: 1));
     await tester.tap(find.text('Hazır · Teslim Et'));

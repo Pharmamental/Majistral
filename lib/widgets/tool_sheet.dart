@@ -8,11 +8,12 @@ import 'grow_panel.dart';
 import 'heating_sheet.dart';
 import 'job_status.dart';
 
-/// Laboratuvarda bir alete basınca açılan pencere (Tuğrul, 2026-10-27): kabul
-/// edilmiş reçeteler listelenir. Aleti şimdi kullanabilenler vurgulu ve
-/// basılabilir; kullanamayanların altında nedeni yazar. Seçilen reçetenin
-/// sıradaki adımı başlar; mini oyunlu adımda önce oyun açılır. Pencere alet
-/// kartının yerinden ([from]) büyür; mini oyun da oradan açılır.
+/// Laboratuvarda bir adım kartına basınca açılan pencere (Tuğrul, 2026-10-27,
+/// 2026-10-28): kabul edilmiş reçeteler listelenir. Bu adımı şimdi
+/// başlatabilenler vurgulu ve basılabilir; başlatamayanların altında nedeni
+/// yazar; adımın alet uyarısı (çelik spatül, cam havan) satırda görünür.
+/// Seçilen reçetede adım başlar; mini oyunlu adımda önce oyun açılır. Pencere
+/// kartın yerinden ([from]) büyür; mini oyun da oradan açılır.
 Future<void> openToolSheet(BuildContext context, LabTool tool, {required Rect from}) {
   final store = JobScope.of(context);
   return openGrowing<void>(
@@ -52,7 +53,7 @@ Future<void> openToolSheet(BuildContext context, LabTool tool, {required Rect fr
                           '${formatRemaining(busy.run.end.difference(store.now()))} kaldı.'
                     : jobs.isEmpty
                     ? 'Laboratuvarda reçete yok. Reçeteler\'de duvardan bir reçete al.'
-                    : 'Bu aletle hangi reçeteye devam edeceksin?',
+                    : 'Bu adımı hangi reçetede yapacaksın?',
                 style: AppText.body(size: 14, color: AppColors.inkMuted),
               ),
               const SizedBox(height: AppSpace.md),
@@ -136,6 +137,13 @@ class _JobRow extends StatelessWidget {
                   ok ? 'Sıradaki adım: ${step!.label} · ${step.minutes} dk' : reason,
                   style: AppText.label(size: 12, color: ok ? AppColors.accentText : AppColors.inkMuted),
                 ),
+                // Alet uyarısı (ASHP): adım kartına geçince seçim değil, uyarı.
+                if (ok)
+                  for (final caution in step!.notWith.values.toSet())
+                    Padding(
+                      padding: const EdgeInsets.only(top: 2),
+                      child: Text('Dikkat: $caution', style: AppText.label(size: 12, color: AppColors.bekliyorText)),
+                    ),
               ],
             ),
           ),

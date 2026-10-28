@@ -82,12 +82,11 @@ lib/
   alınmış reçetede çizilir. Madde listesi kartta değil, pencerede. "Reçete"
   penceresinin "Hazırlık" bölümü adımları ikon ve `›` okuyla gösterir; ok şeridi yalnız orada.
   Adım kutusu beyaz, ikon açık gri dairede (`AppColors.iconWell`; cam ikonlar beyazda kayboluyordu).
-- Aletler (Tuğrul, 2026-10-27): alet seçme ekranı yok; duvardan "Al" reçeteyi kabul eder. Laboratuvarda
-  sahip olunan aletler durur (`labTools`): havanlar ve spatüller farklı işlerin aletleri, her biri
-  ayrı (`Station.upgradePath = false`); kademeli gruplarda (merhem taşı → Unguator → merhem
-  değirmeni, su banyosu, ambalaj) yalnız sahip olunan en yükseği. Merhem taşında karıştırma
-  spatülle; Unguator ya da değirmen alınınca karıştırma adımları ona geçer. Satın alma yokken
-  sahip olunan = ücretsiz kademe (`isOwned`).
+- Aletler (Tuğrul, 2026-10-27): alet seçme ekranı yok; duvardan "Al" reçeteyi kabul eder. Aletler
+  markette (`stations`); laboratuvarda adım kartlarının "neyle yapılır" satırında görünür.
+  Havanlar ve spatüller farklı işlerin aletleri (`Station.upgradePath = false`); kademeli
+  gruplarda (merhem taşı → Unguator → merhem değirmeni, su banyosu) yalnız sahip olunan en
+  yükseği yazar. Satın alma yokken sahip olunan = ücretsiz kademe (`isOwned`).
 - Adımlar gerçek teknikler (Tuğrul, 2026-10-28, "asıl önemlileri koy"): kontrol, etiket ve
   ambalaj adım değil, laboratuvarda ambalaj aleti durmaz (markette Ambalaj grubu şimdilik
   etkisiz). Merhem: Ezme › Levigasyon › Geometrik seyreltme (salisilik asit); Levigasyon ›
@@ -101,12 +100,20 @@ lib/
   https://claude.ai/artifact/RSKXpt9XPG4epnxApKCk7h Kurallar ASHP bülteninden
   (salisilik asit çelikle tepkir, cam havan toz ezmez) adımın `notWith`'inde; parşömen çıktı.
   Kaynak listesi: C:\YZ\knowledge\concepts\majistral-alet-ve-makineler.md.
-- Laboratuvar (Tuğrul, 2026-10-27): her adımı oyuncu başlatır. Alete basınca kabul edilmiş
-  reçeteler açılır (`widgets/tool_sheet.dart`); aleti şimdi kullanabilenler kobalt vurgulu,
-  kullanamayanların altında nedeni (`JobStore.whyNot`: "daha sonra kullanacaksın", "bu reçetede
-  gerek yok", alet kuralı, alet dolu). Bir alet aynı anda tek reçetede çalışır; farklı aletler
+- **KURAL: Reçetedeki her adım = laboratuvardaki bir kart** (Tuğrul, 2026-10-28). Reçetede
+  "Maserasyon" yazıyorsa laboratuvarda "Maserasyon" kartı olur. Kartlar alet değil adımdır
+  (Ezme, Levigasyon, Geometrik seyreltme, Eritme…); kart adımın ikonunu ve altında neyle
+  yapıldığını gösterir ("Merhem taşı ve spatül · Porselen havan"). `labTools()` kartları
+  reçetelerdeki adım adlarından türetir; yeni adımlı reçete eklenince kart kendiliğinden gelir,
+  `test/steps_test.dart` denetler. Alet kuralları (salisilik asitte çelik spatül, cam havan toz
+  ezmez) adımın `notWith`'inde kalır, seçim değil, adım başlatılırken "Dikkat:" uyarısı.
+  Market yükseltmeleri (Unguator, termostatlı banyo) kartın "neyle yapılır" yazısını değiştirir.
+- Laboratuvar (Tuğrul, 2026-10-27): her adımı oyuncu başlatır. Adım kartına basınca kabul edilmiş
+  reçeteler açılır (`widgets/tool_sheet.dart`); o adımı şimdi başlatabilenler kobalt vurgulu,
+  başlatamayanların altında nedeni (`JobStore.whyNot`: "bu adım daha sonra", "bu reçetede bu
+  adım yok", "bu adım bitti", dolu). Bir kart aynı anda tek reçetede çalışır; farklı kartlar
   aynı anda farklı reçetelerde. Adım bitince reçete sıradakini bekler ("seni bekliyor"), kendi
-  kendine ilerlemez. Yanlış alet seçilemediği için alet hatası ve yıldız kaybı yok.
+  kendine ilerlemez.
 - Oyuncu adımı (Tuğrul, 2026-10-27): `interactive: true` adımda önce oyun, sonra süre (kremde
   eritme: termometreyi 70–75°'de tut, `widgets/heating_sheet.dart`); süre oyun bitince başlar.
 - Tartım yok (Tuğrul, 2026-10-27): tartım adımı, terazi istasyonu ve markette terazi kaldırıldı;

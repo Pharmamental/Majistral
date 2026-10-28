@@ -16,37 +16,41 @@ void main() {
     }
   });
 
-  test('laboratuvarda sahip olunan aletler: havan ve spatüller ayrı, kademede en yükseği', () {
-    expect([for (final t in labTools()) t.name], [
-      'Porselen havan',
-      'Çelik spatül',
-      'Plastik spatül',
-      'Ocak ve su banyosu',
-      'Porselen kapsül',
-      'Beher ve baget',
-      'Mezür',
-      'Elek',
-      'Kapsül doldurma aleti',
+  // Kural (Tuğrul, 2026-10-28): reçetedeki her adım = laboratuvardaki bir kart.
+  test('reçetedeki her adımın laboratuvarda aynı adlı tek bir kartı var', () {
+    final names = [for (final t in labTools()) t.name];
+    expect(names.toSet(), hasLength(names.length));
+    for (final o in prescriptionOrders) {
+      for (final step in o.steps) {
+        expect(names, contains(step.label), reason: '${o.magistralName}: ${step.label}');
+      }
+    }
+    expect(names, [
+      'Ezme',
+      'Levigasyon',
+      'Geometrik seyreltme',
+      'Eritme',
+      'Çözme',
+      'Emülsifikasyon',
+      'Soğutma',
+      'Elekten geçirme',
+      'Karıştırma',
+      'Şişirme',
+      'Hacme tamamlama',
+      'Kapsül doldurma',
     ]);
     for (final t in labTools()) {
       expect(File(t.imagePath).existsSync(), isTrue, reason: t.imagePath);
     }
   });
 
-  test('Unguator alınınca karıştırma ona geçer, spatül gerekmez; termostatlı banyo ocağın yerini alır', () {
-    const bought = {'Unguator', 'Termostatlı su banyosu', 'Cam havan'};
-    final tools = labTools(owns: (i) => isOwned(i) || bought.contains(i.name));
-    expect([for (final t in tools) t.name].take(5),
-        ['Porselen havan', 'Cam havan', 'Unguator', 'Termostatlı su banyosu', 'Porselen kapsül']);
-    expect(tools.firstWhere((t) => t.name == 'Unguator').kind, StepTool.karistirma);
-  });
-
-  test('her adımın türünden laboratuvarda en az bir alet var', () {
-    final kinds = {for (final t in labTools()) t.kind};
-    for (final o in prescriptionOrders) {
-      for (final step in o.steps) {
-        expect(kinds, contains(step.tool), reason: '${o.magistralName}: ${step.label}');
-      }
-    }
+  test('kart adımı yapan aleti yazar; Unguator alınınca karıştırma ona geçer', () {
+    String equipment(List tools, String step) => tools.firstWhere((t) => t.name == step).equipment;
+    expect(equipment(labTools(), 'Geometrik seyreltme'), 'Merhem taşı ve spatül · Porselen havan');
+    expect(equipment(labTools(), 'Kapsül doldurma'), 'Kapsül doldurma aleti');
+    const bought = {'Unguator', 'Termostatlı su banyosu'};
+    final upgraded = labTools(owns: (i) => isOwned(i) || bought.contains(i.name));
+    expect(equipment(upgraded, 'Geometrik seyreltme'), 'Unguator · Porselen havan');
+    expect(equipment(upgraded, 'Eritme'), 'Termostatlı su banyosu');
   });
 }

@@ -156,7 +156,7 @@ class JobStore extends ChangeNotifier {
         Duration(minutes: steps.fold(0, (sum, s) => sum + s.minutes));
   }
 
-  /// [tool] şu an hangi reçetenin hangi adımında çalışıyor; boşsa null.
+  /// [tool] adım kartı şu an hangi reçetede çalışıyor; boşsa null.
   ({PrepJob job, StepRun run})? busyWith(LabTool tool) {
     for (final job in _jobs) {
       final run = running(job);
@@ -165,23 +165,22 @@ class JobStore extends ChangeNotifier {
     return null;
   }
 
-  /// [tool] bu reçetenin sıradaki adımında şimdi kullanılabilir mi? Değilse
-  /// oyuncuya gösterilecek neden.
+  /// [tool] adım kartı bu reçetede şimdi başlatılabilir mi? Değilse oyuncuya
+  /// gösterilecek neden. Kart, reçetenin sıradaki adımıyla aynı adı taşımalı
+  /// (Tuğrul, 2026-10-28: reçetedeki her adım = laboratuvardaki bir kart).
   String? whyNot(LabTool tool, PrepJob job) {
     final steps = orderOf(job).steps;
     final run = running(job);
     if (run != null) return 'Şu an ${run.label} sürüyor.';
     final step = nextStep(job);
     if (step == null) return 'Hazır, teslim edebilirsin.';
-    if (!steps.any((s) => s.uses(tool.kind))) return 'Bu reçetede bu alete gerek yok.';
-    if (!step.uses(tool.kind)) {
-      final later = steps.skip(job.runs.length).any((s) => s.uses(tool.kind));
-      return later ? 'Bu aleti daha sonra kullanacaksın; önce ${step.label}.' : 'Bu aletle işin bitti.';
+    if (!steps.any((s) => s.label == tool.name)) return 'Bu reçetede bu adım yok.';
+    if (step.label != tool.name) {
+      final later = steps.skip(job.runs.length).any((s) => s.label == tool.name);
+      return later ? 'Bu adım daha sonra; önce ${step.label}.' : 'Bu adım bitti.';
     }
-    final reason = step.notWith[tool.name];
-    if (reason != null) return reason;
     final busy = busyWith(tool);
-    if (busy != null) return 'Alet dolu: ${busy.job.magistralName} bitince kullanabilirsin.';
+    if (busy != null) return 'Dolu: ${busy.job.magistralName} bitince yapabilirsin.';
     return null;
   }
 

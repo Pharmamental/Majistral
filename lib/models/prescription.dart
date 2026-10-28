@@ -1,8 +1,7 @@
-/// Bir adımın hangi tür aletle yapıldığı. Laboratuvarda o türün sahip olunan
-/// aletleri durur (data/lab_tools.dart); oyuncu alete basıp reçeteyi seçer
-/// (Tuğrul, 2026-10-27).
-/// Beher, mezür, elek ve kapsül doldurma aleti formül kitabının en sık
-/// adımları için eklendi (2026-10-28).
+/// Bir adımın hangi tür aletle yapıldığı. Laboratuvarda kartlar adımdır
+/// (Tuğrul, 2026-10-28); alet türü adım kartında "neyle yapılır" diye yazar
+/// (data/lab_tools.dart). Beher, mezür, elek ve kapsül doldurma aleti formül
+/// kitabının en sık adımları için eklendi (2026-10-28).
 enum StepTool { havan, karistirma, isitma, kapsul, beher, mezur, elek, kapsulAleti }
 
 /// Her hazırlama adımının kendi oyuncak blok ikonu (tools/ikon_blok, "Adımlar").
@@ -46,11 +45,8 @@ class PrescriptionStep {
   final StepTool tool;
 
   /// Adımı aynı doğrulukla yapan başka alet türleri (levigasyon: havan ya da
-  /// merhem taşında spatül; Tuğrul, 2026-10-28).
+  /// merhem taşında spatül; Tuğrul, 2026-10-28). Adım kartında yazar.
   final Set<StepTool> orWith;
-
-  /// Bu alet türüyle yapılabilir mi?
-  bool uses(StepTool kind) => kind == tool || orWith.contains(kind);
 
   /// Adımın gerçek zamanlı süresi (dakika). Yer tutucu; kapalı testte ayarlanacak.
   final int minutes;
@@ -59,7 +55,9 @@ class PrescriptionStep {
   /// tutmak); süre ancak oyun bitince başlar.
   final bool interactive;
 
-  /// Bu adımda kullanılamayan aletler ve nedeni (alet adı → neden).
+  /// Bu adımda kullanılmaması gereken aletler ve nedeni (alet adı → neden).
+  /// Laboratuvar adım kartına geçince (2026-10-28) seçim değil, adımı
+  /// başlatırken gösterilen uyarı.
   final Map<String, String> notWith;
 
   String get imagePath => stepIconPath(label);

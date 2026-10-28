@@ -10,11 +10,12 @@ import '../widgets/job_status.dart';
 import '../widgets/second_tick.dart';
 import '../widgets/tool_sheet.dart';
 
-/// Laboratuvar: sahip olunan aletlerin durduğu oda (Tuğrul, 2026-10-27). Oyuncu
-/// bir alete basar, açılan pencerede reçeteyi seçer ve o reçetenin sıradaki
-/// adımı başlar. Bir alet aynı anda tek reçetede çalışır. Kart aletin
-/// durumunu gösterir: çalışıyor (hangi reçete, hangi adım, kalan süre) ya da
-/// boş; şimdi kullanabilecek bir reçete varsa kart vurgulu.
+/// Laboratuvar: her adımın bir kartı (Tuğrul, 2026-10-28: reçetedeki her adım =
+/// laboratuvardaki bir kart). Kartta adımın adı ve neyle yapıldığı yazar.
+/// Oyuncu karta basar, açılan pencerede reçeteyi seçer ve o adım başlar. Bir
+/// kart aynı anda tek reçetede çalışır. Kart durumunu gösterir: çalışıyor
+/// (hangi reçete, kalan süre) ya da boş; şimdi başlatılabilecek bir reçete
+/// varsa kart vurgulu.
 class LabScreen extends StatefulWidget {
   const LabScreen({super.key});
 
@@ -31,18 +32,18 @@ class _LabScreenState extends State<LabScreen> with SecondTick {
     final busy = tools.where((t) => store.busyWith(t) != null).length;
     final waiting = store.jobs.where(store.needsAction).length;
     final status = [
-      if (busy > 0) '$busy alet çalışıyor',
+      if (busy > 0) '$busy adım çalışıyor',
       if (waiting > 0) '$waiting reçete seni bekliyor',
     ].join(' · ');
 
-    // Başlık duvarda, aletler gri laboratuvar tezgâhında (Tuğrul, 2026-10-27); liste tezgâhın
+    // Başlık duvarda, adım kartları gri laboratuvar tezgâhında (Tuğrul, 2026-10-27); liste tezgâhın
     // içinde kayar, tezgâh çizgisi yerinde kalır.
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         ColoredBox(
           color: AppColors.wall,
-          child: TabHeader(title: 'Laboratuvar', subtitle: status.isEmpty ? 'Bütün aletler boş' : status),
+          child: TabHeader(title: 'Laboratuvar', subtitle: status.isEmpty ? 'Hiçbir adım çalışmıyor' : status),
         ),
         Expanded(
           child: LabBench(
@@ -85,7 +86,7 @@ class _ToolCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final store = JobScope.of(context);
     final busy = store.busyWith(tool);
-    // Bu aletle şimdi başlatılabilecek reçeteler.
+    // Bu adımın şimdi başlatılabileceği reçeteler.
     final ready = [for (final j in store.jobs) if (!store.isReady(j) && store.whyNot(tool, j) == null) j];
     final highlight = busy != null || ready.isNotEmpty;
     final run = busy?.run;
@@ -114,7 +115,15 @@ class _ToolCard extends StatelessWidget {
                 child: Image.asset(tool.imagePath, width: 44, height: 44),
               ),
               const SizedBox(width: AppSpace.sm),
-              Expanded(child: Text(tool.name, style: AppText.title(size: 17))),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(tool.name, style: AppText.title(size: 17)),
+                    Text(tool.equipment, style: AppText.label(size: 12)),
+                  ],
+                ),
+              ),
             ],
           ),
           const SizedBox(height: AppSpace.md),
@@ -128,8 +137,9 @@ class _ToolCard extends StatelessWidget {
             const SizedBox(height: AppSpace.xs),
             Row(
               children: [
-                Expanded(child: Text(run!.label, style: AppText.label(size: 12))),
-                Text(formatRemaining(run.end.difference(store.now())), style: AppText.timer(size: 14)),
+                // Adımın adı kartın başlığında; burada yalnız kalan süre.
+                Expanded(child: Text('Kalan', style: AppText.label(size: 12))),
+                Text(formatRemaining(run!.end.difference(store.now())), style: AppText.timer(size: 14)),
               ],
             ),
             const SizedBox(height: AppSpace.sm),
@@ -149,7 +159,7 @@ class _ToolCard extends StatelessWidget {
                 const SizedBox(width: AppSpace.xs),
                 Expanded(
                   child: Text(
-                    '${ready.length} reçete bu aleti bekliyor',
+                    '${ready.length} reçete bu adımı bekliyor',
                     style: AppText.label(size: 12, color: AppColors.accentText),
                   ),
                 ),

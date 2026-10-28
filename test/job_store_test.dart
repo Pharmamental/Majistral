@@ -13,11 +13,13 @@ void main() {
   final zno = prescriptionOrders[1]; // levigasyon 5, geometrik seyreltme 7
   final cream = prescriptionOrders[2]; // eritme 6 (oyun), çözme 4, emülsifikasyon 9, soğutma 8
   final tools = {for (final t in labTools()) t.name: t};
-  final havan = tools['Porselen havan']!;
-  final celik = tools['Çelik spatül']!;
-  final plastik = tools['Plastik spatül']!;
-  final banyo = tools['Ocak ve su banyosu']!;
-  final kapsul = tools['Porselen kapsül']!;
+  final ezme = tools['Ezme']!;
+  final levigasyon = tools['Levigasyon']!;
+  final seyreltme = tools['Geometrik seyreltme']!;
+  final eritme = tools['Eritme']!;
+  final cozme = tools['Çözme']!;
+  final emulsiyon = tools['Emülsifikasyon']!;
+  final sogutma = tools['Soğutma']!;
   late DateTime clock;
 
   setUp(() {
@@ -37,7 +39,7 @@ void main() {
   test('her adımı oyuncu başlatır; adım bitince sıradakini bekler, sonunda hazır', () async {
     final store = await JobStore.load(now: () => clock);
     await take(store, order); // ezme 1, levigasyon 3, geometrik seyreltme 4
-    await store.startStep(jobOf(store, order)!.id, havan);
+    await store.startStep(jobOf(store, order)!.id, ezme);
     var job = jobOf(store, order)!;
     expect(store.running(job)!.label, 'Ezme');
     expect(store.needsAction(job), isFalse);
@@ -48,110 +50,73 @@ void main() {
     expect(store.needsAction(job), isTrue);
     expect(store.remaining(job), const Duration(minutes: 7));
 
-    await store.startStep(jobOf(store, order)!.id, havan);
+    await store.startStep(jobOf(store, order)!.id, levigasyon);
     clock = clock.add(const Duration(minutes: 3));
-    await store.startStep(jobOf(store, order)!.id, plastik);
+    await store.startStep(jobOf(store, order)!.id, seyreltme);
     clock = clock.add(const Duration(minutes: 4));
     job = jobOf(store, order)!;
     expect(store.isReady(job), isTrue);
-    expect([for (final r in job.runs) r.tool], ['Porselen havan', 'Porselen havan', 'Plastik spatül']);
+    expect([for (final r in job.runs) r.tool], ['Ezme', 'Levigasyon', 'Geometrik seyreltme']);
   });
 
-  test('uygun olmayan alete neden yazılır ve o aletle adım başlamaz', () async {
+  test('sırası gelmemiş ya da reçetede olmayan adıma neden yazılır, o adım başlamaz', () async {
     final store = await JobStore.load(now: () => clock);
     final job = await take(store, order);
-    expect(store.whyNot(havan, job), isNull);
-    expect(store.whyNot(banyo, job), 'Bu reçetede bu alete gerek yok.');
-    await store.startStep(jobOf(store, order)!.id, banyo);
+    expect(store.whyNot(ezme, job), isNull);
+    expect(store.whyNot(eritme, job), 'Bu reçetede bu adım yok.');
+    expect(store.whyNot(levigasyon, job), 'Bu adım daha sonra; önce Ezme.');
+    await store.startStep(jobOf(store, order)!.id, levigasyon);
     expect(jobOf(store, order)!.runs, isEmpty);
 
-    await store.startStep(jobOf(store, order)!.id, havan);
-    expect(store.whyNot(havan, jobOf(store, order)!), 'Şu an Ezme sürüyor.');
+    await store.startStep(jobOf(store, order)!.id, ezme);
+    expect(store.whyNot(levigasyon, jobOf(store, order)!), 'Şu an Ezme sürüyor.');
     clock = clock.add(const Duration(minutes: 1));
     final j = jobOf(store, order)!;
-    // Salisilik asit çelikle tepkir; plastik spatül uygun.
-    expect(store.whyNot(celik, j), contains('çelikle tepkimeye girer'));
-    expect(store.whyNot(plastik, j), isNull);
-    expect(store.whyNot(havan, j), isNull);
+    expect(store.whyNot(levigasyon, j), isNull);
+    expect(store.whyNot(ezme, j), 'Bu adım bitti.');
   });
 
   test('kremde yağ fazı eritilir, su fazındakiler çözülür, kapsülde emülsiyon yapılıp soğutulur', () async {
     final store = await JobStore.load(now: () => clock);
-    var job = await take(store, cream); // eritme 6, su fazı 4, birleştirme 9, soğuma 8
-    expect(store.whyNot(plastik, job), 'Bu reçetede bu alete gerek yok.');
-    expect(store.whyNot(kapsul, job), 'Bu aleti daha sonra kullanacaksın; önce Eritme.');
-    await store.startStep(job.id, banyo); // termometre oyunu ekranda; burada doğrudan başlar
-    clock = clock.add(const Duration(minutes: 6));
-    await store.startStep(job.id, banyo);
-    clock = clock.add(const Duration(minutes: 4));
-    expect(store.whyNot(banyo, store.job(job.id)!), 'Bu aletle işin bitti.');
-    await store.startStep(job.id, kapsul);
-    clock = clock.add(const Duration(minutes: 9));
-    await store.startStep(job.id, kapsul);
-    clock = clock.add(const Duration(minutes: 8));
+    var job = await take(store, cream); // eritme 6, çözme 4, emülsifikasyon 9, soğutma 8
+    expect(store.whyNot(seyreltme, job), 'Bu reçetede bu adım yok.');
+    expect(store.whyNot(emulsiyon, job), 'Bu adım daha sonra; önce Eritme.');
+    for (final (step, minutes) in [(eritme, 6), (cozme, 4), (emulsiyon, 9), (sogutma, 8)]) {
+      await store.startStep(job.id, step); // termometre oyunu ekranda; burada doğrudan başlar
+      clock = clock.add(Duration(minutes: minutes));
+    }
     job = store.job(job.id)!;
     expect([for (final r in job.runs) r.label], ['Eritme', 'Çözme', 'Emülsifikasyon', 'Soğutma']);
-    expect([for (final r in job.runs) r.tool],
-        ['Ocak ve su banyosu', 'Ocak ve su banyosu', 'Porselen kapsül', 'Porselen kapsül']);
     expect(store.isReady(job), isTrue);
   });
 
-  test('ezme ve levigasyon merhem taşında spatülle de yapılır; salisilik asitte çelik spatül olmaz', () async {
-    final store = await JobStore.load(now: () => clock);
-    final sa = await take(store, order);
-    final zn = await take(store, zno);
-    expect(store.whyNot(plastik, sa), isNull);
-    expect(store.whyNot(celik, sa), contains('çelikle tepkimeye girer'));
-    expect(store.whyNot(celik, zn), isNull); // çinko oksitte çelik uygun
-    await store.startStep(sa.id, plastik);
-    expect(store.running(store.job(sa.id)!)!.label, 'Ezme');
-    expect(store.running(store.job(sa.id)!)!.tool, 'Plastik spatül');
+  test('alet kuralı uyarı olarak adımda durur: salisilik asitte çelik spatül, cam havan', () {
+    final steps = {for (final s in order.steps) s.label: s};
+    expect(steps['Ezme']!.notWith['Çelik spatül'], contains('çelikle tepkimeye girer'));
+    expect(zno.steps.first.notWith['Cam havan'], 'Cam havan kaygandır, tozu ezmez.');
+    expect(tools['Levigasyon']!.equipment, 'Porselen havan · Merhem taşı ve spatül');
   });
 
-  test('geometrik seyreltme spatülle ya da havanda yapılır', () async {
-    final store = await JobStore.load(now: () => clock);
-    final zn = await take(store, zno); // levigasyon 5, geometrik seyreltme 7
-    await store.startStep(zn.id, celik);
-    clock = clock.add(const Duration(minutes: 5));
-    final j = store.job(zn.id)!;
-    expect(store.nextStep(j)!.label, 'Geometrik seyreltme');
-    expect(store.whyNot(havan, j), isNull);
-    expect(store.whyNot(plastik, j), isNull);
-  });
-
-  test('cam havan levigasyonda kullanılamaz', () async {
-    final cam = labTools(owns: (i) => isOwned(i) || i.name == 'Cam havan').firstWhere((t) => t.name == 'Cam havan');
-    final store = await JobStore.load(now: () => clock);
-    final job = await take(store, zno);
-    expect(store.whyNot(cam, job), 'Cam havan kaygandır, tozu ezmez.');
-  });
-
-  test('bir alet aynı anda tek reçetede çalışır; farklı aletler farklı reçetelerde aynı anda', () async {
+  test('bir adım kartı aynı anda tek reçetede çalışır; farklı kartlar farklı reçetelerde aynı anda', () async {
     final store = await JobStore.load(now: () => clock);
     await take(store, order);
     await take(store, zno);
-    await store.startStep(jobOf(store, order)!.id, havan);
-    final second = jobOf(store, zno)!;
-    expect(store.whyNot(havan, second), 'Alet dolu: ${order.magistralName} bitince kullanabilirsin.');
-    expect(store.busyWith(havan)!.job.magistralName, order.magistralName);
+    await store.startStep(jobOf(store, order)!.id, ezme);
+    await store.startStep(jobOf(store, zno)!.id, levigasyon); // levigasyon 5 dk
+    expect(store.busyWith(ezme)!.job.magistralName, order.magistralName);
+    expect(store.busyWith(levigasyon)!.job.magistralName, zno.magistralName);
 
-    // Havan boşalınca çinko oksit levigasyona girer; salisilik asit levigasyonu
-    // plastik spatülle merhem taşında yapar. Sonra ikisi aynı anda iki spatülde.
-    clock = clock.add(const Duration(minutes: 1)); // ezme bitti
-    await store.startStep(jobOf(store, zno)!.id, havan); // levigasyon 5 dk
-    await store.startStep(jobOf(store, order)!.id, plastik); // levigasyon 3 dk
-    clock = clock.add(const Duration(minutes: 3));
-    await store.startStep(jobOf(store, order)!.id, plastik); // seyreltme 4 dk
-    clock = clock.add(const Duration(minutes: 2));
-    await store.startStep(jobOf(store, zno)!.id, celik);
-    expect(store.busyWith(plastik)!.job.magistralName, order.magistralName);
-    expect(store.busyWith(celik)!.job.magistralName, zno.magistralName);
+    clock = clock.add(const Duration(minutes: 1)); // ezme bitti; levigasyon kartı dolu
+    final sa = jobOf(store, order)!;
+    expect(store.whyNot(levigasyon, sa), 'Dolu: ${zno.magistralName} bitince yapabilirsin.');
+    clock = clock.add(const Duration(minutes: 4));
+    expect(store.whyNot(levigasyon, jobOf(store, order)!), isNull);
   });
 
   test('uygulama kapanıp açılınca adımlar kaldığı yerden devam eder', () async {
     final first = await JobStore.load(now: () => clock);
     await take(first, order);
-    await first.startStep(jobOf(first, order)!.id, havan);
+    await first.startStep(jobOf(first, order)!.id, ezme);
 
     clock = clock.add(const Duration(seconds: 20));
     final reopened = await JobStore.load(now: () => clock);
@@ -164,7 +129,7 @@ void main() {
     final store = await JobStore.load(now: () => clock);
     await take(store, order);
     expect(await store.deliver(jobOf(store, order)!.id), isNull);
-    for (final t in [havan, havan, plastik]) {
+    for (final t in [ezme, levigasyon, seyreltme]) {
       await store.startStep(jobOf(store, order)!.id, t);
       clock = clock.add(const Duration(minutes: 10));
     }
@@ -183,7 +148,7 @@ void main() {
   test('acele et çalışan adımın süresini ve kaliteyi yarıya indirir: 3 → 2 → 1 → 1', () async {
     final store = await JobStore.load(now: () => clock);
     await take(store, zno);
-    await store.startStep(jobOf(store, zno)!.id, havan); // levigasyon 5 dk
+    await store.startStep(jobOf(store, zno)!.id, levigasyon); // 5 dk
     await store.rush(jobOf(store, zno)!.id);
     var job = jobOf(store, zno)!;
     expect(store.running(job)!.end.difference(clock), const Duration(minutes: 2, seconds: 30));
@@ -205,7 +170,7 @@ void main() {
     expect(store.canRush(jobOf(store, cream)!), isFalse);
 
     await take(store, order);
-    await store.startStep(jobOf(store, order)!.id, havan);
+    await store.startStep(jobOf(store, order)!.id, ezme);
     for (var i = 0; i < 6; i++) {
       await store.rush(jobOf(store, order)!.id);
     }
@@ -268,7 +233,7 @@ void main() {
     clock = clock.add(const Duration(minutes: 10));
     final second = await take(store, order); // dönüşte yeniden gelen salisilik asit
     expect(second.id, isNot(first.id));
-    await store.startStep(first.id, havan);
+    await store.startStep(first.id, ezme);
     expect(store.running(store.job(first.id)!), isNotNull);
     expect(store.running(store.job(second.id)!), isNull);
   });

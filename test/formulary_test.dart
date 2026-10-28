@@ -4,7 +4,6 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:game/data/formulary.dart';
 import 'package:game/data/lab_tools.dart';
-import 'package:game/data/orders.dart';
 import 'package:game/models/formula.dart';
 import 'package:game/models/prescription.dart';
 
@@ -50,12 +49,7 @@ void main() {
 
   test('formül kitabının en sık adımlarının hepsi laboratuvarda yapılabiliyor', () {
     final common = [for (final e in stepUsage()) if (e.value >= 0.1 * formulary.length) e.key];
-    final kinds = {for (final t in labTools()) t.kind};
-    final inLab = {
-      for (final o in prescriptionOrders)
-        for (final s in o.steps)
-          if (kinds.contains(s.tool)) s.label,
-    };
+    final inLab = {for (final t in labTools()) t.name};
     expect(common, isNotEmpty);
     for (final name in common) {
       expect(inLab, contains(name), reason: name);
