@@ -116,7 +116,8 @@ class JobStore extends ChangeNotifier {
   /// Profildeki diploma: oyuncunun ve eczanesinin adı.
   String get playerName => _playerName;
   String get pharmacyName => _pharmacyName;
-  String _playerName = 'Eczacı';
+  // Varsayılan ad yok: "Eczacı" unvanla karışıyordu (2026-10-28); diploma "Adını yaz" der.
+  String _playerName = '';
   String _pharmacyName = 'Majistral Eczanesi';
 
   /// Diplomadaki adları değiştirir; boş ad yazılırsa eskisi kalır.

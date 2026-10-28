@@ -8,6 +8,7 @@ import 'package:game/data/orders.dart';
 import 'package:game/logic/job_store.dart';
 import 'package:game/logic/profile_stats.dart';
 import 'package:game/main.dart';
+import 'package:game/models/formula.dart';
 import 'package:game/models/prep_job.dart';
 import 'package:game/widgets/grow_panel.dart';
 
@@ -61,20 +62,39 @@ void main() {
     expect(reopened.pharmacyName, 'Majistral Eczanesi');
   });
 
-  test('unvan teslim sayısıyla yükselir; ustalık adım başına sayı ve ortalama yıldız', () {
+  test('unvan teslim sayısıyla yükselir; ustalık yıldızla değil kaç kez yapıldığıyla', () {
     expect(ranks[rankIndex(0)].title, 'Stajyer eczacı');
     expect(ranks[rankIndex(10)].title, 'Eczacı');
     expect(ranks[rankIndex(1000)].title, 'Mesul müdür');
     final at = DateTime(2026);
     final deliveries = [
       Delivery(magistralName: 'a', stars: 3, at: at, steps: const ['Ezme', 'Levigasyon']),
-      Delivery(magistralName: 'b', stars: 2, at: at, steps: const ['Ezme']),
+      Delivery(magistralName: 'b', stars: 1, at: at, steps: const ['Ezme']),
     ];
-    expect(masteryOf('Ezme', deliveries), (count: 2, stars: 2.5));
-    expect(masteryOf('Eritme', deliveries).count, 0);
-    expect(formatStars(2.5), '2,5');
+    expect(stepCount('Ezme', deliveries), 2);
+    expect(stepCount('Eritme', deliveries), 0);
+    expect(tierIndex(0), -1);
+    expect(tiers[tierIndex(1)].title, 'Başladın');
+    expect(tiers[tierIndex(5)].title, 'Bronz');
+    expect(tiers[tierIndex(400)].title, 'Altın');
     expect(preparedFormulas([Delivery(magistralName: order.magistralName, stars: 3, at: at, steps: const [])],
         prescriptionOrders), {order.formula});
+  });
+
+  testWidgets('Profil boşken ad yer tutucusu ve ilk adım; "yapılmadı" duvarı yok', (tester) async {
+    tester.view.physicalSize = const Size(1080, 2340);
+    tester.view.devicePixelRatio = 3;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(MajistralApp(store: await JobStore.load(now: () => clock)));
+    await tester.tap(find.text('Profil').last);
+    await tester.pumpAndSettle();
+    expect(find.text('Adını yaz'), findsOneWidget);
+    expect(find.text('Stajyer eczacı'), findsOneWidget); // unvan yalnız diplomada
+    expect(find.text('İlk reçeteni bekliyor'), findsOneWidget);
+    expect(find.textContaining('yapılmadı'), findsNothing);
+    await tester.tap(find.text('Reçetelere git'));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('Gelen reçeteler'), findsOneWidget);
   });
 
   testWidgets('Profil: diploma, ustalık ve koleksiyon teslimden sonra dolar', (tester) async {
@@ -88,21 +108,22 @@ void main() {
     await tester.tap(find.text('Profil').last);
     await tester.pumpAndSettle();
     expect(find.text('ECZACILIK DİPLOMASI'), findsOneWidget);
-    expect(find.text('1 reçete teslim edildi · ★ 3,0'), findsOneWidget);
+    expect(find.text('1 reçete teslim edildi'), findsOneWidget);
     expect(find.text('Eczacı unvanına 9 reçete'), findsOneWidget);
-    expect(find.text('Henüz yapılmadı'), findsWidgets);
-    expect(find.text('1 kez'), findsNWidgets(3));
+    expect(find.text('×1'), findsNWidgets(3)); // yalnız denenen üç teknik
+    expect(find.text('Bronz için 4 kez daha'), findsNWidgets(3));
+    expect(find.text('Laboratuvarda henüz denemediğin ${labTools().length - 3} teknik daha var.'), findsOneWidget);
 
     await tester.tap(find.text('Koleksiyon'));
     await tester.pumpAndSettle();
-    expect(find.text('1/50'), findsOneWidget);
+    final playable = playableFormulas(prescriptionOrders);
+    expect(find.text('1/${formulasOf(FormulaCategory.merhem).where((f) => playable.contains(f.name)).length}'),
+        findsOneWidget);
+    expect(find.text('Yakında'), findsWidgets); // oyunda reçetesi olmayan kategoriler
+    expect(find.text('0/50'), findsNothing);
     await tester.tap(find.text('Merhem ve patlar'));
     await tester.pumpAndSettle();
-    await tester.scrollUntilVisible(
-      find.text(order.formula),
-      200,
-      scrollable: find.descendant(of: find.byType(GrowPanel), matching: find.byType(Scrollable)),
-    );
+    expect(find.descendant(of: find.byType(GrowPanel), matching: find.text(order.formula)), findsOneWidget);
     expect(find.byIcon(Icons.check_circle_rounded), findsOneWidget);
     await tester.tap(find.text('Kapat'));
     await tester.pumpAndSettle();

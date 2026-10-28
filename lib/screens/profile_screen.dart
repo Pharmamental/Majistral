@@ -7,6 +7,7 @@ import '../logic/job_store.dart';
 import '../logic/profile_stats.dart';
 import '../models/formula.dart';
 import '../theme/tokens.dart';
+import 'home_screen.dart';
 import '../widgets/back_pill.dart';
 import '../widgets/chunky_button.dart';
 import '../widgets/grow_panel.dart';
@@ -16,8 +17,8 @@ enum _ProfileTab { ustalik, koleksiyon }
 
 /// Profil sekmesi (Tuğrul, 2026-10-28, "Diploma + ustalık + koleksiyon"):
 /// duvarda çerçeveli eczacılık diploması (ad, eczane, teslim sayısıyla yükselen
-/// unvan); altta Ustalık (laboratuvardaki her adımı kaç kez, kaç yıldızla
-/// yaptın: neye çalışman gerektiğini söyler) ve Koleksiyon (formül kitabından
+/// unvan); altta Ustalık (denenen teknikler, kaç kez ve kademesi: bronz,
+/// gümüş, altın) ve Koleksiyon (oyunda hazırlanabilen formüllerden
 /// hazırladıkların, kategori kategori). Hepsi teslim kaydından hesaplanır.
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -31,7 +32,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final store = JobScope.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -40,7 +40,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              TabHeader(title: 'Profil', subtitle: ranks[rankIndex(store.deliveries.length)].title),
+              // Unvan yalnız diplomada yazar; başlıkta tekrar etmez (2026-10-28).
+              const TabHeader(title: 'Profil', subtitle: 'Diploman ve ilerlemen'),
               const Padding(
                 padding: EdgeInsets.fromLTRB(AppSpace.lg, 0, AppSpace.lg, AppSpace.lg),
                 child: _Diploma(),
@@ -79,6 +80,7 @@ class _Diploma extends StatelessWidget {
     final delivered = store.deliveries.length;
     final rank = rankIndex(delivered);
     final next = rank + 1 < ranks.length ? ranks[rank + 1] : null;
+    final named = store.playerName.isNotEmpty;
     // Avatar halkası unvanla değişir; durum yalnız renkle değil, unvan yazısıyla da söylenir.
     const rings = [AppColors.line, AppColors.kobalt, AppColors.success, AppColors.star];
     return Container(
@@ -109,10 +111,12 @@ class _Diploma extends StatelessWidget {
                     shape: BoxShape.circle,
                     border: Border.all(color: rings[rank], width: 4),
                   ),
-                  child: Text(
-                    store.playerName.characters.first.toUpperCase(),
-                    style: AppText.title(size: 28, color: AppColors.accentText),
-                  ),
+                  child: named
+                      ? Text(
+                          store.playerName.characters.first.toUpperCase(),
+                          style: AppText.title(size: 28, color: AppColors.accentText),
+                        )
+                      : const Icon(Icons.person_rounded, size: 32, color: AppColors.accentText),
                 ),
                 const SizedBox(width: AppSpace.md),
                 Expanded(
@@ -120,7 +124,11 @@ class _Diploma extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text('ECZACILIK DİPLOMASI', style: AppText.label(size: 11)),
-                      Text(store.playerName, style: AppText.title(size: 22)),
+                      // Ad yazılmadıysa yer tutucu; unvanla karışmasın diye varsayılan ad yok.
+                      Text(
+                        named ? store.playerName : 'Adını yaz',
+                        style: AppText.title(size: 22, color: named ? AppColors.ink : AppColors.inkMuted),
+                      ),
                       Text(store.pharmacyName, style: AppText.body(size: 14, color: AppColors.inkMuted)),
                       Text(ranks[rank].title, style: AppText.label(size: 13, color: AppColors.accentText)),
                     ],
@@ -137,10 +145,9 @@ class _Diploma extends StatelessWidget {
               ],
             ),
             const SizedBox(height: AppSpace.sm),
+            // Ortalama yıldız yok: tek teslimden ortalama yanıltır, yıldızı da yalnız acele düşürür.
             Text(
-              delivered == 0
-                  ? 'Henüz teslim yok'
-                  : '$delivered reçete teslim edildi · ★ ${formatStars(averageStars(store.deliveries))}',
+              delivered == 0 ? 'İlk reçeteni bekliyor' : '$delivered reçete teslim edildi',
               style: AppText.body(size: 13, weight: FontWeight.w600),
             ),
             if (next != null)
@@ -217,40 +224,93 @@ EdgeInsets _listPadding(BuildContext context) => EdgeInsets.fromLTRB(
       AppSpace.x3 + MediaQuery.paddingOf(context).bottom,
     );
 
-/// Ustalık: laboratuvardaki her adım, kaç teslimde yapıldı ve ortalama yıldız.
+/// Ustalık: oyuncunun denediği teknikler, kaç kez yapıldığı ve kademesi.
+/// Denenmemiş teknikler satır satır "yapılmadı" diye dizilmez; tek cümleyle
+/// söylenir. Hiç teslim yoksa ilk adım gösterilir (NN/g boş durum ilkesi).
 class _MasteryList extends StatelessWidget {
   const _MasteryList();
 
   @override
   Widget build(BuildContext context) {
     final deliveries = JobScope.of(context).deliveries;
+    if (deliveries.isEmpty) return const _EmptyState();
+    final all = labTools();
+    final started = [for (final t in all) if (stepCount(t.name, deliveries) > 0) t];
+    final rest = all.length - started.length;
     return ListView(
       padding: _listPadding(context),
       children: [
         Text(
-          'Her adımı kaç kez yaptın, ortalama kaç yıldız aldın. Az yıldızlı adım, çalışman gereken adım.',
+          'Denediğin teknikler. Tekrar ettikçe bronz, gümüş ve altın olur.',
           style: AppText.body(size: 13, color: AppColors.inkMuted),
         ),
         const SizedBox(height: AppSpace.md),
-        for (final t in labTools()) ...[
-          _MasteryRow(name: t.name, image: t.imagePath, mastery: masteryOf(t.name, deliveries)),
+        for (final t in started) ...[
+          _MasteryRow(name: t.name, image: t.imagePath, count: stepCount(t.name, deliveries)),
           const SizedBox(height: AppSpace.sm),
+        ],
+        if (rest > 0) ...[
+          const SizedBox(height: AppSpace.xs),
+          Text(
+            'Laboratuvarda henüz denemediğin $rest teknik daha var.',
+            style: AppText.body(size: 13, color: AppColors.inkMuted),
+          ),
         ],
       ],
     );
   }
 }
 
-class _MasteryRow extends StatelessWidget {
-  const _MasteryRow({required this.name, required this.image, required this.mastery});
-
-  final String name;
-  final String image;
-  final Mastery mastery;
+/// Hiç teslim yokken: ne olduğunu söyler, ilk adıma götürür.
+class _EmptyState extends StatelessWidget {
+  const _EmptyState();
 
   @override
   Widget build(BuildContext context) {
-    final done = mastery.count > 0;
+    return ListView(
+      padding: _listPadding(context),
+      children: [
+        Container(
+          padding: const EdgeInsets.all(AppSpace.lg),
+          decoration: BoxDecoration(
+            color: AppColors.surface,
+            borderRadius: BorderRadius.circular(AppRadius.paper),
+            border: Border.all(color: AppColors.line),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('İlk reçeteni bekliyoruz', style: AppText.title(size: 18)),
+              const SizedBox(height: AppSpace.xs),
+              Text(
+                'Duvardan bir reçete al, laboratuvarda hazırla ve teslim et. '
+                'Kullandığın teknikler burada görünür.',
+                style: AppText.body(size: 14),
+              ),
+              const SizedBox(height: AppSpace.lg),
+              ChunkyButton(label: 'Reçetelere git', onPressed: () => HomeScreen.showTab(context, 0)),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _MasteryRow extends StatelessWidget {
+  const _MasteryRow({required this.name, required this.image, required this.count});
+
+  final String name;
+  final String image;
+  final int count;
+
+  // Kademe rengi süs; kademe her zaman yazıyla da söylenir.
+  static const _tierColors = [AppColors.inkMuted, AppColors.rusty, AppColors.goodCondition, AppColors.star];
+
+  @override
+  Widget build(BuildContext context) {
+    final tier = tierIndex(count);
+    final next = tier + 1 < tiers.length ? tiers[tier + 1] : null;
     return Container(
       padding: const EdgeInsets.all(AppSpace.md),
       decoration: BoxDecoration(
@@ -264,41 +324,61 @@ class _MasteryRow extends StatelessWidget {
             width: 44,
             height: 44,
             padding: const EdgeInsets.all(AppSpace.xs),
-            decoration: const BoxDecoration(color: AppColors.iconWell, shape: BoxShape.circle),
+            decoration: BoxDecoration(
+              color: AppColors.iconWell,
+              shape: BoxShape.circle,
+              border: Border.all(color: _tierColors[tier], width: 3),
+            ),
             child: Image.asset(image),
           ),
           const SizedBox(width: AppSpace.md),
-          Expanded(child: Text(name, style: AppText.body(size: 15, weight: FontWeight.w700))),
-          if (done) ...[
-            Text('${mastery.count} kez', style: AppText.label(size: 13, color: AppColors.ink)),
-            const SizedBox(width: AppSpace.sm),
-            const Icon(Icons.star_rounded, size: 18, color: AppColors.star),
-            Text(formatStars(mastery.stars), style: AppText.label(size: 13, color: AppColors.ink)),
-          ] else
-            Text('Henüz yapılmadı', style: AppText.label(size: 13)),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(name, style: AppText.body(size: 15, weight: FontWeight.w700)),
+                Text(
+                  next == null ? '${tiers[tier].title} · en üst kademe' : '${next.title} için ${next.from - count} kez daha',
+                  style: AppText.label(size: 12),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: AppSpace.sm),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text('×$count', style: AppText.title(size: 16)),
+              Text(tiers[tier].title, style: AppText.label(size: 12, color: AppColors.ink)),
+            ],
+          ),
         ],
       ),
     );
   }
 }
 
-/// Koleksiyon: formül kitabından hazırlananlar, kategori kategori.
+/// Koleksiyon: oyunda hazırlanabilen formüllerden teslim edilenler, kategori
+/// kategori. Oyunda henüz reçetesi olmayan kategori "0/50" değil "Yakında"
+/// yazar; ulaşılamayacak hedef gösterilmez (2026-10-28).
 class _CollectionList extends StatelessWidget {
   const _CollectionList();
 
   @override
   Widget build(BuildContext context) {
     final prepared = preparedFormulas(JobScope.of(context).deliveries, prescriptionOrders);
+    final playable = playableFormulas(prescriptionOrders);
     return ListView(
       padding: _listPadding(context),
       children: [
         Text(
-          'Formül kitabındaki ${formulary.length} majistralden teslim ettiklerin.',
+          'Oyunda hazırlayabildiğin ${playable.length} formülden teslim ettiklerin. Formül kitabındaki '
+          'öteki ${formulary.length - playable.length} formül oyuna geldikçe buraya eklenir.',
           style: AppText.body(size: 13, color: AppColors.inkMuted),
         ),
         const SizedBox(height: AppSpace.md),
         for (final c in FormulaCategory.values) ...[
-          _CategoryRow(category: c, prepared: prepared),
+          _CategoryRow(category: c, prepared: prepared, playable: playable),
           const SizedBox(height: AppSpace.sm),
         ],
       ],
@@ -307,62 +387,84 @@ class _CollectionList extends StatelessWidget {
 }
 
 class _CategoryRow extends StatelessWidget {
-  const _CategoryRow({required this.category, required this.prepared});
+  const _CategoryRow({required this.category, required this.prepared, required this.playable});
 
   final FormulaCategory category;
   final Set<String> prepared;
+  final Set<String> playable;
 
   @override
   Widget build(BuildContext context) {
-    final items = formulasOf(category);
-    final done = items.where((f) => prepared.contains(f.name)).length;
+    final items = [for (final f in formulasOf(category)) if (playable.contains(f.name)) f.name];
+    final done = items.where(prepared.contains).length;
+    final soon = items.isEmpty;
+    final content = Padding(
+      padding: const EdgeInsets.all(AppSpace.md),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  category.title,
+                  style: AppText.title(size: 16, color: soon ? AppColors.inkMuted : AppColors.ink),
+                ),
+              ),
+              if (soon)
+                Text('Yakında', style: AppText.label(size: 13))
+              else ...[
+                Text('$done/${items.length}', style: AppText.label(size: 14, color: AppColors.ink)),
+                const SizedBox(width: AppSpace.xs),
+                Text('›', style: AppText.display(size: 22, color: AppColors.accentText)),
+              ],
+            ],
+          ),
+          if (!soon) ...[
+            const SizedBox(height: AppSpace.sm),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(AppRadius.pill),
+              child: LinearProgressIndicator(
+                minHeight: 8,
+                value: done / items.length,
+                backgroundColor: AppColors.surfaceMuted,
+                valueColor: const AlwaysStoppedAnimation(AppColors.success),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
     return Semantics(
-      button: true,
+      button: !soon,
       child: Material(
-        color: AppColors.surface,
+        color: soon ? AppColors.surfaceMuted : AppColors.surface,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppRadius.paper),
           side: const BorderSide(color: AppColors.line),
         ),
         clipBehavior: Clip.antiAlias,
-        child: Builder(
-          builder: (rowContext) => InkWell(
-            onTap: () => _openCategory(rowContext, category, prepared, from: rectOf(rowContext)),
-            child: Padding(
-              padding: const EdgeInsets.all(AppSpace.md),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Expanded(child: Text(category.title, style: AppText.title(size: 16))),
-                      Text('$done/${items.length}', style: AppText.label(size: 14, color: AppColors.ink)),
-                      const SizedBox(width: AppSpace.xs),
-                      Text('›', style: AppText.display(size: 22, color: AppColors.accentText)),
-                    ],
-                  ),
-                  const SizedBox(height: AppSpace.sm),
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(AppRadius.pill),
-                    child: LinearProgressIndicator(
-                      minHeight: 8,
-                      value: items.isEmpty ? 0 : done / items.length,
-                      backgroundColor: AppColors.surfaceMuted,
-                      valueColor: const AlwaysStoppedAnimation(AppColors.success),
-                    ),
-                  ),
-                ],
+        child: soon
+            ? content
+            : Builder(
+                builder: (rowContext) => InkWell(
+                  onTap: () => _openCategory(rowContext, category, items, prepared, from: rectOf(rowContext)),
+                  child: content,
+                ),
               ),
-            ),
-          ),
-        ),
       ),
     );
   }
 }
 
-/// Kategorinin formülleri: hazırlananlar onaylı, kalanlar boş daire.
-Future<void> _openCategory(BuildContext context, FormulaCategory category, Set<String> prepared, {required Rect from}) {
+/// Kategorinin oyundaki formülleri: hazırlananlar onaylı, kalanlar boş daire.
+Future<void> _openCategory(
+  BuildContext context,
+  FormulaCategory category,
+  List<String> items,
+  Set<String> prepared, {
+  required Rect from,
+}) {
   return openGrowing<void>(
     context,
     from: from,
@@ -378,18 +480,18 @@ Future<void> _openCategory(BuildContext context, FormulaCategory category, Set<S
             child: ListView(
               shrinkWrap: true,
               children: [
-                for (final f in formulasOf(category))
+                for (final name in items)
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: AppSpace.xs),
                     child: Row(
                       children: [
                         Icon(
-                          prepared.contains(f.name) ? Icons.check_circle_rounded : Icons.radio_button_unchecked,
+                          prepared.contains(name) ? Icons.check_circle_rounded : Icons.radio_button_unchecked,
                           size: 20,
-                          color: prepared.contains(f.name) ? AppColors.success : AppColors.line,
+                          color: prepared.contains(name) ? AppColors.success : AppColors.line,
                         ),
                         const SizedBox(width: AppSpace.sm),
-                        Expanded(child: Text(f.name, style: AppText.body(size: 14))),
+                        Expanded(child: Text(name, style: AppText.body(size: 14))),
                       ],
                     ),
                   ),

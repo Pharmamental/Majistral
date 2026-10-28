@@ -187,11 +187,18 @@ lib/
 - Profil (Tuğrul, 2026-10-28, "Diploma + ustalık + koleksiyon"): duvarda ceviz çerçeveli eczacılık
   diploması (ad, eczane adı, kalemle değişir; avatar halkası ve unvan teslim sayısıyla yükselir:
   Stajyer eczacı 0, Eczacı 10, Uzman eczacı 30, Mesul müdür 60; eşikler yer tutucu). Altta
-  `PillTabs`: Ustalık (laboratuvardaki her adım kaç teslimde, ortalama kaç yıldız) ve Koleksiyon
-  (formül kitabından teslim edilenler, kategori başına ilerleme). Hepsi teslim kaydından
+  `PillTabs`: Ustalık ve Koleksiyon. Düzeltmeler (Tuğrul, 2026-10-28, "önce düzeltmeler"):
+  ustalık yıldızla ölçülmez (yıldızı yalnız acele düşürüyor), kaç kez yapıldığıyla kademelenir
+  (Başladın 1, Bronz 5, Gümüş 15, Altın 40; yer tutucu); yalnız denenen teknikler listelenir,
+  kalanlar tek cümle. Koleksiyon yalnız oyunda hazırlanabilen formülleri sayar; oyunda reçetesi
+  olmayan kategori "0/50" değil "Yakında". Varsayılan ad yok ("Adını yaz"); unvan yalnız
+  diplomada; ortalama yıldız gösterilmez. Hiç teslim yoksa "İlk reçeteni bekliyoruz" + "Reçetelere
+  git". Hepsi teslim kaydından
   (`JobStore.deliveries`, anahtar `deliveries_v1`; adlar `profile_v1`). Her oyun reçetesinin formül
   kitabındaki karşılığı `PrescriptionOrder.formula`. Liderlik tablosu ve satılık çerçeve yok.
   Sonraya: reçete defteri, seri (onarma haklı), kazanılan çizimli avatar çerçeveleri.
+- Avatarlar (Tuğrul, 2026-10-28): önlüklü hayvan eczacılar, çizgi film sadeliğinde. Oyuncak blok
+  tarzında çizilmez ("oyuncak blok gibi çizme"); stil 10 baykuş örneği arasından seçilecek.
 - Testler gerçek fontu `test/test_fonts.dart` ile yükler; taşma testleri böyle gerçeği yansıtır.
 - Süren işler `shared_preferences` ile telefona kaydedilir; saat şimdilik cihaz saati
   (`JobStore.now`). Sunucu saati gelene kadar saat hilesi mümkün; kapanmamış bir açık.

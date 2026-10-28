@@ -15,18 +15,23 @@ const List<Rank> ranks = [
 /// [delivered] teslimle ulaşılan unvanın sırası.
 int rankIndex(int delivered) => ranks.lastIndexWhere((r) => delivered >= r.from);
 
-/// Bir adımın ustalığı: kaç teslimde yapıldı, o teslimlerin ortalama yıldızı.
-typedef Mastery = ({int count, double stars});
+/// Bir tekniğin ustalık kademesi ve kaç kez yapılınca geldiği. Ustalık yıldızla
+/// ölçülmez: oyunda yıldızı yalnız "acele et" düşürüyor, beceriyi değil reklam
+/// kullanımını gösterir (2026-10-28). Eşikler yer tutucu.
+typedef Tier = ({String title, int from});
 
-Mastery masteryOf(String step, List<Delivery> deliveries) {
-  final done = [for (final d in deliveries) if (d.steps.contains(step)) d.stars];
-  if (done.isEmpty) return (count: 0, stars: 0);
-  return (count: done.length, stars: done.reduce((a, b) => a + b) / done.length);
-}
+const List<Tier> tiers = [
+  (title: 'Başladın', from: 1),
+  (title: 'Bronz', from: 5),
+  (title: 'Gümüş', from: 15),
+  (title: 'Altın', from: 40),
+];
 
-/// Bütün teslimlerin ortalama yıldızı; teslim yoksa 0.
-double averageStars(List<Delivery> deliveries) =>
-    deliveries.isEmpty ? 0 : deliveries.fold(0, (sum, d) => sum + d.stars) / deliveries.length;
+/// Bir tekniğin kaç teslimde yapıldığı.
+int stepCount(String step, List<Delivery> deliveries) => deliveries.where((d) => d.steps.contains(step)).length;
+
+/// [count] kez yapılan tekniğin kademe sırası; hiç yapılmadıysa -1.
+int tierIndex(int count) => tiers.lastIndexWhere((t) => count >= t.from);
 
 /// Teslim edilmiş reçetelerin formül kitabındaki adları (koleksiyon).
 Set<String> preparedFormulas(List<Delivery> deliveries, List<PrescriptionOrder> orders) => {
@@ -35,5 +40,6 @@ Set<String> preparedFormulas(List<Delivery> deliveries, List<PrescriptionOrder> 
           if (o.magistralName == d.magistralName) o.formula,
     };
 
-/// Yıldızı "2,8" biçiminde yazar.
-String formatStars(double stars) => stars.toStringAsFixed(1).replaceAll('.', ',');
+/// Oyunda hazırlanabilen formüller: koleksiyon yalnız bunları sayar; formül
+/// kitabının geri kalanı oyuna geldikçe eklenir.
+Set<String> playableFormulas(List<PrescriptionOrder> orders) => {for (final o in orders) o.formula};
