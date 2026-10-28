@@ -19,8 +19,13 @@ class LabTool {
   final String equipment;
 }
 
+/// Şimdilik her şey açık (Tuğrul, 2026-10-28, "unlocked bir şey olmasın"): market
+/// aletlerinin hepsi elde, koleksiyon tam, vitrine her ürün konur. Satın alma ve
+/// kazanma kuralları gelince false yapılır.
+const unlockAll = true;
+
 /// Satın alma henüz yok: ücretsiz kademeler sahip olunan aletler.
-bool isOwned(ShopItem item) => item.price == 0;
+bool isOwned(ShopItem item) => unlockAll || item.price == 0;
 
 List<ShopItem> _owned(String group, bool Function(ShopItem) owns) =>
     stations.firstWhere((s) => s.name == group).tiers.where(owns).toList();

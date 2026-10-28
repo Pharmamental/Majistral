@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:game/data/lab_tools.dart';
 import 'package:game/data/orders.dart';
 import 'package:game/models/prescription.dart';
+import 'package:game/models/shop_item.dart';
 
 void main() {
   test('her adımın kendi ikonu var ve dosyası duruyor', () {
@@ -46,10 +47,12 @@ void main() {
 
   test('kart adımı yapan aleti yazar; Unguator alınınca karıştırma ona geçer', () {
     String equipment(List tools, String step) => tools.firstWhere((t) => t.name == step).equipment;
-    expect(equipment(labTools(), 'Geometrik seyreltme'), 'Merhem taşı ve spatül · Porselen havan');
-    expect(equipment(labTools(), 'Kapsül doldurma'), 'Kapsül doldurma aleti');
+    // Satın alma öncesi: yalnız ücretsiz kademeler elde (unlockAll'dan bağımsız).
+    bool free(ShopItem i) => i.price == 0;
+    expect(equipment(labTools(owns: free), 'Geometrik seyreltme'), 'Merhem taşı ve spatül · Porselen havan');
+    expect(equipment(labTools(owns: free), 'Kapsül doldurma'), 'Kapsül doldurma aleti');
     const bought = {'Unguator', 'Termostatlı su banyosu'};
-    final upgraded = labTools(owns: (i) => isOwned(i) || bought.contains(i.name));
+    final upgraded = labTools(owns: (i) => free(i) || bought.contains(i.name));
     expect(equipment(upgraded, 'Geometrik seyreltme'), 'Unguator · Porselen havan');
     expect(equipment(upgraded, 'Eritme'), 'Termostatlı su banyosu');
   });

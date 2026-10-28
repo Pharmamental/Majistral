@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../data/lab_tools.dart';
 import '../models/shop_item.dart';
 import '../theme/tokens.dart';
 import 'chunky_button.dart';
@@ -76,7 +77,7 @@ class StationTierCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final owned = tier.price == 0;
+    final owned = isOwned(tier);
     return Container(
       width: 184,
       padding: const EdgeInsets.all(AppSpace.lg),

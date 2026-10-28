@@ -142,7 +142,7 @@ class JobStore extends ChangeNotifier {
   /// [slot]. yere [magistralName]'i koyar (null: rafı boşaltır). Yalnız teslim
   /// edilmiş ürün konur; başka yerdeyse oradan alınır, aynı ürün iki kez durmaz.
   Future<void> setShowcase(int slot, String? magistralName) async {
-    if (magistralName != null && !_deliveries.any((d) => d.magistralName == magistralName)) return;
+    if (!unlockAll && magistralName != null && !_deliveries.any((d) => d.magistralName == magistralName)) return;
     for (var i = 0; i < showcaseSize; i++) {
       if (_showcase[i] == magistralName) _showcase[i] = null;
     }

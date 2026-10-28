@@ -94,7 +94,8 @@ void main() {
     final steps = {for (final s in order.steps) s.label: s};
     expect(steps['Ezme']!.notWith['Çelik spatül'], contains('çelikle tepkimeye girer'));
     expect(zno.steps.first.notWith['Cam havan'], 'Cam havan kaygandır, tozu ezmez.');
-    expect(tools['Levigasyon']!.equipment, 'Porselen havan · Merhem taşı ve spatül');
+    expect(tools['Levigasyon']!.equipment,
+        unlockAll ? 'Porselen havan · Merhem değirmeni' : 'Porselen havan · Merhem taşı ve spatül');
   });
 
   test('bir adım kartı aynı anda tek reçetede çalışır; farklı kartlar farklı reçetelerde aynı anda', () async {

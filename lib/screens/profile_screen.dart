@@ -236,6 +236,12 @@ Future<void> _openShowcasePicker(BuildContext context, int slot, {required Rect 
       for (final d in store.deliveries.reversed) {
         counts[d.magistralName] = (counts[d.magistralName] ?? 0) + 1;
       }
+      // Her şey açıkken teslim edilmemiş ürünler de listede, sonda.
+      if (unlockAll) {
+        for (final o in prescriptionOrders) {
+          counts.putIfAbsent(o.magistralName, () => 0);
+        }
+      }
       return Padding(
         padding: const EdgeInsets.all(AppSpace.lg),
         child: Column(
@@ -245,9 +251,11 @@ Future<void> _openShowcasePicker(BuildContext context, int slot, {required Rect 
             Text('Vitrine ne koyalım?', style: AppText.title(size: 20)),
             const SizedBox(height: AppSpace.xs),
             Text(
-              counts.isEmpty
-                  ? 'Rafa yalnız teslim ettiğin ürünler konur. Önce bir reçete hazırlayıp teslim et.'
-                  : 'Teslim ettiğin ürünlerden birini seç.',
+              unlockAll
+                  ? 'Rafa koymak istediğin ürünü seç.'
+                  : counts.isEmpty
+                      ? 'Rafa yalnız teslim ettiğin ürünler konur. Önce bir reçete hazırlayıp teslim et.'
+                      : 'Teslim ettiğin ürünlerden birini seç.',
               style: AppText.body(size: 14, color: AppColors.inkMuted),
             ),
             const SizedBox(height: AppSpace.md),
@@ -284,7 +292,8 @@ Future<void> _openShowcasePicker(BuildContext context, int slot, {required Rect 
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text(name, style: AppText.body(size: 14, weight: FontWeight.w700)),
-                                      Text('$n kez teslim edildi', style: AppText.label(size: 12)),
+                                      Text(n == 0 ? 'Henüz teslim edilmedi' : '$n kez teslim edildi',
+                                          style: AppText.label(size: 12)),
                                     ],
                                   ),
                                 ),
@@ -602,7 +611,9 @@ class _CollectionList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final prepared = preparedFormulas(JobScope.of(context).deliveries, prescriptionOrders);
+    final prepared = unlockAll
+        ? playableFormulas(prescriptionOrders)
+        : preparedFormulas(JobScope.of(context).deliveries, prescriptionOrders);
     final playable = playableFormulas(prescriptionOrders);
     return ListView(
       padding: _listPadding(context),

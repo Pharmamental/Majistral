@@ -149,14 +149,15 @@ void main() {
     await tester.tap(find.text('Koleksiyon'));
     await tester.pumpAndSettle();
     final playable = playableFormulas(prescriptionOrders);
-    expect(find.text('1/${formulasOf(FormulaCategory.merhem).where((f) => playable.contains(f.name)).length}'),
-        findsOneWidget);
+    final merhemPlayable = formulasOf(FormulaCategory.merhem).where((f) => playable.contains(f.name)).length;
+    // Her şey açıkken koleksiyon tam görünür.
+    expect(find.text('${unlockAll ? merhemPlayable : 1}/$merhemPlayable'), unlockAll ? findsWidgets : findsOneWidget);
     expect(find.text('Yakında'), findsWidgets); // oyunda reçetesi olmayan kategoriler
     expect(find.text('0/50'), findsNothing);
     await tester.tap(find.text('Merhem ve patlar'));
     await tester.pumpAndSettle();
     expect(find.descendant(of: find.byType(GrowPanel), matching: find.text(order.formula)), findsOneWidget);
-    expect(find.byIcon(Icons.check_circle_rounded), findsOneWidget);
+    expect(find.byIcon(Icons.check_circle_rounded), findsNWidgets(unlockAll ? merhemPlayable : 1));
     await tester.tap(find.text('Kapat'));
     await tester.pumpAndSettle();
 
@@ -241,7 +242,9 @@ void showcaseTests() {
   test('vitrine yalnız teslim edilen ürün konur; aynı ürün iki yerde durmaz; kayıtta kalır', () async {
     final store = await JobStore.load(now: () => clock);
     await store.setShowcase(0, prescriptionOrders[1].magistralName); // teslim edilmedi
-    expect(store.showcase, [null, null, null]);
+    // Her şey açıkken teslim edilmemiş ürün de rafa konur.
+    expect(store.showcase, [unlockAll ? prescriptionOrders[1].magistralName : null, null, null]);
+    await store.setShowcase(0, null);
     await store.setShowcase(0, order.magistralName);
     await store.setShowcase(2, order.magistralName); // 0'dan 2'ye taşınır
     expect(store.showcase, [null, null, order.magistralName]);
