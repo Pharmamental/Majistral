@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../data/dried_plants.dart';
 import '../data/formulary.dart';
 import '../data/lab_tools.dart';
 import '../data/orders.dart';
@@ -120,21 +121,10 @@ class _TabsHeader extends SliverPersistentHeaderDelegate {
   bool shouldRebuild(_TabsHeader old) => true;
 }
 
-/// Ürün türüne göre kap: yarı katılar porselen eczane kavanozunda, toz,
-/// kapsül ve sıvılar amber cam şişede.
-String _containerOf(String magistralName) {
-  final order = prescriptionOrders.where((o) => o.magistralName == magistralName).firstOrNull;
-  final category = formulary.where((f) => f.name == order?.formula).firstOrNull?.category;
-  return switch (category) {
-    FormulaCategory.merhem || FormulaCategory.krem || FormulaCategory.jel || null =>
-      'assets/images/ikon/ikon_vitrin_albarello.png',
-    _ => 'assets/images/ikon/ikon_vitrin_sise.png',
-  };
-}
-
 /// Vitrin rafı (Tuğrul, 2026-10-28): diplomanın altında ceviz rafta üç yer.
-/// Oyuncu teslim ettiği ürünlerden seçip koyar (Chess.com, Steam, Clash
-/// Royale'deki "kendi seçtiğin vitrin"). Boş yere basınca seçme penceresi.
+/// Oyuncu fanusta bitki kurularından seçip koyar (Chess.com, Steam, Clash
+/// Royale'deki "kendi seçtiğin vitrin"); rafta ilaç durmaz ("ilaç koymak çok iyi
+/// değil"). Boş yere basınca seçme penceresi.
 class _ShowcaseShelf extends StatelessWidget {
   const _ShowcaseShelf();
 
@@ -180,20 +170,21 @@ class _ShowcaseSlot extends StatelessWidget {
     final name = product;
     return Semantics(
       button: true,
-      label: name == null ? 'Vitrinde boş yer, ürün koy' : 'Vitrinde $name',
+      label: name == null ? 'Vitrinde boş yer, fanus koy' : 'Vitrinde $name fanusu',
       excludeSemantics: true,
       child: Builder(
         builder: (slotContext) => GestureDetector(
           behavior: HitTestBehavior.opaque,
           onTap: () => _openShowcasePicker(slotContext, slot, from: rectOf(slotContext)),
           child: SizedBox(
-            height: 112,
+            height: 128,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 if (name != null) ...[
-                  Image.asset(_containerOf(name), width: 64, height: 64),
-                  const SizedBox(height: AppSpace.xs),
+                  // Fanusun içindeki bitki 64'te seçilmiyordu; 80'e büyütüldü.
+                  Image.asset(driedPlantNamed(name)!.imagePath, width: 80, height: 80),
+                  const SizedBox(height: 2),
                   Text(
                     name,
                     maxLines: 2,
@@ -223,8 +214,8 @@ class _ShowcaseSlot extends StatelessWidget {
   }
 }
 
-/// Vitrine ürün seçme penceresi: teslim edilen ürünler, en yeniden. Dolu yerde
-/// "Raftan kaldır" da çıkar.
+/// Vitrine fanus seçme penceresi. Dolu yerde "Raftan kaldır" da çıkar.
+/// Kazanma kuralı gelene kadar her şey açıkken hepsi listelenir.
 Future<void> _openShowcasePicker(BuildContext context, int slot, {required Rect from}) {
   final store = JobScope.of(context);
   return openGrowing<void>(
@@ -232,16 +223,7 @@ Future<void> _openShowcasePicker(BuildContext context, int slot, {required Rect 
     from: from,
     builder: (sheetContext) {
       final current = store.showcase[slot];
-      final counts = <String, int>{};
-      for (final d in store.deliveries.reversed) {
-        counts[d.magistralName] = (counts[d.magistralName] ?? 0) + 1;
-      }
-      // Her şey açıkken teslim edilmemiş ürünler de listede, sonda.
-      if (unlockAll) {
-        for (final o in prescriptionOrders) {
-          counts.putIfAbsent(o.magistralName, () => 0);
-        }
-      }
+      final plants = unlockAll ? driedPlants : const <DriedPlant>[];
       return Padding(
         padding: const EdgeInsets.all(AppSpace.lg),
         child: Column(
@@ -251,11 +233,9 @@ Future<void> _openShowcasePicker(BuildContext context, int slot, {required Rect 
             Text('Vitrine ne koyalım?', style: AppText.title(size: 20)),
             const SizedBox(height: AppSpace.xs),
             Text(
-              unlockAll
-                  ? 'Rafa koymak istediğin ürünü seç.'
-                  : counts.isEmpty
-                      ? 'Rafa yalnız teslim ettiğin ürünler konur. Önce bir reçete hazırlayıp teslim et.'
-                      : 'Teslim ettiğin ürünlerden birini seç.',
+              plants.isEmpty
+                  ? 'Fanuslar yakında kazanılacak.'
+                  : 'Rafa bir fanus seç: içinde kurutulmuş tıbbi bitki.',
               style: AppText.body(size: 14, color: AppColors.inkMuted),
             ),
             const SizedBox(height: AppSpace.md),
@@ -263,7 +243,7 @@ Future<void> _openShowcasePicker(BuildContext context, int slot, {required Rect 
               child: ListView(
                 shrinkWrap: true,
                 children: [
-                  for (final MapEntry(key: name, value: n) in counts.entries)
+                  for (final DriedPlant(:name, :latin, :use, :imagePath) in plants)
                     Padding(
                       padding: const EdgeInsets.only(bottom: AppSpace.sm),
                       child: Material(
@@ -285,15 +265,14 @@ Future<void> _openShowcasePicker(BuildContext context, int slot, {required Rect 
                             padding: const EdgeInsets.all(AppSpace.sm),
                             child: Row(
                               children: [
-                                Image.asset(_containerOf(name), width: 40, height: 40),
+                                Image.asset(imagePath, width: 48, height: 48),
                                 const SizedBox(width: AppSpace.md),
                                 Expanded(
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text(name, style: AppText.body(size: 14, weight: FontWeight.w700)),
-                                      Text(n == 0 ? 'Henüz teslim edilmedi' : '$n kez teslim edildi',
-                                          style: AppText.label(size: 12)),
+                                      Text('$latin · $use', style: AppText.label(size: 12)),
                                     ],
                                   ),
                                 ),

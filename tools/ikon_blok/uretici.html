@@ -39,6 +39,13 @@ const hx=(cx,cy,r)=>'M'+[0,1,2,3,4,5].map(k=>{const a=(k*60-90)*Math.PI/180;retu
 // iki ucu yuvarlak çubuk
 function cap(x1,y1,x2,y2,w){const r=w/2,dx=x2-x1,dy=y2-y1,l=Math.hypot(dx,dy),nx=-dy/l*r,ny=dx/l*r;
  return `M${f(x1+nx)},${f(y1+ny)}L${f(x2+nx)},${f(y2+ny)}A${r},${r} 0 0 0 ${f(x2-nx)},${f(y2-ny)}L${f(x1-nx)},${f(y1-ny)}A${r},${r} 0 0 0 ${f(x1+nx)},${f(y1+ny)}Z`}
+// yaprak: (x,y) sapından, açı (derece, 0 = yukarı), boy, en
+function leaf(x,y,ang,len,wid){
+ const a=(ang-90)*Math.PI/180,ux=Math.cos(a),uy=Math.sin(a),nx=-uy,ny=ux,tx=x+ux*len,ty=y+uy*len,m=len*.5;
+ return `M${f(x)},${f(y)}Q${f(x+ux*m+nx*wid)},${f(y+uy*m+ny*wid)} ${f(tx)},${f(ty)}Q${f(x+ux*m-nx*wid)},${f(y+uy*m-ny*wid)} ${f(x)},${f(y)}Z`}
+// taç yaprağı: merkezden dışa
+const petal=(cx,cy,ang,dist,len,wid)=>{const a=(ang-90)*Math.PI/180;return leaf(cx+Math.cos(a)*dist,cy+Math.sin(a)*dist,ang,len,wid)};
+const stem=(pts,w=3,c='#7C8F55')=>({d:'M'+pts.map(p=>p.join(',')).join('L'),c,w});
 
 // ---- palet (Pharmamental oyuncak blok paleti + ek palet)
 const R={mercan:'#E8553D',krem:'#FFF3E4',mor:'#7C5CE6',altin:'#F7BE38',altinKoyu:'#E9A21E',kahve:'#8A5A3B',kirmizi:'#FF6B5B',sari:'#FFC93C',kremKoyu:'#E9DCC8',mavi:'#4C9BE8',
@@ -209,7 +216,7 @@ const IKONLAR=[
   {d:'M10,60H90C84,74 68,80 50,80C32,80 16,74 10,60Z',c:R.cam},
   {d:rr(20,52,22,10,5),c:R.krem},{d:rr(40,53,22,10,5),c:R.krem},{d:rr(60,52,22,10,5),c:R.krem},
   {d:rr(30,44,22,10,5),c:R.krem},{d:rr(50,44,22,10,5),c:R.krem},
-  {d:rr(40,36,20,10,5),c:R.krem}]},                 // katı PEG pulları
+  {d:rr(40,36,20,10,5),c:R.krem}]},                 // kati PEG pulları
  // --- Kıvam ve emülgatör
  {grup:'Kıvam ve emülgatör',dosya:'setil_alkol',ad:'Setil Alkol',kutu:'#D9D2FA',parts:[
   {d:rr(18,30,64,54,12),c:R.amber},                 // amber cam kavanoz
@@ -499,6 +506,116 @@ const IKONLAR=[
   ...[[34,42],[66,42],[34,73],[66,73]].map(([x,y])=>({d:circ(x,y,3),c:R.altin,flat:1}))]}       // tutamaklar
 ];
 
+// ===== Vitrin: fanusta tıbbi bitki kurusu (Tuğrul, 2026-10-28, "çooook iyi").
+// Ceviz taban + pirinç ad levhası + cam kubbe; glass:1 parçalar yan yüzsüz, yarı saydam,
+// en üste çizilir. Sıra export.py için önemli: bu kayıtlar IKONLAR'ın sonuna eklenir ve
+// dosyada da IKONLAR'dan sonra durur.
+const CEVIZ='#7A5236', PIRINC='#E2B356', CAM='#DDEFF7', SAP='#7C8F55', SAPK='#8A7A52';
+const KUBBE='M25,76V42C25,25 36,15 50,15C64,15 75,25 75,42V76';
+const fanus=bitki=>[
+ {d:rr(16,80,68,10,4),c:CEVIZ},                       // taban
+ {d:rr(20,76,60,7,3),c:mix(CEVIZ,'#ffffff',.12)},     // taban üst basamağı
+ ...bitki,
+ {d:rr(41,82,18,5,1.5),c:PIRINC,flat:1},              // ad levhası
+ {d:KUBBE+'Z',c:CAM,glass:1,op:.28},                  // cam
+ {d:KUBBE,c:'#F2FAFD',glass:1,line:1,sw:2.6},         // camın kenarı
+ {d:'M31,68V43C31,32 37,24 44,21',c:'#FFFFFF',glass:1,line:1,sw:3,op:.85}, // parıltı
+ {d:circ(50,13,4),c:CAM}];                            // tepe topuzu
+const FANUSLAR=[
+ {grup:'Vitrin',dosya:'fanus_papatya',ad:'Papatya',kutu:'#E3F1E3',parts:fanus([
+  stem([[50,78],[50,42]]), stem([[48,78],[38,52]]), stem([[52,78],[63,48]]),
+  {d:leaf(50,66,-55,10,2.5),c:SAP},{d:leaf(50,60,55,9,2.5),c:SAP},
+  ...[[50,38],[37,49],[64,45]].flatMap(([x,y])=>[
+   ...[0,45,90,135,180,225,270,315].map(a=>({d:petal(x,y,a,2.5,6.5,2.6),c:'#F7F1E3'})),
+   {d:circ(x,y,3.6),c:'#E9B53A'}])])},
+ {grup:'Vitrin',dosya:'fanus_lavanta',ad:'Lavanta',kutu:'#E3F1E3',parts:fanus([
+  stem([[50,78],[50,30]],2.6), stem([[47,78],[37,36]],2.6), stem([[53,78],[63,34]],2.6),
+  ...[[50,30,0],[37,36,-18],[63,34,18]].flatMap(([x,y,r])=>[0,1,2,3,4].map(i=>{
+   const a=r*Math.PI/180,d=i*4.6;return {d:circ(x+Math.sin(a)*d,y+Math.cos(a)*d,3.3-i*.15),c:'#8C79C2'}})),
+  {d:leaf(50,70,-40,9,1.8),c:'#8FA07A'},{d:leaf(50,66,40,9,1.8),c:'#8FA07A'}])},
+ {grup:'Vitrin',dosya:'fanus_nane',ad:'Nane',kutu:'#E3F1E3',parts:fanus([
+  stem([[50,78],[50,30]]),
+  ...[[68,-60,14,6],[56,58,13,5.5],[46,-55,11,5],[38,52,9,4.2]].flatMap(([y,a,l,w])=>[
+   {d:leaf(50,y,a,l,w),c:'#6E9A55'},{d:leaf(50,y-3,-a,l*.95,w*.95),c:'#6E9A55'}]),
+  {d:leaf(50,31,0,8,3.4),c:'#7AA65F'}])},
+ {grup:'Vitrin',dosya:'fanus_adacayi',ad:'Adaçayı',kutu:'#E3F1E3',parts:fanus([
+  stem([[46,78],[42,36]],3,SAPK), stem([[54,78],[59,40]],3,SAPK),
+  ...[[44,64,-62,14,5.5],[44,52,-58,13,5],[43,40,-20,12,4.6],[56,66,60,14,5.5],[57,54,58,13,5],[58,42,20,12,4.6]]
+   .map(([x,y,a,l,w])=>({d:leaf(x,y,a,l,w),c:'#9CAE97'}))])},
+ {grup:'Vitrin',dosya:'fanus_aynisefa',ad:'Aynısefa',kutu:'#E3F1E3',parts:fanus([
+  stem([[50,78],[45,44]]), stem([[51,78],[60,54]]),
+  {d:leaf(48,68,-60,12,3.6),c:SAP},{d:leaf(52,64,58,11,3.4),c:SAP},
+  ...[[45,40,1],[60,52,.82]].flatMap(([x,y,s])=>[
+   ...Array.from({length:12},(_,i)=>({d:petal(x,y,i*30,3*s,8.5*s,2.4*s),c:'#EE9230'})),
+   {d:circ(x,y,4.2*s),c:'#B9611C'}])])},
+ {grup:'Vitrin',dosya:'fanus_kekik',ad:'Kekik',kutu:'#E3F1E3',parts:fanus([
+  stem([[50,78],[50,58],[42,40]],2.6,SAPK), stem([[50,58],[60,36]],2.6,SAPK), stem([[50,66],[36,56]],2.4,SAPK),
+  ...[[48,53],[45,47],[43,42],[53,52],[56,45],[58,40],[46,64],[41,60],[38,57]].flatMap(([x,y])=>[
+   {d:leaf(x,y,-62,8,2.8),c:'#7E9A66'},{d:leaf(x,y,62,8,2.8),c:'#7E9A66'}]),
+  ...[[42,38],[61,34],[35,55]].flatMap(([x,y])=>[[0,-2.6],[-2.4,1.4],[2.4,1.4]].map(([dx,dy])=>({d:circ(x+dx,y+dy,2.4),c:'#D7A3C2',flat:1})))])},
+ {grup:'Vitrin',dosya:'fanus_biberiye',ad:'Biberiye',kutu:'#E3F1E3',parts:fanus([
+  stem([[48,78],[35,32]],2.6,SAPK), stem([[50,78],[50,26]],2.6,SAPK), stem([[52,78],[65,32]],2.6,SAPK),
+  ...[[35,32,48,78,-16],[50,26,50,78,0],[65,32,52,78,16]].flatMap(([x1,y1,x2,y2,r])=>[.1,.28,.46].flatMap(t=>{
+   const x=x1+(x2-x1)*t,y=y1+(y2-y1)*t;return [{d:leaf(x,y,r-50,7,1.5),c:'#5F7E63'},{d:leaf(x,y,r+50,7,1.5),c:'#5F7E63'}]})),
+  ...[[36,31],[50,25],[64,31],[41,46]].map(([x,y])=>({d:circ(x,y,2.4),c:'#93AEDD',flat:1}))])},
+ {grup:'Vitrin',dosya:'fanus_ihlamur',ad:'Ihlamur',kutu:'#E3F1E3',parts:fanus([
+  stem([[52,78],[52,42],[46,28]],2.8,SAPK),
+  {d:'M52,52C52,43 61,39 65,45C69,39 78,43 77,52C76,60 68,64 66,70C63,64 53,60 52,52Z',c:'#8FA266'},
+  {d:'M66,47V66',c:mix('#8FA266','#2a1a10',.25),line:1},
+  stem([[46,28],[36,54]],1.6,SAPK),
+  {d:leaf(46,28,200,22,4.2),c:'#E3DBA0'},
+  ...[[36,55],[33,52],[39,52],[36,59]].map(([x,y])=>({d:circ(x,y,2.8),c:'#E8C95A'})),
+  {d:leaf(52,70,-60,10,3.4),c:'#8FA266'}])},
+ {grup:'Vitrin',dosya:'fanus_rezene',ad:'Rezene',kutu:'#E3F1E3',parts:fanus([
+  stem([[50,78],[50,40]],2.6), stem([[50,62],[62,46]],2.2),
+  ...[[50,40,[[38,28],[44,24],[50,23],[56,24],[62,28]]],[62,46,[[56,37],[62,35],[68,37]]]].flatMap(([x,y,tips])=>[
+   ...tips.map(([tx,ty])=>stem([[x,y],[tx,ty]],1.5)),
+   ...tips.flatMap(([tx,ty])=>[[0,-1.8],[-1.8,1],[1.8,1]].map(([dx,dy])=>({d:circ(tx+dx,ty+dy,1.9),c:'#E2C243',flat:1})))]),
+  ...[[-50,66],[50,70],[-40,72]].flatMap(([a,y])=>[0,1,2].map(i=>stem([[50,y],[50+Math.sin(a*Math.PI/180)*(9+i*2),y-6-i*2]],1.2,'#93A86E')))])},
+ {grup:'Vitrin',dosya:'fanus_ekinezya',ad:'Ekinezya',kutu:'#E3F1E3',parts:fanus([
+  stem([[49,78],[44,38]]), stem([[51,78],[60,48]]),
+  {d:leaf(48,68,-50,13,3.2),c:SAP},{d:leaf(52,64,52,12,3),c:SAP},
+  ...[[44,36,1],[60,46,.85]].flatMap(([x,y,s])=>[
+   ...[100,125,150,175,200,225,250].map(a=>({d:petal(x,y,a,2.5*s,9*s,2.4*s),c:'#D98AA8'})),
+   {d:`M${x-5*s},${y+1}C${x-5*s},${y-6*s} ${x+5*s},${y-6*s} ${x+5*s},${y+1}Z`,c:'#B5652A'},
+   ...[[-2,-2],[1.5,-3],[0,0]].map(([dx,dy])=>({d:circ(x+dx*s,y+dy*s,1),c:'#7E3F17',flat:1}))])])},
+ {grup:'Vitrin',dosya:'fanus_kantaron',ad:'Sarı kantaron',kutu:'#E3F1E3',parts:fanus([
+  stem([[50,78],[50,44]]), stem([[50,56],[38,40]],2.4), stem([[50,56],[62,38]],2.4),
+  ...[[50,70,-60],[50,70,60],[50,62,-58],[50,62,58],[44,48,-70],[56,46,70]].map(([x,y,a])=>({d:leaf(x,y,a,8,2.6),c:'#7F9659'})),
+  ...[[50,40,1],[38,37,.85],[62,35,.85],[44,30,.75],[56,29,.75]].flatMap(([x,y,s])=>[
+   ...[0,72,144,216,288].map(a=>({d:petal(x,y,a,1.5*s,5.5*s,2.6*s),c:'#F2C230'})),
+   {d:circ(x,y,1.8*s),c:'#D98A1E',flat:1}])])},
+ {grup:'Vitrin',dosya:'fanus_hatmi',ad:'Hatmi',kutu:'#E3F1E3',parts:fanus([
+  stem([[50,78],[50,24]],2.8),
+  {d:leaf(50,72,-62,15,6),c:'#A3B394'},{d:leaf(50,70,62,15,6),c:'#A3B394'},
+  {d:leaf(50,58,-60,11,4.6),c:'#A3B394'},
+  ...[[50,28,.8],[44,40,1],[57,50,1]].flatMap(([x,y,s])=>[
+   ...[0,72,144,216,288].map(a=>({d:petal(x,y,a,1.5*s,7*s,3.8*s),c:'#F1C6D0'})),
+   {d:circ(x,y,1.9*s),c:'#C7849A',flat:1}])])},
+ {grup:'Vitrin',dosya:'fanus_gelincik',ad:'Gelincik',kutu:'#E3F1E3',parts:fanus([
+  {d:'M48,78C46,64 40,52 42,40',c:SAP,w:2.2}, {d:'M52,78C55,66 60,58 58,48',c:SAP,w:2.2},
+  {d:'M50,78C50,70 51,66 52,62',c:SAP,w:2},
+  ...[[42,34,1],[58,44,.82]].flatMap(([x,y,s])=>[
+   {d:circ(x-4*s,y,6*s),c:'#C9473A'},{d:circ(x+4*s,y,6*s),c:'#C9473A'},{d:circ(x,y-4*s,6*s),c:'#D25444'},
+   {d:circ(x,y+.5,3*s),c:'#2A2420',flat:1}]),
+  {d:leaf(52,62,20,8,3.4),c:'#8FA266'},
+  {d:leaf(46,70,-60,9,2.2),c:SAP},{d:leaf(53,72,60,9,2.2),c:SAP}])},
+ {grup:'Vitrin',dosya:'fanus_defne',ad:'Defne',kutu:'#E3F1E3',parts:fanus([
+  {d:'M50,78C49,64 46,48 40,32',c:SAPK,w:2.8},
+  ...[[49,70,55,15,4.4],[48,62,-55,15,4.4],[47,54,52,14,4.2],[45,47,-52,13,4],[43,40,45,12,3.6],[41,34,-35,11,3.4]]
+   .map(([x,y,a,l,w])=>({d:leaf(x,y,a,l,w),c:'#5F7F4E'})),
+  ...[[55,49],[58,46],[57,52]].map(([x,y])=>({d:circ(x,y,2.6),c:'#3B2F3F'}))])},
+ {grup:'Vitrin',dosya:'fanus_okaliptus',ad:'Okaliptüs',kutu:'#E3F1E3',parts:fanus([
+  {d:'M47,78C46,62 42,46 40,30',c:'#8A7A6A',w:2.4}, {d:'M53,78C55,62 59,50 60,36',c:'#8A7A6A',w:2.4},
+  ...[[46,68,-1],[44,58,1],[43,48,-1],[41,38,1],[40,30,0],[54,70,1],[56,60,-1],[58,50,1],[59,42,-1],[60,35,0]]
+   .map(([x,y,s])=>({d:circ(x+s*6,y,3.8),c:'#9DB7B4'}))])},
+ {grup:'Vitrin',dosya:'fanus_murver',ad:'Mürver',kutu:'#E3F1E3',parts:fanus([
+  {d:'M50,78C50,62 50,52 48,40',c:SAPK,w:2.8}, {d:'M49,48C42,44 38,40 36,34',c:SAPK,w:2}, {d:'M49,46C56,42 60,38 62,32',c:SAPK,w:2},
+  ...[[50,70,-60],[50,70,60],[50,62,-55],[50,62,55]].map(([x,y,a])=>({d:leaf(x,y,a,12,3.6),c:'#7C9460'})),
+  ...[[36,36],[62,34],[48,40]].flatMap(([x,y])=>[[0,0],[-3,3],[3,3],[0,6],[-2.5,8.6],[2.5,8.6],[0,11]].map(([dx,dy])=>({d:circ(x+dx,y+dy,2.2),c:'#4A3555'})))])},
+];
+IKONLAR.push(...FANUSLAR);
+
 // ---- çizim (Pharmamental üreticisinden aynen)
 const KALINLIK=7, YAN_KOYU=.32, UST_ACIK=.18, KENAR_ACIK=.35;
 const P=(p,ex='')=>`<path d="${p.d}" fill-rule="evenodd" ${ex}/>`;
@@ -510,10 +627,14 @@ function svgIkon(ik){
  const blur=id+'_z';defs.push(`<filter id="${blur}" x="-50%" y="-200%" width="200%" height="500%"><feGaussianBlur stdDeviation="2"/></filter>`);
  let yan='';
  const boru=(p,c)=>P(p,`fill="none" stroke="${c}" stroke-width="${p.w}" stroke-linecap="round" stroke-linejoin="round"`);
- for(let k=KALINLIK;k>=1;k--)yan+=`<g transform="translate(0 ${k-3})">${wrap(ik,ik.parts.map(p=>p.flat?'':p.w?boru(p,D(p.c,YAN_KOYU)):p.line?'':P(p,`fill="${D(p.c,YAN_KOYU)}" stroke="${D(p.c,YAN_KOYU)}" stroke-width=".8"`)).join(''))}</g>`;
- const ust=ik.parts.map(p=>p.w?boru(p,p.c):p.line
+ // glass:1 (fanus camı): yan yüz yok, yarı saydam, en üstte
+ const kati=ik.parts.filter(p=>!p.glass), cam=ik.parts.filter(p=>p.glass);
+ for(let k=KALINLIK;k>=1;k--)yan+=`<g transform="translate(0 ${k-3})">${wrap(ik,kati.map(p=>p.flat?'':p.w?boru(p,D(p.c,YAN_KOYU)):p.line?'':P(p,`fill="${D(p.c,YAN_KOYU)}" stroke="${D(p.c,YAN_KOYU)}" stroke-width=".8"`)).join(''))}</g>`;
+ const ust=kati.map(p=>p.w?boru(p,p.c):p.line
    ?P(p,`fill="none" stroke="${p.c}" stroke-width="3" stroke-linecap="round"`)
-   :P(p,`fill="${lin(L(p.c,UST_ACIK),p.c)}" stroke="${L(p.c,KENAR_ACIK)}" stroke-width=".8"`)).join('');
+   :P(p,`fill="${lin(L(p.c,UST_ACIK),p.c)}" stroke="${L(p.c,KENAR_ACIK)}" stroke-width=".8"`)).join('')
+  +cam.map(p=>p.line?P(p,`fill="none" stroke="${p.c}" stroke-width="${p.sw||3}" stroke-linecap="round" opacity="${p.op??1}"`)
+   :P(p,`fill="${p.c}" opacity="${p.op??.25}"`)).join('');
  const zemin=`<ellipse cx="50" cy="92" rx="28" ry="4.5" fill="#3a2418" opacity=".16" filter="url(#${blur})"/>`;
  return`<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><defs>${defs.join('')}</defs>${zemin}${yan}<g transform="translate(0 -3)">${wrap(ik,ust)}</g></svg>`;
 }

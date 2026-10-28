@@ -7,6 +7,7 @@ import '../theme/tokens.dart';
 import 'grow_panel.dart';
 import 'heating_sheet.dart';
 import 'job_status.dart';
+import 'mini_games.dart';
 
 /// Laboratuvarda bir adım kartına basınca açılan pencere (Tuğrul, 2026-10-27,
 /// 2026-10-28): kabul edilmiş reçeteler listelenir. Bu adımı şimdi
@@ -92,11 +93,21 @@ class _JobRow extends StatelessWidget {
     // bağlamında açılır.
     final navigatorContext = Navigator.of(sheetContext).context;
     Navigator.of(sheetContext).pop();
+    final game = miniGamesEnabled ? miniGameFor(step.label) : null;
     if (step.interactive) {
       openHeating(
         navigatorContext,
         from: from,
         magistralName: job.magistralName,
+        onDone: () => store.startStep(job.id, tool),
+      );
+    } else if (game != null) {
+      openMiniGame(
+        navigatorContext,
+        from: from,
+        magistralName: job.magistralName,
+        step: step.label,
+        game: game,
         onDone: () => store.startStep(job.id, tool),
       );
     } else {
@@ -150,7 +161,9 @@ class _JobRow extends StatelessWidget {
           if (ok) ...[
             const SizedBox(width: AppSpace.sm),
             Icon(
-              step!.interactive ? Icons.touch_app_rounded : Icons.play_circle_fill_rounded,
+              step!.interactive || (miniGamesEnabled && miniGameFor(step.label) != null)
+                  ? Icons.touch_app_rounded
+                  : Icons.play_circle_fill_rounded,
               size: 28,
               color: AppColors.kobalt,
             ),

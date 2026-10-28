@@ -1,9 +1,11 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:game/data/dried_plants.dart';
 import 'package:game/data/formulary.dart';
 import 'package:game/data/lab_tools.dart';
 import 'package:game/data/orders.dart';
@@ -239,22 +241,30 @@ void showcaseTests() {
     clock = DateTime(2026, 10, 28, 12);
   });
 
-  test('vitrine yalnız teslim edilen ürün konur; aynı ürün iki yerde durmaz; kayıtta kalır', () async {
+  test('vitrine yalnız fanus konur; aynı fanus iki yerde durmaz; kayıtta kalır; eski ürün adı düşer', () async {
+    SharedPreferences.setMockInitialValues({
+      'deliveries_v1': saved,
+      // Rafta ilaç dururken kaydedilmiş eski vitrin.
+      'profile_v1': jsonEncode({'showcase': [order.magistralName, null, null]}),
+    });
     final store = await JobStore.load(now: () => clock);
-    await store.setShowcase(0, prescriptionOrders[1].magistralName); // teslim edilmedi
-    // Her şey açıkken teslim edilmemiş ürün de rafa konur.
-    expect(store.showcase, [unlockAll ? prescriptionOrders[1].magistralName : null, null, null]);
-    await store.setShowcase(0, null);
-    await store.setShowcase(0, order.magistralName);
-    await store.setShowcase(2, order.magistralName); // 0'dan 2'ye taşınır
-    expect(store.showcase, [null, null, order.magistralName]);
+    expect(store.showcase, [null, null, null]);
+    await store.setShowcase(0, order.magistralName); // ilaç rafa konmaz
+    expect(store.showcase, [null, null, null]);
+    final plant = driedPlants.first.name;
+    await store.setShowcase(0, plant);
+    // Kazanma kuralı yok: yalnız her şey açıkken konur.
+    expect(store.showcase, [unlockAll ? plant : null, null, null]);
+    if (!unlockAll) return;
+    await store.setShowcase(2, plant); // 0'dan 2'ye taşınır
+    expect(store.showcase, [null, null, plant]);
     final reopened = await JobStore.load(now: () => clock);
-    expect(reopened.showcase, [null, null, order.magistralName]);
+    expect(reopened.showcase, [null, null, plant]);
     await reopened.setShowcase(2, null);
     expect(reopened.showcase, [null, null, null]);
   });
 
-  testWidgets('Vitrin: boş yere basınca teslim edilenler çıkar, seçilen rafa konur, kaldırılır', (tester) async {
+  testWidgets('Vitrin: boş yere basınca fanuslar çıkar, seçilen rafa konur, kaldırılır', (tester) async {
     tester.view.physicalSize = const Size(1080, 2340);
     tester.view.devicePixelRatio = 3;
     addTearDown(tester.view.reset);
@@ -262,18 +272,26 @@ void showcaseTests() {
     await tester.tap(find.text('Profil').last);
     await tester.pumpAndSettle();
 
-    await tester.tap(find.bySemanticsLabel('Vitrinde boş yer, ürün koy').first);
+    await tester.tap(find.bySemanticsLabel('Vitrinde boş yer, fanus koy').first);
     await tester.pumpAndSettle();
     expect(find.text('Vitrine ne koyalım?'), findsOneWidget);
-    expect(find.text('1 kez teslim edildi'), findsOneWidget);
-    await tester.tap(find.descendant(of: find.byType(GrowPanel), matching: find.text(order.magistralName)));
+    if (!unlockAll) return;
+    expect(find.text('Matricaria chamomilla · Yatıştırıcı çay, cilt bakımı'), findsOneWidget);
+    await tester.tap(find.descendant(of: find.byType(GrowPanel), matching: find.text('Papatya')));
     await tester.pumpAndSettle();
-    expect(find.bySemanticsLabel('Vitrinde ${order.magistralName}'), findsOneWidget);
+    expect(find.bySemanticsLabel('Vitrinde Papatya fanusu'), findsOneWidget);
+    expect(tester.takeException(), isNull);
 
-    await tester.tap(find.bySemanticsLabel('Vitrinde ${order.magistralName}'));
+    await tester.tap(find.bySemanticsLabel('Vitrinde Papatya fanusu'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Raftan kaldır'));
     await tester.pumpAndSettle();
-    expect(find.bySemanticsLabel('Vitrinde boş yer, ürün koy'), findsNWidgets(3));
+    expect(find.bySemanticsLabel('Vitrinde boş yer, fanus koy'), findsNWidgets(3));
+  });
+
+  test('her fanusun ikonu var', () {
+    for (final p in driedPlants) {
+      expect(File(p.imagePath).existsSync(), isTrue, reason: p.imagePath);
+    }
   });
 }

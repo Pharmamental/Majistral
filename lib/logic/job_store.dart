@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../data/dried_plants.dart';
 import '../data/lab_tools.dart';
 import '../data/orders.dart';
 import '../models/prep_job.dart';
@@ -97,7 +98,9 @@ class JobStore extends ChangeNotifier {
       final shelf = profile['showcase'] as List?;
       if (shelf != null && shelf.length == showcaseSize) {
         for (var i = 0; i < showcaseSize; i++) {
-          store._showcase[i] = shelf[i] as String?;
+          // Eski kayıttaki ürün adları (rafta ilaç dururken) fanus değil; boş yer olur.
+          final name = shelf[i] as String?;
+          store._showcase[i] = name != null && driedPlantNamed(name) != null ? name : null;
         }
       }
     } on Object {
@@ -133,20 +136,21 @@ class JobStore extends ChangeNotifier {
     await _saveProfile();
   }
 
-  /// Profildeki vitrin rafı (Tuğrul, 2026-10-28): oyuncunun seçtiği, teslim
-  /// edilmiş ürünler; boş yer null.
+  /// Profildeki vitrin rafı (Tuğrul, 2026-10-28): fanusta bitki kurusu
+  /// (`driedPlants`, adla); boş yer null.
   static const showcaseSize = 3;
   List<String?> get showcase => List.unmodifiable(_showcase);
   final List<String?> _showcase = List.filled(showcaseSize, null);
 
-  /// [slot]. yere [magistralName]'i koyar (null: rafı boşaltır). Yalnız teslim
-  /// edilmiş ürün konur; başka yerdeyse oradan alınır, aynı ürün iki kez durmaz.
-  Future<void> setShowcase(int slot, String? magistralName) async {
-    if (!unlockAll && magistralName != null && !_deliveries.any((d) => d.magistralName == magistralName)) return;
+  /// [slot]. yere [plant] fanusunu koyar (null: rafı boşaltır). Fanusların
+  /// kazanılma kuralı henüz yok: her şey açıkken (`unlockAll`) hepsi konur.
+  /// Başka yerdeyse oradan alınır, aynı fanus iki kez durmaz.
+  Future<void> setShowcase(int slot, String? plant) async {
+    if (plant != null && (driedPlantNamed(plant) == null || !unlockAll)) return;
     for (var i = 0; i < showcaseSize; i++) {
-      if (_showcase[i] == magistralName) _showcase[i] = null;
+      if (_showcase[i] == plant) _showcase[i] = null;
     }
-    _showcase[slot] = magistralName;
+    _showcase[slot] = plant;
     await _saveProfile();
   }
 

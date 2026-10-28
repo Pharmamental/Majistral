@@ -51,7 +51,8 @@ lib/
 ├── screens/           home (alt çubuklu kabuk), orders (Reçeteler), lab (Laboratuvar), market,
 │                      profile (Profil), more (Diğer), references (Kaynaklar, Diğer'in içinde)
 └── widgets/           chunky_button (3B düğme), game_tab_bar (alt çubuk), back_pill, prescription_card,
-                       job_status, tool_sheet (alet → reçete), heating_sheet, result_view,
+                       job_status, tool_sheet (alet → reçete), heating_sheet, mini_games (adım
+                       oyunları), mastery_medal, achievement_toast, result_view,
                        market_widgets, thermometer_panel/painter
 ```
 
@@ -202,6 +203,24 @@ lib/
   (`JobStore.deliveries`, anahtar `deliveries_v1`; adlar `profile_v1`). Her oyun reçetesinin formül
   kitabındaki karşılığı `PrescriptionOrder.formula`. Liderlik tablosu ve satılık çerçeve yok.
   Sonraya: reçete defteri, seri (onarma haklı), kazanılan çizimli avatar çerçeveleri.
+- Profil eklemeleri (Tuğrul, 2026-10-28): reçete defteri (son 3 teslim, tamamı güne göre gruplu);
+  ustalıkta madalya halkası (`MasteryMedal`: Başladın gri, Bronz, Gümüş, Altın; dört çentik,
+  renkler `AppColors.medal*`); Bronz, Gümüş ya da Altın'a çıkınca teslimde üstte koyu
+  kırmızı-beyaz açılan kapsül kutucuğu ("Ezme · Bronz / 5 kez hazırladın", `achievement_toast.dart`;
+  Başladın kutucuk çıkarmaz). Vitrin rafında ilaç durmaz ("ilaç koymak çok iyi değil"): fanusta
+  kurutulmuş tıbbi bitki, 16 tane (`data/dried_plants.dart`, ikonlar uretici.html "Vitrin";
+  `glass:1` parça yan yüzsüz, yarı saydam); nasıl kazanılacakları sonra kararlaştırılacak.
+- Şimdilik her şey açık (Tuğrul, 2026-10-28, "unlocked bir şey olmasın"): `unlockAll`
+  (`data/lab_tools.dart`): market aletleri elde, koleksiyon tam, vitrine her fanus konur.
+  Kazanma ve satın alma kuralları gelince false yapılır; testler iki duruma göre yazıldı.
+- Mini oyunlar (Tuğrul, 2026-10-28): her laboratuvar adımında süre başlamadan önce o tekniğin
+  hareketi birkaç saniye oynanır, gerçek yapılıştan türetildi (`widgets/mini_games.dart`,
+  `miniGameFor`): ezmede kristal kırıp havanda dairesel sürtme, levigasyonda damla damla sıvı
+  + spatül, seyreltmede eşit miktar, çözme/karıştırma/emülsifikasyonda uygun hızda daire,
+  soğutmada ritim, elekte sallama, şişirmede yüzeye serpme (aynı yere yığma topak yapar),
+  hacimde menisküsün alt kenarı, kapsülde tozu yayıp bastırma. Eritme kendi termometre oyunu.
+  Hata kaliteyi düşürür, oyun hep biter; kalite şimdilik yıldızı etkilemez (karar açık).
+  Görseller yer tutucu çizim. Testler adım akışını `miniGamesEnabled = false` ile sınar.
 - Avatarlar (Tuğrul, 2026-10-28): önlüklü hayvan eczacılar. Oyuncak blok tarzında çizilmez
   ("oyuncak blok gibi çizme"). Dörtte üç açıdan (45° yandan), kalın koyu kontur, düz renk + uzak
   yanda tek ton gölge; aşırı sade de değil ("bu kadar da basit çizme"): tüy dokusu, kaş, renkli
