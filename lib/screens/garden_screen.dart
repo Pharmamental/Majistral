@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 
 import '../data/dried_plants.dart';
+import '../data/economy.dart';
 import '../logic/job_store.dart';
 import '../models/garden.dart';
 import '../theme/tokens.dart';
 import '../widgets/back_pill.dart';
 import '../widgets/chunky_button.dart';
+import '../widgets/coin_pill.dart';
 import '../widgets/garden_widgets.dart';
 import '../widgets/grow_panel.dart';
 import '../widgets/job_status.dart' show formatRemaining;
@@ -35,28 +37,38 @@ class _GardenScreenState extends State<GardenScreen> with SecondTick {
       children: [
         const ColoredBox(
           color: AppColors.wall,
-          child: TabHeader(title: 'Bahçe', subtitle: 'Tıbbi bitki yetiştir, kurut, vitrine koy'),
+          child: TabHeader(title: 'Bahçe', subtitle: 'Tıbbi bitki yetiştir, vitrine koy', trailing: CoinPill()),
         ),
         Expanded(
           child: GardenGround(
+            // Çit içerikle birlikte kayar, ekranın üstüne yapışmaz (Tuğrul, 2026-10-29).
             child: ListView(
-              padding: EdgeInsets.fromLTRB(AppSpace.lg, AppSpace.lg, AppSpace.lg, bottom),
+              padding: EdgeInsets.only(bottom: bottom),
               children: [
-                _SeedShelf(garden: garden, store: store),
+                const GardenFence(),
                 const SizedBox(height: AppSpace.lg),
-                GridView.count(
-                  crossAxisCount: 2,
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  mainAxisSpacing: AppSpace.lg,
-                  crossAxisSpacing: AppSpace.lg,
-                  childAspectRatio: 1.1,
-                  children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: AppSpace.lg),
+                  child: _SeedShelf(garden: garden, store: store),
+                ),
+                const SizedBox(height: AppSpace.lg),
+                _BedRows(
+                  beds: [
                     for (var i = 0; i < Garden.allBeds; i++)
-                      if (i >= Garden.openBeds)
-                        GardenBed(number: i + 1, open: false)
+                      if (i < garden.beds.length)
+                        _bed(context, store, i, garden.beds[i], now)
+                      // Sıradaki kilitli parsel parayla açılır (2026-10-29).
+                      else if (i == garden.beds.length && store.nextParcelPrice != null)
+                        Builder(
+                          builder: (c) => GardenBed(
+                            number: i + 1,
+                            open: false,
+                            label: 'Parsel ${i + 1} · ${store.nextParcelPrice} ile aç',
+                            onTap: () => _openParcel(c, store, i),
+                          ),
+                        )
                       else
-                        _bed(context, store, i, garden.beds[i], now),
+                        GardenBed(number: i + 1, open: false),
                   ],
                 ),
               ],
@@ -79,11 +91,42 @@ class _GardenScreenState extends State<GardenScreen> with SecondTick {
       builder: (c) => GardenBed(
         number: i + 1,
         open: true,
+        plant: plant.name,
         progress: bed.progressAt(now),
         color: Color(plant.color),
         ready: ready,
         label: ready ? '${plant.name} · hazır' : '${plant.name} · ${formatRemaining(bed.readyAt.difference(now))}',
         onTap: () => ready ? _harvest(c, store, i) : _openGrowing(c, store, i),
+      ),
+    );
+  }
+}
+
+/// Parseller ikişer ikişer; her parselin altında etiketi olduğu için sabit
+/// oranlı ızgara yerine satır.
+class _BedRows extends StatelessWidget {
+  const _BedRows({required this.beds});
+
+  final List<Widget> beds;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: AppSpace.lg),
+      child: Column(
+        children: [
+          for (var i = 0; i < beds.length; i += 2) ...[
+            if (i > 0) const SizedBox(height: AppSpace.lg),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(child: beds[i]),
+                const SizedBox(width: AppSpace.lg),
+                Expanded(child: i + 1 < beds.length ? beds[i + 1] : const SizedBox.shrink()),
+              ],
+            ),
+          ],
+        ],
       ),
     );
   }
@@ -102,10 +145,7 @@ class _SeedShelf extends StatelessWidget {
     final seeds = [for (final p in driedPlants) if ((garden.seeds[p.name] ?? 0) > 0) p];
     final effects = [
       for (final g in PlantGroup.values)
-        if (store.showcaseBonus(g) > 0)
-          g == PlantGroup.cay || g == PlantGroup.bogaz
-              ? '${g.effect} +${store.showcaseBonus(g)}'
-              : '${g.effect} +%${store.showcaseBonus(g)}',
+        if (store.showcaseBonus(g) > 0) g.effectText(store.showcaseBonus(g)),
     ];
     return Container(
       padding: const EdgeInsets.all(AppSpace.lg),
@@ -139,10 +179,117 @@ class _SeedShelf extends StatelessWidget {
                 : 'Vitrindeki oyun etkileri: ${effects.join(' · ')}',
             style: AppText.label(size: 12, color: AppColors.inkMuted),
           ),
+          const SizedBox(height: AppSpace.md),
+          Builder(
+            builder: (c) => ChunkyButton.secondary(
+              compact: true,
+              label: 'Tohum satın al',
+              onPressed: () => _openSeedShop(c, store),
+            ),
+          ),
         ],
       ),
     );
   }
+}
+
+/// Sıradaki kilitli parseli parayla açar.
+Future<void> _openParcel(BuildContext context, JobStore store, int bed) {
+  final price = store.nextParcelPrice!;
+  return openGrowing<void>(
+    context,
+    from: rectOf(context),
+    builder: (sheet) => Padding(
+      padding: const EdgeInsets.all(AppSpace.lg),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text('Parsel ${bed + 1}', style: AppText.title(size: 20)),
+          const SizedBox(height: AppSpace.xs),
+          Text(
+            'Bir parsel daha: aynı anda bir bitki daha yetiştirirsin. Kasada ${store.coins} para var.',
+            style: AppText.body(size: 14, color: AppColors.inkMuted),
+          ),
+          const SizedBox(height: AppSpace.lg),
+          ChunkyButton(
+            label: '$price ile aç',
+            icon: Icons.toll_rounded,
+            onPressed: store.coins >= price
+                ? () {
+                    store.buyParcel();
+                    Navigator.of(sheet).pop();
+                  }
+                : null,
+          ),
+          const SizedBox(height: AppSpace.sm),
+          ChunkyButton.secondary(label: 'Kapat', onPressed: () => Navigator.of(sheet).pop()),
+        ],
+      ),
+    ),
+  );
+}
+
+/// Belirli bir tohumu satın alma (geç oyun gideri, 2026-10-29): elde olmayan
+/// bitkiler, kademesine göre fiyatıyla.
+Future<void> _openSeedShop(BuildContext context, JobStore store) {
+  return openGrowing<void>(
+    context,
+    from: rectOf(context),
+    builder: (sheet) => ListenableBuilder(
+      listenable: store,
+      builder: (context, _) {
+        final plants = [for (final p in driedPlants) if (!store.garden.has(p.name)) p];
+        return Padding(
+          padding: const EdgeInsets.all(AppSpace.lg),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text('Tohum satın al', style: AppText.title(size: 20)),
+              const SizedBox(height: AppSpace.xs),
+              Text(
+                plants.isEmpty
+                    ? 'Bütün bitkiler elinde.'
+                    : 'Şansla gelmesini beklemek istemediğin tohumu al. Kasada ${store.coins} para var.',
+                style: AppText.body(size: 14, color: AppColors.inkMuted),
+              ),
+              const SizedBox(height: AppSpace.md),
+              Flexible(
+                child: ListView(
+                  shrinkWrap: true,
+                  children: [
+                    for (final p in plants)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: AppSpace.sm),
+                        child: Row(
+                          children: [
+                            Expanded(child: _PlantInfo(plant: p)),
+                            const SizedBox(width: AppSpace.sm),
+                            SizedBox(
+                              width: 96,
+                              child: ChunkyButton(
+                                compact: true,
+                                label: '${seedPrices[p.tier]}',
+                                icon: Icons.toll_rounded,
+                                onPressed:
+                                    store.coins >= seedPrices[p.tier]! ? () => store.buySeed(p.name) : null,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: AppSpace.sm),
+              ChunkyButton.secondary(label: 'Kapat', onPressed: () => Navigator.of(sheet).pop()),
+            ],
+          ),
+        );
+      },
+    ),
+  );
 }
 
 class _SeedChip extends StatelessWidget {

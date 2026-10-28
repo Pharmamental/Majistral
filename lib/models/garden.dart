@@ -50,10 +50,11 @@ class Garden {
     this.sinceRare = 0,
     this.fertilizer = 0,
   })  : seeds = seeds ?? {},
-        beds = beds ?? List.filled(openBeds, null),
+        beds = beds ?? List<Bed?>.filled(openBeds, null, growable: true),
         grown = grown ?? {};
 
-  /// Açık parsel sayısı ve bahçedeki toplam parsel (kalanı kilitli).
+  /// Başta açık parsel sayısı ve bahçedeki toplam parsel; 4-6 parayla açılır
+  /// (`JobStore.buyParcel`). [beds]'in uzunluğu açık parsel sayısıdır.
   static const openBeds = 3;
   static const allBeds = 6;
 
@@ -139,7 +140,9 @@ class Garden {
         for (final e in (json['seeds'] as Map<String, dynamic>).entries)
           if (driedPlantNamed(e.key) != null) e.key: e.value as int,
       },
-      beds: [for (var i = 0; i < openBeds; i++) i < beds.length ? beds[i] : null],
+      beds: [
+        for (var i = 0; i < math.max(openBeds, math.min(beds.length, allBeds)); i++) i < beds.length ? beds[i] : null,
+      ],
       grown: {for (final g in json['grown'] as List) if (driedPlantNamed(g as String) != null) g},
       sinceRare: json['sinceRare'] as int,
       fertilizer: json['fertilizer'] as int,

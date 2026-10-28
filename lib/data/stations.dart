@@ -21,17 +21,9 @@ const List<Station> stations = [
         color: AppColors.rusty,
       ),
       ShopItem(
-        name: 'Cam havan',
-        imagePath: 'assets/images/ikon/ikon_havan_cam.png',
-        description: 'Sıvılar, boyayan ve yağlı maddeler. Kaygandır, toz ezmez.',
-        icon: Icons.blender_outlined,
-        color: AppColors.goodCondition,
-        price: 600,
-      ),
-      ShopItem(
         name: 'Wedgwood havan',
         imagePath: 'assets/images/ikon/ikon_havan_wedgwood.png',
-        description: 'Pürüzlü: sert kristalleri küçültme ve emülsiyon. Boyayan maddeyi emer.',
+        description: 'Pürüzlü: sert kristalleri küçültür. Ezme aynı anda iki reçetede yapılır.',
         icon: Icons.blender_outlined,
         color: AppColors.advanced,
         price: 900,
@@ -72,7 +64,7 @@ const List<Station> stations = [
         name: 'Unguator',
         imagePath: 'assets/images/ikon/ikon_unguator.png',
         description: 'Elektronik havan: kapalı kavanozda karıştırır, kabarcık bırakmaz. '
-            'Karıştırma adımını %30 kısaltır.',
+            'Levigasyon ve seyreltme gibi spatülle yapılan adımları %30 kısaltır.',
         icon: Icons.autorenew,
         color: AppColors.goodCondition,
         price: 2500,
@@ -80,7 +72,7 @@ const List<Station> stations = [
       ShopItem(
         name: 'Merhem değirmeni',
         imagePath: 'assets/images/ikon/ikon_merhem_degirmeni.png',
-        description: 'Üç merdane topakları kırar, merhemi pürüzsüzleştirir. Kumlu merhem riski azalır.',
+        description: 'Üç merdane topakları kırar, merhemi pürüzsüzleştirir. Spatülle yapılan adımları %50 kısaltır.',
         icon: Icons.view_week_rounded,
         color: AppColors.advanced,
         price: 4000,
@@ -100,7 +92,7 @@ const List<Station> stations = [
       ShopItem(
         name: 'Termostatlı su banyosu',
         imagePath: 'assets/images/ikon/ikon_su_banyosu_termostat.png',
-        description: 'Sıcaklığı sabit tutar. Isıtma adımını %25 kısaltır.',
+        description: 'Sıcaklığı sabit tutar. Eritme ve ısıtmalı çözmeyi %25 kısaltır.',
         icon: Icons.hot_tub_outlined,
         color: AppColors.goodCondition,
         price: 1800,
@@ -162,26 +154,6 @@ const List<Station> stations = [
         description: 'Delikli plaka: tozu aynı anda birçok kapsüle eşit doldurur.',
         icon: Icons.medication_outlined,
         color: AppColors.rusty,
-      ),
-    ],
-  ),
-  Station(
-    name: 'Ambalaj',
-    tiers: [
-      ShopItem(
-        name: 'Kavanoz',
-        imagePath: 'assets/images/ikon/ikon_kavanoz.png',
-        description: 'Merhem ve krem yeni, temiz kavanoza konur.',
-        icon: Icons.inventory_2_outlined,
-        color: AppColors.rusty,
-      ),
-      ShopItem(
-        name: 'Tüp doldurma ve kıvırma aleti',
-        imagePath: 'assets/images/ikon/ikon_tup.png',
-        description: 'Merhemi tüpe doldurup ağzını kıvırır. Etiket adımını %20 kısaltır.',
-        icon: Icons.compress_rounded,
-        color: AppColors.goodCondition,
-        price: 1500,
       ),
     ],
   ),

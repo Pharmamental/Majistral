@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 
+import '../data/economy.dart';
 import '../data/market_items.dart';
 import '../data/stations.dart';
+import '../logic/job_store.dart';
 import '../theme/tokens.dart';
 import '../widgets/back_pill.dart';
+import '../widgets/coin_pill.dart';
 import '../widgets/counter_top.dart';
 import '../widgets/market_widgets.dart';
 
@@ -36,7 +39,7 @@ class _MarketScreenState extends State<MarketScreen> {
           color: AppColors.wall,
           child: Column(
             children: [
-              const TabHeader(title: 'Market', subtitle: 'İstasyonunu yükselt, kimyasal al'),
+              const TabHeader(title: 'Market', subtitle: 'Alet ve kimyasal al', trailing: CoinPill()),
               Padding(
                 padding: const EdgeInsets.fromLTRB(AppSpace.lg, 0, AppSpace.lg, AppSpace.lg),
                 child: PillTabs<MarketTab>(
@@ -55,6 +58,7 @@ class _MarketScreenState extends State<MarketScreen> {
   }
 
   Widget _content() {
+    final store = JobScope.of(context);
     final bottom = AppSpace.x3 + MediaQuery.paddingOf(context).bottom;
     final listPadding = EdgeInsets.fromLTRB(AppSpace.lg, AppSpace.lg, AppSpace.lg, bottom);
     switch (_tab) {
@@ -87,7 +91,13 @@ class _MarketScreenState extends State<MarketScreen> {
               Text(group.subtitle, style: AppText.label(size: 12, color: AppColors.ink)),
               const SizedBox(height: AppSpace.md),
               for (final item in group.items) ...[
-                ShopItemTile(item: item),
+                ShopItemTile(
+                  item: item,
+                  detail: packs[item.name] == null
+                      ? 'Eczanenin cihazından, bedava'
+                      : 'Paket ${packs[item.name]!.grams} g · rafta ${store.stockOf(item.name).floor()} g',
+                  onBuy: packs[item.name] != null && store.coins >= item.price ? () => store.buyPack(item.name) : null,
+                ),
                 const SizedBox(height: AppSpace.md),
               ],
               const SizedBox(height: AppSpace.lg),

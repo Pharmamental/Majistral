@@ -4,13 +4,10 @@ import 'package:flutter/material.dart';
 
 import '../theme/tokens.dart';
 
-/// Bahçenin zemini (2026-10-29): üstte badanalı tahta çit, altında soluk zeytin
-/// yeşili çimen. İçerik çitin altından başlar; Market'in tentesi gibi çit de
-/// başlığı sahneden ayırır.
+/// Bahçenin zemini (2026-10-29): soluk zeytin yeşili çimen. Çit ([GardenFence])
+/// içeriğin başında durur ve onunla birlikte kayar (Tuğrul, 2026-10-29).
 class GardenGround extends StatelessWidget {
   const GardenGround({super.key, required this.child});
-
-  static const double _fence = 44;
 
   final Widget child;
 
@@ -18,38 +15,32 @@ class GardenGround extends StatelessWidget {
   Widget build(BuildContext context) {
     return ColoredBox(
       color: AppColors.gardenGrass,
-      child: Stack(
-        children: [
-          Positioned.fill(
-            child: RepaintBoundary(
-              child: CustomPaint(
-                painter: _GrassPainter(),
-                child: Padding(padding: const EdgeInsets.only(top: _fence), child: child),
-              ),
-            ),
-          ),
-          const Positioned(
-            left: 0,
-            right: 0,
-            top: 0,
-            height: _fence,
-            child: RepaintBoundary(child: CustomPaint(painter: _FencePainter())),
-          ),
-        ],
-      ),
+      child: RepaintBoundary(child: CustomPaint(painter: _GrassPainter(), child: child)),
     );
+  }
+}
+
+/// Badanalı tahta çit; Market'in tentesi gibi başlığı sahneden ayırır.
+class GardenFence extends StatelessWidget {
+  const GardenFence({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const SizedBox(height: 44, child: RepaintBoundary(child: CustomPaint(painter: _FencePainter())));
   }
 }
 
 /// Bir parsel: ceviz tahtadan yükseltilmiş yatak, içinde karıklı toprak.
 /// Kilitliyse yerinde çimene çizilmiş silik kesik çerçeve ve kilit durur.
-/// Altında kâğıt etikette parselin adı ve durumu (durum yalnız renkle anlatılmaz).
+/// Altında, parsele değmeden, kâğıt etikette parselin adı ve durumu (durum yalnız
+/// renkle anlatılmaz; Tuğrul 2026-10-29: etiket parselin üstüne binmesin).
 class GardenBed extends StatelessWidget {
   const GardenBed({
     super.key,
     required this.number,
     required this.open,
     this.label,
+    this.plant,
     this.progress,
     this.color,
     this.ready = false,
@@ -62,10 +53,13 @@ class GardenBed extends StatelessWidget {
   /// Etikette yazacak durum ("Papatya · 1 sa 20 dk"); boşsa parselin adı.
   final String? label;
 
+  /// Ekili bitkinin adı; çiçeğin biçimi buna göre ([bloomFormOf]).
+  final String? plant;
+
   /// Ekili bitkinin büyümesi (0–1); boş parselde null.
   final double? progress;
 
-  /// Olgunlaşınca açan çiçeğin rengi.
+  /// Olgunlaşınca açan çiçeğin (ya da yaprağın) rengi.
   final Color? color;
   final bool ready;
   final VoidCallback? onTap;
@@ -80,30 +74,28 @@ class GardenBed extends StatelessWidget {
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: onTap,
-        child: AspectRatio(
-          aspectRatio: 1.1,
-          child: Stack(
-            children: [
-              Positioned.fill(
-                child: CustomPaint(
-                  painter: open ? _BedPainter(progress: progress, color: color) : const _LockedBedPainter(),
-                ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            AspectRatio(
+              aspectRatio: 1.1,
+              child: CustomPaint(
+                painter: open
+                    ? _BedPainter(progress: progress, color: color, plant: plant)
+                    : const _LockedBedPainter(),
+                child: open
+                    ? null
+                    : const Center(
+                        child: Padding(
+                          padding: EdgeInsets.only(bottom: 10),
+                          child: Icon(Icons.lock_rounded, color: AppColors.gardenGrassDark, size: 28),
+                        ),
+                      ),
               ),
-              if (!open)
-                const Center(
-                  child: Padding(
-                    padding: EdgeInsets.only(bottom: AppSpace.xl),
-                    child: Icon(Icons.lock_rounded, color: AppColors.gardenGrassDark, size: 28),
-                  ),
-                ),
-              Positioned(
-                left: AppSpace.xs,
-                right: AppSpace.xs,
-                bottom: AppSpace.sm,
-                child: Center(child: _Tag(text: text, ready: ready)),
-              ),
-            ],
-          ),
+            ),
+            const SizedBox(height: AppSpace.sm),
+            Center(child: _Tag(text: text, ready: ready)),
+          ],
         ),
       ),
     );
@@ -218,45 +210,211 @@ class _FencePainter extends CustomPainter {
   bool shouldRepaint(_FencePainter oldDelegate) => false;
 }
 
+/// Çiçeğin biçimi, bitkinin gerçek görünüşünden (2026-10-29): papatya gibi
+/// taç yapraklı baş, başak (lavanta), şemsiye (rezene, mürver), beş yapraklı
+/// kâse (gelincik) ya da yalnız yaprak (nane, defne: yaprağı için yetişir).
+enum BloomForm { daisy, spike, umbel, cup, leafy }
+
+BloomForm bloomFormOf(String? plant) => switch (plant) {
+      'Papatya' || 'Aynısefa' || 'Ekinezya' => BloomForm.daisy,
+      'Lavanta' || 'Kekik' || 'Biberiye' => BloomForm.spike,
+      'Rezene' || 'Ihlamur' || 'Mürver' => BloomForm.umbel,
+      'Sarı kantaron' || 'Hatmi' || 'Gelincik' => BloomForm.cup,
+      _ => BloomForm.leafy,
+    };
+
+/// Büyümenin evresi: tohum (toprak kabarığı), filiz (iki çenek yaprağı), fide
+/// (gerçek yapraklar), tomurcuk, çiçek. Her evrenin içinde boy sürekli uzar.
+enum GrowthStage { seed, sprout, seedling, bud, bloom }
+
+GrowthStage growthStageAt(double p) => p >= 1
+    ? GrowthStage.bloom
+    : p >= 0.75
+        ? GrowthStage.bud
+        : p >= 0.4
+            ? GrowthStage.seedling
+            : p >= 0.12
+                ? GrowthStage.sprout
+                : GrowthStage.seed;
+
 /// Ceviz çerçeveli yükseltilmiş yatak: üstte açık renkli çerçeve kenarı, önde
-/// koyu ön yüz (yükseklik), içinde koyu toprak ve dört karık. Ekiliyse ilk üç
-/// karıkta filizler büyür ([progress]); olgunlaşınca çiçek açar ([color]).
+/// koyu ön yüz (yükseklik), içinde koyu toprak ve dört karık. Ekiliyse her
+/// karıkta üç bitki evre evre büyür ([progress]); olgunlaşınca bitkiye özgü
+/// biçimde çiçek açar ([color], [plant]).
 class _BedPainter extends CustomPainter {
-  const _BedPainter({this.progress, this.color});
+  const _BedPainter({this.progress, this.color, this.plant});
 
   final double? progress;
   final Color? color;
+  final String? plant;
 
-  static const _leaf = Color(0xFF7FA05A), _leafDark = Color(0xFF5C7A3E), _stem = Color(0xFF6B8A47);
+  static const _leaf = Color(0xFF7FA05A),
+      _leafDark = Color(0xFF55723A),
+      _stem = Color(0xFF6B8A47),
+      _sprout = Color(0xFF9DC06A),
+      _seed = Color(0xFFE6D7B0);
 
-  /// Karıktaki bir bitki: sapı ve iki yaprağı büyümeyle uzar; olgunsa tepesinde çiçek.
-  void _plant(Canvas canvas, Offset base, double p, Color? bloom) {
-    final h = 4 + p * 14;
-    final top = base - Offset(0, h);
+  static Color _shade(Color c, double t) => Color.lerp(c, Colors.black, t)!;
+
+  /// Uçları sivri yaprak: [at]'tan [angle] yönüne uzar; altında koyu gölgesi.
+  static void _leafAt(Canvas canvas, Offset at, double angle, double len, Color c) {
+    canvas.save();
+    canvas.translate(at.dx, at.dy);
+    canvas.rotate(angle);
+    final w = len * 0.42;
+    final path = Path()
+      ..moveTo(0, 0)
+      ..quadraticBezierTo(len * 0.45, -w, len, 0)
+      ..quadraticBezierTo(len * 0.45, w, 0, 0)
+      ..close();
+    canvas.drawPath(path.shift(const Offset(0, 0.9)), Paint()..color = _shade(c, 0.3));
+    canvas.drawPath(path, Paint()..color = c);
+    canvas.restore();
+  }
+
+  static void _stemLine(Canvas canvas, Offset a, Offset b, double width) {
     canvas.drawLine(
-      base,
-      top,
+      a,
+      b,
       Paint()
         ..color = _stem
-        ..strokeWidth = 1.6
+        ..strokeWidth = width
         ..strokeCap = StrokeCap.round,
     );
-    final leaf = 2.5 + p * 3.5;
-    for (final (side, y) in [(-1.0, 0.45), (1.0, 0.7)]) {
-      final at = Offset.lerp(base, top, y)!;
-      canvas.save();
-      canvas.translate(at.dx, at.dy);
-      canvas.rotate(side * 0.7);
-      final r = Rect.fromCenter(center: Offset(side * leaf * 0.8, 0), width: leaf * 1.8, height: leaf);
-      canvas.drawOval(r.translate(0, 0.8), Paint()..color = _leafDark);
-      canvas.drawOval(r, Paint()..color = _leaf);
-      canvas.restore();
+  }
+
+  /// Karıktaki bir bitki. [s] ölçek (parsel genişliğine göre), [tall] ve
+  /// [lean] her bitkiye ayrı küçük fark: sıra dümdüz durmasın.
+  void _plant(Canvas canvas, Offset base, double p, double s, double tall, double lean) {
+    final stage = growthStageAt(p);
+    final form = bloomFormOf(plant);
+    final bloom = color ?? const Color(0xFFF4E9A8);
+    final leafColor = form == BloomForm.leafy ? bloom : _leaf;
+
+    if (stage == GrowthStage.seed) {
+      // Toprak kabarığı ve içinden görünen tohum.
+      canvas.drawOval(
+        Rect.fromCenter(center: base - Offset(0, 0.8 * s), width: 9 * s, height: 4 * s),
+        Paint()..color = AppColors.gardenSoilLight,
+      );
+      canvas.drawOval(
+        Rect.fromCenter(center: base - Offset(0.5 * s, 1.6 * s), width: 2.6 * s, height: 1.8 * s),
+        Paint()..color = _seed,
+      );
+      return;
     }
-    if (bloom != null) {
-      for (final o in const [Offset(-2.4, 0), Offset(2.4, 0), Offset(0, -2.6), Offset(0, 2.2)]) {
-        canvas.drawCircle(top + o, 2.6, Paint()..color = bloom);
+
+    if (stage == GrowthStage.sprout) {
+      final t = (p - 0.12) / 0.28;
+      final top = base + Offset(lean * 2 * s, -(3 + 5 * t) * tall * s);
+      _stemLine(canvas, base, top, 1.4 * s);
+      final len = (3 + 2.5 * t) * s;
+      _leafAt(canvas, top, -math.pi + 0.5, len, _sprout);
+      _leafAt(canvas, top, -0.5, len, _sprout);
+      return;
+    }
+
+    // Fide, tomurcuk ve çiçekte sap uzar; yapraklar çift çift dizilir.
+    final t = switch (stage) {
+      GrowthStage.seedling => (p - 0.4) / 0.35,
+      GrowthStage.bud => (p - 0.75) / 0.25,
+      _ => 1.0,
+    };
+    final h = switch (stage) {
+      GrowthStage.seedling => 8 + 9 * t,
+      GrowthStage.bud => 17 + 6 * t,
+      _ => 24.0,
+    } * tall * s;
+    final top = base + Offset(lean * 5 * s, -h);
+    _stemLine(canvas, base, top, 1.7 * s);
+    final pairs = stage == GrowthStage.seedling ? 2 : (form == BloomForm.leafy ? 4 : 3);
+    for (var k = 0; k < pairs; k++) {
+      final y = 0.22 + k * (form == BloomForm.leafy ? 0.24 : 0.2);
+      final at = Offset.lerp(base, top, y)!;
+      final len = (stage == GrowthStage.seedling ? 4 + 2.5 * t : 6.5) * s * (1 - k * 0.12);
+      _leafAt(canvas, at, -math.pi + 0.45 + k * 0.1, len, leafColor);
+      _leafAt(canvas, at + Offset(0, -1.2 * s), -0.45 - k * 0.1, len, leafColor);
+    }
+    if (form == BloomForm.leafy) {
+      // Yaprağı için yetişen bitkide tepede yaprak demeti; çiçek yok.
+      if (stage != GrowthStage.seedling) {
+        final len = (stage == GrowthStage.bloom ? 7.0 : 5.5) * s;
+        _leafAt(canvas, top, -math.pi / 2 - 0.55, len, leafColor);
+        _leafAt(canvas, top, -math.pi / 2 + 0.55, len, leafColor);
+        _leafAt(canvas, top, -math.pi / 2, len * 1.1, leafColor);
       }
-      canvas.drawCircle(top, 1.6, Paint()..color = const Color(0xFFF2D06B));
+      return;
+    }
+    if (stage == GrowthStage.bud) _bud(canvas, top, s, form, bloom, t);
+    if (stage == GrowthStage.bloom) _flower(canvas, top, s, form, bloom);
+  }
+
+  /// Tomurcuk: yeşil, ucunda çiçeğin rengi beliriyor ([t] ile artar).
+  void _bud(Canvas canvas, Offset top, double s, BloomForm form, Color c, double t) {
+    final tip = Color.lerp(_sprout, c, 0.35 + 0.5 * t)!;
+    switch (form) {
+      case BloomForm.spike:
+        for (var i = 0; i < 4; i++) {
+          canvas.drawCircle(top + Offset((i.isEven ? -1 : 1) * 1.2 * s, (i * 2.4 - 1) * s), 1.5 * s, Paint()..color = i == 0 ? tip : _leafDark);
+        }
+      case BloomForm.umbel:
+        for (final dx in const [-3.0, 0.0, 3.0]) {
+          final end = top + Offset(dx * s, -2.5 * s + dx.abs() * 0.4 * s);
+          _stemLine(canvas, top, end, 0.9 * s);
+          canvas.drawCircle(end, 1.4 * s, Paint()..color = tip);
+        }
+      case BloomForm.daisy || BloomForm.cup || BloomForm.leafy:
+        final r = Rect.fromCenter(center: top - Offset(0, 2 * s), width: 4.4 * s, height: 5.6 * s);
+        canvas.drawOval(r, Paint()..color = _leafDark);
+        canvas.drawOval(
+          Rect.fromLTRB(r.left + 0.8 * s, r.top, r.right - 0.8 * s, r.top + r.height * 0.5),
+          Paint()..color = tip,
+        );
+    }
+  }
+
+  /// Açmış çiçek, bitkinin biçiminde.
+  void _flower(Canvas canvas, Offset top, double s, BloomForm form, Color c) {
+    final dark = _shade(c, 0.28);
+    switch (form) {
+      case BloomForm.daisy:
+        final center = top - Offset(0, 1.5 * s);
+        for (var i = 0; i < 10; i++) {
+          final a = i * math.pi / 5;
+          canvas.save();
+          canvas.translate(center.dx, center.dy);
+          canvas.rotate(a);
+          canvas.drawOval(Rect.fromLTWH(1.5 * s, -1.3 * s, 4.6 * s, 2.6 * s), Paint()..color = i.isEven ? c : _shade(c, 0.08));
+          canvas.restore();
+        }
+        final disk = plant == 'Papatya' ? const Color(0xFFE9B93A) : plant == 'Ekinezya' ? const Color(0xFFA2582A) : _shade(c, 0.35);
+        canvas.drawCircle(center, 2.4 * s, Paint()..color = disk);
+        canvas.drawCircle(center - Offset(0.6 * s, 0.6 * s), 0.9 * s, Paint()..color = Colors.white.withValues(alpha: 0.25));
+      case BloomForm.spike:
+        // Sapın ucunda üst üste küçük çiçekler; uca doğru incelir.
+        for (var i = 0; i < 6; i++) {
+          final r = (1.9 - i * 0.18) * s;
+          final o = top + Offset((i.isEven ? -1 : 1) * 1.3 * s, (2 - i * 2.2) * s);
+          canvas.drawCircle(o, r, Paint()..color = i.isEven ? c : dark);
+        }
+      case BloomForm.umbel:
+        // Şemsiye: tepeden yayılan ince saplar, uçlarında küçük çiçek ya da tane öbekleri.
+        for (final dx in const [-6.0, -3.0, 0.0, 3.0, 6.0]) {
+          final end = top + Offset(dx * s, (-4.5 + dx.abs() * 0.35) * s);
+          _stemLine(canvas, top, end, 0.9 * s);
+          for (final o in const [Offset(-1, 0), Offset(1, 0), Offset(0, -1.2)]) {
+            canvas.drawCircle(end + o * s, 1.25 * s, Paint()..color = o.dy < 0 ? c : dark);
+          }
+        }
+      case BloomForm.cup:
+        final center = top - Offset(0, 2 * s);
+        for (var i = 0; i < 5; i++) {
+          final a = -math.pi / 2 + i * 2 * math.pi / 5;
+          canvas.drawCircle(center + Offset(math.cos(a), math.sin(a)) * 2.6 * s, 2.8 * s, Paint()..color = i.isEven ? c : _shade(c, 0.1));
+        }
+        canvas.drawCircle(center, 1.7 * s, Paint()..color = plant == 'Gelincik' ? const Color(0xFF2A1E1E) : _shade(c, 0.45));
+      case BloomForm.leafy:
+        break;
     }
   }
 
@@ -322,21 +480,27 @@ class _BedPainter extends CustomPainter {
         ..style = PaintingStyle.stroke
         ..strokeWidth = 1.5,
     );
-    // Filizler: ilk üç karıkta dörder bitki (en alttaki karığı etiket örter).
+    // Bitkiler: dört karıkta üçer, arkadan öne çizilir (öndeki arkadakini örter).
     if (progress case final p?) {
-      final bloom = p >= 1 ? color : null;
-      for (var i = 1; i <= 3; i++) {
+      // Arka sıranın çiçekleri çerçeveden biraz taşar, üstteki etikete değmez.
+      canvas.clipRect(Rect.fromLTRB(-4, -6, size.width + 4, size.height));
+      final s = soil.width / 95;
+      final rnd = math.Random(5);
+      for (var i = 1; i <= 4; i++) {
         final y = soil.top + soil.height * i / 5 - 1;
-        for (var k = 0; k < 4; k++) {
-          final x = soil.left + soil.width * (k + 0.5 + (i.isEven ? 0.25 : 0)) / 4.25;
-          _plant(canvas, Offset(x, y), p, bloom);
+        for (var k = 0; k < 3; k++) {
+          final x = soil.left + soil.width * (k + 0.5 + (i.isEven ? 0.35 : 0)) / 3.35;
+          // Arka sıra biraz küçük: uzakta durur, çiçeği çerçeveden taşmaz.
+          final far = 0.76 + 0.08 * i;
+          _plant(canvas, Offset(x, y), p.clamp(0.0, 1.0), s * far, 0.9 + rnd.nextDouble() * 0.2, rnd.nextDouble() - 0.5);
         }
       }
     }
   }
 
   @override
-  bool shouldRepaint(_BedPainter oldDelegate) => oldDelegate.progress != progress || oldDelegate.color != color;
+  bool shouldRepaint(_BedPainter oldDelegate) =>
+      oldDelegate.progress != progress || oldDelegate.color != color || oldDelegate.plant != plant;
 }
 
 /// Kilitli parsel: çimende kesik çizgili silik çerçeve (duvardaki boş reçete

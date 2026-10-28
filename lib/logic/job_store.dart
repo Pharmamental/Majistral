@@ -5,11 +5,14 @@ import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../data/dried_plants.dart';
+import '../data/economy.dart';
 import '../data/lab_tools.dart';
 import '../data/orders.dart';
+import '../data/stations.dart';
 import '../models/garden.dart';
 import '../models/prep_job.dart';
 import '../models/prescription.dart';
+import '../models/shop_item.dart';
 
 /// Duvardaki gelen reçeteleri ve kabul edilmiş reçeteleri tutar, telefona
 /// kaydeder.
@@ -35,15 +38,19 @@ class JobStore extends ChangeNotifier {
   static const _deliveriesKey = 'deliveries_v1';
   static const _profileKey = 'profile_v1';
   static const _gardenKey = 'garden_v1';
+  static const _economyKey = 'economy_v1';
 
   /// Duvarda en fazla birikecek reçete; vitrindeki çay fanusu artırır ([wallLimit]).
-  static const wallSize = 3;
+  /// 3'ten 4'e çıktı (ekonomi 2. tur, 2026-10-29): "X sonra dön" = 4 × 60 dk.
+  static const wallSize = 4;
 
   /// Tohum düşmesinin şansı; testler sabit tohumla verir.
   final math.Random _random;
 
-  /// İki reçetenin gelişi arasındaki süre. Yer tutucu; kapalı testte ayarlanacak.
-  static const arrivalEvery = Duration(minutes: 10);
+  /// İki reçetenin gelişi arasındaki süre (2026-10-29: 10 dk'dan 60 dk'ya; 10 dk'da
+  /// duvar hep doluydu ve çok oynayanın geliri az oynayanın 6,5 katıydı, 60 dk'da
+  /// 2,5 katı). Yer tutucu; kapalı testte ayarlanacak.
+  static const arrivalEvery = Duration(minutes: 60);
 
   final SharedPreferences _prefs;
   final DateTime Function() now;
@@ -122,6 +129,27 @@ class JobStore extends ChangeNotifier {
     } on Object {
       // Varsayılan adlarla devam.
     }
+    // Ekonomi: ilk açılışta kasada [startCoins], rafta her maddeden bir paket.
+    try {
+      final raw = prefs.getString(_economyKey);
+      if (raw == null) {
+        store._coins = startCoins;
+        for (final MapEntry(:key, :value) in packs.entries) {
+          store._stock[key] = value.grams.toDouble();
+        }
+        await store._saveEconomy();
+      } else {
+        final e = jsonDecode(raw) as Map<String, dynamic>;
+        store._coins = e['coins'] as int;
+        store._debt = e['debt'] as int;
+        for (final MapEntry(:key, :value) in (e['stock'] as Map<String, dynamic>).entries) {
+          store._stock[key] = (value as num).toDouble();
+        }
+        store._tools.addAll([for (final t in e['tools'] as List) t as String]);
+      }
+    } on Object {
+      // Bozuk ekonomi kaydı: kasa boş başlar, raf boş; eksikler depodan gelir.
+    }
     // İlk açılış: duvar dolu başlar, sayaç şimdi başlar.
     if (nextId == null) {
       while (store._wall.length < store.wallLimit) {
@@ -195,8 +223,162 @@ class JobStore extends ChangeNotifier {
   /// Duvarda birikebilecek reçete: 3 + vitrindeki çay fanusu.
   int get wallLimit => wallSize + showcaseBonus(PlantGroup.cay);
 
-  /// Günlük acele hakkı: 5 + vitrindeki boğaz fanusu.
-  int get rushLimit => dailyRushes + showcaseBonus(PlantGroup.bogaz);
+  /// Günlük acele hakkı (vitrin artık hakkı değil kaliteyi korur, 2026-10-29).
+  int get rushLimit => dailyRushes;
+
+  /// Bugün kaç acele daha kaliteyi düşürmez (vitrindeki boğaz fanusu).
+  int get protectedRushesLeft => (showcaseBonus(PlantGroup.bogaz) - _rushesUsed).clamp(0, 3);
+
+  // ---- Para, stok, aletler (Tuğrul, 2026-10-29, "önerilerle"; data/economy.dart)
+
+  int _coins = 0;
+  int _debt = 0;
+  final Map<String, double> _stock = {};
+  final Set<String> _tools = {};
+
+  /// Kasadaki para.
+  int get coins => _coins;
+
+  /// Ecza deposuna veresiye borcu; teslimlerden kendiliğinden kesilir.
+  int get debt => _debt;
+
+  /// Raftaki madde, gram.
+  double stockOf(String chemical) => _stock[chemical] ?? 0;
+
+  /// Son teslimin parası (teslim penceresi gösterir).
+  Payout? get lastPayout => _lastPayout;
+  Payout? _lastPayout;
+
+  /// Alet elde mi: ücretsiz kademe hep elde, ücretlisi satın alınınca.
+  bool ownsTool(ShopItem item) => item.price == 0 || _tools.contains(item.name);
+
+  /// Ödeyerek alır; para yetmezse hiçbir şey yapmaz.
+  Future<bool> _spend(int price, void Function() give) async {
+    if (_coins < price) return false;
+    _coins -= price;
+    give();
+    await _saveEconomy();
+    return true;
+  }
+
+  Future<bool> buyTool(ShopItem item) =>
+      ownsTool(item) ? Future.value(false) : _spend(item.price, () => _tools.add(item.name));
+
+  /// Bir paket kimyasal alır.
+  Future<bool> buyPack(String chemical) {
+    final p = packs[chemical];
+    if (p == null) return Future.value(false);
+    return _spend(p.price, () => _stock[chemical] = stockOf(chemical) + p.grams);
+  }
+
+  /// Bahçenin sıradaki kilitli parselini açar.
+  Future<bool> buyParcel() async {
+    final i = _garden.beds.length - Garden.openBeds;
+    if (i >= parcelPrices.length) return false;
+    final ok = await _spend(parcelPrices[i], () => _garden.beds.add(null));
+    if (ok) await _saveGarden();
+    return ok;
+  }
+
+  /// Sıradaki parselin fiyatı; hepsi açıksa null.
+  int? get nextParcelPrice {
+    final i = _garden.beds.length - Garden.openBeds;
+    return i < parcelPrices.length ? parcelPrices[i] : null;
+  }
+
+  /// Belirli bir tohumu satın alır (geç oyun gideri); bitki zaten eldeyse almaz.
+  Future<bool> buySeed(String plant) async {
+    final p = driedPlantNamed(plant);
+    if (p == null || _garden.has(plant)) return false;
+    final ok = await _spend(seedPrices[p.tier]!, () => _garden.seeds[plant] = 1);
+    if (ok) await _saveGarden();
+    return ok;
+  }
+
+  /// Reçeteyi almak için eksik olan paketlerin bedeli (0: raf yetiyor).
+  int missingCost(PrescriptionOrder order) {
+    var cost = 0;
+    for (final MapEntry(:key, :value) in gramsFor(order).entries) {
+      final p = packs[key];
+      if (p == null || freeChemicals.contains(key)) continue;
+      var have = stockOf(key);
+      while (have < value) {
+        have += p.grams;
+        cost += p.price;
+      }
+    }
+    return cost;
+  }
+
+  /// "Al" anında malzemeyi raftan düşer; eksik paketi alır, para yetmezse ecza
+  /// deposu veresiye verir (oyuncu hiçbir zaman takılmaz).
+  void _consume(PrescriptionOrder order) {
+    for (final MapEntry(:key, :value) in gramsFor(order).entries) {
+      final p = packs[key];
+      if (p == null || freeChemicals.contains(key)) continue;
+      while (stockOf(key) < value) {
+        if (_coins >= p.price) {
+          _coins -= p.price;
+        } else {
+          _debt += p.price - _coins;
+          _coins = 0;
+        }
+        _stock[key] = stockOf(key) + p.grams;
+      }
+      _stock[key] = stockOf(key) - value;
+    }
+  }
+
+  /// Teslim parasını öder; önce depo borcu kesilir.
+  void _earn(int amount) {
+    final cut = math.min(_debt, amount);
+    _debt -= cut;
+    _coins += amount - cut;
+  }
+
+  Future<void> _saveEconomy() async {
+    await _prefs.setString(
+      _economyKey,
+      jsonEncode({'coins': _coins, 'debt': _debt, 'stock': _stock, 'tools': _tools.toList()}),
+    );
+    notifyListeners();
+  }
+
+  // ---- Aletlerin etkisi (2026-10-29)
+
+  ShopItem? _tier(String name) {
+    for (final s in stations) {
+      for (final t in s.tiers) {
+        if (t.name == name) return t;
+      }
+    }
+    return null;
+  }
+
+  bool _owns(String name) {
+    final t = _tier(name);
+    return t != null && ownsTool(t);
+  }
+
+  /// Adımın süresi, eldeki aletlerle: Unguator spatülle yapılan adımları %30,
+  /// merhem değirmeni %50, termostatlı su banyosu ısıtmayı %25 kısaltır.
+  Duration stepDuration(PrescriptionStep step) {
+    var factor = 1.0;
+    final spatula = step.tool == StepTool.karistirma || step.orWith.contains(StepTool.karistirma);
+    if (spatula) {
+      if (_owns('Merhem değirmeni')) {
+        factor = 0.5;
+      } else if (_owns('Unguator')) {
+        factor = 0.7;
+      }
+    }
+    if (step.tool == StepTool.isitma && _owns('Termostatlı su banyosu')) factor = 0.75;
+    return Duration(seconds: (step.minutes * 60 * factor).round());
+  }
+
+  /// Bir adım kartı aynı anda kaç reçetede çalışır: Wedgwood havan alınınca
+  /// Ezme iki reçetede birden (paralel yuva).
+  int capacity(LabTool tool) => tool.name == 'Ezme' && _owns('Wedgwood havan') ? 2 : 1;
 
   /// [bed]. parsele tohum eker; vitrindeki ferahlatıcı fanus büyümeyi hızlandırır.
   Future<bool> plant(int bed, String plant) =>
@@ -300,17 +482,17 @@ class JobStore extends ChangeNotifier {
     final run = running(job);
     final steps = orderOf(job).steps.skip(job.runs.length);
     return (run == null ? Duration.zero : run.end.difference(now())) +
-        Duration(minutes: steps.fold(0, (sum, s) => sum + s.minutes));
+        steps.fold(Duration.zero, (sum, s) => sum + stepDuration(s));
   }
 
-  /// [tool] adım kartı şu an hangi reçetede çalışıyor; boşsa null.
-  ({PrepJob job, StepRun run})? busyWith(LabTool tool) {
-    for (final job in _jobs) {
-      final run = running(job);
-      if (run != null && run.tool == tool.name) return (job: job, run: run);
-    }
-    return null;
-  }
+  /// [tool] adım kartında şu an çalışan işler.
+  List<({PrepJob job, StepRun run})> runsOn(LabTool tool) => [
+        for (final job in _jobs)
+          if (running(job) case final run? when run.tool == tool.name) (job: job, run: run),
+      ];
+
+  /// [tool] adım kartı şu an hangi reçetede çalışıyor (ilki); boşsa null.
+  ({PrepJob job, StepRun run})? busyWith(LabTool tool) => runsOn(tool).firstOrNull;
 
   /// [tool] adım kartı bu reçetede şimdi başlatılabilir mi? Değilse oyuncuya
   /// gösterilecek neden. Kart, reçetenin sıradaki adımıyla aynı adı taşımalı
@@ -326,18 +508,21 @@ class JobStore extends ChangeNotifier {
       final later = steps.skip(job.runs.length).any((s) => s.label == tool.name);
       return later ? 'Bu adım daha sonra; önce ${step.label}.' : 'Bu adım bitti.';
     }
-    final busy = busyWith(tool);
-    if (busy != null) return 'Dolu: ${busy.job.magistralName} bitince yapabilirsin.';
+    final runs = runsOn(tool);
+    if (runs.length >= capacity(tool)) return 'Dolu: ${runs.first.job.magistralName} bitince yapabilirsin.';
     return null;
   }
 
   /// Duvardaki reçeteyi alır, tezgâha indirir; adımlarını oyuncu laboratuvarda
-  /// başlatır. Duvar doluyken sayaç dolmuşsa yeni reçete hemen gelir.
+  /// başlatır. Malzeme bu anda raftan düşer (eksik paket alınır ya da depo
+  /// veresiye verir). Duvar doluyken sayaç dolmuşsa yeni reçete hemen gelir.
   Future<PrepJob?> accept(IncomingOrder incoming) async {
     _catchUp();
     if (!_wall.any((o) => o.id == incoming.id)) return null;
     if (_wall.length >= wallLimit && !now().isBefore(_due)) _due = now();
     _wall.removeWhere((o) => o.id == incoming.id);
+    _consume(orderKeyed(incoming.orderKey));
+    await _saveEconomy();
     final job = PrepJob(
       id: incoming.id,
       magistralName: incoming.magistralName,
@@ -362,14 +547,14 @@ class JobStore extends ChangeNotifier {
     final start = now();
     _jobs[_jobs.indexOf(job)] = job.copyWith(runs: [
       ...job.runs,
-      StepRun(label: step.label, tool: tool.name, start: start, end: start.add(Duration(minutes: step.minutes))),
+      StepRun(label: step.label, tool: tool.name, start: start, end: start.add(stepDuration(step))),
     ]);
     await _save();
     notifyListeners();
   }
 
-  /// Günde izlenebilecek ödüllü reklam, yani acele et hakkı (tasarım belgesi);
-  /// vitrindeki boğaz fanusu artırır ([rushLimit]).
+  /// Günde izlenebilecek ödüllü reklam, yani acele et hakkı (tasarım belgesi).
+  /// Vitrindeki boğaz fanusu ilk acelelerin kaliteyi düşürmesini önler.
   static const dailyRushes = 5;
   static const _rushKey = 'rush_v1';
 
@@ -399,14 +584,18 @@ class JobStore extends ChangeNotifier {
 
   /// Acele et (Tuğrul, 2026-10-26): çalışan adımın kalan süresi yarıya iner,
   /// kalite de yarıya iner ve yukarı yuvarlanır (3 → 2 → 1, en düşük 1).
+  /// Vitrinde boğaz fanusu varsa günün ilk 1-3 acelesi kaliteyi düşürmez.
   Future<void> rush(int id) async {
     final job = this.job(id);
     if (job == null || !canRush(job)) return;
-    const note = 'Acele edildi: her acele kaliteyi yarıya indirir.';
+    final protected = protectedRushesLeft > 0;
+    final note = protected
+        ? 'Acele edildi; vitrindeki fanus kaliteyi korudu.'
+        : 'Acele edildi: her acele kaliteyi yarıya indirir.';
     final run = running(job)!;
     _jobs[_jobs.indexOf(job)] = job.copyWith(
       runs: [...job.runs.take(job.runs.length - 1), run.copyWith(end: now().add(stepLeftAfterRush(job)))],
-      stars: (job.stars / 2).ceil().clamp(1, 3),
+      stars: protected ? job.stars : (job.stars / 2).ceil().clamp(1, 3),
       notes: job.notes.contains(note) ? job.notes : [...job.notes, note],
     );
     await _prefs.setString(_rushKey, '$_today|${_rushesUsed + 1}');
@@ -420,6 +609,19 @@ class JobStore extends ChangeNotifier {
     final job = this.job(id);
     if (job == null || !isReady(job)) return null;
     _jobs.remove(job);
+    // Teslim parası: günün ilk teslimleri emeği iki kat öder; cilt fanusu emeği artırır.
+    final today = now();
+    final earlierToday = _deliveries
+        .where((d) => d.at.year == today.year && d.at.month == today.month && d.at.day == today.day)
+        .length;
+    _lastPayout = payoutFor(
+      orderOf(job),
+      job.stars,
+      dailyBonus: earlierToday < dailyBonusDeliveries,
+      laborBonusPercent: showcaseBonus(PlantGroup.cilt),
+    );
+    _earn(_lastPayout!.coins);
+    await _saveEconomy();
     _deliveries.add(Delivery(
       magistralName: job.magistralName,
       orderKey: job.orderKey,

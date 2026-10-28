@@ -92,7 +92,7 @@ void main() {
   testWidgets('gelen reçeteler duvarda; alınan tezgâha iner, tezgâhta sağa sola kaydırılır', (tester) async {
     await _tallScreen(tester);
     await tester.pumpWidget(MajistralApp(store: await _store()));
-    expect(find.text('Gelen reçeteler · 3/3 · duvar dolu'), findsOneWidget);
+    expect(find.text('Gelen reçeteler · 4/4 · duvar dolu'), findsOneWidget);
     expect(find.text('Tezgâhın boş. Duvardan bir reçete al.'), findsOneWidget);
 
     // Fişe dokununca reçete açılır; "Kapat" almadan kapatır.
@@ -102,17 +102,17 @@ void main() {
     expect(find.text('Raf ömrü'), findsOneWidget);
     await tester.tap(find.text('Kapat'));
     await tester.pumpAndSettle();
-    expect(find.text('Gelen reçeteler · 3/3 · duvar dolu'), findsOneWidget);
+    expect(find.text('Gelen reçeteler · 4/4 · duvar dolu'), findsOneWidget);
 
     for (final o in prescriptionOrders.take(JobStore.wallSize)) {
       await _take(tester, o.magistralName);
     }
-    expect(find.textContaining('Gelen reçeteler · 0/3 · yenisi'), findsOneWidget);
-    expect(find.byIcon(Icons.hourglass_empty_rounded), findsNWidgets(3)); // duvarın boş yerleri
-    expect(find.text('3 elinde · 3 seni bekliyor'), findsOneWidget);
+    expect(find.textContaining('Gelen reçeteler · 0/4 · yenisi'), findsOneWidget);
+    expect(find.byIcon(Icons.hourglass_empty_rounded), findsNWidgets(4)); // duvarın boş yerleri
+    expect(find.text('4 elinde · 4 seni bekliyor'), findsOneWidget);
     // Son alınan kart öne gelir; geri kaydırınca ilki görünür.
-    expect(find.text('Dr. Deniz · Dermatoloji · Hasta E. Şahin', findRichText: true), findsOneWidget);
-    for (var i = 0; i < 2; i++) {
+    expect(find.text('Dr. Ayşe · Çocuk Hastalıkları · Hasta B. Kaya', findRichText: true), findsOneWidget);
+    for (var i = 0; i < 3; i++) {
       await tester.drag(find.byType(PageView), const Offset(500, 0));
       await tester.pumpAndSettle();
     }
@@ -201,8 +201,8 @@ void main() {
     await tester.tap(find.text('Tamam'));
     await tester.pumpAndSettle();
     expect(jobOf(store, order), isNull);
-    // Teslim edilen duvara dönmez; yenisi sayaçla gelir (8. dakikadayız).
-    expect(find.text('Gelen reçeteler · 2/3 · yenisi 02:00 sonra'), findsOneWidget);
+    // Teslim edilen duvara dönmez; yenisi sayaçla gelir (8. dakikadayız, geliş 60 dk).
+    expect(find.text('Gelen reçeteler · 3/4 · yenisi 52:00 sonra'), findsOneWidget);
   });
 
   testWidgets('market sekmeleri istasyonları, reklamı ve kimyasalları gösterir', (tester) async {
@@ -298,7 +298,7 @@ void main() {
     // Bahçe (2026-10-29): 3 açık, 3 kilitli parsel; 360 genişlikte taşma yok.
     await tester.tap(find.text('Bahçe').last);
     await tester.pumpAndSettle();
-    expect(find.text('Tıbbi bitki yetiştir, kurut, vitrine koy'), findsOneWidget);
+    expect(find.text('Tıbbi bitki yetiştir, vitrine koy'), findsOneWidget);
     expect(find.text('Parsel 1 · tohum ek'), findsOneWidget);
     expect(find.byIcon(Icons.lock_rounded), findsWidgets);
 

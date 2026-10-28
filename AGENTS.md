@@ -88,10 +88,10 @@ lib/
   markette (`stations`); laboratuvarda adım kartlarının "neyle yapılır" satırında görünür.
   Havanlar ve spatüller farklı işlerin aletleri (`Station.upgradePath = false`); kademeli
   gruplarda (merhem taşı → Unguator → merhem değirmeni, su banyosu) yalnız sahip olunan en
-  yükseği yazar. Satın alma yokken sahip olunan = ücretsiz kademe (`isOwned`).
+  yükseği yazar. Sahip olunan = ücretsiz kademe ya da satın alınan (`JobStore.ownsTool`).
 - Adımlar gerçek teknikler (Tuğrul, 2026-10-28, "asıl önemlileri koy"): kontrol, etiket ve
-  ambalaj adım değil, laboratuvarda ambalaj aleti durmaz (markette Ambalaj grubu şimdilik
-  etkisiz). Merhem: Ezme › Levigasyon › Geometrik seyreltme (salisilik asit); Levigasyon ›
+  ambalaj adım değil, laboratuvarda ambalaj aleti durmaz (markette Ambalaj grubu 2026-10-29'da
+  çıktı). Merhem: Ezme › Levigasyon › Geometrik seyreltme (salisilik asit); Levigasyon ›
   Geometrik seyreltme (çinko oksit). Krem: Eritme (su banyosu, termometre oyunu) › Çözme (su
   banyosu) › Emülsifikasyon (porselen kapsül) › Soğutma (porselen kapsül, buzsuz, karıştırarak).
   Adım = eczacının madde üzerinde eliyle, aletle ya da yöntemle yaptığı işlem (ezme, maserasyon,
@@ -123,7 +123,7 @@ lib/
   kaynakları `lib/data/orders.dart` başında. Kayıt anahtarları `prep_jobs_v3` ve `wall_v1`; kimliksiz eski
   kayıtlar (v1, v2) okunmaz.
 - Acele et (Tuğrul, 2026-10-26): her basış çalışan adımın kalan süresini yarıya, kaliteyi de
-  yarıya indirir, yıldız yukarı yuvarlanır (3 → 2 → 1, en düşük 1). Günde 5 hak (`JobStore.rush`).
+  yarıya indirir, yıldız yukarı yuvarlanır (3 → 2 → 1, en düşük 1). Günde 5 hak (`JobStore.rush`); vitrindeki boğaz fanusu ilk 1-3 acelede kaliteyi korur.
   Adım çalışmıyorsa (reçete oyuncuyu bekliyor) basılamaz. Reklam henüz bağlı değil, onay penceresi yerini tutuyor.
 - Kimyasal seçimi yok (Tuğrul, 2026-10-26): maddeler reçeteden gelir. Adım sırası da sorulmaz
   (Tuğrul, 2026-10-27): adımlar sabit sırayla yapılır.
@@ -137,9 +137,9 @@ lib/
 - Duvar ve tezgâh (Tuğrul, 2026-10-27): duvarda gelen reçeteler, tezgâhta elindekiler. Duvarda
   henüz alınmamış reçetelerin küçük fişleri (hekim, ad, süre; hepsi aynı boyda, düz, kobalt
   çerçeveli); dokununca reçete penceresi açılır, altta "Al". Alınan reçete duvardan kalkar,
-  tezgâha iner ve öne gelir. Duvar sınırı (Tuğrul, 2026-10-27): duvarda en fazla 3 reçete
-  birikir (`JobStore.wallSize`), boş yerler silik çerçeve; yenisi her 10 dakikada gelir
-  (`arrivalEvery`, yer tutucu), sayaç geldiği anda yeniden başlar. Duvar doluyken sayaç
+  tezgâha iner ve öne gelir. Duvar sınırı (Tuğrul, 2026-10-27; ekonomi 2. turuyla 2026-10-29): duvarda en fazla 4 reçete
+  birikir (`JobStore.wallSize`, çay fanusuyla `wallLimit`), boş yerler silik çerçeve; yenisi her
+  60 dakikada gelir (`arrivalEvery`, yer tutucu; 10 dk'da duvar hep doluydu), sayaç geldiği anda yeniden başlar. Duvar doluyken sayaç
   dolsa da gelmez; reçete alınca süre çoktan dolmuşsa yenisi hemen gelir, sayaç o andan
   başlar. Uygulama kapalıyken de gelir. Reçeteler sırayla döner, aynı reçete yeniden gelebilir
   (her gelişin kimliği `IncomingOrder.id`, iş de bu kimlikle tutulur). Elde tutma sınırı yok,
@@ -177,10 +177,13 @@ lib/
   etkiler açıkça yazar. Vitrin yalnız yetiştirilmiş bitkiyi alır (`unlockAll` vitrini
   açmaz; bahçeden önce rafa konmuş fanus yetiştirilmiş sayılır); seçicide kilitliler soluk
   ve kilitli, her fanusun etkisi yazılı. Duvar ve acele sınırı vitrine göre
-  (`JobStore.wallLimit`, `rushLimit`); teslim parası etkisi ekonomi gelince bağlanacak.
-  Parsel açma (4-6) ve kurutma askısı henüz yok. Vitrindeki fanus küçük oyun etkisi verir, aynı gruptan iki fanus
-  toplanmaz, en güçlüsü sayılır: çaylar duvar (Papatya +1, Ihlamur/Rezene +2, Mürver +3),
-  boğaz acele hakkı (Adaçayı +1, Kekik/Hatmi +2, Gelincik +3), cilt teslim parası (Aynısefa
+  (`JobStore.wallLimit`, `protectedRushesLeft`), cilt fanusu teslim emeğini artırır.
+  Parsel 4-6 parayla açılır (800/1600/3200); markette belirli tohum satılır (bahçedeki
+  "Tohum satın al": sık 300, orta 900, nadir 2500). Kurutma askısı henüz yok. Vitrindeki fanus küçük oyun etkisi verir, aynı gruptan iki fanus
+  toplanmaz, en güçlüsü sayılır: çaylar duvar (Papatya +1, Ihlamur/Rezene +1, Mürver +2;
+  ekonomi 2. turu, "önerilerle": +3 az oynayanın teslimini %34 artırıyordu), boğaz günde
+  1/2/3 acelenin kaliteyi düşürmemesi (Adaçayı, Kekik/Hatmi, Gelincik; acele hakkı artırmak
+  para kaybettirdiği için değersizdi), cilt teslim emeği (Aynısefa
   %5, Lavanta/Defne %10, Kantaron %15), ferahlatıcı bahçe hızı (Nane %10, Biberiye/Okaliptüs
   %20, Ekinezya %30). Tohum teslimde şansla düşer (sık %50, iki orta %20'şer, nadir %10;
   "A", Tuğrul 2026-10-29) ve 10 teslimde nadir çıkmazsa 11.'de garanti; fazla tohum sonraki
@@ -269,13 +272,20 @@ lib/
 - Testler gerçek fontu `test/test_fonts.dart` ile yükler; taşma testleri böyle gerçeği yansıtır.
 - Süren işler `shared_preferences` ile telefona kaydedilir; saat şimdilik cihaz saati
   (`JobStore.now`). Sunucu saati gelene kadar saat hilesi mümkün; kapanmamış bir açık.
-- Ekonomi, reklam ve bildirim henüz yok; satın alma düğmeleri bilerek boş. Ekonomi önerisi
-  (2. tur 2026-10-29, onay bekliyor): teslim = malzeme bedeli + adım başına 13 × yıldız, günün
-  ilk 3 teslimi emek ×2; kimyasal gramla harcanır, paketle alınır (38 paket fiyatı), başta her
-  maddeden 1 paket + 100 para, depo veresiyesi; giderler 18 100 (aletler + parsel 4-6 + kurutma
-  askısı). Bulgular: market aletlerinin yazılı etkileri (Unguator %30, termostatlı banyo %25)
-  kodda yok; zaman simülasyonu tezgâhı sınırsız almalı; çay fanusu çok güçlü, boğaz değersiz.
-  Beyinde `knowledge/concepts/majistral-ekonomi.md`.
+- **Ekonomi kodda** (Tuğrul, 2026-10-29, "Evet, önerilerle"; `data/economy.dart`, kayıt
+  `economy_v1`, hesap beyinde `knowledge/concepts/majistral-ekonomi.md` 2. tur). Tek para.
+  Teslim = malzeme bedeli (hep tam) + adım başına 11 emek × yıldız (%100/%70/%40); günün ilk 3
+  teslimi emek ×2; cilt fanusu emeğe %5-15. Kimyasal paketle alınır (`packs`, 38 madde), gramla
+  harcanır (`gramsFor`: yüzde, ad, not satırı, kapsül 0,2 g laktoz); "Al" anında raftan düşer,
+  eksik paket kasadan alınır, kasa yetmezse ecza deposu veresiye verir, borç teslimden kesilir
+  (oyuncu hiç takılmaz; 1★ teslim bile malzemesini öder, test denetler). Başta her maddeden bir
+  paket + 100 para. Distile su bedava. Aletler satın alınır ve etkisi var: Unguator spatüllü
+  adımları %30, merhem değirmeni %50, termostatlı banyo ısıtmayı %25 kısaltır, Wedgwood Ezme'yi
+  aynı anda iki reçetede yaptırır (`stepDuration`, `capacity`). Cam havan ve tüp doldurma aleti
+  marketten çıktı (hiçbir adımı değiştirmiyordu); cam havan uyarıları adımlarda duruyor.
+  Giderler 14 800 (aletler 9 200 + parsel 5 600); emek 11 bu toplamdan çözüldü. Para göstergesi
+  Market ve Bahçe başlığında (`CoinPill`), teslim penceresinde döküm. Reklam ve bildirim henüz
+  yok; acele düğmesi onay penceresiyle çalışıyor.
 - Eski deneme (Temmuz 2026, tek dosya) git geçmişinde: ilk commit `0bd231c`. 2026-10-25'te market
   düzeni, istasyon kademeleri, reçete kartı, termometre ve görseller oradan seçilerek taşındı.
   Taşınmayan görseller (`Capsule`, `Kalıp_ikon`, `Maserasyon_ikon`, `Oyun_tick`, `Carpi`)

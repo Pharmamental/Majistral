@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 
 import '../data/dried_plants.dart';
+import '../data/economy.dart';
 import '../logic/job_store.dart';
 import '../logic/profile_stats.dart';
 import '../models/prep_job.dart';
@@ -35,6 +36,7 @@ Future<void> deliverJob(BuildContext context, int id) async {
   final job = await store.deliver(id);
   if (job == null || !navigatorContext.mounted) return;
   final drop = store.lastDrop;
+  final pay = store.lastPayout;
   // Ustalıkta seviye atlandıysa üstte başarım kutucuğu; teslim penceresiyle birlikte.
   showAchievements(navigatorContext, tierUps(store.deliveries));
   await openGrowing<void>(
@@ -48,6 +50,35 @@ Future<void> deliverJob(BuildContext context, int id) async {
           Text(job.magistralName, textAlign: TextAlign.center, style: AppText.label(size: 14)),
           const SizedBox(height: AppSpace.md),
           ResultView(stars: job.stars, notes: job.notes),
+          // Teslim parası (2026-10-29): malzeme bedeli hep tam, emek yıldıza göre.
+          if (pay != null) ...[
+            const SizedBox(height: AppSpace.lg),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.toll_rounded, size: 22, color: AppColors.star),
+                const SizedBox(width: AppSpace.xs),
+                Text('+${pay.coins}', style: AppText.title(size: 22)),
+              ],
+            ),
+            Text(
+              'Malzeme ${pay.material} + emek ${pay.labor}',
+              textAlign: TextAlign.center,
+              style: AppText.label(size: 12, color: AppColors.ink),
+            ),
+            if (pay.dailyBonus)
+              Text(
+                'Günün ilk $dailyBonusDeliveries teslimi: emek iki kat',
+                textAlign: TextAlign.center,
+                style: AppText.label(size: 12, color: AppColors.hazirText),
+              ),
+            if (store.debt > 0)
+              Text(
+                'Depoya kalan borç ${store.debt}',
+                textAlign: TextAlign.center,
+                style: AppText.label(size: 12, color: AppColors.bekliyorText),
+              ),
+          ],
           // Her teslim bahçeye bir tohum getirir (2026-10-29).
           if (drop != null) ...[
             const SizedBox(height: AppSpace.lg),
@@ -185,7 +216,12 @@ class _RushButton extends StatelessWidget {
             const SizedBox(height: AppSpace.md),
             Text('${run.label}: $before › $after', style: AppText.body(weight: FontWeight.w600)),
             const SizedBox(height: AppSpace.xs),
-            Text('Kalite de yarıya iner: aceleyle karıştırılan merhem homojen olmaz.', style: AppText.body(size: 14)),
+            Text(
+              store.protectedRushesLeft > 0
+                  ? 'Vitrindeki fanus bu acelede kaliteyi korur (bugün ${store.protectedRushesLeft} kez).'
+                  : 'Kalite de yarıya iner: aceleyle karıştırılan merhem homojen olmaz.',
+              style: AppText.body(size: 14),
+            ),
             const SizedBox(height: AppSpace.xs),
             Text('Bugün ${store.rushesLeft} hakkın var.', style: AppText.label()),
             const SizedBox(height: AppSpace.xl),

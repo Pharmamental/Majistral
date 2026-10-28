@@ -28,7 +28,7 @@ class _LabScreenState extends State<LabScreen> with SecondTick {
   @override
   Widget build(BuildContext context) {
     final store = JobScope.of(context);
-    final tools = labTools();
+    final tools = labTools(owns: store.ownsTool);
     final busy = tools.where((t) => store.busyWith(t) != null).length;
     final waiting = store.jobs.where(store.needsAction).length;
     final status = [

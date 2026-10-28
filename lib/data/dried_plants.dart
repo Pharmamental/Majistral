@@ -3,14 +3,22 @@
 /// eczanenin oyun etkisi, bitkinin ilacı değil (ekranda "oyun etkisi" yazar).
 enum PlantGroup {
   cay('Çaylar', 'duvara reçete yeri'),
-  bogaz('Boğaz ve öksürük', 'günlük acele hakkı'),
-  cilt('Cilt ve yara', 'teslim parası'),
+  bogaz('Boğaz ve öksürük', 'kaliteyi korumuş acele'),
+  cilt('Cilt ve yara', 'teslim emeği'),
   ferah('Ferahlatıcı', 'bahçe hızı');
 
   const PlantGroup(this.title, this.effect);
 
   final String title;
   final String effect;
+
+  /// Etkinin yazısı: "duvara reçete yeri +2", "günde 2 acele kaliteyi düşürmez",
+  /// "teslim emeği +%10", "bahçe hızı +%20".
+  String effectText(int bonus) => switch (this) {
+        cay => 'duvara reçete yeri +$bonus',
+        bogaz => 'günde $bonus acele kaliteyi düşürmez',
+        cilt || ferah => '$effect +%$bonus',
+      };
 }
 
 /// Vitrin rafındaki fanuslar (Tuğrul, 2026-10-28, "ilaç koymak çok iyi değil"):
@@ -36,19 +44,19 @@ class DriedPlant {
 
   String get imagePath => 'assets/images/ikon/ikon_fanus_$file.png';
 
-  /// Vitrindeki etkisinin büyüklüğü: duvar ve acele için adet (1-3), para ve
-  /// bahçe hızı için yüzde (para 5/10/15, bahçe 10/20/30).
+  /// Vitrindeki etkisinin büyüklüğü. Ekonomi hesabından sonra (2026-10-29,
+  /// "önerilerle"): çay duvara +1/+1/+2 (az oynayanın teslimini %14-27 artırır;
+  /// +3 %34 ile fazla güçlüydü); boğaz günde 1/2/3 acelenin kalite düşürmemesi
+  /// (acele hakkı artırmak para kaybettirdiği için değersizdi); cilt emeğe
+  /// %5/10/15; ferah bahçeye %10/20/30.
   int get bonus => switch (group) {
-        PlantGroup.cay || PlantGroup.bogaz => tier,
+        PlantGroup.cay => tier == 3 ? 2 : 1,
+        PlantGroup.bogaz => tier,
         PlantGroup.cilt => tier * 5,
         PlantGroup.ferah => tier * 10,
       };
 
-  /// Etkinin kısa yazısı: "duvara reçete yeri +2", "teslim parası %10".
-  String get effectText => switch (group) {
-        PlantGroup.cay || PlantGroup.bogaz => '${group.effect} +$bonus',
-        PlantGroup.cilt || PlantGroup.ferah => '${group.effect} +%$bonus',
-      };
+  String get effectText => group.effectText(bonus);
 
   /// Bahçedeki büyüme süresi (oyun süresi, gerçek büyüme değil; 2026-10-29).
   Duration get growTime => const [Duration(hours: 2), Duration(hours: 6), Duration(hours: 12)][tier - 1];

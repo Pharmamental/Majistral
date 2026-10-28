@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-import '../data/lab_tools.dart';
+import '../logic/job_store.dart';
 import '../models/shop_item.dart';
 import '../theme/tokens.dart';
 import 'chunky_button.dart';
 
-// Ekonomi henüz yok: satın alma ve reklam düğmeleri kapalı testten önce
-// bağlanacak, şimdilik bilerek bir şey yapmıyor.
+// Satın alma (2026-10-29): aletler ve kimyasal paketleri kasadaki parayla
+// alınır (data/economy.dart). Reklam düğmesi henüz bağlı değil.
 
 /// İstasyon adı + yatay kaydırılan kademe kartları (paslı → iyi → gelişmiş).
 class StationSection extends StatelessWidget {
@@ -77,7 +77,8 @@ class StationTierCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final owned = isOwned(tier);
+    final store = JobScope.of(context);
+    final owned = store.ownsTool(tier);
     return Container(
       width: 184,
       padding: const EdgeInsets.all(AppSpace.lg),
@@ -136,7 +137,8 @@ class StationTierCard extends StatelessWidget {
                     compact: true,
                     label: '${tier.price}',
                     icon: Icons.toll_rounded,
-                    onPressed: () {},
+                    // Para yetmiyorsa düğme kapalı (2026-10-29).
+                    onPressed: store.coins >= tier.price ? () => store.buyTool(tier) : null,
                   ),
           ),
         ],
@@ -204,9 +206,15 @@ class _Thumb extends StatelessWidget {
 
 /// Liste satırı: kimyasal ya da reklam. Düğme sağda, başparmak tarafında.
 class ShopItemTile extends StatelessWidget {
-  const ShopItemTile({super.key, required this.item, this.highlight = false});
+  const ShopItemTile({super.key, required this.item, this.highlight = false, this.detail, this.onBuy});
 
   final ShopItem item;
+
+  /// Açıklamanın altındaki ek satır (kimyasalda paket ve raftaki miktar).
+  final String? detail;
+
+  /// Satın alma; null ise düğme kapalı.
+  final VoidCallback? onBuy;
 
   /// Reklam satırı gibi öne çıkan satır: yeşil kenar ve yeşil düğme.
   final bool highlight;
@@ -237,6 +245,10 @@ class ShopItemTile extends StatelessWidget {
                   item.description,
                   style: AppText.body(size: 13, color: AppColors.inkMuted),
                 ),
+                if (detail != null) ...[
+                  const SizedBox(height: AppSpace.xs),
+                  Text(detail!, style: AppText.label(size: 12, color: AppColors.ink)),
+                ],
               ],
             ),
           ),
@@ -249,12 +261,14 @@ class ShopItemTile extends StatelessWidget {
                     label: item.buttonLabel,
                     onPressed: () {},
                   )
-                : ChunkyButton(
-                    compact: true,
-                    label: '${item.price}',
-                    icon: Icons.toll_rounded,
-                    onPressed: () {},
-                  ),
+                : item.price == 0
+                    ? Text('Bedava', textAlign: TextAlign.center, style: AppText.label(size: 14, color: AppColors.ink))
+                    : ChunkyButton(
+                        compact: true,
+                        label: '${item.price}',
+                        icon: Icons.toll_rounded,
+                        onPressed: onBuy,
+                      ),
           ),
         ],
       ),

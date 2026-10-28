@@ -34,8 +34,10 @@ void main() {
       expect(tiers, [1, 2, 2, 3], reason: g.title);
     }
     expect(driedPlantNamed('Papatya')!.effectText, 'duvara reçete yeri +1');
-    expect(driedPlantNamed('Mürver')!.effectText, 'duvara reçete yeri +3');
-    expect(driedPlantNamed('Sarı kantaron')!.effectText, 'teslim parası +%15');
+    expect(driedPlantNamed('Mürver')!.effectText, 'duvara reçete yeri +2');
+    expect(driedPlantNamed('Ihlamur')!.effectText, 'duvara reçete yeri +1');
+    expect(driedPlantNamed('Gelincik')!.effectText, 'günde 3 acele kaliteyi düşürmez');
+    expect(driedPlantNamed('Sarı kantaron')!.effectText, 'teslim emeği +%15');
   });
 
   test('tohum olasılıkları: sık %50, orta %40, nadir %10', () {
@@ -113,22 +115,39 @@ void main() {
       expect(reopened.garden.sinceRare, 1);
     });
 
-    test('vitrin etkileri: Mürver duvarı 6, Gelincik aceleyi 8 yapar; aynı grup toplanmaz', () async {
+    test('vitrin etkileri: Mürver duvarı 6 yapar, Gelincik 3 aceleyi korur; aynı grup toplanmaz', () async {
       SharedPreferences.setMockInitialValues({
         'garden_v1': jsonEncode(Garden(grown: {'Mürver', 'Papatya', 'Gelincik'}).toJson()),
       });
       final store = await JobStore.load(now: () => clock);
       expect(store.wallLimit, JobStore.wallSize);
-      expect(store.wall, hasLength(3));
+      expect(store.wall, hasLength(JobStore.wallSize));
       await store.setShowcase(0, 'Papatya');
       await store.setShowcase(1, 'Mürver');
       await store.setShowcase(2, 'Gelincik');
-      expect(store.wallLimit, 6, reason: 'en güçlü çay fanusu sayılır, +1 ile +3 toplanmaz');
-      expect(store.rushLimit, 8);
-      expect(store.rushesLeft, 8);
+      expect(store.wallLimit, JobStore.wallSize + 2, reason: 'en güçlü çay fanusu sayılır, +1 ile +2 toplanmaz');
+      expect(store.rushLimit, JobStore.dailyRushes, reason: 'acele hakkı artmaz');
+      expect(store.protectedRushesLeft, 3);
       // Duvar artık 6'ya kadar dolar.
       clock = clock.add(JobStore.arrivalEvery * 10);
-      expect(store.wall, hasLength(6));
+      expect(store.wall, hasLength(JobStore.wallSize + 2));
+    });
+
+    test('Gelincik vitrindeyken ilk 3 acele yıldız düşürmez, 4.sü düşürür', () async {
+      SharedPreferences.setMockInitialValues({
+        'garden_v1': jsonEncode(Garden(grown: {'Gelincik'}).toJson()),
+        'profile_v1': jsonEncode({'showcase': ['Gelincik', null, null]}),
+      });
+      final store = await JobStore.load(now: () => clock);
+      final order = prescriptionOrders[2]; // hidrofil: 4 adım
+      final tools = {for (final t in labTools()) t.name: t};
+      await take(store, order);
+      final id = jobOf(store, order)!.id;
+      for (final s in order.steps) {
+        await store.startStep(id, tools[s.label]!);
+        await store.rush(id);
+      }
+      expect(store.job(id)!.stars, 2, reason: '3 korundu, 4. acele 3 → 2');
     });
   });
 }

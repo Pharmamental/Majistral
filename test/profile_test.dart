@@ -289,7 +289,7 @@ void showcaseTests() {
     await tester.pumpAndSettle();
     expect(find.text('Vitrine ne koyalım?'), findsOneWidget);
     expect(find.text('Oyun etkisi: duvara reçete yeri +1'), findsOneWidget);
-    expect(find.text('Bahçede yetiştir · teslim parası +%10'), findsWidgets); // Lavanta kilitli
+    expect(find.text('Bahçede yetiştir · teslim emeği +%10'), findsWidgets); // Lavanta kilitli
     await tester.tap(find.descendant(of: find.byType(GrowPanel), matching: find.text('Papatya')));
     await tester.pumpAndSettle();
     expect(find.bySemanticsLabel('Vitrinde Papatya fanusu'), findsOneWidget);

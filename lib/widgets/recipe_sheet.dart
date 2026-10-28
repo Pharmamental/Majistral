@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../data/formulary.dart';
 import '../data/market_items.dart';
+import '../logic/job_store.dart';
 import '../models/prescription.dart';
 import '../theme/tokens.dart';
 import 'chunky_button.dart';
@@ -21,6 +22,10 @@ Future<void> openRecipe(
   VoidCallback? onTake,
   Rect Function()? takeTo,
 }) {
+  // Rafta yetmeyen maddelerin paket bedeli; Al'da kasadan ödenir, para yetmezse
+  // depo veresiye verir (2026-10-29).
+  final store = JobScope.of(context);
+  final missing = onTake == null ? 0 : store.missingCost(order);
   return openGrowing<void>(
     context,
     from: from,
@@ -120,8 +125,18 @@ Future<void> openRecipe(
           ),
           const SizedBox(height: AppSpace.lg),
           if (onTake != null) ...[
+            if (missing > 0) ...[
+              Text(
+                store.coins >= missing
+                    ? "Rafta yetmeyen madde var: Al'a basınca eksik paketler kasadan alınır."
+                    : 'Rafta yetmeyen madde var; kasa yetmediği için ecza deposu veresiye verir, ilk teslimden kesilir.',
+                textAlign: TextAlign.center,
+                style: AppText.label(size: 12, color: AppColors.ink),
+              ),
+              const SizedBox(height: AppSpace.sm),
+            ],
             ChunkyButton(
-              label: 'Al',
+              label: missing > 0 ? 'Al · eksik paket $missing' : 'Al',
               icon: Icons.add_rounded,
               onPressed: () {
                 final route = ModalRoute.of(sheetContext);

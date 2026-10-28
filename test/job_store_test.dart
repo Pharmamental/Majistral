@@ -94,8 +94,8 @@ void main() {
     final steps = {for (final s in order.steps) s.label: s};
     expect(steps['Ezme']!.notWith['Çelik spatül'], contains('çelikle tepkimeye girer'));
     expect(zno.steps.first.notWith['Cam havan'], 'Cam havan kaygandır, tozu ezmez.');
-    expect(tools['Levigasyon']!.equipment,
-        unlockAll ? 'Porselen havan · Merhem değirmeni' : 'Porselen havan · Merhem taşı ve spatül');
+    // Aletler satın alınır (2026-10-29): yalnız ücretsiz kademeler elde.
+    expect(tools['Levigasyon']!.equipment, 'Porselen havan · Merhem taşı ve spatül');
   });
 
   test('bir adım kartı aynı anda tek reçetede çalışır; farklı kartlar farklı reçetelerde aynı anda', () async {
@@ -193,13 +193,13 @@ void main() {
 
   test('sayaç doluyken reçete alınca yenisi hemen gelir, sayaç o andan başlar', () async {
     final store = await JobStore.load(now: () => clock);
-    clock = clock.add(const Duration(minutes: 15)); // sayaç 10. dakikada doldu, duvar dolu
+    clock = clock.add(JobStore.arrivalEvery * 1.5); // sayaç doldu, duvar dolu
     await take(store, order);
-    expect(store.wall, hasLength(3)); // yerine hemen yenisi geldi
+    expect(store.wall, hasLength(JobStore.wallSize)); // yerine hemen yenisi geldi
     expect(store.wall.last.magistralName, prescriptionOrders[JobStore.wallSize].magistralName); // sırayla döner
 
     await take(store, zno);
-    expect(store.wall, hasLength(2));
+    expect(store.wall, hasLength(JobStore.wallSize - 1));
     expect(store.untilNextArrival, JobStore.arrivalEvery);
   });
 
@@ -207,31 +207,31 @@ void main() {
     final store = await JobStore.load(now: () => clock);
     clock = clock.add(const Duration(minutes: 4));
     await take(store, order);
-    expect(store.wall, hasLength(2));
-    expect(store.untilNextArrival, const Duration(minutes: 6));
-    clock = clock.add(const Duration(minutes: 6));
-    expect(store.wall, hasLength(3));
+    expect(store.wall, hasLength(JobStore.wallSize - 1));
+    expect(store.untilNextArrival, JobStore.arrivalEvery - const Duration(minutes: 4));
+    clock = clock.add(JobStore.arrivalEvery - const Duration(minutes: 4));
+    expect(store.wall, hasLength(JobStore.wallSize));
   });
 
-  test('kapalıyken de reçete gelir ama duvar 3\'ü geçmez; kayıtta kalır', () async {
+  test('kapalıyken de reçete gelir ama duvar sınırı geçilmez; kayıtta kalır', () async {
     final store = await JobStore.load(now: () => clock);
     for (final o in prescriptionOrders.take(JobStore.wallSize)) {
       await take(store, o);
     }
     expect(store.wall, isEmpty);
-    clock = clock.add(const Duration(minutes: 25));
+    clock = clock.add(JobStore.arrivalEvery * 2.5);
     final reopened = await JobStore.load(now: () => clock);
-    expect(reopened.wall, hasLength(2)); // 10. ve 20. dakikada
-    expect(reopened.untilNextArrival, const Duration(minutes: 5));
-    clock = clock.add(const Duration(hours: 3));
-    expect(reopened.wall, hasLength(3));
+    expect(reopened.wall, hasLength(2)); // 1. ve 2. gelişte
+    expect(reopened.untilNextArrival, JobStore.arrivalEvery * 0.5);
+    clock = clock.add(JobStore.arrivalEvery * 20);
+    expect(reopened.wall, hasLength(JobStore.wallSize));
   });
 
   test('aynı reçete ikinci kez gelince iki iş ayrı tutulur', () async {
-    // Üç reçetelik dönüşte salisilik asit 10 dakika sonra yeniden gelir.
+    // Üç reçetelik dönüşte salisilik asit bir geliş sonra yeniden gelir.
     final store = await JobStore.load(now: () => clock, orders: prescriptionOrders.take(3).toList());
     final first = await take(store, order);
-    clock = clock.add(const Duration(minutes: 10));
+    clock = clock.add(JobStore.arrivalEvery);
     final second = await take(store, order); // dönüşte yeniden gelen salisilik asit
     expect(second.id, isNot(first.id));
     await store.startStep(first.id, ezme);
