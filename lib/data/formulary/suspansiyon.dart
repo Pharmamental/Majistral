@@ -1070,7 +1070,8 @@ const suspansiyonFormulas = <Formula>[
       FormulaStep('Levigasyon', 'Tozları gliserolle sürterek düzgün bir macun yapın.'),
       FormulaStep('Geometrik seyreltme', 'Suyu azar azar katıp karıştırın.'),
     ],
-    refs: ['nrf', 'suspansiyon-bauer'],
+    refs: ['nrf', 'suspansiyon-bauer', 'usp-795'],
+    shelfLife: '14 gün, buzdolabında (sulu, koruyucusuz; USP <795>)',
   ),
   Formula(
     name: 'Ten rengi çinko oksit çalkalama karışımı',

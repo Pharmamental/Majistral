@@ -55,7 +55,8 @@ class JobStore extends ChangeNotifier {
     final prefs = await SharedPreferences.getInstance();
     final clock = now ?? DateTime.now;
     final known = orders ?? prescriptionOrders;
-    bool isKnown(String name) => known.any((o) => o.magistralName == name);
+    final keys = {for (final o in known) o.key};
+    bool isKnown(String key) => keys.contains(key);
     final jobs = <PrepJob>[];
     final wall = <IncomingOrder>[];
     int? nextId;
@@ -64,14 +65,14 @@ class JobStore extends ChangeNotifier {
       for (final item in jsonDecode(prefs.getString(_key) ?? '[]') as List) {
         final job = PrepJob.fromJson(item as Map<String, dynamic>);
         // Oyundan çıkarılmış reçetenin kaydı atlanır.
-        if (isKnown(job.magistralName)) jobs.add(job);
+        if (isKnown(job.orderKey)) jobs.add(job);
       }
       final raw = prefs.getString(_wallKey);
       if (raw != null) {
         final saved = jsonDecode(raw) as Map<String, dynamic>;
         for (final item in saved['wall'] as List) {
           final o = IncomingOrder.fromJson(item as Map<String, dynamic>);
-          if (isKnown(o.magistralName)) wall.add(o);
+          if (isKnown(o.orderKey)) wall.add(o);
         }
         nextId = saved['nextId'] as int;
         due = DateTime.fromMillisecondsSinceEpoch(saved['due'] as int);
@@ -177,7 +178,7 @@ class JobStore extends ChangeNotifier {
 
   void _arrive() {
     final order = _orders[_nextId % _orders.length];
-    _wall.add(IncomingOrder(id: _nextId++, magistralName: order.magistralName));
+    _wall.add(IncomingOrder(id: _nextId++, magistralName: order.magistralName, orderKey: order.key));
   }
 
   /// Uygulama kapalıyken dolan sayaçlar da sayılır: her geliş kendi anında
@@ -199,9 +200,10 @@ class JobStore extends ChangeNotifier {
     return null;
   }
 
-  PrescriptionOrder orderNamed(String magistralName) => _orders.firstWhere((o) => o.magistralName == magistralName);
+  /// Kimliği [key] olan reçete (`PrescriptionOrder.key`).
+  PrescriptionOrder orderKeyed(String key) => _orders.firstWhere((o) => o.key == key);
 
-  PrescriptionOrder orderOf(PrepJob job) => orderNamed(job.magistralName);
+  PrescriptionOrder orderOf(PrepJob job) => orderKeyed(job.orderKey);
 
   /// Sırası gelen ama başlatılmamış adım; bütün adımlar başlatıldıysa null.
   PrescriptionStep? nextStep(PrepJob job) {
@@ -264,6 +266,7 @@ class JobStore extends ChangeNotifier {
     final job = PrepJob(
       id: incoming.id,
       magistralName: incoming.magistralName,
+      orderKey: incoming.orderKey,
       acceptedAt: now(),
       stars: 3,
       notes: const [],
@@ -340,6 +343,7 @@ class JobStore extends ChangeNotifier {
     _jobs.remove(job);
     _deliveries.add(Delivery(
       magistralName: job.magistralName,
+      orderKey: job.orderKey,
       stars: job.stars,
       at: now(),
       steps: [for (final s in orderOf(job).steps) s.label],

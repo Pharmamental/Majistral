@@ -52,10 +52,10 @@ String equipmentName(StepTool kind, {bool Function(ShopItem item) owns = isOwned
 /// laboratuvarda olmayan adım kalmaz.
 List<LabTool> labTools({
   bool Function(ShopItem item) owns = isOwned,
-  List<PrescriptionOrder> orders = prescriptionOrders,
+  List<PrescriptionOrder>? orders,
 }) {
   final kinds = <String, Set<StepTool>>{};
-  for (final o in orders) {
+  for (final o in orders ?? prescriptionOrders) {
     for (final s in o.steps) {
       kinds.putIfAbsent(s.label, () => {}).addAll({s.tool, ...s.orWith});
     }

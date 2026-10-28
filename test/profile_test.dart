@@ -154,12 +154,14 @@ void main() {
     final merhemPlayable = formulasOf(FormulaCategory.merhem).where((f) => playable.contains(f.name)).length;
     // Her şey açıkken koleksiyon tam görünür.
     expect(find.text('${unlockAll ? merhemPlayable : 1}/$merhemPlayable'), unlockAll ? findsWidgets : findsOneWidget);
-    expect(find.text('Yakında'), findsWidgets); // oyunda reçetesi olmayan kategoriler
+    // 2026-10-28'den beri altı kategorinin hepsinde oyunda reçete var.
+    expect(find.text('Yakında'), findsNothing);
     expect(find.text('0/50'), findsNothing);
     await tester.tap(find.text('Merhem ve patlar'));
     await tester.pumpAndSettle();
     expect(find.descendant(of: find.byType(GrowPanel), matching: find.text(order.formula)), findsOneWidget);
-    expect(find.byIcon(Icons.check_circle_rounded), findsNWidgets(unlockAll ? merhemPlayable : 1));
+    // Uzun liste kaydırılır; her şey açıkken ekrandakilerin hepsi işaretli.
+    expect(find.byIcon(Icons.check_circle_rounded), unlockAll ? findsWidgets : findsOneWidget);
     await tester.tap(find.text('Kapat'));
     await tester.pumpAndSettle();
 

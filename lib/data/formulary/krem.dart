@@ -281,7 +281,8 @@ const kremFormulas = <Formula>[
       FormulaStep('Emülsifikasyon', 'Ilık suyu eriyiğe azar azar ekleyip her porsiyonu iyice işle.'),
       FormulaStep('Soğutma', 'Krem soğuyup homojen olana kadar karıştır.'),
     ],
-    refs: ['krem-dab', 'krem-altmeyer'],
+    refs: ['krem-dab', 'krem-altmeyer', 'usp-795'],
+    shelfLife: '14 gün, buzdolabında (sulu, koruyucusuz; USP <795>)',
   ),
   Formula(
     name: 'Stearat kremi (kaybolan krem)',
@@ -314,7 +315,8 @@ const kremFormulas = <Formula>[
       FormulaStep('Geometrik seyreltme', 'Gliserolü önce az miktar kremle, sonra kalan kremle eşit '
           'porsiyonlarla karıştır.'),
     ],
-    refs: ['apf', 'krem-dmd'],
+    refs: ['apf', 'krem-dmd', 'usp-795'],
+    shelfLife: '35 gün, oda sıcaklığında ya da buzdolabında (sulu, koruyuculu; USP <795>)',
   ),
   Formula(
     name: 'Sulu krem ve emülsiye edici merhem karışımı %50',
@@ -413,7 +415,8 @@ const kremFormulas = <Formula>[
       FormulaStep('Ezme', 'Üreyi havanda ince toz hâline getir.'),
       FormulaStep('Geometrik seyreltme', 'Üreyi sulu kremle eşit porsiyonlarla karıştır.'),
     ],
-    refs: ['krem-dmd', 'martindale'],
+    refs: ['krem-dmd', 'martindale', 'usp-795'],
+    shelfLife: '35 gün, oda sıcaklığında ya da buzdolabında (sulu, koruyuculu; USP <795>)',
   ),
   Formula(
     name: 'Laktik asitli sulu krem %10',
@@ -537,7 +540,8 @@ const kremFormulas = <Formula>[
       FormulaStep('Levigasyon', 'Mentolü az miktar kremle pürüzsüz bir macun hâline getir.'),
       FormulaStep('Geometrik seyreltme', 'Macunu kalan kremle eşit porsiyonlarla karıştır.'),
     ],
-    refs: ['krem-dmd', 'martindale'],
+    refs: ['krem-dmd', 'martindale', 'usp-795'],
+    shelfLife: '35 gün, oda sıcaklığında ya da buzdolabında (sulu, koruyuculu; USP <795>)',
   ),
   Formula(
     name: 'Mentollü sulu krem %2',
@@ -552,7 +556,8 @@ const kremFormulas = <Formula>[
       FormulaStep('Levigasyon', 'Az miktar kremle mentolü pürüzsüz macuna çevir.'),
       FormulaStep('Geometrik seyreltme', 'Kalan kremi azar azar katarak homojen karıştır.'),
     ],
-    refs: ['krem-dmd', 'martindale'],
+    refs: ['krem-dmd', 'martindale', 'usp-795'],
+    shelfLife: '35 gün, oda sıcaklığında ya da buzdolabında (sulu, koruyuculu; USP <795>)',
   ),
   Formula(
     name: 'Mentollü setomakrogol krem %2',
@@ -567,7 +572,8 @@ const kremFormulas = <Formula>[
       FormulaStep('Levigasyon', 'Mentolü az miktar setomakrogol kremle macun hâline getir.'),
       FormulaStep('Geometrik seyreltme', 'Kalan kremi eşit porsiyonlarla kat.'),
     ],
-    refs: ['krem-dmd', 'martindale'],
+    refs: ['krem-dmd', 'martindale', 'usp-795'],
+    shelfLife: '35 gün, oda sıcaklığında ya da buzdolabında (sulu, koruyuculu; USP <795>)',
   ),
   Formula(
     name: 'Mentol %1 ve salisilik asit %1 sulu krem',
@@ -583,7 +589,8 @@ const kremFormulas = <Formula>[
       FormulaStep('Levigasyon', 'Tozları az miktar kremle pürüzsüz macun yap; çelik spatül kullanma.'),
       FormulaStep('Geometrik seyreltme', 'Macunu kalan kremle eşit porsiyonlarla karıştır.'),
     ],
-    refs: ['krem-dmd', 'martindale'],
+    refs: ['krem-dmd', 'martindale', 'usp-795'],
+    shelfLife: '35 gün, oda sıcaklığında ya da buzdolabında (sulu, koruyuculu; USP <795>)',
   ),
 
   // ---------------------------------------------------------------- Soyucu ve akne
@@ -602,7 +609,8 @@ const kremFormulas = <Formula>[
       FormulaStep('Levigasyon', 'İki tozu az miktar kremle pürüzsüz macun yap; çelik spatül kullanma.'),
       FormulaStep('Geometrik seyreltme', 'Macunu kalan kremle eşit porsiyonlarla karıştır.'),
     ],
-    refs: ['apf', 'krem-bpc', 'krem-dmd'],
+    refs: ['apf', 'krem-bpc', 'krem-dmd', 'usp-795'],
+    shelfLife: '35 gün, oda sıcaklığında ya da buzdolabında (sulu, koruyuculu; USP <795>)',
   ),
   Formula(
     name: 'Salisilik asitli sulu krem %5',
@@ -617,7 +625,8 @@ const kremFormulas = <Formula>[
       FormulaStep('Levigasyon', 'Tozu az miktar kremle pürüzsüz macun yap; çelik spatül kullanma.'),
       FormulaStep('Geometrik seyreltme', 'Macunu kalan kremle eşit porsiyonlarla karıştır.'),
     ],
-    refs: ['apf', 'krem-dmd'],
+    refs: ['apf', 'krem-dmd', 'usp-795'],
+    shelfLife: '35 gün, oda sıcaklığında ya da buzdolabında (sulu, koruyuculu; USP <795>)',
   ),
   Formula(
     name: 'Kükürtlü sulu krem %5',
@@ -632,7 +641,8 @@ const kremFormulas = <Formula>[
       FormulaStep('Levigasyon', 'Kükürdü az miktar kremle pürüzsüz macun yap.'),
       FormulaStep('Geometrik seyreltme', 'Macunu kalan kremle azar azar karıştır.'),
     ],
-    refs: ['krem-dmd', 'martindale'],
+    refs: ['krem-dmd', 'martindale', 'usp-795'],
+    shelfLife: '35 gün, oda sıcaklığında ya da buzdolabında (sulu, koruyuculu; USP <795>)',
   ),
   Formula(
     name: 'Kükürtlü sulu krem %2',
@@ -647,7 +657,8 @@ const kremFormulas = <Formula>[
       FormulaStep('Levigasyon', 'Az miktar kremle kükürdü macun hâline getir.'),
       FormulaStep('Geometrik seyreltme', 'Kalan kremle eşit porsiyonlarla karıştır.'),
     ],
-    refs: ['krem-dmd', 'martindale'],
+    refs: ['krem-dmd', 'martindale', 'usp-795'],
+    shelfLife: '35 gün, oda sıcaklığında ya da buzdolabında (sulu, koruyuculu; USP <795>)',
   ),
 
   // ---------------------------------------------------------------- Kurutucu, koruyucu
@@ -724,7 +735,8 @@ const kremFormulas = <Formula>[
       FormulaStep('Karıştırma', 'İhtiyolü yün yağı alkolleri merhemiyle homojen olana dek karıştır.'),
       FormulaStep('Emülsifikasyon', 'Suyu küçük porsiyonlarla katıp her seferinde iyice işle.'),
     ],
-    refs: ['nrf', 'krem-altmeyer'],
+    refs: ['nrf', 'krem-altmeyer', 'usp-795'],
+    shelfLife: '14 gün, buzdolabında (sulu, koruyucusuz; USP <795>)',
   ),
   Formula(
     name: 'İhtiyollü krem %20',
@@ -739,7 +751,8 @@ const kremFormulas = <Formula>[
       FormulaStep('Karıştırma', 'İhtiyolü merhemle azar azar karıştır.'),
       FormulaStep('Emülsifikasyon', 'Az miktardaki suyu yavaşça işleyerek kremi kur.'),
     ],
-    refs: ['nrf', 'krem-altmeyer'],
+    refs: ['nrf', 'krem-altmeyer', 'usp-795'],
+    shelfLife: '14 gün, buzdolabında (sulu, koruyucusuz; USP <795>)',
   ),
 
   // ---------------------------------------------------------------- Antiseptikler
@@ -782,7 +795,8 @@ const kremFormulas = <Formula>[
       FormulaStep('Levigasyon', 'Tozu az miktar kremle pürüzsüz macun yap; çelik spatül kullanma.'),
       FormulaStep('Geometrik seyreltme', 'Macunu kalan kremle eşit porsiyonlarla karıştır.'),
     ],
-    refs: ['krem-dmd', 'apf'],
+    refs: ['krem-dmd', 'apf', 'usp-795'],
+    shelfLife: '35 gün, oda sıcaklığında ya da buzdolabında (sulu, koruyuculu; USP <795>)',
   ),
   Formula(
     name: 'Üre ve sodyum klorürlü lipofil krem %10',
@@ -800,7 +814,8 @@ const kremFormulas = <Formula>[
       FormulaStep('Emülsifikasyon', 'Tuzlu çözeltiyi merheme azar azar katıp her porsiyonu iyice işle.'),
       FormulaStep('Soğutma', 'Krem homojen ve soğuk olana dek karıştır.'),
     ],
-    refs: ['nrf', 'krem-altmeyer'],
+    refs: ['nrf', 'krem-altmeyer', 'usp-795'],
+    shelfLife: '14 gün, buzdolabında (sulu, koruyucusuz; USP <795>)',
   ),
   Formula(
     name: 'Setrimidli krem %0,5',
@@ -818,7 +833,8 @@ const kremFormulas = <Formula>[
       FormulaStep('Emülsifikasyon', 'Sıcak setrimid çözeltisini yağ fazına karıştırarak ekle.'),
       FormulaStep('Soğutma', 'Krem kıvam alana kadar karıştır.'),
     ],
-    refs: ['bp', 'martindale'],
+    refs: ['bp', 'martindale', 'usp-795'],
+    shelfLife: '14 gün, buzdolabında (sulu, koruyucusuz; USP <795>)',
   ),
 
   // ---------------------------------------------------------------- Mantar ve parazit

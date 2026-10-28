@@ -112,7 +112,8 @@ const tozFormulas = <Formula>[
           'Çinko oksit önce nişastayla, sonra talkla eşit parçalar hâlinde karıştırılır.'),
       FormulaStep('Elekten geçirme', 'Karışım ince elekten geçirilir, renk ve doku tek düze olur.'),
     ],
-    refs: ['bp', 'toz-bpc-1973', 'martindale'],
+    refs: ['bp', 'toz-bpc-1973', 'martindale', 'usp-795'],
+    shelfLife: '180 gün, oda sıcaklığında, sıkı kapalı (susuz; USP <795>)',
   ),
   Formula(
     name: 'Talk pudrası',
@@ -126,7 +127,8 @@ const tozFormulas = <Formula>[
       FormulaStep('Karıştırma', 'Talk ve nişasta havanda hafifçe karıştırılır.'),
       FormulaStep('Elekten geçirme', 'Karışım ince elekten geçirilir, topak kalmaz.'),
     ],
-    refs: ['bp', 'toz-bpc-1973'],
+    refs: ['bp', 'toz-bpc-1973', 'usp-795'],
+    shelfLife: '180 gün, oda sıcaklığında, sıkı kapalı (susuz; USP <795>)',
   ),
   Formula(
     name: 'Klorheksidin pudrası %0,5',
@@ -188,7 +190,8 @@ const tozFormulas = <Formula>[
       FormulaStep('Geometrik seyreltme', 'Mentol talka eşit parçalar hâlinde katılır.'),
       FormulaStep('Elekten geçirme', 'Pudra elekten geçirilir, mentol topağı kalmaz.'),
     ],
-    refs: ['fn-es', 'martindale', 'remington'],
+    refs: ['fn-es', 'martindale', 'remington', 'usp-795'],
+    shelfLife: '180 gün, oda sıcaklığında, sıkı kapalı (susuz; USP <795>)',
   ),
   Formula(
     name: 'Kâfurlu mentollü pudra',
@@ -394,7 +397,8 @@ const tozFormulas = <Formula>[
       FormulaStep('Ezme', 'Sodyum bikarbonat havanda topaksız ince toz hâline getirilir.'),
       FormulaStep('Elekten geçirme', 'Toz elekten geçirilir, sonra 1 g\'lık 10 pakete bölünür.'),
     ],
-    refs: ['martindale', 'toz-bnf'],
+    refs: ['martindale', 'toz-bnf', 'usp-795'],
+    shelfLife: '180 gün, oda sıcaklığında, sıkı kapalı (susuz; USP <795>)',
   ),
   Formula(
     name: 'Folik asit paket toz 0,5 mg',
@@ -410,7 +414,8 @@ const tozFormulas = <Formula>[
           'Çok az olan folik asit laktozla adım adım eşit parçalar hâlinde seyreltilir.'),
       FormulaStep('Elekten geçirme', 'Karışım elekten geçirilir, sonra 300 mg\'lık 30 pakete bölünür.'),
     ],
-    refs: ['martindale', 'toz-bnfc'],
+    refs: ['martindale', 'toz-bnfc', 'usp-795'],
+    shelfLife: '180 gün, oda sıcaklığında, sıkı kapalı (susuz; USP <795>)',
   ),
   Formula(
     name: 'Kalsiyum karbonat paket toz 500 mg',
@@ -436,7 +441,8 @@ const tozFormulas = <Formula>[
       FormulaStep('Ezme', 'Sodyum klorür kristalleri havanda ince toz hâline getirilir.'),
       FormulaStep('Elekten geçirme', 'Toz elekten geçirilir, sonra 500 mg\'lık 30 pakete bölünür.'),
     ],
-    refs: ['martindale', 'toz-bnfc'],
+    refs: ['martindale', 'toz-bnfc', 'usp-795'],
+    shelfLife: '180 gün, oda sıcaklığında, sıkı kapalı (susuz; USP <795>)',
   ),
   // -------------------------------------------------------------- Kapsüller
   Formula(

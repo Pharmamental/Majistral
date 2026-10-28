@@ -324,7 +324,8 @@ const jelFormulas = <Formula>[
       FormulaStep('Şişirme', 'Parabenli su eklenip jel berraklaşana kadar bekletilir.'),
       FormulaStep('Hacme tamamlama', 'Su ile 100 g\'a tamamlanır.'),
     ],
-    refs: ['allen', 'remington'],
+    refs: ['allen', 'remington', 'usp-795'],
+    shelfLife: '35 gün, oda sıcaklığında ya da buzdolabında (sulu, koruyuculu; USP <795>)',
   ),
   Formula(
     name: 'Gliserollü koruyucu jel %30',
@@ -754,7 +755,8 @@ const jelFormulas = <Formula>[
       FormulaStep('Geometrik seyreltme', 'Hamur jele eşit parçalarla katılır.'),
       FormulaStep('Hacme tamamlama', 'Su ile 100 g\'a tamamlanır.'),
     ],
-    refs: ['jel-fda-acne', 'martindale'],
+    refs: ['jel-fda-acne', 'martindale', 'usp-795'],
+    shelfLife: '14 gün, buzdolabında (sulu, koruyucusuz; USP <795>)',
   ),
   Formula(
     name: 'Çay ağacı yağlı jel %5',
@@ -792,7 +794,8 @@ const jelFormulas = <Formula>[
       FormulaStep('Şişirme', 'Su eklenip karıştırılır, jel topaksız şişsin diye bir saat bekletilir.'),
       FormulaStep('Hacme tamamlama', 'Su ile 100 g\'a tamamlanır.'),
     ],
-    refs: ['nrf', 'martindale'],
+    refs: ['nrf', 'martindale', 'usp-795'],
+    shelfLife: '14 gün, buzdolabında (sulu, koruyucusuz; USP <795>)',
   ),
   Formula(
     name: 'Alüminyum klorürlü jel %20',
@@ -808,7 +811,8 @@ const jelFormulas = <Formula>[
       FormulaStep('Şişirme', 'Su eklenip karıştırılır, jel bir saat bekletilerek şişirilir.'),
       FormulaStep('Hacme tamamlama', 'Su ile 100 g\'a tamamlanır.'),
     ],
-    refs: ['nrf', 'martindale'],
+    refs: ['nrf', 'martindale', 'usp-795'],
+    shelfLife: '14 gün, buzdolabında (sulu, koruyucusuz; USP <795>)',
   ),
   Formula(
     name: 'Polihexanidli yara jeli %0,04',

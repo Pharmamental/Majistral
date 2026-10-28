@@ -32,15 +32,22 @@ class StepRun {
 /// Duvarda bekleyen, henüz alınmamış reçete. Aynı reçete birden çok kez
 /// gelebilir; her gelişin kendi kimliği ([id]) var, alınınca işin kimliği olur.
 class IncomingOrder {
-  const IncomingOrder({required this.id, required this.magistralName});
+  const IncomingOrder({required this.id, required this.magistralName, String? orderKey})
+      : orderKey = orderKey ?? magistralName;
 
   final int id;
   final String magistralName;
 
-  Map<String, Object> toJson() => {'id': id, 'magistralName': magistralName};
+  /// Reçetenin kimliği (`PrescriptionOrder.key`); eski kayıtta yoksa adı.
+  final String orderKey;
 
-  factory IncomingOrder.fromJson(Map<String, dynamic> json) =>
-      IncomingOrder(id: json['id'] as int, magistralName: json['magistralName'] as String);
+  Map<String, Object> toJson() => {'id': id, 'magistralName': magistralName, 'order': orderKey};
+
+  factory IncomingOrder.fromJson(Map<String, dynamic> json) => IncomingOrder(
+        id: json['id'] as int,
+        magistralName: json['magistralName'] as String,
+        orderKey: json['order'] as String?,
+      );
 }
 
 /// Kabul edilmiş bir reçete: başlatılan adımları ([runs], reçetedeki sırayla)
@@ -54,11 +61,15 @@ class PrepJob {
     required this.stars,
     required this.notes,
     this.runs = const [],
-  });
+    String? orderKey,
+  }) : orderKey = orderKey ?? magistralName;
 
   /// Duvardan gelişinin kimliği; aynı reçetenin iki işi bununla ayrılır.
   final int id;
   final String magistralName;
+
+  /// Reçetenin kimliği (`PrescriptionOrder.key`); eski kayıtta yoksa adı.
+  final String orderKey;
   final DateTime acceptedAt;
 
   /// Başlatılmış adımlar; runs[i] reçetenin i. adımıdır.
@@ -72,6 +83,7 @@ class PrepJob {
   PrepJob copyWith({List<StepRun>? runs, int? stars, List<String>? notes}) => PrepJob(
         id: id,
         magistralName: magistralName,
+        orderKey: orderKey,
         acceptedAt: acceptedAt,
         runs: runs ?? this.runs,
         stars: stars ?? this.stars,
@@ -81,6 +93,7 @@ class PrepJob {
   Map<String, Object> toJson() => {
         'id': id,
         'magistralName': magistralName,
+        'order': orderKey,
         'acceptedAt': acceptedAt.millisecondsSinceEpoch,
         'runs': [for (final r in runs) r.toJson()],
         'stars': stars,
@@ -90,6 +103,7 @@ class PrepJob {
   factory PrepJob.fromJson(Map<String, dynamic> json) => PrepJob(
         id: json['id'] as int,
         magistralName: json['magistralName'] as String,
+        orderKey: json['order'] as String?,
         acceptedAt: DateTime.fromMillisecondsSinceEpoch(json['acceptedAt'] as int),
         runs: [for (final r in json['runs'] as List) StepRun.fromJson(r as Map<String, dynamic>)],
         stars: json['stars'] as int,
@@ -100,9 +114,18 @@ class PrepJob {
 /// Teslim edilen bir reçetenin kaydı (Tuğrul, 2026-10-28): profildeki unvan,
 /// ustalık ve koleksiyon bu kayıttan hesaplanır.
 class Delivery {
-  const Delivery({required this.magistralName, required this.stars, required this.at, required this.steps});
+  const Delivery({
+    required this.magistralName,
+    required this.stars,
+    required this.at,
+    required this.steps,
+    String? orderKey,
+  }) : orderKey = orderKey ?? magistralName;
 
   final String magistralName;
+
+  /// Reçetenin kimliği (`PrescriptionOrder.key`); eski kayıtta yoksa adı.
+  final String orderKey;
   final int stars;
   final DateTime at;
 
@@ -111,6 +134,7 @@ class Delivery {
 
   Map<String, Object> toJson() => {
         'magistralName': magistralName,
+        'order': orderKey,
         'stars': stars,
         'at': at.millisecondsSinceEpoch,
         'steps': steps,
@@ -118,6 +142,7 @@ class Delivery {
 
   factory Delivery.fromJson(Map<String, dynamic> json) => Delivery(
         magistralName: json['magistralName'] as String,
+        orderKey: json['order'] as String?,
         stars: json['stars'] as int,
         at: DateTime.fromMillisecondsSinceEpoch(json['at'] as int),
         steps: [for (final s in json['steps'] as List) s as String],

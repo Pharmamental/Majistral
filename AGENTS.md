@@ -44,7 +44,8 @@ lib/
 ├── theme/             tokens (renk, boşluk, köşe, AppText yazı stilleri), app_theme
 ├── models/            shop_item (ShopItem, Station), prescription, prep_job, formula (formül kitabı)
 ├── data/              stations, lab_tools (laboratuvardaki aletler), market_items, orders
-│                      (taslak içerik, doğrulanmadı), references (kaynaklar), formulary +
+│                      (elle yazılmış 6 reçete + hâl üretici), order_book (kitaptan 62 reçete
+│                      şablonu), references (kaynaklar), formulary +
 │                      formulary/<kategori>.dart (300 formül, 6 × 50)
 ├── logic/             job_store (kabul edilen reçeteler, adım başlatma, acele, telefona kayıt,
 │                      JobScope ile ekranlara verilir)
@@ -163,11 +164,26 @@ lib/
   dükkân), Profil (eczacı önlüğü), Diğer (çekmece dolabı; içinde Kaynaklar).
   Formüller sekmesi kaldırıldı (ekranı git geçmişinde); formül verisi duruyor
   (`GameTabBar`). Seçim her yerde aynı: adı kobalt yazı + altında kısa kobalt çizgi (`SelectionMark`); alt çubukta çizgi sekmeden sekmeye kayar, yolda uzayıp yerinde kısalır (`_SlidingMark`, Tuğrul 2026-10-27); daire seçimle renk değiştirmez. İkonlar `uretici.html` "Sekmeler" grubunda.
-- Market hammaddeleri (2026-10-26): `chemicalGroups`, 6 rol grubunda 31 madde; liste ve kaynakları
+- Market hammaddeleri (2026-10-26): `chemicalGroups`, 6 rol grubunda; liste ve kaynakları
   beyinde (`knowledge/concepts/majistral-hammaddeler.md`). Reçeteye yeni madde girerse markete de
   eklenir; her maddenin oyuncak blok ikonu olur (`test/market_items_test.dart` ikisini de denetler).
-  İkonlar `tools/ikon_blok/uretici.html`'de; görünüşte benzer kardeş maddeler (Tween/Span, setil/
-  stearil, iki paraben) aynı kapta çizilir, kapak rengiyle ayrılır.
+  İkonlar `tools/ikon_blok/uretici.html`'de; görünüşte benzer kardeş maddeler (setostearil/stearil,
+  iki paraben, hazır baz kavanozları) aynı kapta çizilir, kapak rengiyle ayrılır.
+- **500 reçete, 39 madde** (Tuğrul, 2026-10-28, "30-40 civarı madde, her madde en az 10
+  reçetede, 500 civarı reçete"): markette 39 madde, hepsi en az 10 reçetede; reçetede geçmeyen
+  madde markette durmaz (benzil benzoat, kafur, LCD, rezorsin, PEG 400/3350, setil alkol, stearik
+  asit, GMS, Tween, Span çıktı). 40 maddeyle kitaptan en çok ~70 formül tamamen yapılabiliyor;
+  bu yüzden 68 temel reçete (elle yazılmış 6 + kitaptan 62, `order_book.dart`) her biri 7-10
+  hâlle gelir: farklı miktar, hekim (dala göre) ve hasta; her üç hâlden birinde formül temel
+  miktarıyla yazılır, hazırlanacak miktar notta ("Formül 100 g için; sen 30 g hazırla").
+  0,1 g altı mg yazılır. Hâller sırayla dizilir, aynı formül duvarda arka arkaya gelmez.
+  Her reçetenin tek kimliği `PrescriptionOrder.key` (ilk hâlde adı); iş, duvar ve teslim kaydı
+  bununla tutulur (`order` alanı; eski kayıtta yoksa ad). Oyuna giren kitap formüllerinden
+  raf ömrü olmayan 60'ına USP <795>'in genel süresi yazıldı (sulu koruyucusuz 14 gün buzdolabı,
+  sulu koruyuculu 35 gün, susuz 180 gün; sulu krem ve setomakrogol krem koruyuculu, izopropanol
+  ≥%40 koruyucu sayıldı). Dışarıda: polihexanid jelleri (enjeksiyonluk su), %70 izopropil alkol,
+  plasebo kapsülü, nötralleştirme ve süzme adımlı formüller (laboratuvarda kartları yok).
+  Şablonlar scratchpad'deki betikle üretildi, artık elle düzenlenir.
 - Formül kitabı (Tuğrul, 2026-10-28, /goal): 6 kategori farmasötik şekle göre (USP <1151>, Ph. Eur.
   şekil monografları): merhem ve patlar, kremler, jeller, çözeltiler, süspansiyonlar, tozlar ve
   kapsüller; her birinde 50, toplam 300 (`lib/data/formulary/`). Her formül üç soruyu cevaplar: ne

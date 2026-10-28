@@ -126,10 +126,10 @@ class _OrdersScreenState extends State<OrdersScreen> with SecondTick {
                     for (final (i, o) in incoming.indexed) ...[
                       if (i > 0) const SizedBox(width: AppSpace.sm),
                       _Slip(
-                        order: store.orderNamed(o.magistralName),
+                        order: store.orderKeyed(o.orderKey),
                         onTap: (from) => openRecipe(
                           context,
-                          store.orderNamed(o.magistralName),
+                          store.orderKeyed(o.orderKey),
                           from: from,
                           onTake: () => _take(o),
                           takeTo: _counterSpot,

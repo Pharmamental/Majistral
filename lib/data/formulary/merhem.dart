@@ -68,7 +68,8 @@ const merhemFormulas = <Formula>[
       FormulaStep('Eritme', 'Balmumu su banyosunda eritilir, vazelin eklenip birlikte tamamen sıvılaştırılır.'),
       FormulaStep('Soğutma', 'Banyodan alınır, katılaşıp donmaya başlayana kadar sürekli karıştırılır.'),
     ],
-    refs: ['usp-nf', 'ansel', 'remington'],
+    refs: ['usp-nf', 'ansel', 'remington', 'usp-795'],
+    shelfLife: '180 gün, oda sıcaklığında, sıkı kapalı (susuz; USP <795>)',
   ),
   Formula(
     name: 'Sarı merhem (USP)',
@@ -115,7 +116,8 @@ const merhemFormulas = <Formula>[
       FormulaStep('Eritme', 'Sert parafin ve setostearil alkol önce eritilir, sonra yün yağı ve vazelin eklenir.'),
       FormulaStep('Soğutma', 'Eriyik banyodan alınır, soğuyup katılaşana kadar karıştırılır.'),
     ],
-    refs: ['bp', 'martindale'],
+    refs: ['bp', 'martindale', 'usp-795'],
+    shelfLife: '180 gün, oda sıcaklığında, sıkı kapalı (susuz; USP <795>)',
   ),
   Formula(
     name: 'Basit merhem (BP, sarı)',
@@ -131,7 +133,8 @@ const merhemFormulas = <Formula>[
       FormulaStep('Eritme', 'En yüksek erime noktalı sert parafinden başlanarak bütün maddeler eritilir.'),
       FormulaStep('Soğutma', 'Karışım donana kadar karıştırılarak soğutulur.'),
     ],
-    refs: ['bp', 'martindale'],
+    refs: ['bp', 'martindale', 'usp-795'],
+    shelfLife: '180 gün, oda sıcaklığında, sıkı kapalı (susuz; USP <795>)',
   ),
   Formula(
     name: 'Emülsiyon yapıcı merhem (BP)',
@@ -268,7 +271,8 @@ const merhemFormulas = <Formula>[
       FormulaStep('Eritme', 'Balmumu, sert parafin ve setostearil alkol eritilir, ardından vazelin eklenir.'),
       FormulaStep('Soğutma', 'Eriyik banyodan alınır, katılaşana kadar karıştırılır.'),
     ],
-    refs: ['bp', 'martindale'],
+    refs: ['bp', 'martindale', 'usp-795'],
+    shelfLife: '180 gün, oda sıcaklığında, sıkı kapalı (susuz; USP <795>)',
   ),
   Formula(
     name: 'Sıvı parafin ve beyaz vazelin merhemi (50/50)',
@@ -283,7 +287,8 @@ const merhemFormulas = <Formula>[
       FormulaStep('Karıştırma', 'Sıvı parafin eriyiğe eklenir ve iyice karıştırılır.'),
       FormulaStep('Soğutma', 'Karışım ayrışmasın diye donana kadar karıştırılarak soğutulur.'),
     ],
-    refs: ['merhem-bnf', 'martindale'],
+    refs: ['merhem-bnf', 'martindale', 'usp-795'],
+    shelfLife: '180 gün, oda sıcaklığında, sıkı kapalı (susuz; USP <795>)',
   ),
   Formula(
     name: 'Hidrofobik baz jel (DAC)',
@@ -366,7 +371,8 @@ const merhemFormulas = <Formula>[
       FormulaStep('Levigasyon', 'Toz bazın küçük bir kısmıyla havanda ezilerek pürüzsüz hamur yapılır.'),
       FormulaStep('Geometrik seyreltme', 'Kalan baz eşit parçalar hâlinde eklenip karıştırılır.'),
     ],
-    refs: ['merhem-dab', 'merhem-altmeyer'],
+    refs: ['merhem-dab', 'merhem-altmeyer', 'usp-795'],
+    shelfLife: '180 gün, oda sıcaklığında, sıkı kapalı (susuz; USP <795>)',
   ),
   Formula(
     name: 'Çinko oksit patı %25 (USP)',
@@ -382,7 +388,8 @@ const merhemFormulas = <Formula>[
       FormulaStep('Levigasyon', 'Toz karışımı vazelinin bir kısmıyla merhem taşında ezilir.'),
       FormulaStep('Geometrik seyreltme', 'Kalan vazelin kademeli olarak eklenir; çok toz olduğu için sıkı ezilir.'),
     ],
-    refs: ['usp-nf', 'ansel', 'bp'],
+    refs: ['usp-nf', 'ansel', 'bp', 'usp-795'],
+    shelfLife: '180 gün, oda sıcaklığında, sıkı kapalı (susuz; USP <795>)',
   ),
   Formula(
     name: 'Yumuşak çinko patı %30 (DAB)',
@@ -416,7 +423,8 @@ const merhemFormulas = <Formula>[
       FormulaStep('Levigasyon', 'Toz, vazelinin küçük bir kısmıyla merhem taşında ezilir.'),
       FormulaStep('Geometrik seyreltme', 'Kalan vazelin kademeli olarak eklenip karıştırılır.'),
     ],
-    refs: ['nrf', 'merhem-pz'],
+    refs: ['nrf', 'merhem-pz', 'usp-795'],
+    shelfLife: '180 gün, oda sıcaklığında, sıkı kapalı (susuz; USP <795>)',
   ),
   Formula(
     name: 'Lassar patı (çinko oksit ve salisilik asit patı)',
@@ -435,7 +443,8 @@ const merhemFormulas = <Formula>[
       FormulaStep('Karıştırma', 'Toz karışımı eriyiğe azar azar katılır ve dağıtılır.'),
       FormulaStep('Soğutma', 'Tozlar çökmesin diye pat donana kadar karıştırılır.'),
     ],
-    refs: ['bp', 'usp-nf', 'martindale'],
+    refs: ['bp', 'usp-nf', 'martindale', 'usp-795'],
+    shelfLife: '180 gün, oda sıcaklığında, sıkı kapalı (susuz; USP <795>)',
   ),
   Formula(
     name: 'Çinko ve hint yağı merhemi (BP)',
@@ -521,7 +530,8 @@ const merhemFormulas = <Formula>[
       FormulaStep('Levigasyon', 'Toz sıvı parafinle ezilerek topaksız bir hamur yapılır.'),
       FormulaStep('Geometrik seyreltme', 'Vazelin kademeli olarak katılır; plastik ya da porselen spatül kullanılır.'),
     ],
-    refs: ['nrf', 'merhem-altmeyer', 'martindale'],
+    refs: ['nrf', 'merhem-altmeyer', 'martindale', 'usp-795'],
+    shelfLife: '180 gün, oda sıcaklığında, sıkı kapalı (susuz; USP <795>)',
   ),
   Formula(
     name: 'Salisilik asit %3 ve kükürt %3 merhemi',
@@ -538,7 +548,8 @@ const merhemFormulas = <Formula>[
       FormulaStep('Levigasyon', 'Toz karışımı vazelinin küçük bir kısmıyla pürüzsüzce ezilir.'),
       FormulaStep('Geometrik seyreltme', 'Kalan vazelin eşit parçalar hâlinde katılır.'),
     ],
-    refs: ['merhem-dmd', 'martindale'],
+    refs: ['merhem-dmd', 'martindale', 'usp-795'],
+    shelfLife: '180 gün, oda sıcaklığında, sıkı kapalı (susuz; USP <795>)',
   ),
   Formula(
     name: 'Salisilik asit %2 ve kükürt %2, emülsiyon yapıcı merhemde',
@@ -571,7 +582,8 @@ const merhemFormulas = <Formula>[
       FormulaStep('Levigasyon', 'Kükürt sıvı parafinle havanda pürüzsüz bir hamur yapılır.'),
       FormulaStep('Geometrik seyreltme', 'Beyaz merhem eşit parçalar hâlinde katılarak karıştırılır.'),
     ],
-    refs: ['usp-nf', 'remington'],
+    refs: ['usp-nf', 'remington', 'usp-795'],
+    shelfLife: '180 gün, oda sıcaklığında, sıkı kapalı (susuz; USP <795>)',
   ),
   Formula(
     name: 'Kükürtlü vazelin %6',
@@ -586,7 +598,8 @@ const merhemFormulas = <Formula>[
       FormulaStep('Levigasyon', 'Kükürt az miktar vazelinle merhem taşında pürüzsüzce ezilir.'),
       FormulaStep('Geometrik seyreltme', 'Kalan vazelin kademeli olarak katılır.'),
     ],
-    refs: ['merhem-cdc', 'martindale'],
+    refs: ['merhem-cdc', 'martindale', 'usp-795'],
+    shelfLife: '180 gün, oda sıcaklığında, sıkı kapalı (susuz; USP <795>)',
   ),
   Formula(
     name: 'Kükürtlü vazelin %10',
@@ -601,7 +614,8 @@ const merhemFormulas = <Formula>[
       FormulaStep('Levigasyon', 'Kükürt vazelinin küçük bir kısmıyla ezilerek hamur yapılır.'),
       FormulaStep('Geometrik seyreltme', 'Kalan vazelin eşit parçalar hâlinde eklenir.'),
     ],
-    refs: ['merhem-cdc', 'martindale'],
+    refs: ['merhem-cdc', 'martindale', 'usp-795'],
+    shelfLife: '180 gün, oda sıcaklığında, sıkı kapalı (susuz; USP <795>)',
   ),
   // ------------------------------------------------------------ Mantar ilaçları
   Formula(
@@ -669,7 +683,8 @@ const merhemFormulas = <Formula>[
       FormulaStep('Karıştırma', 'İhtiyol lanolinle merhem taşında iyice karıştırılır.'),
       FormulaStep('Geometrik seyreltme', 'Vazelin eşit parçalar hâlinde eklenerek karışım homojen yapılır.'),
     ],
-    refs: ['usp-nf', 'remington'],
+    refs: ['usp-nf', 'remington', 'usp-795'],
+    shelfLife: '180 gün, oda sıcaklığında, sıkı kapalı (susuz; USP <795>)',
   ),
   Formula(
     name: 'İhtiyol merhemi %10 (BP)',
@@ -685,7 +700,8 @@ const merhemFormulas = <Formula>[
       FormulaStep('Soğutma', 'Baz koyulaşana kadar karıştırılarak soğutulur.'),
       FormulaStep('Karıştırma', 'İhtiyol yarı soğumuş baza katılır ve homojen olana kadar karıştırılır.'),
     ],
-    refs: ['bp', 'martindale'],
+    refs: ['bp', 'martindale', 'usp-795'],
+    shelfLife: '180 gün, oda sıcaklığında, sıkı kapalı (susuz; USP <795>)',
   ),
   // ------------------------------------------------------------- Ditranol
   Formula(
@@ -701,7 +717,8 @@ const merhemFormulas = <Formula>[
       FormulaStep('Levigasyon', 'Ditranol sıvı parafinle havanda ezilerek ince bir hamur yapılır; eldiven giyilir.'),
       FormulaStep('Geometrik seyreltme', 'Az miktar etkin madde olduğu için vazelin kademeli ve titizlikle katılır.'),
     ],
-    refs: ['nrf', 'bp', 'merhem-altmeyer'],
+    refs: ['nrf', 'bp', 'merhem-altmeyer', 'usp-795'],
+    shelfLife: '180 gün, oda sıcaklığında, sıkı kapalı (susuz; USP <795>)',
   ),
   Formula(
     name: 'Salisilik asitli ditranollü vazelin %0,5',
@@ -718,7 +735,8 @@ const merhemFormulas = <Formula>[
       FormulaStep('Levigasyon', 'Ditranol ve salisilik asit sıvı parafinle pürüzsüz bir hamur yapılır.'),
       FormulaStep('Geometrik seyreltme', 'Vazelin eşit parçalar hâlinde katılır; metal spatül kullanılmaz.'),
     ],
-    refs: ['nrf', 'merhem-altmeyer'],
+    refs: ['nrf', 'merhem-altmeyer', 'usp-795'],
+    shelfLife: '180 gün, oda sıcaklığında, sıkı kapalı (susuz; USP <795>)',
   ),
   Formula(
     name: 'Ditranollü Lassar patı %0,1',
@@ -750,7 +768,8 @@ const merhemFormulas = <Formula>[
       FormulaStep('Çözme', 'Setrimid sıcak eriyiğe katılır ve dağılıp çözünene kadar karıştırılır.'),
       FormulaStep('Soğutma', 'Merhem donana kadar karıştırılarak soğutulur.'),
     ],
-    refs: ['bp', 'martindale'],
+    refs: ['bp', 'martindale', 'usp-795'],
+    shelfLife: '180 gün, oda sıcaklığında, sıkı kapalı (susuz; USP <795>)',
   ),
   Formula(
     name: 'Lidokain merhemi %5',
@@ -811,7 +830,8 @@ const merhemFormulas = <Formula>[
       FormulaStep('Levigasyon', 'Povidon iyot tozu PEG merheminin küçük bir kısmıyla pürüzsüzce ezilir.'),
       FormulaStep('Geometrik seyreltme', 'Kalan PEG merhemi kademeli olarak katılıp renk eşitlenir.'),
     ],
-    refs: ['usp-nf', 'martindale'],
+    refs: ['usp-nf', 'martindale', 'usp-795'],
+    shelfLife: '180 gün, oda sıcaklığında, sıkı kapalı (susuz; USP <795>)',
   ),
   // ------------------------------------------------------------- Diğerleri
   Formula(
@@ -828,7 +848,8 @@ const merhemFormulas = <Formula>[
       FormulaStep('Levigasyon', 'Üre tozu yün yağıyla havanda pürüzsüz bir hamur yapılır.'),
       FormulaStep('Geometrik seyreltme', 'Vazelin eşit parçalar hâlinde eklenerek pat tamamlanır.'),
     ],
-    refs: ['nrf', 'merhem-south-farber', 'merhem-altmeyer'],
+    refs: ['nrf', 'merhem-south-farber', 'merhem-altmeyer', 'usp-795'],
+    shelfLife: '180 gün, oda sıcaklığında, sıkı kapalı (susuz; USP <795>)',
   ),
   Formula(
     name: 'Magnezyum sülfat patı (Morison patı, BP)',

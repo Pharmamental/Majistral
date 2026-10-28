@@ -130,7 +130,8 @@ const cozeltiFormulas = <Formula>[
       FormulaStep('Çözme', 'Bikarbonatı ısıtmadan, soğuk suda yavaşça karıştırarak çöz; ısı karbondioksit kaçırır.'),
       FormulaStep('Hacme tamamlama', 'Çözeltiyi saf suyla 100 mL\'ye tamamla.'),
     ],
-    refs: ['cozelti-nahata', 'martindale'],
+    refs: ['cozelti-nahata', 'martindale', 'usp-795'],
+    shelfLife: '14 gün, buzdolabında (sulu, koruyucusuz; USP <795>)',
   ),
   Formula(
     name: 'Kafein sitrat oral çözeltisi 20 mg/mL',
@@ -218,7 +219,8 @@ const cozeltiFormulas = <Formula>[
       FormulaStep('Çözme', 'Sodyum florürü suyun bir kısmında karıştırarak çöz.'),
       FormulaStep('Hacme tamamlama', 'Çözeltiyi saf suyla 100 mL\'ye tamamla.'),
     ],
-    refs: ['martindale', 'remington'],
+    refs: ['martindale', 'remington', 'usp-795'],
+    shelfLife: '14 gün, buzdolabında (sulu, koruyucusuz; USP <795>)',
   ),
   Formula(
     name: 'Sodyum florür ağız çalkalama çözeltisi %0,2',
@@ -232,7 +234,8 @@ const cozeltiFormulas = <Formula>[
       FormulaStep('Çözme', 'Sodyum florürü suda karıştırarak tamamen çöz.'),
       FormulaStep('Hacme tamamlama', 'Çözeltiyi saf suyla 100 mL\'ye tamamla.'),
     ],
-    refs: ['martindale', 'remington'],
+    refs: ['martindale', 'remington', 'usp-795'],
+    shelfLife: '14 gün, buzdolabında (sulu, koruyucusuz; USP <795>)',
   ),
   Formula(
     name: 'Klorheksidin glukonat gargarası %0,2',
@@ -246,7 +249,8 @@ const cozeltiFormulas = <Formula>[
       FormulaStep('Karıştırma', 'Klorheksidin çözeltisini suyun bir kısmına ekleyip karıştır.'),
       FormulaStep('Hacme tamamlama', 'Saf suyla 100 mL\'ye tamamla.'),
     ],
-    refs: ['bp', 'martindale'],
+    refs: ['bp', 'martindale', 'usp-795'],
+    shelfLife: '14 gün, buzdolabında (sulu, koruyucusuz; USP <795>)',
   ),
   Formula(
     name: 'Klorheksidin glukonat ağız çalkalama çözeltisi %0,12',
@@ -260,7 +264,8 @@ const cozeltiFormulas = <Formula>[
       FormulaStep('Karıştırma', 'Klorheksidin çözeltisini suyun bir kısmında karıştırarak seyrelt.'),
       FormulaStep('Hacme tamamlama', 'Saf suyla 100 mL\'ye tamamla.'),
     ],
-    refs: ['usp-nf', 'martindale'],
+    refs: ['usp-nf', 'martindale', 'usp-795'],
+    shelfLife: '14 gün, buzdolabında (sulu, koruyucusuz; USP <795>)',
   ),
   Formula(
     name: 'Povidon iyot gargarası %1',
@@ -274,7 +279,8 @@ const cozeltiFormulas = <Formula>[
       FormulaStep('Çözme', 'Povidon iyodu suyun bir kısmında yavaşça karıştırarak çöz.'),
       FormulaStep('Hacme tamamlama', 'Saf suyla 100 mL\'ye tamamla.'),
     ],
-    refs: ['bp', 'martindale'],
+    refs: ['bp', 'martindale', 'usp-795'],
+    shelfLife: '14 gün, buzdolabında (sulu, koruyucusuz; USP <795>)',
   ),
 
   // ---------- Deri üzerine: antiseptik ve ilaçlı çözeltiler ----------
@@ -290,7 +296,8 @@ const cozeltiFormulas = <Formula>[
       FormulaStep('Çözme', 'Povidon iyodu suya azar azar serpip topaklanmadan karıştırarak çöz.'),
       FormulaStep('Hacme tamamlama', 'Saf suyla 100 mL\'ye tamamla.'),
     ],
-    refs: ['usp-nf', 'martindale'],
+    refs: ['usp-nf', 'martindale', 'usp-795'],
+    shelfLife: '14 gün, buzdolabında (sulu, koruyucusuz; USP <795>)',
   ),
   Formula(
     name: 'Hidrojen peroksit çözeltisi %3',
@@ -448,7 +455,8 @@ const cozeltiFormulas = <Formula>[
       FormulaStep('Karıştırma', 'İzopropil alkolü azar azar ekleyip karıştır.'),
       FormulaStep('Hacme tamamlama', 'İzopropil alkolle 100 g\'a tamamla.'),
     ],
-    refs: ['nrf', 'cozelti-altmeyer', 'martindale'],
+    refs: ['nrf', 'cozelti-altmeyer', 'martindale', 'usp-795'],
+    shelfLife: '35 gün, oda sıcaklığında ya da buzdolabında (sulu, koruyuculu; USP <795>)',
   ),
   Formula(
     name: 'Alüminyum klorür hekzahidrat çözeltisi %15 (izopropanollü)',
@@ -464,7 +472,8 @@ const cozeltiFormulas = <Formula>[
       FormulaStep('Karıştırma', 'İzopropil alkolü yavaşça ekleyip karıştır.'),
       FormulaStep('Hacme tamamlama', 'İzopropil alkolle 100 g\'a tamamla.'),
     ],
-    refs: ['nrf', 'cozelti-altmeyer'],
+    refs: ['nrf', 'cozelti-altmeyer', 'usp-795'],
+    shelfLife: '35 gün, oda sıcaklığında ya da buzdolabında (sulu, koruyuculu; USP <795>)',
   ),
   Formula(
     name: 'Eozin çözeltisi %2 (sulu)',
@@ -559,7 +568,8 @@ const cozeltiFormulas = <Formula>[
       FormulaStep('Karıştırma', 'Suyu azar azar ekleyip karıştır.'),
       FormulaStep('Hacme tamamlama', 'İzopropil alkolle 100 g\'a tamamla.'),
     ],
-    refs: ['nrf', 'cozelti-altmeyer'],
+    refs: ['nrf', 'cozelti-altmeyer', 'usp-795'],
+    shelfLife: '35 gün, oda sıcaklığında ya da buzdolabında (sulu, koruyuculu; USP <795>)',
   ),
   Formula(
     name: 'Salisilik asitli akne spiriti %5',
@@ -576,7 +586,8 @@ const cozeltiFormulas = <Formula>[
       FormulaStep('Karıştırma', 'Suyu yavaşça ekleyip karıştır.'),
       FormulaStep('Hacme tamamlama', 'Saf suyla 100 g\'a tamamla.'),
     ],
-    refs: ['nrf', 'cozelti-altmeyer'],
+    refs: ['nrf', 'cozelti-altmeyer', 'usp-795'],
+    shelfLife: '35 gün, oda sıcaklığında ya da buzdolabında (sulu, koruyuculu; USP <795>)',
   ),
   Formula(
     name: 'Minoksidil saç spiriti %5',
@@ -728,7 +739,8 @@ const cozeltiFormulas = <Formula>[
       FormulaStep('Karıştırma', 'Gliserolü ekleyip karıştır.'),
       FormulaStep('Hacme tamamlama', 'Saf suyla 100 mL\'ye tamamla.'),
     ],
-    refs: ['bp', 'martindale'],
+    refs: ['bp', 'martindale', 'usp-795'],
+    shelfLife: '14 gün, buzdolabında (sulu, koruyucusuz; USP <795>)',
   ),
   Formula(
     name: 'Asetik asit kulak çözeltisi %2',

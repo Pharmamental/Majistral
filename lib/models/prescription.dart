@@ -84,7 +84,13 @@ class PrescriptionOrder {
     required this.steps,
     required this.formula,
     this.batchNote,
-  });
+    String? key,
+  }) : key = key ?? magistralName;
+
+  /// Reçetenin tek kimliği. Aynı formül birkaç hâliyle gelir (2026-10-28,
+  /// "500 civarı reçete"); hâller aynı adı taşıdığı için kayıtta bu tutulur.
+  /// İlk hâlin kimliği adıdır, eski kayıtlar böyle okunur.
+  final String key;
 
   /// Reçetedeki maddeler, yazıldığı sırayla.
   final List<Ingredient> ingredients;

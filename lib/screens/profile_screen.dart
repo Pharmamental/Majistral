@@ -805,7 +805,7 @@ class _LedgerRow extends StatelessWidget {
     final at = delivery.at;
     final time = '${at.hour.toString().padLeft(2, '0')}:${at.minute.toString().padLeft(2, '0')}';
     // Kayıttaki reçete oyundan çıkarıldıysa hekim yazılmaz.
-    final doctor = prescriptionOrders.where((o) => o.magistralName == delivery.magistralName).firstOrNull?.doctorName;
+    final doctor = prescriptionOrders.where((o) => o.key == delivery.orderKey).firstOrNull?.doctorName;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: AppSpace.md, vertical: AppSpace.sm),
       child: Row(

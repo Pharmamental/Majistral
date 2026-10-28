@@ -327,6 +327,69 @@ const IKONLAR=[
  {grup:'Kimyasal',dosya:'folik_asit',ad:'Folik Asit',kutu:'#FFE3A6',parts:[
   {d:'M10,60H90C84,74 68,80 50,80C32,80 16,74 10,60Z',c:R.cam},   // saat camı
   {d:'M22,62C28,38 72,38 78,62Z',c:'#F2A23A'}]},                   // toz yığını
+ // ===== 500 reçetenin yeni maddeleri (2026-10-28). Hazır bazlar kardeş: aynı merhem
+ // kavanozu, kapak ve etiket rengiyle ayrılır.
+ {grup:'Hazır bazlar',dosya:'sulu_krem',ad:'Sulu Krem',kutu:'#CFE4F7',parts:kavanoz(R.mavi)},
+ {grup:'Hazır bazlar',dosya:'yun_yagi_alkolleri',ad:'Yün Yağı Alkolleri Merhemi',kutu:'#FFF0B8',parts:kavanoz(R.altin)},
+ {grup:'Hazır bazlar',dosya:'setomakrogol_krem',ad:'Setomakrogol Krem',kutu:'#D9D2FA',parts:kavanoz(R.mor)},
+ {grup:'Hazır bazlar',dosya:'beyaz_merhem',ad:'Beyaz Merhem',kutu:'#FFD6C2',parts:kavanoz(R.mercan)},
+ {grup:'Hazır bazlar',dosya:'peg_merhemi',ad:'PEG Merhemi',kutu:'#C9EFE6',parts:kavanoz(R.yesil)},
+ // Setostearil alkol, setil ve stearil alkolün karışımı: stearil alkolün kavanozu, içinde pastil ve pul birlikte.
+ {grup:'Kıvam ve emülgatör',dosya:'setostearil_alkol',ad:'Setostearil Alkol',kutu:'#D9D2FA',parts:[
+  {d:rr(18,30,64,54,12),c:R.amber},
+  {d:rr(24,18,52,14,6),c:R.mor},
+  {d:circ(34,68,7.5),c:R.krem,flat:1},{d:circ(60,56,7.5),c:R.krem,flat:1},
+  {d:rr(46,64,22,9,4.5),c:R.krem,flat:1},{d:rr(28,50,22,9,4.5),c:R.krem,flat:1}]},
+ // İzopropil alkol: ovma alkolünün kapaklı şişesi.
+ {grup:'Su fazı, koruyucu, toz',dosya:'izopropil_alkol',ad:'İzopropil Alkol',kutu:'#FFD6C2',parts:[
+  {d:rr(38,10,24,20,6),c:R.mercan},                 // açılır kapak
+  {d:rr(30,28,40,58,12),c:R.cam},                   // şişe
+  {d:rr(34,50,32,22,4),c:R.krem,flat:1},
+  {d:'M40,61H60',c:R.mercan,line:1}]},
+ // Talk, sabuntaşından (talk taşı) öğütülür: taş ve önündeki toz.
+ {grup:'Su fazı, koruyucu, toz',dosya:'talk',ad:'Talk',kutu:'#E3F1E3',parts:[
+  {d:'M14,84L20,46L40,30L66,32L86,50L86,84Z',c:'#B9CBB5'}, // sabuntaşı
+  {d:'M30,42L44,36M58,40L72,48',c:L('#B9CBB5',.45),line:1},
+  {d:'M28,86C32,64 68,64 72,86Z',c:R.krem}]},        // talk tozu
+ // Sodyum bikarbonat: ağzı açık kâğıt torbada beyaz toz (karbonat).
+ {grup:'Etkin maddeler',dosya:'sodyum_bikarbonat',ad:'Sodyum Bikarbonat',kutu:'#CFE4F7',parts:[
+  {d:'M26,38H74L78,86H22Z',c:R.bisküvi},            // kâğıt torba
+  {d:'M30,40C36,24 64,24 70,40Z',c:R.krem},          // toz
+  {d:rr(34,56,32,18,4),c:R.krem,flat:1},
+  {d:'M40,65H60',c:R.mavi,line:1}]},
+ // Sodyum klorür: küp biçimli kaya tuzu kristalleri, saat camında.
+ {grup:'Etkin maddeler',dosya:'sodyum_klorur',ad:'Sodyum Klorür',kutu:'#E4E8EE',parts:[
+  {d:'M10,60H90C84,74 68,80 50,80C32,80 16,74 10,60Z',c:R.cam},
+  {d:rr(22,46,18,16,2),c:R.krem},{d:rr(41,34,22,28,2),c:R.krem},{d:rr(63,48,15,14,2),c:R.krem}]},
+ // Sodyum florür çürüğe karşı kullanılır: azı dişi.
+ {grup:'Etkin maddeler',dosya:'sodyum_florur',ad:'Sodyum Florür',kutu:'#CFE4F7',parts:[
+  {d:'M28,32C28,20 40,16 50,22C60,16 72,20 72,32C72,46 68,54 65,62L61,82C60,87 54,87 53,82L50,68L47,82C46,87 40,87 39,82L35,62C32,54 28,46 28,32Z',c:'#FFFFFF'}]},
+ // Alüminyum klorür ter kesicidir: kapağı açık roll-on şişesi.
+ {grup:'Etkin maddeler',dosya:'aluminyum_klorur',ad:'Alüminyum Klorür',kutu:'#C9EFE6',parts:[
+  {d:rr(30,40,40,46,14),c:R.krem},                  // şişe
+  {d:circ(50,36,11),c:R.metal},                     // bilye
+  {d:rr(34,58,32,16,4),c:R.yesil,flat:1}]},
+ // Povidon iyot: koyu kahverengi antiseptik çözelti şişesi.
+ {grup:'Etkin maddeler',dosya:'povidon_iyot',ad:'Povidon İyot',kutu:'#FFE3A6',parts:[
+  {d:rr(44,8,12,10,3),c:R.krem},                    // damlatıcı uç
+  {d:rr(36,16,28,14,5),c:R.krem},                   // kapak
+  {d:rr(28,28,44,58,13),c:R.cam},
+  {d:rr(31,46,38,37,10),c:'#8B3A12'}]},             // koyu kahve çözelti
+ // Klorheksidin ağız çalkalama suyudur: pembe sıvılı ölçek kabı.
+ {grup:'Etkin maddeler',dosya:'klorheksidin',ad:'Klorheksidin Glukonat %20',kutu:'#FFD6C2',parts:[
+  {d:'M28,34H72L66,86H34Z',c:R.cam},                // ölçek kabı
+  {d:'M31,54H69L66,84H34Z',c:'#F08DA8'},             // pembe gargara
+  {d:'M38,44H48M38,62H46M38,72H48',c:L('#F08DA8',.55),line:1}]},
+ // Setrimid yara antiseptiğidir: yara bandı.
+ {grup:'Etkin maddeler',dosya:'setrimid',ad:'Setrimid',kutu:'#D9D2FA',rot:-30,parts:[
+  {d:rr(10,38,80,26,13),c:'#E9B98F'},               // bant
+  {d:rr(36,40,28,22,4),c:R.krem},                   // ped
+  ...[[20,46],[20,56],[80,46],[80,56]].map(([x,y])=>({d:circ(x,y,1.8),c:D('#E9B98F',.18),flat:1}))]},
+ // Ditranol ilk kez araroba ağacının kabuğundaki sarı tozdan (Goa tozu) elde edildi.
+ {grup:'Etkin maddeler',dosya:'ditranol',ad:'Ditranol',kutu:'#FFF0B8',parts:[
+  {d:'M12,70C20,58 34,56 50,58C66,60 80,56 88,66L84,84H16Z',c:R.kahve}, // ağaç kabuğu
+  {d:'M24,74L34,80M52,72L60,80M70,72L76,78',c:D(R.kahve,.3),line:1},
+  {d:'M28,62C32,40 64,40 68,62Z',c:'#F2C230'}]},     // sarı toz
  // Karıştırma (sıvı, jel): beherde cam bagetle döndürerek.
  {grup:'Adımlar',dosya:'adim_karistirma_sivi',ad:'Karıştırma',kutu:'#C9EFE6',parts:[
   {d:rr(20,28,58,58,8),c:R.cam},                    // beher
@@ -615,6 +678,13 @@ const FANUSLAR=[
   ...[[36,36],[62,34],[48,40]].flatMap(([x,y])=>[[0,0],[-3,3],[3,3],[0,6],[-2.5,8.6],[2.5,8.6],[0,11]].map(([dx,dy])=>({d:circ(x+dx,y+dy,2.2),c:'#4A3555'})))])},
 ];
 IKONLAR.push(...FANUSLAR);
+
+// Hazır baz kavanozu: porselen merhem kavanozu, kapak ve etiket [c] renginde.
+function kavanoz(c){return[
+ {d:rr(18,40,64,44,12),c:R.krem},
+ {d:rr(22,26,56,17,7),c},
+ {d:rr(28,56,44,18,4),c:L(c,.55),flat:1},
+ {d:'M35,65H65',c:L(c,.15),line:1}]}
 
 // ---- çizim (Pharmamental üreticisinden aynen)
 const KALINLIK=7, YAN_KOYU=.32, UST_ACIK=.18, KENAR_ACIK=.35;
