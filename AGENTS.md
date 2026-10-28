@@ -270,8 +270,12 @@ lib/
 - Süren işler `shared_preferences` ile telefona kaydedilir; saat şimdilik cihaz saati
   (`JobStore.now`). Sunucu saati gelene kadar saat hilesi mümkün; kapanmamış bir açık.
 - Ekonomi, reklam ve bildirim henüz yok; satın alma düğmeleri bilerek boş. Ekonomi önerisi
-  (2026-10-28, onay bekliyor): teslim = hammadde bedeli + adım başına işçilik × yıldız, kimyasal
-  gramla harcanır, paketle alınır, depo veresiyesi; beyinde `knowledge/concepts/majistral-ekonomi.md`.
+  (2. tur 2026-10-29, onay bekliyor): teslim = malzeme bedeli + adım başına 13 × yıldız, günün
+  ilk 3 teslimi emek ×2; kimyasal gramla harcanır, paketle alınır (38 paket fiyatı), başta her
+  maddeden 1 paket + 100 para, depo veresiyesi; giderler 18 100 (aletler + parsel 4-6 + kurutma
+  askısı). Bulgular: market aletlerinin yazılı etkileri (Unguator %30, termostatlı banyo %25)
+  kodda yok; zaman simülasyonu tezgâhı sınırsız almalı; çay fanusu çok güçlü, boğaz değersiz.
+  Beyinde `knowledge/concepts/majistral-ekonomi.md`.
 - Eski deneme (Temmuz 2026, tek dosya) git geçmişinde: ilk commit `0bd231c`. 2026-10-25'te market
   düzeni, istasyon kademeleri, reçete kartı, termometre ve görseller oradan seçilerek taşındı.
   Taşınmayan görseller (`Capsule`, `Kalıp_ikon`, `Maserasyon_ikon`, `Oyun_tick`, `Carpi`)
