@@ -167,9 +167,18 @@ lib/
 - Bahçe (Tuğrul, 2026-10-29): eczanenin arka bahçesi; başlık duvarda, altında badanalı tahta
   çit ve soluk zeytin yeşili çimen (`GardenGround`), ceviz çerçeveli yükseltilmiş toprak
   parseller (`GardenBed`, `widgets/garden_widgets.dart`): 3 açık, 3 kilitli (çimende kesik
-  çerçeve + kilit + kâğıt etiket). Şimdilik yalnız sahne. Kararlaşan mekanik (henüz kodda
-  yok): tıbbi bitki gerçek zamanda büyür, bozulmaz, parsel dolunca durur; bitki satılmaz,
-  vitrin fanusunu açar. Vitrindeki fanus küçük oyun etkisi verir, aynı gruptan iki fanus
+  çerçeve + kilit + kâğıt etiket). Mekanik kodda (2026-10-29, `models/garden.dart`, kayıt
+  `garden_v1`): her teslim bir tohum getirir (teslim penceresinde yazar); boş parsele
+  dokununca tohum seçilip ekilir; bitki gerçek zamanda büyür (sık 2 sa, orta 6 sa, nadir 12
+  sa; "oyun süresi" diye yazar), filizler büyür, olgunlaşınca çiçek açar, bozulmaz; olgun
+  parsele dokununca hasat ve bitki vitrine konabilir olur (`garden.grown`). Bitki satılmaz.
+  Elde olan bitkinin tohumu gübre olur, gübre büyüyen parselin kalan süresini yarıya indirir.
+  Tohum kâğıdında gübre, nadir tohumun en geç kaç teslim sonra geleceği ve vitrindeki
+  etkiler açıkça yazar. Vitrin yalnız yetiştirilmiş bitkiyi alır (`unlockAll` vitrini
+  açmaz; bahçeden önce rafa konmuş fanus yetiştirilmiş sayılır); seçicide kilitliler soluk
+  ve kilitli, her fanusun etkisi yazılı. Duvar ve acele sınırı vitrine göre
+  (`JobStore.wallLimit`, `rushLimit`); teslim parası etkisi ekonomi gelince bağlanacak.
+  Parsel açma (4-6) ve kurutma askısı henüz yok. Vitrindeki fanus küçük oyun etkisi verir, aynı gruptan iki fanus
   toplanmaz, en güçlüsü sayılır: çaylar duvar (Papatya +1, Ihlamur/Rezene +2, Mürver +3),
   boğaz acele hakkı (Adaçayı +1, Kekik/Hatmi +2, Gelincik +3), cilt teslim parası (Aynısefa
   %5, Lavanta/Defne %10, Kantaron %15), ferahlatıcı bahçe hızı (Nane %10, Biberiye/Okaliptüs

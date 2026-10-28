@@ -13,6 +13,7 @@ import 'package:game/logic/job_store.dart';
 import 'package:game/logic/profile_stats.dart';
 import 'package:game/main.dart';
 import 'package:game/models/formula.dart';
+import 'package:game/models/garden.dart';
 import 'package:game/models/prep_job.dart';
 import 'package:game/screens/profile_screen.dart';
 import 'package:game/widgets/achievement_toast.dart';
@@ -254,10 +255,15 @@ void showcaseTests() {
     await store.setShowcase(0, order.magistralName); // ilaç rafa konmaz
     expect(store.showcase, [null, null, null]);
     final plant = driedPlants.first.name;
+    // Bahçede yetiştirilmeyen fanus konmaz (2026-10-29; unlockAll vitrini açmaz).
     await store.setShowcase(0, plant);
-    // Kazanma kuralı yok: yalnız her şey açıkken konur.
-    expect(store.showcase, [unlockAll ? plant : null, null, null]);
-    if (!unlockAll) return;
+    expect(store.showcase, [null, null, null]);
+    await store.giveSeed(plant);
+    expect(await store.plant(0, plant), isTrue);
+    clock = clock.add(driedPlantNamed(plant)!.growTime);
+    expect(await store.harvest(0), plant);
+    await store.setShowcase(0, plant);
+    expect(store.showcase, [plant, null, null]);
     await store.setShowcase(2, plant); // 0'dan 2'ye taşınır
     expect(store.showcase, [null, null, plant]);
     final reopened = await JobStore.load(now: () => clock);
@@ -270,6 +276,11 @@ void showcaseTests() {
     tester.view.physicalSize = const Size(1080, 2340);
     tester.view.devicePixelRatio = 3;
     addTearDown(tester.view.reset);
+    // Bahçede Papatya yetiştirilmiş.
+    SharedPreferences.setMockInitialValues({
+      'deliveries_v1': saved,
+      'garden_v1': jsonEncode(Garden(grown: {'Papatya'}).toJson()),
+    });
     await tester.pumpWidget(MajistralApp(store: await JobStore.load(now: () => clock)));
     await tester.tap(find.text('Profil').last);
     await tester.pumpAndSettle();
@@ -277,8 +288,8 @@ void showcaseTests() {
     await tester.tap(find.bySemanticsLabel('Vitrinde boş yer, fanus koy').first);
     await tester.pumpAndSettle();
     expect(find.text('Vitrine ne koyalım?'), findsOneWidget);
-    if (!unlockAll) return;
-    expect(find.text('Matricaria chamomilla · Yatıştırıcı çay, cilt bakımı'), findsOneWidget);
+    expect(find.text('Oyun etkisi: duvara reçete yeri +1'), findsOneWidget);
+    expect(find.text('Bahçede yetiştir · teslim parası +%10'), findsWidgets); // Lavanta kilitli
     await tester.tap(find.descendant(of: find.byType(GrowPanel), matching: find.text('Papatya')));
     await tester.pumpAndSettle();
     expect(find.bySemanticsLabel('Vitrinde Papatya fanusu'), findsOneWidget);

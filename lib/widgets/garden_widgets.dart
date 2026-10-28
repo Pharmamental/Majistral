@@ -45,45 +45,78 @@ class GardenGround extends StatelessWidget {
 /// Kilitliyse yerinde çimene çizilmiş silik kesik çerçeve ve kilit durur.
 /// Altında kâğıt etikette parselin adı ve durumu (durum yalnız renkle anlatılmaz).
 class GardenBed extends StatelessWidget {
-  const GardenBed({super.key, required this.number, required this.open});
+  const GardenBed({
+    super.key,
+    required this.number,
+    required this.open,
+    this.label,
+    this.progress,
+    this.color,
+    this.ready = false,
+    this.onTap,
+  });
 
   final int number;
   final bool open;
 
+  /// Etikette yazacak durum ("Papatya · 1 sa 20 dk"); boşsa parselin adı.
+  final String? label;
+
+  /// Ekili bitkinin büyümesi (0–1); boş parselde null.
+  final double? progress;
+
+  /// Olgunlaşınca açan çiçeğin rengi.
+  final Color? color;
+  final bool ready;
+  final VoidCallback? onTap;
+
   @override
   Widget build(BuildContext context) {
+    final text = label ?? (open ? 'Parsel $number · tohum ek' : 'Parsel $number · kilitli');
     return Semantics(
-      label: 'Parsel $number, ${open ? 'boş' : 'kilitli'}',
-      child: AspectRatio(
-        aspectRatio: 1.1,
-        child: Stack(
-          children: [
-            Positioned.fill(child: CustomPaint(painter: open ? const _BedPainter() : const _LockedBedPainter())),
-            if (!open)
-              const Center(
-                child: Padding(
-                  padding: EdgeInsets.only(bottom: AppSpace.xl),
-                  child: Icon(Icons.lock_rounded, color: AppColors.gardenGrassDark, size: 28),
+      button: onTap != null,
+      label: text,
+      excludeSemantics: true,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: onTap,
+        child: AspectRatio(
+          aspectRatio: 1.1,
+          child: Stack(
+            children: [
+              Positioned.fill(
+                child: CustomPaint(
+                  painter: open ? _BedPainter(progress: progress, color: color) : const _LockedBedPainter(),
                 ),
               ),
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: AppSpace.sm,
-              child: Center(child: _Tag(text: open ? 'Parsel $number · boş' : 'Parsel $number · kilitli')),
-            ),
-          ],
+              if (!open)
+                const Center(
+                  child: Padding(
+                    padding: EdgeInsets.only(bottom: AppSpace.xl),
+                    child: Icon(Icons.lock_rounded, color: AppColors.gardenGrassDark, size: 28),
+                  ),
+                ),
+              Positioned(
+                left: AppSpace.xs,
+                right: AppSpace.xs,
+                bottom: AppSpace.sm,
+                child: Center(child: _Tag(text: text, ready: ready)),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 }
 
-/// Parselin önüne iliştirilmiş küçük kâğıt etiket.
+/// Parselin önüne iliştirilmiş küçük kâğıt etiket. Olgun bitkide onay işareti
+/// ve yeşil yazı (durum yalnız renkle anlatılmaz).
 class _Tag extends StatelessWidget {
-  const _Tag({required this.text});
+  const _Tag({required this.text, this.ready = false});
 
   final String text;
+  final bool ready;
 
   @override
   Widget build(BuildContext context) {
@@ -94,7 +127,23 @@ class _Tag extends StatelessWidget {
         borderRadius: BorderRadius.circular(AppRadius.paperInner),
         boxShadow: const [BoxShadow(color: Color(0x33000000), blurRadius: 2, offset: Offset(0, 1))],
       ),
-      child: Text(text, style: AppText.label(size: 12, color: AppColors.ink)),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (ready) ...[
+            const Icon(Icons.check_circle_rounded, size: 14, color: AppColors.hazirText),
+            const SizedBox(width: AppSpace.xs),
+          ],
+          Flexible(
+            child: Text(
+              text,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: AppText.label(size: 12, color: ready ? AppColors.hazirText : AppColors.ink),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -170,9 +219,46 @@ class _FencePainter extends CustomPainter {
 }
 
 /// Ceviz çerçeveli yükseltilmiş yatak: üstte açık renkli çerçeve kenarı, önde
-/// koyu ön yüz (yükseklik), içinde koyu toprak ve dört karık.
+/// koyu ön yüz (yükseklik), içinde koyu toprak ve dört karık. Ekiliyse ilk üç
+/// karıkta filizler büyür ([progress]); olgunlaşınca çiçek açar ([color]).
 class _BedPainter extends CustomPainter {
-  const _BedPainter();
+  const _BedPainter({this.progress, this.color});
+
+  final double? progress;
+  final Color? color;
+
+  static const _leaf = Color(0xFF7FA05A), _leafDark = Color(0xFF5C7A3E), _stem = Color(0xFF6B8A47);
+
+  /// Karıktaki bir bitki: sapı ve iki yaprağı büyümeyle uzar; olgunsa tepesinde çiçek.
+  void _plant(Canvas canvas, Offset base, double p, Color? bloom) {
+    final h = 4 + p * 14;
+    final top = base - Offset(0, h);
+    canvas.drawLine(
+      base,
+      top,
+      Paint()
+        ..color = _stem
+        ..strokeWidth = 1.6
+        ..strokeCap = StrokeCap.round,
+    );
+    final leaf = 2.5 + p * 3.5;
+    for (final (side, y) in [(-1.0, 0.45), (1.0, 0.7)]) {
+      final at = Offset.lerp(base, top, y)!;
+      canvas.save();
+      canvas.translate(at.dx, at.dy);
+      canvas.rotate(side * 0.7);
+      final r = Rect.fromCenter(center: Offset(side * leaf * 0.8, 0), width: leaf * 1.8, height: leaf);
+      canvas.drawOval(r.translate(0, 0.8), Paint()..color = _leafDark);
+      canvas.drawOval(r, Paint()..color = _leaf);
+      canvas.restore();
+    }
+    if (bloom != null) {
+      for (final o in const [Offset(-2.4, 0), Offset(2.4, 0), Offset(0, -2.6), Offset(0, 2.2)]) {
+        canvas.drawCircle(top + o, 2.6, Paint()..color = bloom);
+      }
+      canvas.drawCircle(top, 1.6, Paint()..color = const Color(0xFFF2D06B));
+    }
+  }
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -236,10 +322,21 @@ class _BedPainter extends CustomPainter {
         ..style = PaintingStyle.stroke
         ..strokeWidth = 1.5,
     );
+    // Filizler: ilk üç karıkta dörder bitki (en alttaki karığı etiket örter).
+    if (progress case final p?) {
+      final bloom = p >= 1 ? color : null;
+      for (var i = 1; i <= 3; i++) {
+        final y = soil.top + soil.height * i / 5 - 1;
+        for (var k = 0; k < 4; k++) {
+          final x = soil.left + soil.width * (k + 0.5 + (i.isEven ? 0.25 : 0)) / 4.25;
+          _plant(canvas, Offset(x, y), p, bloom);
+        }
+      }
+    }
   }
 
   @override
-  bool shouldRepaint(_BedPainter oldDelegate) => false;
+  bool shouldRepaint(_BedPainter oldDelegate) => oldDelegate.progress != progress || oldDelegate.color != color;
 }
 
 /// Kilitli parsel: çimende kesik çizgili silik çerçeve (duvardaki boş reçete

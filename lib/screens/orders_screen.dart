@@ -18,7 +18,7 @@ import '../widgets/second_tick.dart';
 /// Tezgâhta elindeki reçeteler raf kenarına bantla asılı, yan yana durur ve
 /// sağa sola kaydırılır (kartı alta uzatıp düğmeyi alta sabitleme denendi,
 /// geri alındı). Tezgâhta sıra durumlara göre: seni bekleyen, hazır,
-/// hazırlanan. Duvarda en fazla [JobStore.wallSize] reçete birikir; yenisi
+/// hazırlanan. Duvarda en fazla [JobStore.wallLimit] reçete birikir; yenisi
 /// sayaçla gelir, boş yerler silik çerçeveyle görünür. Reçete kaybolmaz.
 class OrdersScreen extends StatefulWidget {
   const OrdersScreen({super.key});
@@ -74,7 +74,7 @@ class _OrdersScreenState extends State<OrdersScreen> with SecondTick {
     final incoming = store.wall;
     final next = store.untilNextArrival;
     final wallLine = [
-      'Gelen reçeteler · ${incoming.length}/${JobStore.wallSize}',
+      'Gelen reçeteler · ${incoming.length}/${store.wallLimit}',
       next == null ? 'duvar dolu' : 'yenisi ${formatRemaining(next)} sonra',
     ].join(' · ');
     int count(OrderStatus s) => hand.where((e) => e.status == s).length;
@@ -137,7 +137,7 @@ class _OrdersScreenState extends State<OrdersScreen> with SecondTick {
                       ),
                     ],
                     // Duvarın boş yerleri: sınır görünsün.
-                    for (var i = incoming.length; i < JobStore.wallSize; i++) ...[
+                    for (var i = incoming.length; i < store.wallLimit; i++) ...[
                       if (i > 0) const SizedBox(width: AppSpace.sm),
                       const _EmptySlip(),
                     ],

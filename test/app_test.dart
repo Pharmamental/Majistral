@@ -299,7 +299,7 @@ void main() {
     await tester.tap(find.text('Bahçe').last);
     await tester.pumpAndSettle();
     expect(find.text('Tıbbi bitki yetiştir, kurut, vitrine koy'), findsOneWidget);
-    expect(find.text('Parsel 1 · boş'), findsOneWidget);
+    expect(find.text('Parsel 1 · tohum ek'), findsOneWidget);
     expect(find.byIcon(Icons.lock_rounded), findsWidgets);
 
     await tester.tap(find.text('Profil').last);

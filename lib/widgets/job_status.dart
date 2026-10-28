@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 
+import '../data/dried_plants.dart';
 import '../logic/job_store.dart';
 import '../logic/profile_stats.dart';
 import '../models/prep_job.dart';
@@ -33,6 +34,7 @@ Future<void> deliverJob(BuildContext context, int id) async {
   final store = JobScope.of(context);
   final job = await store.deliver(id);
   if (job == null || !navigatorContext.mounted) return;
+  final drop = store.lastDrop;
   // Ustalıkta seviye atlandıysa üstte başarım kutucuğu; teslim penceresiyle birlikte.
   showAchievements(navigatorContext, tierUps(store.deliveries));
   await openGrowing<void>(
@@ -46,6 +48,25 @@ Future<void> deliverJob(BuildContext context, int id) async {
           Text(job.magistralName, textAlign: TextAlign.center, style: AppText.label(size: 14)),
           const SizedBox(height: AppSpace.md),
           ResultView(stars: job.stars, notes: job.notes),
+          // Her teslim bahçeye bir tohum getirir (2026-10-29).
+          if (drop != null) ...[
+            const SizedBox(height: AppSpace.lg),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                if (driedPlantNamed(drop.plant) case final p?) Image.asset(p.imagePath, width: 36, height: 36),
+                const SizedBox(width: AppSpace.sm),
+                Flexible(
+                  child: Text(
+                    drop.fertilizer
+                        ? '${drop.plant} zaten bahçende: 1 gübre kazandın'
+                        : 'Bahçe için ${drop.plant} tohumu kazandın',
+                    style: AppText.label(size: 13, color: AppColors.ink),
+                  ),
+                ),
+              ],
+            ),
+          ],
           const SizedBox(height: AppSpace.xxl),
           SizedBox(
             width: double.infinity,

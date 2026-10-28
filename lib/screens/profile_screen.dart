@@ -316,8 +316,9 @@ class _ShelfLabel extends StatelessWidget {
   }
 }
 
-/// Vitrine fanus seçme penceresi. Dolu yerde "Raftan kaldır" da çıkar.
-/// Kazanma kuralı gelene kadar her şey açıkken hepsi listelenir.
+/// Vitrine fanus seçme penceresi. Dolu yerde "Raftan kaldır" da çıkar. Bahçede
+/// yetiştirilen bitkiler önce, seçilebilir; ötekiler kilitli ve soluk
+/// (2026-10-29). Her fanusun oyun etkisi yazar.
 Future<void> _openShowcasePicker(BuildContext context, int slot, {required Rect from}) {
   final store = JobScope.of(context);
   return openGrowing<void>(
@@ -325,7 +326,11 @@ Future<void> _openShowcasePicker(BuildContext context, int slot, {required Rect 
     from: from,
     builder: (sheetContext) {
       final current = store.showcase[slot];
-      final plants = unlockAll ? driedPlants : const <DriedPlant>[];
+      final grown = store.garden.grown;
+      final plants = [
+        ...driedPlants.where((p) => grown.contains(p.name)),
+        ...driedPlants.where((p) => !grown.contains(p.name)),
+      ];
       return Padding(
         padding: const EdgeInsets.all(AppSpace.lg),
         child: Column(
@@ -335,9 +340,9 @@ Future<void> _openShowcasePicker(BuildContext context, int slot, {required Rect 
             Text('Vitrine ne koyalım?', style: AppText.title(size: 20)),
             const SizedBox(height: AppSpace.xs),
             Text(
-              plants.isEmpty
-                  ? 'Fanuslar yakında kazanılacak.'
-                  : 'Rafa bir fanus seç: içinde kurutulmuş tıbbi bitki.',
+              grown.isEmpty
+                  ? 'Fanuslar bahçede yetişir. Reçete teslim ettikçe tohum gelir.'
+                  : 'Rafa bir fanus seç. Aynı gruptan iki fanus etkiyi katlamaz.',
               style: AppText.body(size: 14, color: AppColors.inkMuted),
             ),
             const SizedBox(height: AppSpace.md),
@@ -345,10 +350,12 @@ Future<void> _openShowcasePicker(BuildContext context, int slot, {required Rect 
               child: ListView(
                 shrinkWrap: true,
                 children: [
-                  for (final DriedPlant(:name, :latin, :use, :imagePath) in plants)
+                  for (final DriedPlant(:name, :latin, :imagePath, :effectText) in plants)
                     Padding(
                       padding: const EdgeInsets.only(bottom: AppSpace.sm),
-                      child: Material(
+                      child: Opacity(
+                        opacity: grown.contains(name) ? 1 : 0.55,
+                        child: Material(
                         color: name == current ? AppColors.kobaltSoft : AppColors.surface,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(AppRadius.paper),
@@ -359,10 +366,12 @@ Future<void> _openShowcasePicker(BuildContext context, int slot, {required Rect 
                         ),
                         clipBehavior: Clip.antiAlias,
                         child: InkWell(
-                          onTap: () {
-                            store.setShowcase(slot, name);
-                            Navigator.of(sheetContext).pop();
-                          },
+                          onTap: grown.contains(name)
+                              ? () {
+                                  store.setShowcase(slot, name);
+                                  Navigator.of(sheetContext).pop();
+                                }
+                              : null,
                           child: Padding(
                             padding: const EdgeInsets.all(AppSpace.sm),
                             child: Row(
@@ -374,17 +383,25 @@ Future<void> _openShowcasePicker(BuildContext context, int slot, {required Rect 
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text(name, style: AppText.body(size: 14, weight: FontWeight.w700)),
-                                      Text('$latin · $use', style: AppText.label(size: 12)),
+                                      Text(latin, style: AppText.label(size: 12)),
+                                      Text(
+                                        grown.contains(name) ? 'Oyun etkisi: $effectText' : 'Bahçede yetiştir · $effectText',
+                                        style: AppText.label(size: 12, color: AppColors.ink),
+                                      ),
                                     ],
                                   ),
                                 ),
-                                // Seçili olan yalnız renkle değil, onay işaretiyle de belli.
+                                // Seçili olan yalnız renkle değil, onay işaretiyle de belli;
+                                // kilitli olan kilitle.
                                 if (name == current)
-                                  const Icon(Icons.check_circle_rounded, color: AppColors.kobalt),
+                                  const Icon(Icons.check_circle_rounded, color: AppColors.kobalt)
+                                else if (!grown.contains(name))
+                                  const Icon(Icons.lock_rounded, color: AppColors.inkMuted),
                               ],
                             ),
                           ),
                         ),
+                      ),
                       ),
                     ),
                 ],

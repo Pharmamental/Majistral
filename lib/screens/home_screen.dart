@@ -19,6 +19,9 @@ class HomeScreen extends StatefulWidget {
   /// Laboratuvar sekmesinin sırası.
   static const lab = 1;
 
+  /// Profil sekmesinin sırası (bahçede hasattan sonra "Vitrine git").
+  static const profile = 4;
+
   /// Alt çubuktaki [index]. sekmeye geçer (kartın "Laboratuvara git" düğmesi).
   static void showTab(BuildContext context, int index) =>
       context.findAncestorStateOfType<_HomeScreenState>()?._select(index);

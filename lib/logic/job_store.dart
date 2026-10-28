@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math' as math;
 
 import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -6,13 +7,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../data/dried_plants.dart';
 import '../data/lab_tools.dart';
 import '../data/orders.dart';
+import '../models/garden.dart';
 import '../models/prep_job.dart';
 import '../models/prescription.dart';
 
 /// Duvardaki gelen reçeteleri ve kabul edilmiş reçeteleri tutar, telefona
 /// kaydeder.
 ///
-/// Duvar (Tuğrul, 2026-10-27): en fazla [wallSize] reçete birikir; yenisi her
+/// Duvar (Tuğrul, 2026-10-27): en fazla [wallLimit] reçete birikir; yenisi her
 /// [arrivalEvery]'de bir gelir ve sayaç geldiği anda yeniden başlar. Duvar
 /// doluyken sayaç dolsa da reçete gelmez, bekletilir; oyuncu bir reçete alınca
 /// süre çoktan dolmuşsa yenisi hemen gelir ve sayaç o andan başlar.
@@ -25,16 +27,20 @@ import '../models/prescription.dart';
 /// Saat şimdilik cihaz saatinden okunur ([now]). Tasarım belgesi saat hilesine
 /// karşı sunucu saatini istiyor; sunucu gelince yalnız [now] değişecek.
 class JobStore extends ChangeNotifier {
-  JobStore._(this._prefs, this.now, this._jobs, this._orders, this._wall, this._nextId, this._due);
+  JobStore._(this._prefs, this.now, this._jobs, this._orders, this._wall, this._nextId, this._due, this._random);
 
   // Kimliksiz eski kayıtlar (v1, v2) bu düzene çevrilmez, okunmaz.
   static const _key = 'prep_jobs_v3';
   static const _wallKey = 'wall_v1';
   static const _deliveriesKey = 'deliveries_v1';
   static const _profileKey = 'profile_v1';
+  static const _gardenKey = 'garden_v1';
 
-  /// Duvarda en fazla birikecek reçete.
+  /// Duvarda en fazla birikecek reçete; vitrindeki çay fanusu artırır ([wallLimit]).
   static const wallSize = 3;
+
+  /// Tohum düşmesinin şansı; testler sabit tohumla verir.
+  final math.Random _random;
 
   /// İki reçetenin gelişi arasındaki süre. Yer tutucu; kapalı testte ayarlanacak.
   static const arrivalEvery = Duration(minutes: 10);
@@ -51,7 +57,7 @@ class JobStore extends ChangeNotifier {
   /// Sayacın dolduğu an: duvarda yer varsa yeni reçete bu anda gelir.
   DateTime _due;
 
-  static Future<JobStore> load({DateTime Function()? now, List<PrescriptionOrder>? orders}) async {
+  static Future<JobStore> load({DateTime Function()? now, List<PrescriptionOrder>? orders, math.Random? random}) async {
     final prefs = await SharedPreferences.getInstance();
     final clock = now ?? DateTime.now;
     final known = orders ?? prescriptionOrders;
@@ -83,7 +89,14 @@ class JobStore extends ChangeNotifier {
       wall.clear();
       nextId = null;
     }
-    final store = JobStore._(prefs, clock, jobs, known, wall, nextId ?? 0, due ?? clock().add(arrivalEvery));
+    final store = JobStore._(
+        prefs, clock, jobs, known, wall, nextId ?? 0, due ?? clock().add(arrivalEvery), random ?? math.Random());
+    try {
+      final raw = prefs.getString(_gardenKey);
+      if (raw != null) store._garden = Garden.fromJson(jsonDecode(raw) as Map<String, dynamic>);
+    } on Object {
+      // Bozuk bahçe kaydı boş bahçeyle başlar.
+    }
     // Teslim kaydı ve profil ayrı anahtarlarda; bozulursa yalnız onlar boş başlar.
     try {
       for (final item in jsonDecode(prefs.getString(_deliveriesKey) ?? '[]') as List) {
@@ -102,6 +115,8 @@ class JobStore extends ChangeNotifier {
           // Eski kayıttaki ürün adları (rafta ilaç dururken) fanus değil; boş yer olur.
           final name = shelf[i] as String?;
           store._showcase[i] = name != null && driedPlantNamed(name) != null ? name : null;
+          // Bahçeden önce (her şey açıkken) rafa konmuş fanus yetiştirilmiş sayılır.
+          if (store._showcase[i] case final plant?) store._garden.grown.add(plant);
         }
       }
     } on Object {
@@ -109,7 +124,7 @@ class JobStore extends ChangeNotifier {
     }
     // İlk açılış: duvar dolu başlar, sayaç şimdi başlar.
     if (nextId == null) {
-      while (store._wall.length < wallSize) {
+      while (store._wall.length < store.wallLimit) {
         store._arrive();
       }
       await store._save();
@@ -143,16 +158,76 @@ class JobStore extends ChangeNotifier {
   List<String?> get showcase => List.unmodifiable(_showcase);
   final List<String?> _showcase = List.filled(showcaseSize, null);
 
-  /// [slot]. yere [plant] fanusunu koyar (null: rafı boşaltır). Fanusların
-  /// kazanılma kuralı henüz yok: her şey açıkken (`unlockAll`) hepsi konur.
+  /// [slot]. yere [plant] fanusunu koyar (null: rafı boşaltır). Yalnız bahçede
+  /// yetiştirilmiş bitki konur (2026-10-29; `unlockAll` vitrini açmaz).
   /// Başka yerdeyse oradan alınır, aynı fanus iki kez durmaz.
   Future<void> setShowcase(int slot, String? plant) async {
-    if (plant != null && (driedPlantNamed(plant) == null || !unlockAll)) return;
+    if (plant != null && !_garden.grown.contains(plant)) return;
     for (var i = 0; i < showcaseSize; i++) {
       if (_showcase[i] == plant) _showcase[i] = null;
     }
     _showcase[slot] = plant;
     await _saveProfile();
+  }
+
+  // ---- Bahçe ve vitrin etkileri (Tuğrul, 2026-10-29)
+
+  Garden _garden = Garden();
+
+  /// Bahçenin durumu (salt okunur kullanılır; değişiklik aşağıdaki yöntemlerle).
+  Garden get garden => _garden;
+
+  /// Son teslimde düşen tohum; teslim penceresi gösterir.
+  SeedDrop? get lastDrop => _lastDrop;
+  SeedDrop? _lastDrop;
+
+  /// Vitrinde [group] grubundan duran en güçlü fanusun etkisi; aynı gruptan
+  /// iki fanus toplanmaz. Yoksa 0.
+  int showcaseBonus(PlantGroup group) {
+    var best = 0;
+    for (final name in _showcase) {
+      final p = name == null ? null : driedPlantNamed(name);
+      if (p != null && p.group == group && p.bonus > best) best = p.bonus;
+    }
+    return best;
+  }
+
+  /// Duvarda birikebilecek reçete: 3 + vitrindeki çay fanusu.
+  int get wallLimit => wallSize + showcaseBonus(PlantGroup.cay);
+
+  /// Günlük acele hakkı: 5 + vitrindeki boğaz fanusu.
+  int get rushLimit => dailyRushes + showcaseBonus(PlantGroup.bogaz);
+
+  /// [bed]. parsele tohum eker; vitrindeki ferahlatıcı fanus büyümeyi hızlandırır.
+  Future<bool> plant(int bed, String plant) =>
+      _gardenChange(() => _garden.plant(bed, plant, now(), speedPercent: showcaseBonus(PlantGroup.ferah)));
+
+  /// Büyüyen parsele gübre verir.
+  Future<bool> feed(int bed) => _gardenChange(() => _garden.feed(bed, now()));
+
+  /// Olgun bitkiyi hasat eder; adı döner, olgun değilse null.
+  Future<String?> harvest(int bed) async {
+    final plant = _garden.harvest(bed, now());
+    if (plant != null) await _saveGarden();
+    return plant;
+  }
+
+  /// Testler için: elde tohum verir.
+  @visibleForTesting
+  Future<void> giveSeed(String plant) async {
+    _garden.seeds[plant] = (_garden.seeds[plant] ?? 0) + 1;
+    await _saveGarden();
+  }
+
+  Future<bool> _gardenChange(bool Function() change) async {
+    final ok = change();
+    if (ok) await _saveGarden();
+    return ok;
+  }
+
+  Future<void> _saveGarden() async {
+    await _prefs.setString(_gardenKey, jsonEncode(_garden.toJson()));
+    notifyListeners();
   }
 
   Future<void> _saveProfile() async {
@@ -172,7 +247,7 @@ class JobStore extends ChangeNotifier {
   /// Bir sonraki reçeteye kalan süre; duvar doluysa null.
   Duration? get untilNextArrival {
     _catchUp();
-    if (_wall.length >= wallSize) return null;
+    if (_wall.length >= wallLimit) return null;
     return _due.difference(now());
   }
 
@@ -185,7 +260,7 @@ class JobStore extends ChangeNotifier {
   /// olur ve sayaç o andan başlar. Duvar dolunca geliş bekletilir.
   void _catchUp() {
     var changed = false;
-    while (_wall.length < wallSize && !now().isBefore(_due)) {
+    while (_wall.length < wallLimit && !now().isBefore(_due)) {
       _arrive();
       _due = _due.add(arrivalEvery);
       changed = true;
@@ -261,7 +336,7 @@ class JobStore extends ChangeNotifier {
   Future<PrepJob?> accept(IncomingOrder incoming) async {
     _catchUp();
     if (!_wall.any((o) => o.id == incoming.id)) return null;
-    if (_wall.length >= wallSize && !now().isBefore(_due)) _due = now();
+    if (_wall.length >= wallLimit && !now().isBefore(_due)) _due = now();
     _wall.removeWhere((o) => o.id == incoming.id);
     final job = PrepJob(
       id: incoming.id,
@@ -293,16 +368,20 @@ class JobStore extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Günde izlenebilecek ödüllü reklam, yani acele et hakkı (tasarım belgesi).
+  /// Günde izlenebilecek ödüllü reklam, yani acele et hakkı (tasarım belgesi);
+  /// vitrindeki boğaz fanusu artırır ([rushLimit]).
   static const dailyRushes = 5;
   static const _rushKey = 'rush_v1';
 
-  /// Bugün kalan acele et hakkı. Gün cihaz saatine göre değişir.
-  int get rushesLeft {
+  /// Bugün kullanılan acele hakkı. Gün cihaz saatine göre değişir.
+  int get _rushesUsed {
     final saved = _prefs.getString(_rushKey)?.split('|');
-    if (saved == null || saved.length != 2 || saved[0] != _today) return dailyRushes;
-    return (dailyRushes - (int.tryParse(saved[1]) ?? 0)).clamp(0, dailyRushes);
+    if (saved == null || saved.length != 2 || saved[0] != _today) return 0;
+    return int.tryParse(saved[1]) ?? 0;
   }
+
+  /// Bugün kalan acele et hakkı.
+  int get rushesLeft => (rushLimit - _rushesUsed).clamp(0, rushLimit);
 
   String get _today {
     final d = now();
@@ -330,7 +409,7 @@ class JobStore extends ChangeNotifier {
       stars: (job.stars / 2).ceil().clamp(1, 3),
       notes: job.notes.contains(note) ? job.notes : [...job.notes, note],
     );
-    await _prefs.setString(_rushKey, '$_today|${dailyRushes - rushesLeft + 1}');
+    await _prefs.setString(_rushKey, '$_today|${_rushesUsed + 1}');
     await _save();
     notifyListeners();
   }
@@ -349,6 +428,9 @@ class JobStore extends ChangeNotifier {
       steps: [for (final s in orderOf(job).steps) s.label],
     ));
     await _prefs.setString(_deliveriesKey, jsonEncode([for (final d in _deliveries) d.toJson()]));
+    // Her teslim bahçeye bir tohum (ya da elde olan bitkiyse gübre) getirir.
+    _lastDrop = _garden.dropSeed(_random);
+    await _prefs.setString(_gardenKey, jsonEncode(_garden.toJson()));
     await _save();
     notifyListeners();
     return job;
