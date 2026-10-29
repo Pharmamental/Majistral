@@ -81,6 +81,39 @@ class _LabScreenState extends State<LabScreen> with SecondTick {
   }
 }
 
+/// Adımın adı: kelime ortasından bölünmez. En uzun kelime satıra sığmazsa yazı
+/// sığana dek küçülür (en az 13).
+class _StepName extends StatelessWidget {
+  const _StepName(this.text);
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    final scaler = MediaQuery.textScalerOf(context);
+    final base = DefaultTextStyle.of(context).style;
+    return LayoutBuilder(
+      builder: (context, box) {
+        double widest(double size) => text.split(' ').fold(0.0, (w, word) {
+              final painter = TextPainter(
+                text: TextSpan(text: word, style: base.merge(AppText.title(size: size))),
+                textDirection: TextDirection.ltr,
+                textScaler: scaler,
+              )..layout();
+              final width = painter.width;
+              painter.dispose();
+              return width > w ? width : w;
+            });
+        var size = 17.0;
+        while (size > 13 && widest(size) > box.maxWidth) {
+          size -= .5;
+        }
+        return Text(text, style: AppText.title(size: size));
+      },
+    );
+  }
+}
+
 class _ToolCard extends StatelessWidget {
   const _ToolCard({required this.tool});
 
@@ -106,30 +139,21 @@ class _ToolCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Container(
-                width: 52,
-                height: 52,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: highlight ? AppColors.kobaltSoft : AppColors.surfaceMuted,
-                  shape: BoxShape.circle,
-                ),
-                child: Image.asset(tool.imagePath, width: 44, height: 44),
-              ),
-              const SizedBox(width: AppSpace.sm),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(tool.name, style: AppText.title(size: 17)),
-                    Text(tool.equipment, style: AppText.label(size: 12)),
-                  ],
-                ),
-              ),
-            ],
+          // İkon üstte, ad kartın tam genişliğinde: dar kartta "Levigasyon" gibi uzun
+          // adlar hece ortasından bölünüyordu (Tuğrul, 2026-10-29).
+          Container(
+            width: 52,
+            height: 52,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: highlight ? AppColors.kobaltSoft : AppColors.surfaceMuted,
+              shape: BoxShape.circle,
+            ),
+            child: Image.asset(tool.imagePath, width: 44, height: 44),
           ),
+          const SizedBox(height: AppSpace.sm),
+          _StepName(tool.name),
+          Text(tool.equipment, style: AppText.label(size: 12)),
           const SizedBox(height: AppSpace.md),
           if (busy != null) ...[
             Text(
