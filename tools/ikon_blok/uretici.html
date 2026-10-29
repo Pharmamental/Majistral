@@ -446,15 +446,18 @@ const IKONLAR=[
  // eritilir, su fazının maddeleri beherde çözülür, su fazı kapsüle eklenerek emülsiyon
  // yapılır, krem soğuyana kadar karıştırılarak soğutulur. Kapsül "Porselen kapsül"
  // alet ikonunun aynısı.
+ // Eritme (Tuğrul, 2026-10-29, "beğenmedim"): su banyosunun üstünde porselen kapsül,
+ // içinde dibi akıp yayılan yağ kalıbı; banyonun iki yanından buhar yükselir.
  {grup:'Adımlar',dosya:'adim_eritme',ad:'Eritme',kutu:'#FFD6C2',parts:[
-  {d:'M20,48C28,34 72,34 82,48Z',c:'#F2D27A'},       // eriyen yağ fazı
-  {d:cap(72,8,58,50,8),c:'#F4F6F8'},                // termometre
-  {d:'M12,52H90C88,68 72,78 51,78C30,78 14,68 12,52Z',c:R.krem}, // kapsül
-  {d:'M2,38C7,39 13,43 17,46V55H11C6,52 3,46 2,38Z',c:R.krem},
-  {d:rr(8,46,86,9,4.5),c:R.krem},
-  {d:rr(38,75,26,8,3.5),c:R.kremKoyu},
-  {d:'M24,63C38,68 64,68 78,63',c:R.mavi,line:1},
-  {d:'M61,40L69,14',c:R.kan,line:1}]},              // yükselen kırmızı sıvı
+  {d:'M16,62H84L80,88H20Z',c:R.metal},              // su banyosu tenceresi
+  {d:rr(10,56,80,9,4.5),c:R.metal},                 // tencere ağzı
+  {d:'M22,42H78C76,54 66,60 50,60C34,60 24,54 22,42Z',c:R.krem}, // kapsül
+  {d:rr(18,37,64,8,4),c:R.krem},                    // kapsül kenarı
+  {d:'M24,40C30,35 70,35 76,40C70,44 30,44 24,40Z',c:'#F2D27A',flat:1}, // eriyip yayılan yağ
+  {d:'M38,24C38,20 40,18 44,18H56C60,18 62,20 62,24V33C62,36 67,38 72,40H28C33,38 38,36 38,33Z',c:'#F2D27A'}, // eriyen kalıp
+  // üstten akan erime katmanı, dalgalı ucu aşağı süzülür
+  {d:'M38,24C38,20 40,18 44,18H56C60,18 62,20 62,24V28C60,30 58,30 57,28C56,33 52,34 51,29C49,27 47,27 46,30C45,34 41,33 40,29L38,28Z',c:D('#F2D27A',.12),flat:1},
+  {d:'M13,55C8,48 17,43 12,35M87,55C92,48 83,43 88,35',c:R.buz,line:1}]}, // buhar
  {grup:'Adımlar',dosya:'adim_cozme',ad:'Çözme',kutu:'#CFE4F7',parts:[
   {d:rr(22,24,50,60,8),c:R.cam},                    // beher
   {d:rr(26,44,42,36,6),c:R.buz},                    // su fazı
@@ -471,16 +474,15 @@ const IKONLAR=[
   {d:rr(38,75,26,8,3.5),c:R.kremKoyu},
   {d:'M24,63C38,68 64,68 78,63',c:R.mavi,line:1}]},
  // Soğutma: krem banyodan alınıp soğuyana kadar karıştırılır; hızlı soğutulmaz (buz yok).
+ // Soğutma (Tuğrul, 2026-10-29, "beğenmedim"): kapsül banyodan alınıp mantar halkaya
+ // konur (buz yok); krem koyulaşıp tepe yapar, termometre düşük gösterir (mavi).
  {grup:'Adımlar',dosya:'adim_sogutma',ad:'Soğutma',kutu:'#C9EFE6',parts:[
-  {d:'M24,48C29,30 73,30 78,48Z',c:'#FFFFFF'},       // kıvam alan beyaz krem
-  {d:'M36,42C42,36 56,36 60,41',c:R.kremKoyu,line:1}, // karıştırma izi
-  {d:cap(58,40,82,14,8),c:R.metal},                 // spatül ağzı
-  {d:cap(80,16,90,6,8),c:R.kahve},                  // sap
-  {d:'M12,52H90C88,68 72,78 51,78C30,78 14,68 12,52Z',c:R.krem}, // kapsül
-  {d:'M2,38C7,39 13,43 17,46V55H11C6,52 3,46 2,38Z',c:R.krem},
-  {d:rr(8,46,86,9,4.5),c:R.krem},
-  {d:rr(38,75,26,8,3.5),c:R.kremKoyu},
-  {d:'M24,63C38,68 64,68 78,63',c:R.mavi,line:1}]},
+  {d:'M20,46C24,36 34,33 42,36C44,26 50,20 54,28C56,32 58,34 62,35C70,35 78,40 80,46Z',c:'#FFFFFF'}, // koyulaşan krem
+  {d:cap(78,8,64,46,8),c:'#F4F6F8'},                // termometre
+  {d:cap(65.5,42,67.5,36,3.5),c:R.mavi,flat:1},     // düşük mavi sıvı
+  {d:'M14,52H86C84,66 70,76 50,76C30,76 16,66 14,52Z',c:R.krem}, // kapsül
+  {d:rr(10,46,80,9,4.5),c:R.krem},                  // kapsül kenarı
+  {d:rr(20,74,60,12,6),c:'#C8A274'}]},              // mantar halka
  // Formül kitabındaki öteki adımlar (2026-10-28).
  // Elekten geçirme: toz elekten geçip altta yığılır.
  {grup:'Adımlar',dosya:'adim_elek',ad:'Elekten geçirme',kutu:'#FFE3A6',parts:[

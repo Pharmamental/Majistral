@@ -62,11 +62,12 @@ class StationSection extends StatelessWidget {
                 double center(int i) => i * (width + gap) + width / 2;
                 return Stack(
                   children: [
-                    // Duraklar arası çizgi: iki ucu da eldeyse yeşil.
+                    // Duraklar arası çizgi: iki ucu da eldeyse yeşil. Halkanın
+                    // kenarında başlar ve biter, halkanın içine girmez (Tuğrul, 2026-10-29).
                     for (var i = 1; i < n; i++)
                       Positioned(
-                        left: center(i - 1),
-                        width: center(i) - center(i - 1),
+                        left: center(i - 1) + _TierNode.ring / 2,
+                        width: math.max(0, center(i) - center(i - 1) - _TierNode.ring),
                         top: _TierNode.ring / 2 - 2,
                         height: 4,
                         child: DecoratedBox(
