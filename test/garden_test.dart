@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:game/data/dried_plants.dart';
+import 'package:game/data/economy.dart';
 import 'package:game/data/lab_tools.dart';
 import 'package:game/data/orders.dart';
 import 'package:game/logic/job_store.dart';
@@ -40,65 +41,83 @@ void main() {
     expect(driedPlantNamed('Sarı kantaron')!.effectText, 'teslim emeği +%15');
   });
 
-  test('tohum olasılıkları: sık %50, orta %40, nadir %10', () {
+  // Tuğrul, 2026-10-29: teslimlerin %50'si tohum; ağırlıklar tür başına sık 60,
+  // orta 27,5, nadir 12,5 ("Yüzdeler tür başına olsun").
+  test('tohum olasılıkları: yarı yarıya tohum; tek orta bitki tek nadirin iki katı sık', () {
     final rnd = math.Random(1);
-    final count = {1: 0, 2: 0, 3: 0};
-    const n = 20000;
-    for (var i = 0; i < n; i++) {
-      final drop = Garden().dropSeed(rnd); // her seferinde yeni bahçe: garanti devreye girmez
-      count[driedPlantNamed(drop.plant)!.tier] = count[driedPlantNamed(drop.plant)!.tier]! + 1;
-    }
-    expect(count[1]! / n, closeTo(0.5, 0.02));
-    expect(count[2]! / n, closeTo(0.4, 0.02));
-    expect(count[3]! / n, closeTo(0.1, 0.01));
-  });
-
-  test('10 teslimde nadir çıkmazsa 11.de kesin nadir; fazla tohum gübre olur', () {
     final garden = Garden();
-    final rnd = _Fixed(0); // hep sık kademe, hep ilk grup (Papatya)
-    expect(garden.rareWithin, 11);
-    final first = garden.dropSeed(rnd);
-    expect(first, (plant: 'Papatya', fertilizer: false));
-    for (var i = 0; i < 9; i++) {
-      expect(garden.dropSeed(rnd).fertilizer, isTrue); // Papatya zaten elde
+    var none = 0;
+    const n = 40000;
+    for (var i = 0; i < n; i++) {
+      if (garden.dropSeed(rnd) == null) none++;
     }
-    expect(garden.fertilizer, 9);
-    expect(garden.rareWithin, 1);
-    final rare = garden.dropSeed(rnd);
-    expect(driedPlantNamed(rare.plant)!.tier, 3);
-    expect(rare.plant, 'Mürver');
-    expect(garden.rareWithin, 11);
+    final drops = n - none;
+    double share(String plant) => garden.seeds[plant]! / drops;
+    expect(none / n, closeTo(0.5, 0.01));
+    expect(share('Papatya'), closeTo(60 / 510, 0.01));
+    expect(share('Ihlamur'), closeTo(27.5 / 510, 0.007));
+    expect(share('Mürver'), closeTo(12.5 / 510, 0.005));
+    // Gruplar: sık ~%47, orta ~%43, nadir ~%10.
+    int tierTotal(int tier) => [for (final p in driedPlants) if (p.tier == tier) garden.seeds[p.name] ?? 0]
+        .fold(0, (a, b) => a + b);
+    expect(tierTotal(3) / drops, closeTo(50 / 510, 0.01));
   });
 
-  test('ek, gübre ver, hasat et; bahçe hızı süreyi kısaltır; kayıttan geri okunur', () {
-    final garden = Garden(seeds: {'Ihlamur': 1, 'Papatya': 1}, fertilizer: 1);
+  test('tohumlar birikir; zar tutmazsa tohum yok', () {
+    final garden = Garden();
+    expect(garden.dropSeed(_Fixed(0.6)), isNull);
+    for (var i = 0; i < 3; i++) {
+      expect(garden.dropSeed(_Fixed(0)), 'Papatya');
+    }
+    expect(garden.seeds, {'Papatya': 3});
+  });
+
+  test('ek, hasat et: her hasat bir çiçek; 5 çiçek bir fanus açar; kayıttan geri okunur', () {
+    final garden = Garden(seeds: {'Ihlamur': 2, 'Papatya': 1}, flowers: {'Ihlamur': 3});
     expect(garden.plant(0, 'Ihlamur', at), isTrue);
+    expect(garden.seeds['Ihlamur'], 1);
     expect(garden.plant(0, 'Papatya', at), isFalse, reason: 'parsel dolu');
     expect(garden.beds[0]!.readyAt, at.add(const Duration(hours: 6)));
     expect(garden.harvest(0, at.add(const Duration(hours: 1))), isNull, reason: 'olgun değil');
-    // Gübre kalan süreyi yarıya indirir: 1. saatte kalan 5 saat → 2,5 saat.
-    final t = at.add(const Duration(hours: 1));
-    expect(garden.feed(0, t), isTrue);
-    expect(garden.beds[0]!.readyAt, t.add(const Duration(hours: 2, minutes: 30)));
-    expect(garden.feed(0, t), isFalse, reason: 'gübre bitti');
     // %30 bahçe hızıyla Papatya 2 saat yerine 1 sa 24 dk.
     expect(garden.plant(1, 'Papatya', at, speedPercent: 30), isTrue);
     expect(garden.beds[1]!.readyAt, at.add(const Duration(hours: 1, minutes: 24)));
 
     final copy = Garden.fromJson(jsonDecode(jsonEncode(garden.toJson())) as Map<String, dynamic>);
     expect(copy.beds[0]!.readyAt, garden.beds[0]!.readyAt);
-    expect(copy.seeds, isEmpty);
+    expect(copy.seeds, {'Ihlamur': 1});
+    expect(copy.flowers, {'Ihlamur': 3});
 
-    expect(garden.harvest(0, at.add(const Duration(hours: 4))), 'Ihlamur');
+    expect(garden.harvest(0, at.add(const Duration(hours: 6))), 'Ihlamur');
+    expect(garden.flowers['Ihlamur'], 4);
+    expect(garden.openFanus('Ihlamur'), isFalse, reason: '4 çiçek yetmez');
+    expect(garden.plant(0, 'Ihlamur', at), isTrue);
+    expect(garden.harvest(0, at.add(const Duration(hours: 6))), 'Ihlamur');
+    expect(garden.openFanus('Ihlamur'), isTrue);
+    expect(garden.flowers['Ihlamur'], 0);
     expect(garden.grown, {'Ihlamur'});
-    expect(garden.beds[0], isNull);
+    expect(garden.openFanus('Ihlamur'), isTrue, reason: 'açık fanus yeniden çiçek harcamaz');
+    expect(garden.flowers['Ihlamur'], 0);
+  });
+
+  test('eski kayıt (gübre, nadir sayacı) okunur, o alanlar atlanır', () {
+    final old = Garden.fromJson({
+      'seeds': {'Papatya': 1},
+      'beds': [null, null, null],
+      'grown': ['Mürver'],
+      'sinceRare': 4,
+      'fertilizer': 2,
+    });
+    expect(old.seeds, {'Papatya': 1});
+    expect(old.flowers, isEmpty);
+    expect(old.grown, {'Mürver'});
   });
 
   group('oyunda', () {
     late DateTime clock;
     setUp(() => clock = at);
 
-    test('her teslim tohum getirir ve kaydedilir', () async {
+    test('teslim tohum getirir (zar tutunca) ve kaydedilir', () async {
       SharedPreferences.setMockInitialValues({});
       final store = await JobStore.load(now: () => clock, random: _Fixed(0));
       final order = prescriptionOrders.first;
@@ -109,10 +128,31 @@ void main() {
         clock = clock.add(Duration(minutes: s.minutes));
       }
       await store.deliver(jobOf(store, order)!.id);
-      expect(store.lastDrop, (plant: 'Papatya', fertilizer: false));
+      expect(store.lastDrop, 'Papatya');
       final reopened = await JobStore.load(now: () => clock);
       expect(reopened.garden.seeds, {'Papatya': 1});
-      expect(reopened.garden.sinceRare, 1);
+    });
+
+    test('vitrine yeni fanus 5 çiçekle konur, çiçek markette tek tek alınır', () async {
+      SharedPreferences.setMockInitialValues({
+        'economy_v1': jsonEncode({'coins': 1000, 'debt': 0, 'stock': {}, 'tools': []}),
+        'garden_v1': jsonEncode(Garden(flowers: {'Papatya': 4}).toJson()),
+      });
+      final store = await JobStore.load(now: () => clock);
+      await store.setShowcase(0, 'Papatya');
+      expect(store.showcase[0], isNull, reason: '4 çiçek yetmez');
+      expect(await store.buyFlower('Papatya'), isTrue);
+      expect(store.coins, 1000 - flowerPrices[1]!);
+      await store.setShowcase(0, 'Papatya');
+      expect(store.showcase[0], 'Papatya');
+      expect(store.garden.flowers['Papatya'], 0);
+      // Raftan kaldırıp yeniden koymak çiçek harcamaz.
+      await store.setShowcase(0, null);
+      await store.setShowcase(1, 'Papatya');
+      expect(store.showcase[1], 'Papatya');
+      final reopened = await JobStore.load(now: () => clock);
+      expect(reopened.garden.grown, contains('Papatya'));
+      expect(reopened.garden.flowers['Papatya'], 0);
     });
 
     test('vitrin etkileri: Mürver duvarı 6 yapar, Gelincik 3 aceleyi korur; aynı grup toplanmaz', () async {

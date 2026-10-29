@@ -554,10 +554,14 @@ class PillTabs<T> extends StatelessWidget {
                     child: GestureDetector(
                       behavior: HitTestBehavior.opaque,
                       onTap: () => onChanged(value),
+                      // Dört sekmede dar telefonda ad kesilmez, yalnız sığmadığında küçülür.
                       child: Container(
                         height: 44,
                         alignment: Alignment.center,
-                        child: AnimatedDefaultTextStyle(
+                        padding: const EdgeInsets.symmetric(horizontal: AppSpace.xs),
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: AnimatedDefaultTextStyle(
                           duration: duration,
                           curve: Curves.linear,
                           style: AppText.label(
@@ -566,7 +570,8 @@ class PillTabs<T> extends StatelessWidget {
                                 ? Colors.white
                                 : AppColors.inkMuted,
                           ),
-                          child: Text(labelOf(value)),
+                          child: Text(labelOf(value), maxLines: 1),
+                          ),
                         ),
                       ),
                     ),

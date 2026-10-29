@@ -79,19 +79,17 @@ Future<void> deliverJob(BuildContext context, int id) async {
                 style: AppText.label(size: 12, color: AppColors.bekliyorText),
               ),
           ],
-          // Her teslim bahçeye bir tohum getirir (2026-10-29).
+          // Teslimlerin yarısı bahçeye bir tohum getirir (2026-10-29).
           if (drop != null) ...[
             const SizedBox(height: AppSpace.lg),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                if (driedPlantNamed(drop.plant) case final p?) Image.asset(p.imagePath, width: 36, height: 36),
+                if (driedPlantNamed(drop) case final p?) Image.asset(p.imagePath, width: 36, height: 36),
                 const SizedBox(width: AppSpace.sm),
                 Flexible(
                   child: Text(
-                    drop.fertilizer
-                        ? '${drop.plant} zaten bahçende: 1 gübre kazandın'
-                        : 'Bahçe için ${drop.plant} tohumu kazandın',
+                    'Bahçe için $drop tohumu kazandın',
                     style: AppText.label(size: 13, color: AppColors.ink),
                   ),
                 ),

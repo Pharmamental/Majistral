@@ -255,13 +255,15 @@ void showcaseTests() {
     await store.setShowcase(0, order.magistralName); // ilaç rafa konmaz
     expect(store.showcase, [null, null, null]);
     final plant = driedPlants.first.name;
-    // Bahçede yetiştirilmeyen fanus konmaz (2026-10-29; unlockAll vitrini açmaz).
+    // Fanus 5 çiçekle açılır (2026-10-29; unlockAll vitrini açmaz).
     await store.setShowcase(0, plant);
     expect(store.showcase, [null, null, null]);
-    await store.giveSeed(plant);
-    expect(await store.plant(0, plant), isTrue);
-    clock = clock.add(driedPlantNamed(plant)!.growTime);
-    expect(await store.harvest(0), plant);
+    for (var i = 0; i < Garden.fanusCost; i++) {
+      await store.giveSeed(plant);
+      expect(await store.plant(0, plant), isTrue);
+      clock = clock.add(driedPlantNamed(plant)!.growTime);
+      expect(await store.harvest(0), plant);
+    }
     await store.setShowcase(0, plant);
     expect(store.showcase, [plant, null, null]);
     await store.setShowcase(2, plant); // 0'dan 2'ye taşınır
@@ -289,7 +291,7 @@ void showcaseTests() {
     await tester.pumpAndSettle();
     expect(find.text('Vitrine ne koyalım?'), findsOneWidget);
     expect(find.text('Oyun etkisi: duvara reçete yeri +1'), findsOneWidget);
-    expect(find.text('Bahçede yetiştir · teslim emeği +%10'), findsWidgets); // Lavanta kilitli
+    expect(find.text('0/5 çiçek · teslim emeği +%10'), findsWidgets); // Lavanta kilitli
     await tester.tap(find.descendant(of: find.byType(GrowPanel), matching: find.text('Papatya')));
     await tester.pumpAndSettle();
     expect(find.bySemanticsLabel('Vitrinde Papatya fanusu'), findsOneWidget);

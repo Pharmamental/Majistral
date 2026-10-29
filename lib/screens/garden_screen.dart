@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../data/dried_plants.dart';
-import '../data/economy.dart';
 import '../logic/job_store.dart';
 import '../models/garden.dart';
 import '../theme/tokens.dart';
@@ -16,8 +15,9 @@ import 'home_screen.dart';
 
 /// Bahçe sekmesi (Tuğrul, 2026-10-29): eczanenin arka bahçesinde tıbbi bitki
 /// yetiştirilir, hasat edilir, vitrine konur. Başlık duvarda, parseller çitin
-/// altındaki çimende. Tohum her teslimde gelir ([Garden]); boş parsele dokununca
-/// tohum seçilir, büyüyen parsele gübre verilir, olgun parsele dokununca hasat.
+/// altındaki çimende. Teslimlerin yarısı tohum getirir ([Garden]); boş parsele
+/// dokununca tohum seçilir, olgun parsele dokununca hasat (bir çiçek); 5 çiçek
+/// bir fanus açar.
 class GardenScreen extends StatefulWidget {
   const GardenScreen({super.key});
 
@@ -132,8 +132,8 @@ class _BedRows extends StatelessWidget {
   }
 }
 
-/// Bahçenin üstündeki kâğıt: eldeki tohumlar, gübre, nadir tohumun en geç
-/// ne zaman geleceği (tavan açıkça söylenir) ve vitrindeki etkiler.
+/// Bahçenin üstündeki kâğıt: eldeki tohumlar, fanusa biriken çiçekler ve
+/// vitrindeki etkiler.
 class _SeedShelf extends StatelessWidget {
   const _SeedShelf({required this.garden, required this.store});
 
@@ -143,6 +143,7 @@ class _SeedShelf extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final seeds = [for (final p in driedPlants) if ((garden.seeds[p.name] ?? 0) > 0) p];
+    final flowers = [for (final p in driedPlants) if ((garden.flowers[p.name] ?? 0) > 0) p];
     final effects = [
       for (final g in PlantGroup.values)
         if (store.showcaseBonus(g) > 0) g.effectText(store.showcaseBonus(g)),
@@ -160,32 +161,40 @@ class _SeedShelf extends StatelessWidget {
           Text('Tohumların', style: AppText.title(size: 18)),
           const SizedBox(height: AppSpace.sm),
           if (seeds.isEmpty)
-            Text('Her reçete teslim ettiğinde bir tohum gelir.', style: AppText.body(size: 14, color: AppColors.inkMuted))
+            Text(
+              'Teslim ettiğin reçetelerin yarısı bir tohum getirir.',
+              style: AppText.body(size: 14, color: AppColors.inkMuted),
+            )
           else
             Wrap(
               spacing: AppSpace.sm,
               runSpacing: AppSpace.sm,
-              children: [for (final p in seeds) _SeedChip(plant: p)],
+              children: [for (final p in seeds) _SeedChip(plant: p, text: '${p.name} ×${garden.seeds[p.name]}')],
+            ),
+          const SizedBox(height: AppSpace.lg),
+          Text('Çiçeklerin', style: AppText.title(size: 18)),
+          const SizedBox(height: AppSpace.sm),
+          if (flowers.isEmpty)
+            Text(
+              'Hasat ettiğin her bitki bir çiçek verir. ${Garden.fanusCost} çiçek bir fanus açar. '
+              'Çiçek markette tek tek de satılır.',
+              style: AppText.body(size: 14, color: AppColors.inkMuted),
+            )
+          else
+            Wrap(
+              spacing: AppSpace.sm,
+              runSpacing: AppSpace.sm,
+              children: [
+                for (final p in flowers)
+                  _SeedChip(plant: p, text: '${p.name} ${garden.flowers[p.name]}/${Garden.fanusCost}'),
+              ],
             ),
           const SizedBox(height: AppSpace.md),
-          Text(
-            'Gübre: ${garden.fertilizer} · Nadir tohum en geç ${garden.rareWithin} teslim sonra',
-            style: AppText.label(size: 12, color: AppColors.ink),
-          ),
-          const SizedBox(height: AppSpace.xs),
           Text(
             effects.isEmpty
-                ? 'Yetiştirdiğin bitkiyi Profil\'deki vitrine koy; oyun etkisi kazanırsın.'
+                ? '${Garden.fanusCost} çiçeği biriken bitkiyi Profil\'deki vitrine koy; oyun etkisi kazanırsın.'
                 : 'Vitrindeki oyun etkileri: ${effects.join(' · ')}',
             style: AppText.label(size: 12, color: AppColors.inkMuted),
-          ),
-          const SizedBox(height: AppSpace.md),
-          Builder(
-            builder: (c) => ChunkyButton.secondary(
-              compact: true,
-              label: 'Tohum satın al',
-              onPressed: () => _openSeedShop(c, store),
-            ),
           ),
         ],
       ),
@@ -230,72 +239,11 @@ Future<void> _openParcel(BuildContext context, JobStore store, int bed) {
   );
 }
 
-/// Belirli bir tohumu satın alma (geç oyun gideri, 2026-10-29): elde olmayan
-/// bitkiler, kademesine göre fiyatıyla.
-Future<void> _openSeedShop(BuildContext context, JobStore store) {
-  return openGrowing<void>(
-    context,
-    from: rectOf(context),
-    builder: (sheet) => ListenableBuilder(
-      listenable: store,
-      builder: (context, _) {
-        final plants = [for (final p in driedPlants) if (!store.garden.has(p.name)) p];
-        return Padding(
-          padding: const EdgeInsets.all(AppSpace.lg),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text('Tohum satın al', style: AppText.title(size: 20)),
-              const SizedBox(height: AppSpace.xs),
-              Text(
-                plants.isEmpty
-                    ? 'Bütün bitkiler elinde.'
-                    : 'Şansla gelmesini beklemek istemediğin tohumu al. Kasada ${store.coins} para var.',
-                style: AppText.body(size: 14, color: AppColors.inkMuted),
-              ),
-              const SizedBox(height: AppSpace.md),
-              Flexible(
-                child: ListView(
-                  shrinkWrap: true,
-                  children: [
-                    for (final p in plants)
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: AppSpace.sm),
-                        child: Row(
-                          children: [
-                            Expanded(child: _PlantInfo(plant: p)),
-                            const SizedBox(width: AppSpace.sm),
-                            SizedBox(
-                              width: 96,
-                              child: ChunkyButton(
-                                compact: true,
-                                label: '${seedPrices[p.tier]}',
-                                icon: Icons.toll_rounded,
-                                onPressed:
-                                    store.coins >= seedPrices[p.tier]! ? () => store.buySeed(p.name) : null,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: AppSpace.sm),
-              ChunkyButton.secondary(label: 'Kapat', onPressed: () => Navigator.of(sheet).pop()),
-            ],
-          ),
-        );
-      },
-    ),
-  );
-}
-
 class _SeedChip extends StatelessWidget {
-  const _SeedChip({required this.plant});
+  const _SeedChip({required this.plant, required this.text});
 
   final DriedPlant plant;
+  final String text;
 
   @override
   Widget build(BuildContext context) {
@@ -310,7 +258,7 @@ class _SeedChip extends StatelessWidget {
         children: [
           Image.asset(plant.imagePath, width: 28, height: 28),
           const SizedBox(width: AppSpace.xs),
-          Text(plant.name, style: AppText.label(size: 13, color: AppColors.ink)),
+          Text(text, style: AppText.label(size: 13, color: AppColors.ink)),
         ],
       ),
     );
@@ -363,7 +311,7 @@ Future<void> _openSeedPicker(BuildContext context, JobStore store, int bed) {
           const SizedBox(height: AppSpace.xs),
           Text(
             seeds.isEmpty
-                ? 'Tohumun yok. Her reçete teslim ettiğinde bir tohum gelir.'
+                ? 'Tohumun yok. Teslim ettiğin reçetelerin yarısı bir tohum getirir.'
                 : 'Büyüme süreleri oyun süresidir, gerçek büyüme değil.',
             style: AppText.body(size: 14, color: AppColors.inkMuted),
           ),
@@ -391,7 +339,8 @@ Future<void> _openSeedPicker(BuildContext context, JobStore store, int bed) {
                           padding: const EdgeInsets.all(AppSpace.sm),
                           child: _PlantInfo(
                             plant: p,
-                            trailing: 'Büyüme: ${formatRemaining(p.growTime * (1 - speed / 100))}',
+                            trailing: '${store.garden.seeds[p.name]} tohum · '
+                                'Büyüme: ${formatRemaining(p.growTime * (1 - speed / 100))}',
                           ),
                         ),
                       ),
@@ -408,7 +357,7 @@ Future<void> _openSeedPicker(BuildContext context, JobStore store, int bed) {
   );
 }
 
-/// Büyüyen parsel: kalan süre ve gübre.
+/// Büyüyen parsel: kalan süre ve fanusa kaç çiçek kaldığı.
 Future<void> _openGrowing(BuildContext context, JobStore store, int bed) {
   return openGrowing<void>(
     context,
@@ -420,7 +369,6 @@ Future<void> _openGrowing(BuildContext context, JobStore store, int bed) {
         if (b == null) return const SizedBox.shrink();
         final plant = driedPlantNamed(b.plant)!;
         final left = b.readyAt.difference(store.now());
-        final fertilizer = store.garden.fertilizer;
         return Padding(
           padding: const EdgeInsets.all(AppSpace.lg),
           child: Column(
@@ -430,15 +378,10 @@ Future<void> _openGrowing(BuildContext context, JobStore store, int bed) {
               _PlantInfo(plant: plant, trailing: 'Olgunlaşmaya ${formatRemaining(left)}'),
               const SizedBox(height: AppSpace.md),
               Text(
-                'Gübre kalan süreyi yarıya indirir. Elinde olan bitkinin tohumu gelince gübreye döner.',
+                _flowerProgress(store.garden, plant.name),
                 style: AppText.body(size: 13, color: AppColors.inkMuted),
               ),
               const SizedBox(height: AppSpace.lg),
-              ChunkyButton(
-                label: 'Gübre ver ($fertilizer)',
-                onPressed: fertilizer > 0 && left > Duration.zero ? () => store.feed(bed) : null,
-              ),
-              const SizedBox(height: AppSpace.sm),
               ChunkyButton.secondary(label: 'Kapat', onPressed: () => Navigator.of(sheet).pop()),
             ],
           ),
@@ -448,13 +391,25 @@ Future<void> _openGrowing(BuildContext context, JobStore store, int bed) {
   );
 }
 
-/// Olgun parsel: hasat et; bitki kurutulup vitrine konabilir olur.
+/// Bitkinin fanusuna kaç çiçek kaldığı: "Elinde 3 Papatya çiçeği. Fanus için 2 tane daha."
+String _flowerProgress(Garden garden, String plant) {
+  if (garden.grown.contains(plant)) return '$plant fanusu açık; vitrine koyabilirsin.';
+  final have = garden.flowers[plant] ?? 0;
+  final need = Garden.fanusCost - have;
+  return need <= 0
+      ? 'Elinde $have $plant çiçeği: fanusu vitrine koyabilirsin.'
+      : 'Elinde $have $plant çiçeği. Fanus için $need tane daha.';
+}
+
+/// Olgun parsel: hasat et; bir çiçek kurutulur, 5 çiçek bir fanus açar.
 Future<void> _harvest(BuildContext context, JobStore store, int bed) async {
   final from = rectOf(context);
   final navigator = Navigator.of(context);
   final name = await store.harvest(bed);
   if (name == null || !navigator.mounted) return;
   final plant = driedPlantNamed(name)!;
+  // Fanusu açık ya da 5 çiçeği biriken bitki vitrine konabilir.
+  final ready = store.garden.grown.contains(name) || (store.garden.flowers[name] ?? 0) >= Garden.fanusCost;
   await openGrowing<void>(
     navigator.context,
     from: from,
@@ -466,22 +421,24 @@ Future<void> _harvest(BuildContext context, JobStore store, int bed) async {
         children: [
           Image.asset(plant.imagePath, width: 96, height: 96),
           const SizedBox(height: AppSpace.md),
-          Text('${plant.name} kurutuldu', textAlign: TextAlign.center, style: AppText.title(size: 20)),
+          Text('Bir ${plant.name} çiçeği kurutuldu', textAlign: TextAlign.center, style: AppText.title(size: 20)),
           const SizedBox(height: AppSpace.xs),
           Text(
-            'Artık vitrine koyabilirsin. Oyun etkisi: ${plant.effectText}.',
+            '${_flowerProgress(store.garden, plant.name)} Oyun etkisi: ${plant.effectText}.',
             textAlign: TextAlign.center,
             style: AppText.body(size: 14, color: AppColors.inkMuted),
           ),
           const SizedBox(height: AppSpace.xl),
-          ChunkyButton(
-            label: 'Vitrine git',
-            onPressed: () {
-              Navigator.of(sheet).pop();
-              HomeScreen.showTab(navigator.context, HomeScreen.profile);
-            },
-          ),
-          const SizedBox(height: AppSpace.sm),
+          if (ready) ...[
+            ChunkyButton(
+              label: 'Vitrine git',
+              onPressed: () {
+                Navigator.of(sheet).pop();
+                HomeScreen.showTab(navigator.context, HomeScreen.profile);
+              },
+            ),
+            const SizedBox(height: AppSpace.sm),
+          ],
           ChunkyButton.secondary(label: 'Tamam', onPressed: () => Navigator.of(sheet).pop()),
         ],
       ),

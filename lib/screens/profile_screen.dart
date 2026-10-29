@@ -7,6 +7,7 @@ import '../data/orders.dart';
 import '../logic/job_store.dart';
 import '../logic/profile_stats.dart';
 import '../models/formula.dart';
+import '../models/garden.dart';
 import '../models/prep_job.dart';
 import '../theme/tokens.dart';
 import 'home_screen.dart';
@@ -316,9 +317,9 @@ class _ShelfLabel extends StatelessWidget {
   }
 }
 
-/// Vitrine fanus seçme penceresi. Dolu yerde "Raftan kaldır" da çıkar. Bahçede
-/// yetiştirilen bitkiler önce, seçilebilir; ötekiler kilitli ve soluk
-/// (2026-10-29). Her fanusun oyun etkisi yazar.
+/// Vitrine fanus seçme penceresi. Dolu yerde "Raftan kaldır" da çıkar. Fanusu
+/// açık ya da 5 çiçeği biriken bitkiler önce, seçilebilir; ötekiler kilitli,
+/// soluk ve kaç çiçeği olduğunu yazar (2026-10-29). Her fanusun oyun etkisi yazar.
 Future<void> _openShowcasePicker(BuildContext context, int slot, {required Rect from}) {
   final store = JobScope.of(context);
   return openGrowing<void>(
@@ -326,7 +327,13 @@ Future<void> _openShowcasePicker(BuildContext context, int slot, {required Rect 
     from: from,
     builder: (sheetContext) {
       final current = store.showcase[slot];
-      final grown = store.garden.grown;
+      final garden = store.garden;
+      // "grown": konabilecek fanuslar (açık ya da 5 çiçeği hazır).
+      final grown = {
+        for (final p in driedPlants)
+          if (garden.grown.contains(p.name) || (garden.flowers[p.name] ?? 0) >= Garden.fanusCost) p.name,
+      };
+      String locked(String name) => '${garden.flowers[name] ?? 0}/${Garden.fanusCost} çiçek';
       final plants = [
         ...driedPlants.where((p) => grown.contains(p.name)),
         ...driedPlants.where((p) => !grown.contains(p.name)),
@@ -341,8 +348,10 @@ Future<void> _openShowcasePicker(BuildContext context, int slot, {required Rect 
             const SizedBox(height: AppSpace.xs),
             Text(
               grown.isEmpty
-                  ? 'Fanuslar bahçede yetişir. Reçete teslim ettikçe tohum gelir.'
-                  : 'Rafa bir fanus seç. Aynı gruptan iki fanus etkiyi katlamaz.',
+                  ? 'Bir fanus için o bitkiden ${Garden.fanusCost} çiçek gerekir. Çiçek bahçede yetişir '
+                      'ya da markette tek tek satılır.'
+                  : 'Rafa bir fanus seç. Yeni fanus ${Garden.fanusCost} çiçek harcar. '
+                      'Aynı gruptan iki fanus etkiyi katlamaz.',
               style: AppText.body(size: 14, color: AppColors.inkMuted),
             ),
             const SizedBox(height: AppSpace.md),
@@ -385,7 +394,9 @@ Future<void> _openShowcasePicker(BuildContext context, int slot, {required Rect 
                                       Text(name, style: AppText.body(size: 14, weight: FontWeight.w700)),
                                       Text(latin, style: AppText.label(size: 12)),
                                       Text(
-                                        grown.contains(name) ? 'Oyun etkisi: $effectText' : 'Bahçede yetiştir · $effectText',
+                                        grown.contains(name)
+                                            ? 'Oyun etkisi: $effectText'
+                                            : '${locked(name)} · $effectText',
                                         style: AppText.label(size: 12, color: AppColors.ink),
                                       ),
                                     ],

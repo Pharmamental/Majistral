@@ -184,27 +184,31 @@ lib/
   çit ve soluk zeytin yeşili çimen (`GardenGround`), ceviz çerçeveli yükseltilmiş toprak
   parseller (`GardenBed`, `widgets/garden_widgets.dart`): 3 açık, 3 kilitli (çimende kesik
   çerçeve + kilit + kâğıt etiket). Mekanik kodda (2026-10-29, `models/garden.dart`, kayıt
-  `garden_v1`): her teslim bir tohum getirir (teslim penceresinde yazar); boş parsele
-  dokununca tohum seçilip ekilir; bitki gerçek zamanda büyür (sık 2 sa, orta 6 sa, nadir 12
-  sa; "oyun süresi" diye yazar), filizler büyür, olgunlaşınca çiçek açar, bozulmaz; olgun
-  parsele dokununca hasat ve bitki vitrine konabilir olur (`garden.grown`). Bitki satılmaz.
-  Elde olan bitkinin tohumu gübre olur, gübre büyüyen parselin kalan süresini yarıya indirir.
-  Tohum kâğıdında gübre, nadir tohumun en geç kaç teslim sonra geleceği ve vitrindeki
-  etkiler açıkça yazar. Vitrin yalnız yetiştirilmiş bitkiyi alır (`unlockAll` vitrini
-  açmaz; bahçeden önce rafa konmuş fanus yetiştirilmiş sayılır); seçicide kilitliler soluk
-  ve kilitli, her fanusun etkisi yazılı. Duvar ve acele sınırı vitrine göre
-  (`JobStore.wallLimit`, `protectedRushesLeft`), cilt fanusu teslim emeğini artırır.
-  Parsel 4-6 parayla açılır (800/1600/3200); markette belirli tohum satılır (bahçedeki
-  "Tohum satın al": sık 300, orta 900, nadir 2500). Kurutma askısı henüz yok. Vitrindeki fanus küçük oyun etkisi verir, aynı gruptan iki fanus
+  `garden_v1`). **Tohum, çiçek, fanus** (Tuğrul, 2026-10-29, "her teslimde zar atılır",
+  "Yüzdeler tür başına olsun"): teslimlerin %50'si bir tohum getirir (teslim penceresinde
+  yazar); türü kademe ağırlığıyla, tür başına seçilir (her sık 60, her orta 27,5, her nadir
+  12,5; gruplar ~%47/%43/%10, tek bir orta bitki bir nadirin iki katı sık). Tohumlar birikir.
+  Boş parsele dokununca tohum seçilip ekilir; bitki gerçek zamanda büyür (sık 2 sa, orta 6 sa,
+  nadir 12 sa; "oyun süresi" diye yazar), olgunlaşınca bozulmaz; olgun parsele dokununca
+  hasat: bir kurutulmuş çiçek (`garden.flowers`). Bir bitkinin fanusu o bitkiden 5 çiçekle
+  açılır (`Garden.fanusCost`): vitrine ilk konuşta 5 çiçek harcanır, fanus kalıcıdır
+  (`garden.grown`; raftan kaldırıp geri koymak çiçek harcamaz). Çiçek markette "Çiçekler"
+  sekmesinde tek tek satılır (`flowerPrices` sık 60, orta 180, nadir 500; 5 çiçek eski tohum
+  fiyatı 300/900/2500), fanusu açık bitkinin çiçeği satılmaz. Gübre, nadir tohum garantisi
+  ve tohum satın alma kalktı (eski kayıttaki o alanlar okunmaz). Bahçenin üstündeki kâğıtta
+  tohumlar "×2", çiçekler "3/5" diye yazar. `unlockAll` vitrini açmaz; bahçeden önce rafa
+  konmuş fanus açık sayılır; seçicide kilitliler soluk, "0/5 çiçek" ve etkisi yazılı. Duvar
+  ve acele sınırı vitrine göre (`JobStore.wallLimit`, `protectedRushesLeft`), cilt fanusu
+  teslim emeğini artırır. Bitki para karşılığı satılmaz.
+  Parsel 4-6 parayla açılır (800/1600/3200). Kurutma askısı henüz yok. Vitrindeki fanus küçük oyun etkisi verir, aynı gruptan iki fanus
   toplanmaz, en güçlüsü sayılır: çaylar duvar (Papatya +1, Ihlamur/Rezene +1, Mürver +2;
   ekonomi 2. turu, "önerilerle": +3 az oynayanın teslimini %34 artırıyordu), boğaz günde
   1/2/3 acelenin kaliteyi düşürmemesi (Adaçayı, Kekik/Hatmi, Gelincik; acele hakkı artırmak
   para kaybettirdiği için değersizdi), cilt teslim emeği (Aynısefa
   %5, Lavanta/Defne %10, Kantaron %15), ferahlatıcı bahçe hızı (Nane %10, Biberiye/Okaliptüs
-  %20, Ekinezya %30). Tohum teslimde şansla düşer (sık %50, iki orta %20'şer, nadir %10;
-  "A", Tuğrul 2026-10-29) ve 10 teslimde nadir çıkmazsa 11.'de garanti; fazla tohum sonraki
-  ekimi hızlandırır. Bahçe gelince vitrin için `unlockAll` kalkar. Etkiler ekranda "oyun
-  etkisi" diye yazar, sahte farmakoloji kurulmaz.
+  %20, Ekinezya %30). Etkiler ekranda "oyun etkisi" diye yazar, sahte farmakoloji kurulmaz.
+  Market sekmeleri dört (Hızlandırma, İstasyonlar, Kimyasallar, Çiçekler); `PillTabs` yazısı
+  yalnız sığmadığında küçülür (`test/market_screen_test.dart`, 360 dp).
   Formüller sekmesi kaldırıldı (ekranı git geçmişinde); formül verisi duruyor
   (`GameTabBar`). Seçim her yerde aynı: adı kobalt yazı + altında kısa kobalt çizgi (`SelectionMark`); alt çubukta çizgi sekmeden sekmeye kayar, yolda uzayıp yerinde kısalır (`_SlidingMark`, Tuğrul 2026-10-27); daire seçimle renk değiştirmez. İkonlar `uretici.html` "Sekmeler" grubunda.
 - Market hammaddeleri (2026-10-26): `chemicalGroups`, rol gruplarında; liste ve kaynakları

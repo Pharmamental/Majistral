@@ -195,11 +195,16 @@ class JobStore extends ChangeNotifier {
   List<String?> get showcase => List.unmodifiable(_showcase);
   final List<String?> _showcase = List.filled(showcaseSize, null);
 
-  /// [slot]. yere [plant] fanusunu koyar (null: rafı boşaltır). Yalnız bahçede
-  /// yetiştirilmiş bitki konur (2026-10-29; `unlockAll` vitrini açmaz).
-  /// Başka yerdeyse oradan alınır, aynı fanus iki kez durmaz.
+  /// [slot]. yere [plant] fanusunu koyar (null: rafı boşaltır). Fanus ilk kez
+  /// konurken o bitkiden 5 çiçek harcanır, sonra kalıcıdır (2026-10-29;
+  /// `unlockAll` vitrini açmaz). Başka yerdeyse oradan alınır, aynı fanus iki
+  /// kez durmaz.
   Future<void> setShowcase(int slot, String? plant) async {
-    if (plant != null && !_garden.grown.contains(plant)) return;
+    if (plant != null) {
+      final opened = _garden.grown.contains(plant);
+      if (!_garden.openFanus(plant)) return;
+      if (!opened) await _saveGarden();
+    }
     for (var i = 0; i < showcaseSize; i++) {
       if (_showcase[i] == plant) _showcase[i] = null;
     }
@@ -214,9 +219,9 @@ class JobStore extends ChangeNotifier {
   /// Bahçenin durumu (salt okunur kullanılır; değişiklik aşağıdaki yöntemlerle).
   Garden get garden => _garden;
 
-  /// Son teslimde düşen tohum; teslim penceresi gösterir.
-  SeedDrop? get lastDrop => _lastDrop;
-  SeedDrop? _lastDrop;
+  /// Son teslimde düşen tohum (yarı ihtimalle yok); teslim penceresi gösterir.
+  String? get lastDrop => _lastDrop;
+  String? _lastDrop;
 
   /// Vitrinde [group] grubundan duran en güçlü fanusun etkisi; aynı gruptan
   /// iki fanus toplanmaz. Yoksa 0.
@@ -304,11 +309,14 @@ class JobStore extends ChangeNotifier {
     return i < parcelPrices.length ? parcelPrices[i] : null;
   }
 
-  /// Belirli bir tohumu satın alır (geç oyun gideri); bitki zaten eldeyse almaz.
-  Future<bool> buySeed(String plant) async {
+  /// Markette tek bir kurutulmuş çiçek alır (Tuğrul, 2026-10-29).
+  Future<bool> buyFlower(String plant) async {
     final p = driedPlantNamed(plant);
-    if (p == null || _garden.has(plant)) return false;
-    final ok = await _spend(seedPrices[p.tier]!, () => _garden.seeds[plant] = 1);
+    if (p == null) return false;
+    final ok = await _spend(
+      flowerPrices[p.tier]!,
+      () => _garden.flowers[plant] = (_garden.flowers[plant] ?? 0) + 1,
+    );
     if (ok) await _saveGarden();
     return ok;
   }
@@ -375,10 +383,7 @@ class JobStore extends ChangeNotifier {
   Future<bool> plant(int bed, String plant) =>
       _gardenChange(() => _garden.plant(bed, plant, now(), speedPercent: showcaseBonus(PlantGroup.ferah)));
 
-  /// Büyüyen parsele gübre verir.
-  Future<bool> feed(int bed) => _gardenChange(() => _garden.feed(bed, now()));
-
-  /// Olgun bitkiyi hasat eder; adı döner, olgun değilse null.
+  /// Olgun bitkiyi hasat eder (bir çiçek); adı döner, olgun değilse null.
   Future<String?> harvest(int bed) async {
     final plant = _garden.harvest(bed, now());
     if (plant != null) await _saveGarden();
@@ -629,7 +634,7 @@ class JobStore extends ChangeNotifier {
       steps: [for (final s in orderOf(job).steps) s.label],
     ));
     await _prefs.setString(_deliveriesKey, jsonEncode([for (final d in _deliveries) d.toJson()]));
-    // Her teslim bahçeye bir tohum (ya da elde olan bitkiyse gübre) getirir.
+    // Teslimlerin yarısı bahçeye bir tohum getirir.
     _lastDrop = _garden.dropSeed(_random);
     await _prefs.setString(_gardenKey, jsonEncode(_garden.toJson()));
     await _save();

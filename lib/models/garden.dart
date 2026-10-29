@@ -19,8 +19,6 @@ class Bed {
     return (at.difference(plantedAt).inMilliseconds / total).clamp(0, 1);
   }
 
-  Bed copyWith({DateTime? readyAt}) => Bed(plant: plant, plantedAt: plantedAt, readyAt: readyAt ?? this.readyAt);
-
   Map<String, Object> toJson() =>
       {'plant': plant, 'at': plantedAt.millisecondsSinceEpoch, 'ready': readyAt.millisecondsSinceEpoch};
 
@@ -31,25 +29,22 @@ class Bed {
       );
 }
 
-/// Teslimde düşen tohum: hangi bitki, ve bitki zaten varsa gübreye döndü mü.
-typedef SeedDrop = ({String plant, bool fertilizer});
-
-/// Tıbbi bitki bahçesi (Tuğrul, 2026-10-29, "A"):
-/// - Her teslimde bir tohum düşer: grup eşit şansla, kademe sık %50, iki orta
-///   %20'şer, nadir %10. 10 teslim üst üste nadir çıkmazsa 11.'de kesin nadir.
-/// - Bir bitkinin tek tohumu yeter. Zaten elde olan (tohumu, parselde ya da
-///   yetiştirilmiş) bitkinin tohumu boşa gitmez, gübre olur.
-/// - Gübre büyüyen bir parselin kalan süresini yarıya indirir.
-/// - Bitki gerçek zamanda büyür, olgunlaşınca bozulmaz, hasat edilene kadar
-///   parselde bekler; hasat edilince vitrine konabilir ([grown]).
+/// Tıbbi bitki bahçesi (Tuğrul, 2026-10-29, "her teslimde zar atılır"):
+/// - Teslim edilen reçetenin yarısı bir tohum getirir ([dropChance]). Tür
+///   kademesine göre seçilir; ağırlıklar tür başına (sık 60, orta 27,5, nadir
+///   12,5), böylece tek bir orta bitki bir nadirin iki katı sık gelir.
+/// - Tohumlar birikir. Ekilen tohum gerçek zamanda büyür, olgunlaşınca bozulmaz;
+///   hasatta bir kurutulmuş çiçek verir ([flowers]).
+/// - Bir bitkinin fanusu 5 çiçekle açılır ([fanusCost]); açılan fanus kalıcıdır
+///   ve vitrine konabilir ([grown]). Çiçek markette tek tek de satılır.
 class Garden {
   Garden({
     Map<String, int>? seeds,
+    Map<String, int>? flowers,
     List<Bed?>? beds,
     Set<String>? grown,
-    this.sinceRare = 0,
-    this.fertilizer = 0,
   })  : seeds = seeds ?? {},
+        flowers = flowers ?? {},
         beds = beds ?? List<Bed?>.filled(openBeds, null, growable: true),
         grown = grown ?? {};
 
@@ -58,40 +53,48 @@ class Garden {
   static const openBeds = 3;
   static const allBeds = 6;
 
-  /// Nadir tohum en geç bu kadar teslimden sonra kesin gelir.
-  static const pity = 10;
+  /// Teslimin tohum getirme şansı.
+  static const dropChance = 0.5;
+
+  /// Tek bir türün ağırlığı, kademesine göre.
+  static const tierWeights = {1: 60.0, 2: 27.5, 3: 12.5};
+
+  /// Bir fanusu açmak için gereken çiçek.
+  static const fanusCost = 5;
 
   final Map<String, int> seeds;
+
+  /// Hasat edilmiş ya da satın alınmış, henüz fanusa girmemiş çiçekler.
+  final Map<String, int> flowers;
   final List<Bed?> beds;
 
-  /// Hasat edilmiş, vitrine konabilen bitkiler.
+  /// Fanusu açılmış, vitrine konabilen bitkiler.
   final Set<String> grown;
 
-  /// Son nadir tohumdan beri teslim sayısı.
-  int sinceRare;
-  int fertilizer;
-
-  /// Nadir tohumun en geç kaç teslim sonra geleceği (1 = bir sonraki).
-  int get rareWithin => pity + 1 - sinceRare;
-
-  /// Bitki elde mi: tohumu duruyor, parselde ya da yetiştirilmiş.
-  bool has(String plant) => (seeds[plant] ?? 0) > 0 || grown.contains(plant) || beds.any((b) => b?.plant == plant);
-
-  /// Teslimde tohum düşürür.
-  SeedDrop dropSeed(math.Random rnd) {
-    final group = PlantGroup.values[rnd.nextInt(PlantGroup.values.length)];
-    final inGroup = [for (final p in driedPlants) if (p.group == group) p];
-    final roll = rnd.nextDouble();
-    final tier = sinceRare >= pity ? 3 : (roll < 0.5 ? 1 : roll < 0.9 ? 2 : 3);
-    final choices = [for (final p in inGroup) if (p.tier == tier) p];
-    final plant = choices[rnd.nextInt(choices.length)].name;
-    sinceRare = tier == 3 ? 0 : sinceRare + 1;
-    if (has(plant)) {
-      fertilizer++;
-      return (plant: plant, fertilizer: true);
+  /// Teslimde zar atar: yarı ihtimalle bir tohum düşer, adı döner; yoksa null.
+  String? dropSeed(math.Random rnd) {
+    if (rnd.nextDouble() >= dropChance) return null;
+    final total = driedPlants.fold(0.0, (sum, p) => sum + tierWeights[p.tier]!);
+    var roll = rnd.nextDouble() * total;
+    var plant = driedPlants.last.name;
+    for (final p in driedPlants) {
+      roll -= tierWeights[p.tier]!;
+      if (roll < 0) {
+        plant = p.name;
+        break;
+      }
     }
-    seeds[plant] = 1;
-    return (plant: plant, fertilizer: false);
+    seeds[plant] = (seeds[plant] ?? 0) + 1;
+    return plant;
+  }
+
+  /// [plant]'ın fanusunu açar: açıksa bir şey harcamaz, değilse 5 çiçek harcar.
+  bool openFanus(String plant) {
+    if (grown.contains(plant)) return true;
+    if ((flowers[plant] ?? 0) < fanusCost) return false;
+    flowers[plant] = flowers[plant]! - fanusCost;
+    grown.add(plant);
+    return true;
   }
 
   /// [bed]. parsele [plant] tohumunu eker; bahçe hızı ([speedPercent]) süreyi kısaltır.
@@ -105,47 +108,38 @@ class Garden {
     return true;
   }
 
-  /// Büyüyen parsele gübre verir: kalan süre yarıya iner.
-  bool feed(int bed, DateTime now) {
-    final b = beds[bed];
-    if (b == null || b.readyBy(now) || fertilizer < 1) return false;
-    fertilizer--;
-    beds[bed] = b.copyWith(readyAt: now.add(b.readyAt.difference(now) ~/ 2));
-    return true;
-  }
-
-  /// Olgun bitkiyi hasat eder; vitrine konabilir olur. Olgun değilse null.
+  /// Olgun bitkiyi hasat eder: bir çiçek verir. Olgun değilse null.
   String? harvest(int bed, DateTime now) {
     final b = beds[bed];
     if (b == null || !b.readyBy(now)) return null;
     beds[bed] = null;
-    grown.add(b.plant);
+    flowers[b.plant] = (flowers[b.plant] ?? 0) + 1;
     return b.plant;
   }
 
   Map<String, Object> toJson() => {
         'seeds': seeds,
+        'flowers': flowers,
         'beds': [for (final b in beds) b?.toJson()],
         'grown': grown.toList(),
-        'sinceRare': sinceRare,
-        'fertilizer': fertilizer,
       };
 
   factory Garden.fromJson(Map<String, dynamic> json) {
     final beds = <Bed?>[
       for (final b in json['beds'] as List) b == null ? null : Bed.fromJson(b as Map<String, dynamic>),
     ];
+    Map<String, int> counts(Object? raw) => {
+          for (final e in ((raw as Map<String, dynamic>?) ?? {}).entries)
+            if (driedPlantNamed(e.key) != null) e.key: e.value as int,
+        };
+    // Eski kayıttaki gübre ve nadir sayacı (2026-10-29 öncesi) okunmaz.
     return Garden(
-      seeds: {
-        for (final e in (json['seeds'] as Map<String, dynamic>).entries)
-          if (driedPlantNamed(e.key) != null) e.key: e.value as int,
-      },
+      seeds: counts(json['seeds']),
+      flowers: counts(json['flowers']),
       beds: [
         for (var i = 0; i < math.max(openBeds, math.min(beds.length, allBeds)); i++) i < beds.length ? beds[i] : null,
       ],
       grown: {for (final g in json['grown'] as List) if (driedPlantNamed(g as String) != null) g},
-      sinceRare: json['sinceRare'] as int,
-      fertilizer: json['fertilizer'] as int,
     );
   }
 }

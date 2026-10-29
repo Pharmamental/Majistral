@@ -28,8 +28,10 @@ const startCoins = 100;
 /// Bahçenin 4., 5. ve 6. parseli.
 const parcelPrices = [800, 1600, 3200];
 
-/// Markette belirli bir tohum: sık, orta, nadir (geç oyun gideri).
-const seedPrices = {1: 300, 2: 900, 3: 2500};
+/// Markette tek bir kurutulmuş çiçek: sık, orta, nadir (Tuğrul, 2026-10-29,
+/// "marketten çiçeği 1er 1er satabilir"). Bir fanus 5 çiçek ister; 5 çiçeğin
+/// bedeli eski tohum fiyatı (300 / 900 / 2500).
+const flowerPrices = {1: 60, 2: 180, 3: 500};
 
 const freeChemicals = {'Distile Su'};
 
