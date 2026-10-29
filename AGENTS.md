@@ -215,6 +215,10 @@ lib/
   gibi: çift çizgili beyaz kâğıt, üstünde bant, altında "8 maddeden 5 açık"
   (`ChemicalGroupHeader`). Açıklamalar sade: ne olduğu ve ne işe yaradığı, bir iki kısa
   cümle; teknik terim yok ya da yanında anlamı (reçete penceresi de `chemicalRole` ile okur).
+  Satırda düğme "Al"; basınca hemen almaz, satırın yerinden pencere büyür: `PillTabs` ile
+  1-5-10-20-100 paket, toplam fiyat, kasadaki para, "N paket al" (para yetmezse kapalı ve
+  "Paran yetmiyor"), "Vazgeç" (`openPackBuy`, `JobStore.buyPacks`; Tuğrul, 2026-10-29).
+  Paket fiyatı satırın alt yazısında ("Paketi 30 para · Sahip olunan: 3 adet").
 - **500 reçete, 39 madde** (Tuğrul, 2026-10-28, "30-40 civarı madde, her madde en az 10
   reçetede, 500 civarı reçete"): markette 39 madde, hepsi en az 10 reçetede; reçetede geçmeyen
   madde markette durmaz (benzil benzoat, kafur, LCD, rezorsin, PEG 400/3350, setil alkol, stearik

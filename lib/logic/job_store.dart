@@ -280,10 +280,13 @@ class JobStore extends ChangeNotifier {
       ownsTool(item) ? Future.value(false) : _spend(item.price, () => _tools.add(item.name));
 
   /// Bir paket kimyasal alır.
-  Future<bool> buyPack(String chemical) {
+  Future<bool> buyPack(String chemical) => buyPacks(chemical, 1);
+
+  /// [count] paket birden alır (marketteki miktar seçimi: 1, 5, 10, 20, 100).
+  Future<bool> buyPacks(String chemical, int count) {
     final p = packs[chemical];
-    if (p == null) return Future.value(false);
-    return _spend(p.price, () => _stock[chemical] = stockOf(chemical) + p.grams);
+    if (p == null || count < 1) return Future.value(false);
+    return _spend(p.price * count, () => _stock[chemical] = stockOf(chemical) + p.grams * count);
   }
 
   /// Bahçenin sıradaki kilitli parselini açar.

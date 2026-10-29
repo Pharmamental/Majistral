@@ -4,6 +4,7 @@ import '../logic/job_store.dart';
 import '../models/shop_item.dart';
 import '../theme/tokens.dart';
 import 'chunky_button.dart';
+import 'grow_panel.dart';
 import 'paper_tape.dart';
 
 // Satın alma (2026-10-29): aletler ve kimyasal paketleri kasadaki parayla
@@ -285,6 +286,98 @@ class ChemicalGroupHeader extends StatelessWidget {
   }
 }
 
+/// Kimyasalın "Al" penceresi: satırın yerinden büyür, kaç paket alınacağı
+/// seçilir (Tuğrul, 2026-10-29: 1, 5, 10, 20, 100).
+Future<void> openPackBuy(BuildContext context, ShopItem item) =>
+    openGrowing<void>(context, from: rectOf(context), builder: (_) => _PackBuyPanel(item: item));
+
+class _PackBuyPanel extends StatefulWidget {
+  const _PackBuyPanel({required this.item});
+
+  final ShopItem item;
+
+  static const counts = [1, 5, 10, 20, 100];
+
+  @override
+  State<_PackBuyPanel> createState() => _PackBuyPanelState();
+}
+
+class _PackBuyPanelState extends State<_PackBuyPanel> {
+  int _count = 1;
+
+  @override
+  Widget build(BuildContext context) {
+    final store = JobScope.of(context);
+    final item = widget.item;
+    final total = item.price * _count;
+    final enough = store.coins >= total;
+    return Padding(
+      padding: const EdgeInsets.all(AppSpace.lg),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            children: [
+              _Thumb(item: item, size: 56),
+              const SizedBox(width: AppSpace.md),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(item.name, style: AppText.title(size: 20)),
+                    const SizedBox(height: AppSpace.xs),
+                    Text(
+                      'Sahip olunan: ${store.packsOf(item.name)} adet',
+                      style: AppText.label(size: 13, color: AppColors.ink),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppSpace.lg),
+          Text('Kaç paket?', style: AppText.label(size: 14, color: AppColors.ink)),
+          const SizedBox(height: AppSpace.sm),
+          PillTabs<int>(
+            values: _PackBuyPanel.counts,
+            selected: _count,
+            labelOf: (n) => '$n',
+            onChanged: (n) => setState(() => _count = n),
+          ),
+          const SizedBox(height: AppSpace.lg),
+          Row(
+            children: [
+              Text('Toplam', style: AppText.body(size: 15)),
+              const Spacer(),
+              const Icon(Icons.toll_rounded, size: 20, color: AppColors.star),
+              const SizedBox(width: AppSpace.xs),
+              Text('$total', style: AppText.title(size: 20)),
+            ],
+          ),
+          const SizedBox(height: AppSpace.xs),
+          Text(
+            enough ? 'Kasada ${store.coins} para var.' : 'Paran yetmiyor: kasada ${store.coins} para var.',
+            style: AppText.label(size: 13, color: AppColors.inkMuted),
+          ),
+          const SizedBox(height: AppSpace.lg),
+          ChunkyButton(
+            label: '$_count paket al',
+            onPressed: enough
+                ? () async {
+                    final navigator = Navigator.of(context);
+                    if (await store.buyPacks(item.name, _count)) navigator.pop();
+                  }
+                : null,
+          ),
+          const SizedBox(height: AppSpace.sm),
+          ChunkyButton.secondary(label: 'Vazgeç', onPressed: () => Navigator.of(context).pop()),
+        ],
+      ),
+    );
+  }
+}
+
 /// Liste satırı: kimyasal ya da reklam. Düğme sağda, başparmak tarafında.
 class ShopItemTile extends StatelessWidget {
   const ShopItemTile({
@@ -293,19 +386,15 @@ class ShopItemTile extends StatelessWidget {
     this.highlight = false,
     this.locked = false,
     this.detail,
-    this.onBuy,
   });
 
   final ShopItem item;
 
-  /// Açıklamanın altındaki ek satır (kimyasalda raftaki paket sayısı).
+  /// Açıklamanın altındaki ek satır (kimyasalda paket fiyatı ve raftaki sayı).
   final String? detail;
 
   /// Henüz onu isteyen reçete gelmemiş kimyasal: soluk, kilitli, alınmaz.
   final bool locked;
-
-  /// Satın alma; null ise düğme kapalı.
-  final VoidCallback? onBuy;
 
   /// Reklam satırı gibi öne çıkan satır: yeşil kenar ve yeşil düğme.
   final bool highlight;
@@ -372,11 +461,11 @@ class ShopItemTile extends StatelessWidget {
                       )
                 : item.price == 0
                     ? Text('Bedava', textAlign: TextAlign.center, style: AppText.label(size: 14, color: AppColors.ink))
+                    // Dokununca hemen almaz; miktar penceresi açılır (Tuğrul, 2026-10-29).
                     : ChunkyButton(
                         compact: true,
-                        label: '${item.price}',
-                        icon: Icons.toll_rounded,
-                        onPressed: onBuy,
+                        label: 'Al',
+                        onPressed: () => openPackBuy(context, item),
                       ),
           ),
         ],
