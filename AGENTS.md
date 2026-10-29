@@ -137,7 +137,7 @@ lib/
   Adım çalışmıyorsa (reçete oyuncuyu bekliyor) basılamaz. Reklam henüz bağlı değil, onay penceresi yerini tutuyor.
 - Kimyasal seçimi yok (Tuğrul, 2026-10-26): maddeler reçeteden gelir. Adım sırası da sorulmaz
   (Tuğrul, 2026-10-27): adımlar sabit sırayla yapılır.
-  Her adımın kendi oyuncak blok ikonu var (`stepIcons`, `ikon_adim_<ad>.png`); yeni adım adı
+  Her adımın kendi ikonu var (`stepIcons`, `ikon_adim_<ad>.png`); yeni adım adı
   eklenirse ikonu da çizilir (`test/steps_test.dart` denetler).
 - Reçete durum renkleri (2026-10-27): `OrderStatus` (seni bekliyor amber, hazır yeşil, hazırlanıyor
   mor, yeni kobalt); renkler `AppColors` içinde, yazı tonları açık zeminde ≥5,1:1 ölçüldü. Reçeteler
@@ -203,9 +203,16 @@ lib/
   (`GameTabBar`). Seçim her yerde aynı: adı kobalt yazı + altında kısa kobalt çizgi (`SelectionMark`); alt çubukta çizgi sekmeden sekmeye kayar, yolda uzayıp yerinde kısalır (`_SlidingMark`, Tuğrul 2026-10-27); daire seçimle renk değiştirmez. İkonlar `uretici.html` "Sekmeler" grubunda.
 - Market hammaddeleri (2026-10-26): `chemicalGroups`, rol gruplarında; liste ve kaynakları
   beyinde (`knowledge/concepts/majistral-hammaddeler.md`). Reçeteye yeni madde girerse markete de
-  eklenir; her maddenin oyuncak blok ikonu olur (`test/market_items_test.dart` ikisini de denetler).
+  eklenir; her maddenin ikonu olur (`test/market_items_test.dart` ikisini de denetler).
   İkonlar `tools/ikon_blok/uretici.html`'de; görünüşte benzer kardeş maddeler (setostearil/stearil,
   iki paraben, hazır baz kavanozları) aynı kapta çizilir, kapak rengiyle ayrılır.
+- **İkon tarzı: renkli bilimsel çizim** (Tuğrul, 2026-10-29, "27"; oyuncak blok küçük boyda
+  okunmuyordu). Eski farmakope levhası gibi: açık renk boya (`BOYA` .3), mürekkep laciverti
+  kontur (`CIZGI` 2.2), ışık sol üstten, gövdelerin sağ alt yarısında çapraz tarama; çizgi
+  (`line`) parçaları mürekkep rengi, hacim ve renk geçişi yok. Tarz sayfasındaki çizgi 1,5'ti,
+  40 pikselde kaybolmasın diye kalınlaştırıldı. Seçim sayfası (40 tarz):
+  https://claude.ai/artifact/K3XFvUP2j2Ws7Kypt5x7HT. Üretici `tools/ikon_blok/uretici.html`
+  (`svgIkon`), PNG'ler `py -3 tools/ikon_blok/export.py` ile; geometri değişmedi.
 - Kimyasal sekmesi (Tuğrul, 2026-10-29): madde, onu isteyen ilk reçete duvara gelince açılır;
   o güne dek soluk, renksiz ikonlu ve kilitli durur, alınmaz ("Bu maddeyi isteyen ilk reçete
   gelince açılır."). Açılanlar kayıtta (`wall_v1`, `seen`; `JobStore.chemicalUnlocked`); eski

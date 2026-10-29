@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Majistral Oyuncak Blok İkonları</title>
+<title>Majistral İkonları</title>
 <style>
 body{margin:0;background:#F2EFE9;font-family:Rubik,system-ui,sans-serif;color:#1E1B18}
 main{max-width:980px;margin:0 auto;padding:24px 16px}
@@ -20,8 +20,8 @@ body.tek div.tek svg{width:100%;height:100%;overflow:visible}
 </head>
 <body>
 <script>
-// Majistral oyunu oyuncak blok ikonları. Stil ve ölçüler Pharmamental'ın üreticisiyle aynı
-// (C:/YZ/800-Arsenal 🛠️/Tasarim-Rehberi/Ikon-Stili-Oyuncak-Blok.md); ölçülere dokunma.
+// Majistral oyunu ikonları. Geometri (parça ölçüleri) Pharmamental'ın oyuncak blok
+// üreticisinden; 2026-10-29'dan beri renkli bilimsel çizim tarzında boyanır (aşağıda svgIkon).
 // Yeni ikon: IKONLAR'a bir kayıt ekle, sayfayı aç, sonra `py -3 export.py` ile PNG al.
 
 // ---- renk
@@ -811,27 +811,28 @@ function kavanoz(c){return[
  {d:rr(28,56,44,18,4),c:L(c,.55),flat:1},
  {d:'M35,65H65',c:L(c,.15),line:1}]}
 
-// ---- çizim (Pharmamental üreticisinden aynen)
-const KALINLIK=7, YAN_KOYU=.32, UST_ACIK=.18, KENAR_ACIK=.35;
+// ---- çizim: renkli bilimsel çizim (Tuğrul, 2026-10-29, tarz sayfasında "27"; oyuncak blok
+// küçük boyda okunmuyordu). Eski farmakope levhası gibi: açık renk boya, mürekkep kontur,
+// ışık sol üstten, gövdelerin sağ alt yarısında çapraz tarama. Çizgi kalınlığı tarz sayfasındakinden
+// biraz kalın, oyundaki 40 piksellik boyda kaybolmasın diye.
+const BOYA=.3, CIZGI=2.2, TARAMA=.7, ARALIK=2.6, MUREKKEP='#172033';
 const P=(p,ex='')=>`<path d="${p.d}" fill-rule="evenodd" ${ex}/>`;
 const wrap=(ik,s)=>ik.rot?`<g transform="rotate(${ik.rot} 50 50)">${s}</g>`:s;
 let uid=0;
 function svgIkon(ik){
- const id='b'+(uid++),defs=[];let n=0;
- const lin=(a,b)=>{const i=id+'_'+(n++);defs.push(`<linearGradient id="${i}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${a}"/><stop offset="1" stop-color="${b}"/></linearGradient>`);return`url(#${i})`};
- const blur=id+'_z';defs.push(`<filter id="${blur}" x="-50%" y="-200%" width="200%" height="500%"><feGaussianBlur stdDeviation="2"/></filter>`);
- let yan='';
- const boru=(p,c)=>P(p,`fill="none" stroke="${c}" stroke-width="${p.w}" stroke-linecap="round" stroke-linejoin="round"`);
- // glass:1 (fanus camı): yan yüz yok, yarı saydam, en üstte
+ const id='b'+(uid++),golge=id+'_g',tarama=id+'_t';
+ const defs=`<clipPath id="${golge}"><path d="M100,0V100H0Z"/></clipPath>`
+  +`<pattern id="${tarama}" width="${ARALIK}" height="${ARALIK}" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="${TARAMA}" height="${ARALIK}" fill="${MUREKKEP}" fill-opacity=".75"/></pattern>`;
+ const boru=(p,c,w)=>P(p,`fill="none" stroke="${c}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round"`);
+ const kontur=(p,w)=>P(p,`fill="none" stroke="${MUREKKEP}" stroke-width="${w}" stroke-linejoin="round"`);
+ // glass:1 (fanus camı): taramasız, yarı saydam, en üstte
  const kati=ik.parts.filter(p=>!p.glass), cam=ik.parts.filter(p=>p.glass);
- for(let k=KALINLIK;k>=1;k--)yan+=`<g transform="translate(0 ${k-3})">${wrap(ik,kati.map(p=>p.flat?'':p.w?boru(p,D(p.c,YAN_KOYU)):p.line?'':P(p,`fill="${D(p.c,YAN_KOYU)}" stroke="${D(p.c,YAN_KOYU)}" stroke-width=".8"`)).join(''))}</g>`;
- const ust=kati.map(p=>p.w?boru(p,p.c):p.line
-   ?P(p,`fill="none" stroke="${p.c}" stroke-width="3" stroke-linecap="round"`)
-   :P(p,`fill="${lin(L(p.c,UST_ACIK),p.c)}" stroke="${L(p.c,KENAR_ACIK)}" stroke-width=".8"`)).join('')
-  +cam.map(p=>p.line?P(p,`fill="none" stroke="${p.c}" stroke-width="${p.sw||3}" stroke-linecap="round" opacity="${p.op??1}"`)
-   :P(p,`fill="${p.c}" opacity="${p.op??.25}"`)).join('');
- const zemin=`<ellipse cx="50" cy="92" rx="28" ry="4.5" fill="#3a2418" opacity=".16" filter="url(#${blur})"/>`;
- return`<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><defs>${defs.join('')}</defs>${zemin}${yan}<g transform="translate(0 -3)">${wrap(ik,ust)}</g></svg>`;
+ const govde=kati.map(p=>p.line?P(p,`fill="none" stroke="${MUREKKEP}" stroke-width="3" stroke-linecap="round"`)
+   :p.w?boru(p,MUREKKEP,p.w+CIZGI*.8)+boru(p,L(p.c,.2),p.w)
+   :P(p,`fill="${L(p.c,BOYA)}"`)+(p.flat?'':`<g clip-path="url(#${golge})">${P(p,`fill="url(#${tarama})"`)}</g>`)+kontur(p,p.flat?CIZGI*.7:CIZGI)).join('')
+  +cam.map(p=>p.line?P(p,`fill="none" stroke="${MUREKKEP}" stroke-width="${p.sw||3}" stroke-linecap="round" opacity="${(p.op??1)*.7}"`)
+   :P(p,`fill="${L(p.c,BOYA)}" opacity="${p.op??.25}"`)+P(p,`fill="none" stroke="${MUREKKEP}" stroke-width="1.2" opacity=".55"`)).join('');
+ return`<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><defs>${defs}</defs>${wrap(ik,govde)}</svg>`;
 }
 
 // ?tek&px=<boy>#<sıra> : yalnız o ikonu şeffaf çizer (export.py kullanır)
@@ -841,7 +842,7 @@ if(location.search.includes('tek')){
  document.body.innerHTML=`<div class="tek" style="width:${px}px;height:${px}px">${svgIkon(IKONLAR[+location.hash.slice(1)])}</div>`;
 }else{
  const gruplar=[...new Set(IKONLAR.map(i=>i.grup))];
- document.body.innerHTML=`<main><h1>Majistral Oyuncak Blok İkonları</h1>${gruplar.map(g=>`<h2>${g}</h2><div class="izgara">${IKONLAR.filter(i=>i.grup==g).map(ik=>`<div class="kutu" style="background:${ik.kutu}">${svgIkon(ik)}<span>${ik.ad}</span></div>`).join('')}</div>`).join('')}
+ document.body.innerHTML=`<main><h1>Majistral İkonları</h1>${gruplar.map(g=>`<h2>${g}</h2><div class="izgara">${IKONLAR.filter(i=>i.grup==g).map(ik=>`<div class="kutu" style="background:${ik.kutu}">${svgIkon(ik)}<span>${ik.ad}</span></div>`).join('')}</div>`).join('')}
  <h2>28 px</h2><div class="kucuk">${IKONLAR.map(ik=>svgIkon(ik)).join('')}</div></main>`;
 }
 </script>

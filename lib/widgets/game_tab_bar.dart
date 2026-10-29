@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 
 import '../theme/tokens.dart';
 
-/// Alt çubuktaki bir bölüm: adı ve oyuncak blok ikonu.
+/// Alt çubuktaki bir bölüm: adı ve ikonu.
 typedef GameTab = ({String label, String image});
 
 /// Alt çubuk: oyunun kalbi laboratuvar çubuktan taşan büyük porselen daire

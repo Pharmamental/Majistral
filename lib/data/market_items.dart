@@ -20,7 +20,7 @@ typedef ChemicalGroup = ({String title, String subtitle, List<ShopItem> items});
 const _mavi = Color(0xFF4C9BE8), _mor = Color(0xFF7C5CE6), _yesil = Color(0xFF3DBE7A);
 const _altin = Color(0xFFF7BE38), _mercan = Color(0xFFE8553D), _gri = Color(0xFF757575);
 
-/// [image]: tools/ikon_blok/uretici.html'deki oyuncak blok ikonu; [color]
+/// [image]: tools/ikon_blok/uretici.html'deki ikonu; [color]
 /// ikonun kutusunu boyar (kutu bu rengin %16'sı). Fiyat bir paketin fiyatı
 /// (data/economy.dart, [packs]).
 ShopItem _chem(String name, String description, String image, Color color) => ShopItem(

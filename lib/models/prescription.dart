@@ -4,7 +4,7 @@
 /// kitabının en sık adımları için eklendi (2026-10-28).
 enum StepTool { havan, karistirma, isitma, kapsul, beher, mezur, elek, kapsulAleti }
 
-/// Her hazırlama adımının kendi oyuncak blok ikonu (tools/ikon_blok, "Adımlar").
+/// Her hazırlama adımının kendi ikonu (tools/ikon_blok, "Adımlar").
 /// Adım, eczacının madde üzerinde eliyle, bir aletle ya da bir yöntemle yaptığı
 /// işlemdir (ezme, eritme, çözme, soğutma); malzeme ("su fazı") ya da kontrol,
 /// etiket gibi yan işler adım değildir (Tuğrul, 2026-10-28).

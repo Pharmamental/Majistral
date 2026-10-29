@@ -186,8 +186,7 @@ class _Thumb extends StatelessWidget {
   final ShopItem item;
   final double size;
 
-  // Oyuncak blok ikonu açık bir kutunun üstünde durur (Pharmamental'daki gibi);
-  // ikonun kendi gölgesi ve yan yüzü var, kırpılmaz.
+  // İkon açık bir kutunun üstünde durur; kenar çizgisi kutuya taşabilir, kırpılmaz.
   @override
   Widget build(BuildContext context) {
     final box = Color.alphaBlend(item.color.withValues(alpha: 0.16), AppColors.surface);

@@ -16,7 +16,7 @@ void main() {
     }
   });
 
-  test('her maddenin oyuncak blok ikonu var ve dosyası duruyor', () {
+  test('her maddenin ikonu var ve dosyası duruyor', () {
     for (final g in chemicalGroups) {
       for (final i in g.items) {
         expect(i.imagePath, isNotNull, reason: i.name);
