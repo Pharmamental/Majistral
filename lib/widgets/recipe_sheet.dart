@@ -63,7 +63,7 @@ Future<void> openRecipe(
                           if (n > 0) const Divider(height: 1, color: AppColors.line),
                           _IngredientRow(ingredient: i),
                         ],
-                        if (order.batchNote != null) ...[
+                        if (order.note != null) ...[
                           const Divider(height: 1, color: AppColors.line),
                           Padding(
                             padding: const EdgeInsets.only(top: AppSpace.sm, bottom: AppSpace.xs),
@@ -73,7 +73,7 @@ Future<void> openRecipe(
                                 const SizedBox(width: AppSpace.xs),
                                 Expanded(
                                   child: Text(
-                                    order.batchNote!,
+                                    order.note!,
                                     style: AppText.label(size: 12, color: AppColors.accentText),
                                   ),
                                 ),

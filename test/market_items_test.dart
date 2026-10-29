@@ -29,37 +29,39 @@ void main() {
     expect(sold.toSet(), hasLength(sold.length));
   });
 
-  // Tuğrul, 2026-10-28: "30-40 civarı madde, her madde en az 10 reçetede";
-  // 2026-10-29: "farklı majistral sayımız çok az" → 62 madde, 100'ün üstünde
-  // farklı majistral.
-  test('markette 55-65 madde var, her biri en az 10 reçetede geçiyor', () {
+  // Tuğrul, 2026-10-29: "farklı majistral sayımız çok az" → 62 madde, 100'ün
+  // üstünde farklı majistral; reçetede geçmeyen madde markette durmaz.
+  test('markette 55-65 madde var, her biri en az bir reçetede geçiyor', () {
     expect(sold.length, inInclusiveRange(55, 65));
     for (final name in sold) {
-      final n = prescriptionOrders.where((o) => o.ingredients.any((i) => i.name == name)).length;
-      expect(n, greaterThanOrEqualTo(10), reason: name);
+      expect(prescriptionOrders.any((o) => o.ingredients.any((i) => i.name == name)), isTrue, reason: name);
     }
   });
 
-  test('100\'ün üstünde farklı majistral, en az 500 reçete; kimlikler tek, ilk altısı elle yazılanlar', () {
-    expect(prescriptionOrders.map((o) => o.formula).toSet().length, greaterThan(100));
-    expect(prescriptionOrders.length, greaterThanOrEqualTo(500));
+  // Tuğrul, 2026-10-29: "her formül tek reçete".
+  test('her formül tek reçete, 100\'ün üstünde; kimlikler tek, ilk altısı elle yazılanlar', () {
+    final formulas = [for (final o in prescriptionOrders) o.formula];
+    expect(formulas.toSet(), hasLength(formulas.length));
+    expect(formulas.length, greaterThan(100));
     final keys = [for (final o in prescriptionOrders) o.key];
     expect(keys.toSet(), hasLength(keys.length));
     expect(prescriptionOrders.first.key, '%5 Salisilik Asitli Vazelin');
-    expect([for (final i in prescriptionOrders.first.ingredients) i.written], ['%5', '1,5 g', 'ad 50 g']);
-    // Aynı formül duvarda arka arkaya gelmez.
-    for (var i = 1; i < prescriptionOrders.length; i++) {
-      expect(prescriptionOrders[i].formula, isNot(prescriptionOrders[i - 1].formula), reason: '$i');
-    }
   });
 
-  test('hâller miktarı oranla yazar ya da notta söyler', () {
-    final zno = prescriptionOrders.where((o) => o.magistralName == 'Çinko oksit patı %25 (USP)').toList();
-    expect(zno.length, greaterThanOrEqualTo(7));
-    // İlk hâl 100 g, ikincisi 50 g: miktarlar yarıya iner.
-    expect([for (final i in zno[1].ingredients) i.written], ['12,5 g', '12,5 g', '25 g']);
-    // Üçüncü hâl formülü 100 g için yazar, 30 g'ı notta söyler.
-    expect(zno[2].batchNote, 'Formül 100 g için yazılmış; sen 30 g hazırla.');
-    expect([for (final i in zno[2].ingredients) i.written], ['25 g', '25 g', '50 g']);
+  // Tuğrul, 2026-10-29: "100 gramda hangi maddeden kaç g var onu yaz ama oyunun
+  // bir mekaniği olmasın".
+  test('miktar bilgi: gram ve mL hep 100 için yazılır, "hazırla" notu yok', () {
+    expect([for (final i in prescriptionOrders.first.ingredients) i.written], ['%5', '3 g', 'ad 100 g']);
+    final hidrofil = prescriptionOrders[2]; // kitapta 1000 g
+    expect([for (final i in hidrofil.ingredients) i.written].take(3), ['25 mg', '15 mg', '1 g']);
+    for (final o in prescriptionOrders) {
+      // Kapsül ve paket tozda formül kendi sayısıyla yazılır (30 kapsül, 30 paket).
+      final counted = o.formula.contains('kapsül') || o.formula.contains('paket');
+      final ad = o.ingredients.where((i) => i.written.startsWith('ad ')).map((i) => i.written);
+      for (final w in ad) {
+        if (!counted) expect(w, anyOf('ad 100 g', 'ad 100 mL'), reason: o.key);
+      }
+      expect(o.note == null || o.note!.endsWith('numara kapsül'), isTrue, reason: o.key);
+    }
   });
 }

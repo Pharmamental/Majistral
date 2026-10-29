@@ -16,10 +16,8 @@ class Amount {
   final bool ad;
 }
 
-/// Bir formülün oyundaki reçete kalıbı (Tuğrul, 2026-10-28, "500 civarı
-/// reçete"): aynı formül farklı miktar, farklı hekim ve hastayla birkaç kez
-/// reçete edilir. Her hâl [batches]'teki bir miktardır; hâller
-/// `data/orders.dart`'ta reçeteye çevrilir.
+/// Bir formülün oyundaki reçete kalıbı; `data/orders.dart`'ta tek reçeteye
+/// çevrilir (Tuğrul, 2026-10-29, "her formül tek reçete").
 class OrderTemplate {
   const OrderTemplate({
     required this.formula,
@@ -31,9 +29,7 @@ class OrderTemplate {
     required this.unit,
     required this.amounts,
     required this.steps,
-    required this.batches,
     this.capsule,
-    this.alwaysNote = false,
     this.doctor,
     this.patient,
   });
@@ -47,24 +43,18 @@ class OrderTemplate {
   /// Hekimin dalı ("Dermatoloji"); hekim adı bu dalın listesinden seçilir.
   final String branch;
 
-  /// Maddelerin yazıldığı temel miktar ve birimi (100 g, 100 mL, 30 kapsül).
+  /// Maddelerin yazıldığı temel miktar ve birimi (100 g, 100 mL, 30 kapsül);
+  /// gram ve mL'li formül reçetede 100'e çevrilir.
   final num base;
   final String unit;
 
   final List<Amount> amounts;
   final List<PrescriptionStep> steps;
 
-  /// Her hâlin hazırlanacak miktarı; ilki temel hâl.
-  final List<num> batches;
-
   /// Kapsül numarası ("3 numara"); kapsül reçetelerinde not satırına yazılır.
   final String? capsule;
 
-  /// Formül hep temel miktarıyla yazılır, hazırlanacak miktar notta
-  /// söylenir (hidrofil merhem 1000 g formülü).
-  final bool alwaysNote;
-
-  /// İlk hâlin hekimi ve hastası (oyunun ilk reçeteleri hep aynı kalsın).
+  /// Reçetenin hekimi ve hastası (oyunun ilk reçeteleri hep aynı kalsın).
   final String? doctor;
   final String? patient;
 }

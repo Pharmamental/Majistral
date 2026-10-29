@@ -18,22 +18,20 @@ import 'test_helpers.dart';
 ShopItem _tool(String name) => stations.expand((s) => s.tiers).firstWhere((t) => t.name == name);
 
 void main() {
-  final order = prescriptionOrders.first; // %5 SA 50 g: ezme, levigasyon, seyreltme
+  final order = prescriptionOrders.first; // %5 SA 100 g: ezme, levigasyon, seyreltme
 
   group('veri', () {
-    test('gram hesabı: yüzde, ad, not satırı, kapsül', () {
-      expect(gramsFor(order), {'Salisilik Asit': 2.5, 'Sıvı Parafin': 1.5, 'Beyaz Vazelin': 46});
-      final hidrofil = gramsFor(prescriptionOrders[2]); // 1000 g formülü, 100 g hazırlanır
+    test('gram hesabı: yüzde, ad, kapsül; reçete hep 100 g için', () {
+      expect(gramsFor(order), {'Salisilik Asit': 5, 'Sıvı Parafin': 3, 'Beyaz Vazelin': 92});
+      final hidrofil = gramsFor(prescriptionOrders[2]); // 1000 g formülü 100 g'a çevrilir
       expect(hidrofil['Stearil Alkol'], closeTo(25, 1e-9));
       expect(hidrofil['Metilparaben'], closeTo(0.025, 1e-9));
       final folik = gramsFor(prescriptionOrders[5]); // 30 kapsül
       expect(folik['Folik Asit'], closeTo(0.03, 1e-9));
       expect(folik['Laktoz'], closeTo(30 * 0.2 - 0.03, 1e-9));
-      final note = prescriptionOrders.firstWhere((o) => o.batchNote == 'Formül 100 g için yazılmış; sen 30 g hazırla.');
-      expect(gramsFor(note).values.fold(0.0, (a, b) => a + b), closeTo(30, 0.01));
     });
 
-    test('500 reçetenin hiçbirinde eksi miktar yok; her madde paketli ya da bedava', () {
+    test('hiçbir reçetede eksi miktar yok; her madde paketli ya da bedava', () {
       for (final o in prescriptionOrders) {
         for (final MapEntry(:key, :value) in gramsFor(o).entries) {
           expect(value, greaterThanOrEqualTo(0), reason: '${o.key}: $key');
@@ -81,8 +79,8 @@ void main() {
       expect(store.stockOf('Beyaz Vazelin'), 250);
       expect(store.missingCost(order), 0);
       await take(store, order);
-      expect(store.stockOf('Beyaz Vazelin'), 204);
-      expect(store.stockOf('Salisilik Asit'), 22.5);
+      expect(store.stockOf('Beyaz Vazelin'), 158);
+      expect(store.stockOf('Salisilik Asit'), 20);
     });
 
     test('teslim parası: malzeme + emek; günün ilk 3 teslimi emek ×2, 4.sü değil', () async {

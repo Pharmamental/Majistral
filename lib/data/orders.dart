@@ -77,7 +77,6 @@ const List<OrderTemplate> _handwritten = [
         notWith: {'Çelik spatül': _celikSA},
       ),
     ],
-    batches: [50, 30, 100, 20, 60, 40, 75, 25],
   ),
   OrderTemplate(
     doctor: 'Dr. Kerem',
@@ -99,7 +98,6 @@ const List<OrderTemplate> _handwritten = [
       PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 5, notWith: _tozHavani),
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.karistirma, orWith: _havanda, minutes: 7),
     ],
-    batches: [60, 30, 100, 50, 120, 40, 200, 80],
   ),
   OrderTemplate(
     doctor: 'Dr. Deniz',
@@ -111,7 +109,6 @@ const List<OrderTemplate> _handwritten = [
     usedFor: 'Etkin maddeleri taşıyan baz olarak; suyla kolay temizlenmesi istenen kremlerde',
     base: 1000,
     unit: 'g',
-    alwaysNote: true,
     amounts: [
       Amount('Metilparaben', 0.25, 'g'),
       Amount('Propilparaben', 0.15, 'g'),
@@ -131,7 +128,6 @@ const List<OrderTemplate> _handwritten = [
       PrescriptionStep('Emülsifikasyon', tool: StepTool.kapsul, minutes: 9),
       PrescriptionStep('Soğutma', tool: StepTool.kapsul, minutes: 8),
     ],
-    batches: [100, 50, 200, 150, 250, 30, 75, 120, 60, 300],
   ),
   // Formül kitabından (2026-10-28): en sık adımlar laboratuvarda. Elekten
   // geçirme (pudra, kapsül), karıştırma, şişirme ve hacme tamamlama (jel),
@@ -155,7 +151,6 @@ const List<OrderTemplate> _handwritten = [
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.havan, minutes: 4, notWith: _tozHavani),
       PrescriptionStep('Elekten geçirme', tool: StepTool.elek, minutes: 3),
     ],
-    batches: [100, 50, 200, 30, 150, 60, 250, 80],
   ),
   OrderTemplate(
     doctor: 'Dr. Murat',
@@ -179,7 +174,6 @@ const List<OrderTemplate> _handwritten = [
       PrescriptionStep('Şişirme', tool: StepTool.beher, minutes: 10),
       PrescriptionStep('Hacme tamamlama', tool: StepTool.mezur, minutes: 2),
     ],
-    batches: [100, 50, 200, 30, 150, 60, 250, 80],
   ),
   OrderTemplate(
     doctor: 'Dr. Leyla',
@@ -202,14 +196,12 @@ const List<OrderTemplate> _handwritten = [
       PrescriptionStep('Elekten geçirme', tool: StepTool.elek, minutes: 2),
       PrescriptionStep('Kapsül doldurma', tool: StepTool.kapsulAleti, minutes: 6),
     ],
-    batches: [30, 60, 20, 90, 15, 45, 100, 50],
   ),
 ];
 
-/// Oyundaki bütün reçeteler (yaklaşık 800, 112 farklı majistral): elle yazılmış altı reçete ve
-/// formül kitabından gelenler, her biri birkaç hâliyle. Sıra hâllere göre
-/// dizilir (önce her formülün ilk hâli, sonra ikincisi…), böylece duvarda aynı
-/// formül arka arkaya gelmez.
+/// Oyundaki bütün reçeteler (112): elle yazılmış altı reçete ve formül
+/// kitabından gelenler, her formül bir kez (Tuğrul, 2026-10-29, "her formül tek
+/// reçete"). Duvar bunları sırayla döndürür.
 final List<PrescriptionOrder> prescriptionOrders = buildOrders([..._handwritten, ...bookTemplates]);
 
 // Hekimlerin dallara göre adları (yalnız unvan ve ilk ad; Tuğrul, 2026-10-27)
@@ -231,43 +223,26 @@ const _surnames = [
   'Polat', 'Aydın', 'Erdem', 'Güneş', 'Tekin', 'Yıldız', 'Bulut', 'Keskin', 'Avcı', 'Kılıç', 'Uçar', 'Duman',
 ];
 
-/// Şablonları reçetelere çevirir; [OrderTemplate.batches]'teki her miktar bir hâl.
-List<PrescriptionOrder> buildOrders(List<OrderTemplate> templates) {
-  final most = templates.fold(0, (m, t) => t.batches.length > m ? t.batches.length : m);
-  final orders = <PrescriptionOrder>[];
-  for (var v = 0; v < most; v++) {
-    for (var i = 0; i < templates.length; i++) {
-      if (v < templates[i].batches.length) orders.add(_variant(templates[i], i, v, orders.length));
-    }
-  }
-  return orders;
-}
+/// Şablonları reçetelere çevirir, her şablondan bir reçete.
+List<PrescriptionOrder> buildOrders(List<OrderTemplate> templates) =>
+    [for (final (i, t) in templates.indexed) _order(t, i)];
 
-PrescriptionOrder _variant(OrderTemplate t, int ti, int v, int n) {
-  final batch = t.batches[v];
+/// Miktar oyunun mekaniği değil, bilgi (Tuğrul, 2026-10-29): gram ve mL'li
+/// formül hep 100 g ya da 100 mL için yazılır; kapsül ve paket kendi sayısıyla.
+PrescriptionOrder _order(OrderTemplate t, int i) {
   final counted = t.unit == 'kapsül' || t.unit == 'paket';
-  // Her üç hâlden birinde formül temel miktarıyla yazılır, hazırlanacak
-  // miktarı oyuncu hesaplar (Formül 100 g için; sen 50 g hazırla).
-  final note = !counted && batch != t.base && (t.alwaysNote || v % 3 == 2);
-  final scale = note ? 1 : batch / t.base;
+  final scale = counted ? 1 : 100 / t.base;
   final names = _doctors[t.branch]!;
   return PrescriptionOrder(
-    key: v == 0 ? t.magistralName : '${t.magistralName} · ${v + 1}',
-    doctorName: v == 0 && t.doctor != null ? t.doctor! : 'Dr. ${names[(ti + v * 3) % names.length]}',
+    doctorName: t.doctor ?? 'Dr. ${names[i % names.length]}',
     doctorBranch: t.branch,
-    patientName: v == 0 && t.patient != null
-        ? t.patient!
-        : '${_initials[(n * 7) % _initials.length]}. ${_surnames[(n * 11) % _surnames.length]}',
+    patientName: t.patient ?? '${_initials[(i * 7) % _initials.length]}. ${_surnames[(i * 11) % _surnames.length]}',
     magistralName: t.magistralName,
     formula: t.formula,
     purpose: t.purpose,
     usedFor: t.usedFor,
     ingredients: [for (final a in t.amounts) Ingredient(a.name, _written(a, a.qty * scale))],
-    batchNote: counted
-        ? '${_num(batch)} ${t.unit}${t.capsule != null ? ' (${t.capsule})' : ''} hazırla.'
-        : note
-            ? 'Formül ${_num(t.base)} ${t.unit} için yazılmış; sen ${_num(batch)} ${t.unit} hazırla.'
-            : null,
+    note: t.capsule == null ? null : '${t.capsule} kapsül',
     steps: t.steps,
   );
 }

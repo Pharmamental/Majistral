@@ -4,10 +4,9 @@ import '../models/prescription.dart';
 // Formül kitabından oyuna giren reçeteler (Tuğrul, 2026-10-28: "30-40 civarı
 // madde, 500 civarı reçete"; 2026-10-29: 62 madde, 112 farklı majistral).
 // Formüller data/formulary'deki kaynaklı formüllerin aynısı; kitaptaki yalnız
-// marketteki maddelerle yapılabilen formüller seçildi. Yeni şablonlar 6 hâlle
-// gelir, tek şablonda geçen madde varsa 10. Her formül birkaç miktarla, farklı hekim ve
-// hastayla tekrar gelir (hâller). Bu dosya scratchpad'deki uret.py ile üretildi;
-// elle düzenlenebilir.
+// marketteki maddelerle yapılabilen formüller seçildi. Her formül bir reçete;
+// miktarlar 100 g ya da 100 mL için yazılır (data/orders.dart). Bu dosya
+// scratchpad'deki uret.py ile üretildi; elle düzenlenebilir.
 //
 // Adım aletleri orders.dart'taki kurallarla aynı: toz ezilirken ve levige
 // edilirken cam havan olmaz; salisilik asit ve iyot çelik spatülle tepkimeye
@@ -36,7 +35,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Çözme', tool: StepTool.beher, minutes: 3),
       PrescriptionStep('Hacme tamamlama', tool: StepTool.mezur, minutes: 2),
     ],
-    batches: [100, 50, 200, 150, 250, 30, 75],
   ),
   OrderTemplate(
     formula: 'Sodyum florür ağız çalkalama çözeltisi %0,05',
@@ -54,7 +52,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Çözme', tool: StepTool.beher, minutes: 3),
       PrescriptionStep('Hacme tamamlama', tool: StepTool.mezur, minutes: 2),
     ],
-    batches: [100, 50, 200, 150, 250, 30, 75, 120],
   ),
   OrderTemplate(
     formula: 'Sodyum florür ağız çalkalama çözeltisi %0,2',
@@ -72,7 +69,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Çözme', tool: StepTool.beher, minutes: 3),
       PrescriptionStep('Hacme tamamlama', tool: StepTool.mezur, minutes: 2),
     ],
-    batches: [100, 50, 200, 150, 250, 30, 75, 120],
   ),
   OrderTemplate(
     formula: 'Klorheksidin glukonat gargarası %0,2',
@@ -90,7 +86,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Karıştırma', tool: StepTool.beher, minutes: 2),
       PrescriptionStep('Hacme tamamlama', tool: StepTool.mezur, minutes: 2),
     ],
-    batches: [100, 50, 200, 150, 250, 30, 75, 120],
   ),
   OrderTemplate(
     formula: 'Klorheksidin glukonat ağız çalkalama çözeltisi %0,12',
@@ -108,7 +103,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Karıştırma', tool: StepTool.beher, minutes: 2),
       PrescriptionStep('Hacme tamamlama', tool: StepTool.mezur, minutes: 2),
     ],
-    batches: [100, 50, 200, 150, 250, 30, 75, 120],
   ),
   OrderTemplate(
     formula: 'Povidon iyot gargarası %1',
@@ -126,7 +120,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Çözme', tool: StepTool.beher, minutes: 3),
       PrescriptionStep('Hacme tamamlama', tool: StepTool.mezur, minutes: 2),
     ],
-    batches: [100, 50, 200, 150, 250, 30, 75],
   ),
   OrderTemplate(
     formula: 'Povidon iyot topikal çözeltisi %10',
@@ -144,7 +137,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Çözme', tool: StepTool.beher, minutes: 3),
       PrescriptionStep('Hacme tamamlama', tool: StepTool.mezur, minutes: 2),
     ],
-    batches: [100, 50, 200, 150, 250, 30, 75],
   ),
   OrderTemplate(
     formula: 'Alüminyum klorür hekzahidrat çözeltisi %20 (izopropanollü)',
@@ -164,7 +156,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Karıştırma', tool: StepTool.beher, minutes: 2),
       PrescriptionStep('Hacme tamamlama', tool: StepTool.mezur, minutes: 2),
     ],
-    batches: [100, 50, 30, 200, 60, 40, 25],
   ),
   OrderTemplate(
     formula: 'Alüminyum klorür hekzahidrat çözeltisi %15 (izopropanollü)',
@@ -184,7 +175,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Karıştırma', tool: StepTool.beher, minutes: 2),
       PrescriptionStep('Hacme tamamlama', tool: StepTool.mezur, minutes: 2),
     ],
-    batches: [100, 50, 30, 200, 60, 40, 25],
   ),
   OrderTemplate(
     formula: 'Salisilik asitli izopropanol spiriti %2',
@@ -204,7 +194,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Karıştırma', tool: StepTool.beher, minutes: 2),
       PrescriptionStep('Hacme tamamlama', tool: StepTool.mezur, minutes: 2),
     ],
-    batches: [100, 50, 30, 200, 60, 40, 25],
   ),
   OrderTemplate(
     formula: 'Salisilik asitli akne spiriti %5',
@@ -225,7 +214,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Karıştırma', tool: StepTool.beher, minutes: 2),
       PrescriptionStep('Hacme tamamlama', tool: StepTool.mezur, minutes: 2),
     ],
-    batches: [100, 50, 30, 200, 60, 40, 25],
   ),
   OrderTemplate(
     formula: 'Sodyum bikarbonat kulak damlası %5',
@@ -245,7 +233,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Karıştırma', tool: StepTool.beher, minutes: 2),
       PrescriptionStep('Hacme tamamlama', tool: StepTool.mezur, minutes: 2),
     ],
-    batches: [100, 50, 200, 150, 250, 30, 75],
   ),
   OrderTemplate(
     formula: 'Kayganlaştırıcı jel',
@@ -267,7 +254,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Şişirme', tool: StepTool.beher, minutes: 10),
       PrescriptionStep('Hacme tamamlama', tool: StepTool.mezur, minutes: 2),
     ],
-    batches: [100, 50, 30, 200, 60, 40, 25],
   ),
   OrderTemplate(
     formula: 'Kükürtlü jel %5',
@@ -289,7 +275,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.karistirma, orWith: _havanda, minutes: 4),
       PrescriptionStep('Hacme tamamlama', tool: StepTool.mezur, minutes: 2),
     ],
-    batches: [100, 50, 30, 200, 60, 40, 25],
   ),
   OrderTemplate(
     formula: 'Alüminyum klorürlü jel %15',
@@ -309,7 +294,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Şişirme', tool: StepTool.beher, minutes: 10),
       PrescriptionStep('Hacme tamamlama', tool: StepTool.mezur, minutes: 2),
     ],
-    batches: [100, 50, 30, 200, 60, 40, 25],
   ),
   OrderTemplate(
     formula: 'Alüminyum klorürlü jel %20',
@@ -329,7 +313,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Şişirme', tool: StepTool.beher, minutes: 10),
       PrescriptionStep('Hacme tamamlama', tool: StepTool.mezur, minutes: 2),
     ],
-    batches: [100, 50, 30, 200, 60, 40, 25],
   ),
   OrderTemplate(
     formula: 'Sulu yün yağı alkolleri merhemi (DAB)',
@@ -348,7 +331,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Emülsifikasyon', tool: StepTool.kapsul, minutes: 9),
       PrescriptionStep('Soğutma', tool: StepTool.kapsul, minutes: 8),
     ],
-    batches: [100, 50, 30, 200, 60, 40, 25],
   ),
   OrderTemplate(
     formula: 'Gliserinli setomakrogol krem %10',
@@ -365,7 +347,6 @@ const List<OrderTemplate> bookTemplates = [
     steps: [
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.karistirma, orWith: _havanda, minutes: 4),
     ],
-    batches: [100, 50, 30, 200, 60, 40, 25, 150],
   ),
   OrderTemplate(
     formula: 'Üreli sulu krem %20',
@@ -383,7 +364,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Ezme', tool: StepTool.havan, orWith: _levhada, minutes: 1, notWith: {'Cam havan': _cam}),
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.karistirma, orWith: _havanda, minutes: 4),
     ],
-    batches: [100, 50, 30, 200, 60, 40, 25],
   ),
   OrderTemplate(
     formula: 'Mentollü sulu krem %1',
@@ -402,7 +382,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3, notWith: {'Cam havan': _cam}),
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.karistirma, orWith: _havanda, minutes: 4),
     ],
-    batches: [100, 50, 30, 200, 60, 40, 25],
   ),
   OrderTemplate(
     formula: 'Mentollü sulu krem %2',
@@ -421,7 +400,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3, notWith: {'Cam havan': _cam}),
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.karistirma, orWith: _havanda, minutes: 4),
     ],
-    batches: [100, 50, 30, 200, 60, 40, 25],
   ),
   OrderTemplate(
     formula: 'Mentollü setomakrogol krem %2',
@@ -440,7 +418,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3, notWith: {'Cam havan': _cam}),
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.karistirma, orWith: _havanda, minutes: 4),
     ],
-    batches: [100, 50, 30, 200, 60, 40, 25, 150],
   ),
   OrderTemplate(
     formula: 'Mentol %1 ve salisilik asit %1 sulu krem',
@@ -460,7 +437,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3, notWith: {'Cam havan': _cam, 'Çelik spatül': _celikSA}),
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.karistirma, orWith: _havanda, minutes: 4, notWith: {'Çelik spatül': _celikSA}),
     ],
-    batches: [100, 50, 30, 200, 60, 40, 25],
   ),
   OrderTemplate(
     formula: 'Salisilik asit ve kükürtlü sulu krem %2',
@@ -481,7 +457,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3, notWith: {'Cam havan': _cam, 'Çelik spatül': _celikSA}),
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.karistirma, orWith: _havanda, minutes: 4, notWith: {'Çelik spatül': _celikSA}),
     ],
-    batches: [100, 50, 30, 200, 60, 40, 25],
   ),
   OrderTemplate(
     formula: 'Salisilik asitli sulu krem %5',
@@ -500,7 +475,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3, notWith: {'Cam havan': _cam, 'Çelik spatül': _celikSA}),
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.karistirma, orWith: _havanda, minutes: 4, notWith: {'Çelik spatül': _celikSA}),
     ],
-    batches: [100, 50, 30, 200, 60, 40, 25],
   ),
   OrderTemplate(
     formula: 'Kükürtlü sulu krem %5',
@@ -519,7 +493,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3, notWith: {'Cam havan': _cam}),
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.karistirma, orWith: _havanda, minutes: 4),
     ],
-    batches: [100, 50, 30, 200, 60, 40, 25],
   ),
   OrderTemplate(
     formula: 'Kükürtlü sulu krem %2',
@@ -538,7 +511,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3, notWith: {'Cam havan': _cam}),
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.karistirma, orWith: _havanda, minutes: 4),
     ],
-    batches: [100, 50, 30, 200, 60, 40, 25],
   ),
   OrderTemplate(
     formula: 'İhtiyollü krem %10',
@@ -557,7 +529,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Karıştırma', tool: StepTool.karistirma, orWith: _havanda, minutes: 3),
       PrescriptionStep('Emülsifikasyon', tool: StepTool.kapsul, minutes: 9),
     ],
-    batches: [100, 50, 30, 200, 60, 40, 25],
   ),
   OrderTemplate(
     formula: 'İhtiyollü krem %20',
@@ -576,7 +547,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Karıştırma', tool: StepTool.karistirma, orWith: _havanda, minutes: 3),
       PrescriptionStep('Emülsifikasyon', tool: StepTool.kapsul, minutes: 9),
     ],
-    batches: [100, 50, 30, 200, 60, 40, 25],
   ),
   OrderTemplate(
     formula: 'Salisilik asitli sulu krem %10',
@@ -595,7 +565,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3, notWith: {'Cam havan': _cam, 'Çelik spatül': _celikSA}),
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.karistirma, orWith: _havanda, minutes: 4, notWith: {'Çelik spatül': _celikSA}),
     ],
-    batches: [100, 50, 30, 200, 60, 40, 25],
   ),
   OrderTemplate(
     formula: 'Üre ve sodyum klorürlü lipofil krem %10',
@@ -617,7 +586,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Emülsifikasyon', tool: StepTool.kapsul, minutes: 9),
       PrescriptionStep('Soğutma', tool: StepTool.kapsul, minutes: 8),
     ],
-    batches: [100, 50, 30, 200, 60, 40, 25],
   ),
   OrderTemplate(
     formula: 'Setrimidli krem %0,5',
@@ -639,7 +607,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Emülsifikasyon', tool: StepTool.kapsul, minutes: 9),
       PrescriptionStep('Soğutma', tool: StepTool.kapsul, minutes: 8),
     ],
-    batches: [100, 50, 30, 200, 60, 40, 25, 150],
   ),
   OrderTemplate(
     formula: 'Beyaz merhem (USP)',
@@ -657,7 +624,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Eritme', tool: StepTool.isitma, minutes: 6, interactive: true),
       PrescriptionStep('Soğutma', tool: StepTool.kapsul, minutes: 8),
     ],
-    batches: [100, 50, 30, 200, 60, 40, 25, 150],
   ),
   OrderTemplate(
     formula: 'Basit merhem (BP, beyaz)',
@@ -677,7 +643,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Eritme', tool: StepTool.isitma, minutes: 6, interactive: true),
       PrescriptionStep('Soğutma', tool: StepTool.kapsul, minutes: 8),
     ],
-    batches: [100, 50, 30, 200, 60, 40, 25],
   ),
   OrderTemplate(
     formula: 'Basit merhem (BP, sarı)',
@@ -697,7 +662,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Eritme', tool: StepTool.isitma, minutes: 6, interactive: true),
       PrescriptionStep('Soğutma', tool: StepTool.kapsul, minutes: 8),
     ],
-    batches: [100, 50, 30, 200, 60, 40, 25],
   ),
   OrderTemplate(
     formula: 'Parafin merhemi (BP)',
@@ -717,7 +681,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Eritme', tool: StepTool.isitma, minutes: 6, interactive: true),
       PrescriptionStep('Soğutma', tool: StepTool.kapsul, minutes: 8),
     ],
-    batches: [100, 50, 30, 200, 60, 40, 25],
   ),
   OrderTemplate(
     formula: 'Sıvı parafin ve beyaz vazelin merhemi (50/50)',
@@ -736,7 +699,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Karıştırma', tool: StepTool.kapsul, minutes: 3),
       PrescriptionStep('Soğutma', tool: StepTool.kapsul, minutes: 8),
     ],
-    batches: [100, 50, 30, 200, 60, 40, 25],
   ),
   OrderTemplate(
     formula: 'Çinko merhemi %10 (DAB)',
@@ -755,7 +717,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3, notWith: {'Cam havan': _cam}),
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.karistirma, orWith: _havanda, minutes: 4),
     ],
-    batches: [100, 50, 30, 200, 60, 40, 25],
   ),
   OrderTemplate(
     formula: 'Çinko oksit patı %25 (USP)',
@@ -775,7 +736,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3, notWith: {'Cam havan': _cam}),
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.karistirma, orWith: _havanda, minutes: 4),
     ],
-    batches: [100, 50, 30, 200, 60, 40, 25],
   ),
   OrderTemplate(
     formula: 'Lipofil çinko oksit patı %30 (NRF)',
@@ -794,7 +754,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3, notWith: {'Cam havan': _cam}),
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.karistirma, orWith: _havanda, minutes: 4),
     ],
-    batches: [100, 50, 30, 200, 60, 40, 25],
   ),
   OrderTemplate(
     formula: 'Lassar patı (çinko oksit ve salisilik asit patı)',
@@ -817,7 +776,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Karıştırma', tool: StepTool.kapsul, minutes: 3),
       PrescriptionStep('Soğutma', tool: StepTool.kapsul, minutes: 8),
     ],
-    batches: [100, 50, 30, 200, 60, 40, 25],
   ),
   OrderTemplate(
     formula: 'Salisilik asitli vazelin %10',
@@ -837,7 +795,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3, notWith: {'Cam havan': _cam, 'Çelik spatül': _celikSA}),
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.karistirma, orWith: _havanda, minutes: 4, notWith: {'Çelik spatül': _celikSA}),
     ],
-    batches: [100, 50, 30, 200, 60, 40, 25],
   ),
   OrderTemplate(
     formula: 'Salisilik asit %3 ve kükürt %3 merhemi',
@@ -858,7 +815,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3, notWith: {'Cam havan': _cam, 'Çelik spatül': _celikSA}),
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.karistirma, orWith: _havanda, minutes: 4, notWith: {'Çelik spatül': _celikSA}),
     ],
-    batches: [100, 50, 30, 200, 60, 40, 25],
   ),
   OrderTemplate(
     formula: 'Kükürt merhemi %10 (USP)',
@@ -878,7 +834,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3, notWith: {'Cam havan': _cam}),
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.karistirma, orWith: _havanda, minutes: 4),
     ],
-    batches: [100, 50, 30, 200, 60, 40, 25, 150, 75, 20, 120],
   ),
   OrderTemplate(
     formula: 'Kükürtlü vazelin %6',
@@ -897,7 +852,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3, notWith: {'Cam havan': _cam}),
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.karistirma, orWith: _havanda, minutes: 4),
     ],
-    batches: [100, 50, 30, 200, 60, 40, 25],
   ),
   OrderTemplate(
     formula: 'Kükürtlü vazelin %10',
@@ -916,7 +870,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3, notWith: {'Cam havan': _cam}),
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.karistirma, orWith: _havanda, minutes: 4),
     ],
-    batches: [100, 50, 30, 200, 60, 40, 25],
   ),
   OrderTemplate(
     formula: 'İhtiyol merhemi %10 (USP)',
@@ -935,7 +888,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Karıştırma', tool: StepTool.karistirma, orWith: _havanda, minutes: 3),
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.karistirma, orWith: _havanda, minutes: 4),
     ],
-    batches: [100, 50, 30, 200, 60, 40, 25],
   ),
   OrderTemplate(
     formula: 'İhtiyol merhemi %10 (BP)',
@@ -955,7 +907,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Soğutma', tool: StepTool.kapsul, minutes: 8),
       PrescriptionStep('Karıştırma', tool: StepTool.kapsul, minutes: 3),
     ],
-    batches: [100, 50, 30, 200, 60, 40, 25],
   ),
   OrderTemplate(
     formula: 'Ditranollü vazelin %0,1',
@@ -974,7 +925,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3, notWith: {'Cam havan': _cam}),
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.karistirma, orWith: _havanda, minutes: 4),
     ],
-    batches: [100, 50, 30, 200, 60, 40, 25],
   ),
   OrderTemplate(
     formula: 'Salisilik asitli ditranollü vazelin %0,5',
@@ -995,7 +945,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3, notWith: {'Cam havan': _cam, 'Çelik spatül': _celikSA}),
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.karistirma, orWith: _havanda, minutes: 4, notWith: {'Çelik spatül': _celikSA}),
     ],
-    batches: [100, 50, 30, 200, 60, 40, 25],
   ),
   OrderTemplate(
     formula: 'Setrimid emülsiyon yapıcı merhemi %3 (BP)',
@@ -1016,7 +965,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Çözme', tool: StepTool.isitma, minutes: 4),
       PrescriptionStep('Soğutma', tool: StepTool.kapsul, minutes: 8),
     ],
-    batches: [100, 50, 30, 200, 60, 40, 25],
   ),
   OrderTemplate(
     formula: 'Povidon iyot merhemi %10',
@@ -1034,7 +982,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3, notWith: {'Cam havan': _cam, 'Çelik spatül': _celikIyot}),
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.karistirma, orWith: _havanda, minutes: 4, notWith: {'Çelik spatül': _celikIyot}),
     ],
-    batches: [100, 50, 30, 200, 60, 40, 25, 150, 75, 20, 120],
   ),
   OrderTemplate(
     formula: 'Üre patı %40 (tırnak)',
@@ -1054,7 +1001,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3, notWith: {'Cam havan': _cam}),
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.karistirma, orWith: _havanda, minutes: 4),
     ],
-    batches: [100, 50, 30, 200, 60, 40, 25],
   ),
   OrderTemplate(
     formula: 'Çinko oksit çalkalama karışımı (Lotio alba)',
@@ -1076,7 +1022,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3, notWith: {'Cam havan': _cam}),
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.havan, minutes: 4, notWith: {'Cam havan': _cam}),
     ],
-    batches: [100, 50, 30, 200, 60, 40, 25],
   ),
   OrderTemplate(
     formula: 'Çinko, nişasta ve talk pudrası',
@@ -1096,7 +1041,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.havan, minutes: 4, notWith: {'Cam havan': _cam}),
       PrescriptionStep('Elekten geçirme', tool: StepTool.elek, minutes: 2),
     ],
-    batches: [100, 50, 30, 200, 60, 40, 25],
   ),
   OrderTemplate(
     formula: 'Talk pudrası',
@@ -1114,7 +1058,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Karıştırma', tool: StepTool.havan, minutes: 2),
       PrescriptionStep('Elekten geçirme', tool: StepTool.elek, minutes: 2),
     ],
-    batches: [100, 50, 30, 200, 60, 40, 25],
   ),
   OrderTemplate(
     formula: 'Mentollü pudra %1',
@@ -1133,7 +1076,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.havan, minutes: 4, notWith: {'Cam havan': _cam}),
       PrescriptionStep('Elekten geçirme', tool: StepTool.elek, minutes: 2),
     ],
-    batches: [100, 50, 30, 200, 60, 40, 25],
   ),
   OrderTemplate(
     formula: 'Sodyum bikarbonat paket toz 1 g',
@@ -1150,7 +1092,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Ezme', tool: StepTool.havan, minutes: 2, notWith: {'Cam havan': _cam}),
       PrescriptionStep('Elekten geçirme', tool: StepTool.elek, minutes: 2),
     ],
-    batches: [10, 30, 20, 60, 15, 45, 40],
   ),
   OrderTemplate(
     formula: 'Folik asit paket toz 0,5 mg',
@@ -1169,7 +1110,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.havan, minutes: 4, notWith: {'Cam havan': _cam}),
       PrescriptionStep('Elekten geçirme', tool: StepTool.elek, minutes: 2),
     ],
-    batches: [30, 10, 20, 60, 15, 45, 40],
   ),
   OrderTemplate(
     formula: 'Sodyum klorür paket toz 500 mg',
@@ -1186,7 +1126,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Ezme', tool: StepTool.havan, minutes: 2, notWith: {'Cam havan': _cam}),
       PrescriptionStep('Elekten geçirme', tool: StepTool.elek, minutes: 2),
     ],
-    batches: [30, 10, 20, 60, 15, 45, 40],
   ),
   OrderTemplate(
     formula: 'Sodyum klorür kapsülü 500 mg',
@@ -1204,7 +1143,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Elekten geçirme', tool: StepTool.elek, minutes: 2),
       PrescriptionStep('Kapsül doldurma', tool: StepTool.kapsulAleti, minutes: 6),
     ],
-    batches: [30, 60, 20, 90, 15, 45, 100],
   ),
   OrderTemplate(
     formula: 'Sodyum bikarbonat kapsülü 500 mg',
@@ -1222,7 +1160,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Elekten geçirme', tool: StepTool.elek, minutes: 2),
       PrescriptionStep('Kapsül doldurma', tool: StepTool.kapsulAleti, minutes: 6),
     ],
-    batches: [30, 60, 20, 90, 15, 45, 100],
   ),
   // 62 maddeye çıkış (Tuğrul, 2026-10-29, "farklı majistral sayımız çok az"): kitapta duran, yeni maddelerle yapılabilen formüller.
   OrderTemplate(
@@ -1241,7 +1178,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Karıştırma', tool: StepTool.beher, minutes: 2),
       PrescriptionStep('Hacme tamamlama', tool: StepTool.mezur, minutes: 2),
     ],
-    batches: [100, 20, 30, 50, 15, 25],
   ),
   OrderTemplate(
     formula: 'Etanol %70',
@@ -1260,7 +1196,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Soğutma', tool: StepTool.kapsul, minutes: 5),
       PrescriptionStep('Hacme tamamlama', tool: StepTool.mezur, minutes: 2),
     ],
-    batches: [100, 50, 200, 250, 500, 150],
   ),
   OrderTemplate(
     formula: 'Hidrojen peroksit çözeltisi %3',
@@ -1278,7 +1213,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Karıştırma', tool: StepTool.beher, minutes: 2),
       PrescriptionStep('Hacme tamamlama', tool: StepTool.mezur, minutes: 2),
     ],
-    batches: [100, 50, 200, 150, 250, 30],
   ),
   OrderTemplate(
     formula: 'Hidrojen peroksit çözeltisi %6',
@@ -1296,7 +1230,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Karıştırma', tool: StepTool.beher, minutes: 2),
       PrescriptionStep('Hacme tamamlama', tool: StepTool.mezur, minutes: 2),
     ],
-    batches: [100, 50, 200, 150, 250, 30],
   ),
   OrderTemplate(
     formula: 'Allantoinli jel %0,5',
@@ -1319,7 +1252,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Şişirme', tool: StepTool.beher, minutes: 10),
       PrescriptionStep('Hacme tamamlama', tool: StepTool.mezur, minutes: 2),
     ],
-    batches: [100, 50, 30, 200, 60, 40, 25, 150, 75, 20],
   ),
   OrderTemplate(
     formula: 'Benzokainli jel %5',
@@ -1341,7 +1273,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Şişirme', tool: StepTool.beher, minutes: 10),
       PrescriptionStep('Hacme tamamlama', tool: StepTool.mezur, minutes: 2),
     ],
-    batches: [100, 50, 30, 200, 60, 40],
   ),
   OrderTemplate(
     formula: 'Gliserollü koruyucu jel %30',
@@ -1363,7 +1294,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Şişirme', tool: StepTool.beher, minutes: 10),
       PrescriptionStep('Hacme tamamlama', tool: StepTool.mezur, minutes: 2),
     ],
-    batches: [100, 50, 30, 200, 60, 40],
   ),
   OrderTemplate(
     formula: 'Hidroksipropilselüloz alkollü jeli %2',
@@ -1382,7 +1312,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Şişirme', tool: StepTool.beher, minutes: 10),
       PrescriptionStep('Hacme tamamlama', tool: StepTool.mezur, minutes: 2),
     ],
-    batches: [100, 50, 30, 200, 60, 40],
   ),
   OrderTemplate(
     formula: 'Klotrimazollü jel %1',
@@ -1404,7 +1333,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Şişirme', tool: StepTool.beher, minutes: 10),
       PrescriptionStep('Hacme tamamlama', tool: StepTool.mezur, minutes: 2),
     ],
-    batches: [100, 50, 30, 200, 60, 40],
   ),
   OrderTemplate(
     formula: 'Lidokainli jel %2',
@@ -1427,7 +1355,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Şişirme', tool: StepTool.beher, minutes: 10),
       PrescriptionStep('Hacme tamamlama', tool: StepTool.mezur, minutes: 2),
     ],
-    batches: [100, 50, 30, 200, 60, 40],
   ),
   OrderTemplate(
     formula: 'Lidokainli jel %4',
@@ -1450,7 +1377,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Karıştırma', tool: StepTool.beher, minutes: 2),
       PrescriptionStep('Hacme tamamlama', tool: StepTool.mezur, minutes: 2),
     ],
-    batches: [100, 50, 30, 200, 60, 40],
   ),
   OrderTemplate(
     formula: 'Mikonazollü jel %2',
@@ -1474,7 +1400,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.karistirma, orWith: _havanda, minutes: 4),
       PrescriptionStep('Hacme tamamlama', tool: StepTool.mezur, minutes: 2),
     ],
-    batches: [100, 50, 30, 200, 60, 40],
   ),
   OrderTemplate(
     formula: 'Salisilik asitli jel %2',
@@ -1496,7 +1421,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Şişirme', tool: StepTool.beher, minutes: 10, notWith: {'Çelik spatül': _celikSA}),
       PrescriptionStep('Hacme tamamlama', tool: StepTool.mezur, minutes: 2),
     ],
-    batches: [100, 50, 30, 200, 60, 40],
   ),
   OrderTemplate(
     formula: 'Salisilik asitli jel %6',
@@ -1518,7 +1442,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Şişirme', tool: StepTool.beher, minutes: 10, notWith: {'Çelik spatül': _celikSA}),
       PrescriptionStep('Hacme tamamlama', tool: StepTool.mezur, minutes: 2),
     ],
-    batches: [100, 50, 30, 200, 60, 40],
   ),
   OrderTemplate(
     formula: 'Klotrimazollü krem %1',
@@ -1537,7 +1460,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3, notWith: {'Cam havan': _cam}),
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.karistirma, orWith: _havanda, minutes: 4),
     ],
-    batches: [100, 50, 30, 200, 60, 40],
   ),
   OrderTemplate(
     formula: 'Krotamitonlu krem %10',
@@ -1554,7 +1476,6 @@ const List<OrderTemplate> bookTemplates = [
     steps: [
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.karistirma, orWith: _havanda, minutes: 4),
     ],
-    batches: [100, 50, 30, 200, 60, 40, 25, 150, 75, 20],
   ),
   OrderTemplate(
     formula: 'Laktik asitli sulu krem %10',
@@ -1571,7 +1492,6 @@ const List<OrderTemplate> bookTemplates = [
     steps: [
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.karistirma, orWith: _havanda, minutes: 4),
     ],
-    batches: [100, 50, 30, 200, 60, 40, 25, 150, 75, 20],
   ),
   OrderTemplate(
     formula: 'Mikonazol nitratlı krem %2',
@@ -1590,7 +1510,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3, notWith: {'Cam havan': _cam}),
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.karistirma, orWith: _havanda, minutes: 4),
     ],
-    batches: [100, 50, 30, 200, 60, 40],
   ),
   OrderTemplate(
     formula: 'Sulu krem ve emülsiye edici merhem karışımı %50',
@@ -1607,7 +1526,6 @@ const List<OrderTemplate> bookTemplates = [
     steps: [
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.karistirma, orWith: _havanda, minutes: 4),
     ],
-    batches: [100, 50, 30, 200, 60, 40],
   ),
   OrderTemplate(
     formula: 'Benzokain merhemi %5',
@@ -1627,7 +1545,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Çözme', tool: StepTool.isitma, minutes: 4),
       PrescriptionStep('Soğutma', tool: StepTool.kapsul, minutes: 8),
     ],
-    batches: [100, 50, 30, 200, 60, 40],
   ),
   OrderTemplate(
     formula: 'Hidrofil vazelin (USP)',
@@ -1648,7 +1565,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Çözme', tool: StepTool.isitma, minutes: 4),
       PrescriptionStep('Soğutma', tool: StepTool.kapsul, minutes: 8),
     ],
-    batches: [100, 50, 30, 200, 60, 40, 25, 150, 75, 20],
   ),
   OrderTemplate(
     formula: 'Kalamin merhemi %15 (BP)',
@@ -1667,7 +1583,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3, notWith: {'Cam havan': _cam}),
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.karistirma, orWith: _havanda, minutes: 4),
     ],
-    batches: [100, 50, 30, 200, 60, 40],
   ),
   OrderTemplate(
     formula: 'Salisilik asit merhemi %2 (BP)',
@@ -1688,7 +1603,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Karıştırma', tool: StepTool.kapsul, minutes: 3, notWith: {'Çelik spatül': _celikSA}),
       PrescriptionStep('Soğutma', tool: StepTool.kapsul, minutes: 8, notWith: {'Çelik spatül': _celikSA}),
     ],
-    batches: [100, 50, 30, 200, 60, 40],
   ),
   OrderTemplate(
     formula: 'Sarı merhem (USP)',
@@ -1706,7 +1620,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Eritme', tool: StepTool.isitma, minutes: 6, interactive: true),
       PrescriptionStep('Soğutma', tool: StepTool.kapsul, minutes: 8),
     ],
-    batches: [100, 50, 30, 200, 60, 40, 25, 150, 75, 20],
   ),
   OrderTemplate(
     formula: 'Whitfield merhemi (bileşik benzoik asit merhemi, BP)',
@@ -1728,7 +1641,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Karıştırma', tool: StepTool.kapsul, minutes: 3, notWith: {'Çelik spatül': _celikSA}),
       PrescriptionStep('Soğutma', tool: StepTool.kapsul, minutes: 8, notWith: {'Çelik spatül': _celikSA}),
     ],
-    batches: [100, 50, 30, 200, 60, 40],
   ),
   OrderTemplate(
     formula: 'Whitfield merhemi (bileşik benzoik asit merhemi, USP)',
@@ -1748,7 +1660,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3, notWith: {'Cam havan': _cam, 'Çelik spatül': _celikSA}),
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.karistirma, orWith: _havanda, minutes: 4, notWith: {'Çelik spatül': _celikSA}),
     ],
-    batches: [100, 50, 30, 200, 60, 40],
   ),
   OrderTemplate(
     formula: 'Yumuşak çinko patı %30 (DAB)',
@@ -1771,7 +1682,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3, notWith: {'Cam havan': _cam}),
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.karistirma, orWith: _havanda, minutes: 4),
     ],
-    batches: [100, 50, 30, 200, 60, 40],
   ),
   OrderTemplate(
     formula: 'Çinko merhemi %15 (BP)',
@@ -1790,7 +1700,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3, notWith: {'Cam havan': _cam}),
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.karistirma, orWith: _havanda, minutes: 4),
     ],
-    batches: [100, 50, 30, 200, 60, 40, 25, 150, 75, 20],
   ),
   OrderTemplate(
     formula: 'Bentonit magması %5',
@@ -1809,7 +1718,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Karıştırma', tool: StepTool.beher, minutes: 2),
       PrescriptionStep('Hacme tamamlama', tool: StepTool.mezur, minutes: 2),
     ],
-    batches: [100, 50, 200, 150, 250, 30],
   ),
   OrderTemplate(
     formula: 'Askorbik asit kapsülü 500 mg',
@@ -1831,7 +1739,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Elekten geçirme', tool: StepTool.elek, minutes: 2),
       PrescriptionStep('Kapsül doldurma', tool: StepTool.kapsulAleti, minutes: 6),
     ],
-    batches: [30, 60, 20, 90, 15, 45, 100, 50, 40, 120],
   ),
   OrderTemplate(
     formula: 'Kalsiyum karbonat kapsülü 500 mg',
@@ -1850,7 +1757,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Elekten geçirme', tool: StepTool.elek, minutes: 2),
       PrescriptionStep('Kapsül doldurma', tool: StepTool.kapsulAleti, minutes: 6),
     ],
-    batches: [30, 60, 20, 90, 15, 45],
   ),
   OrderTemplate(
     formula: 'Kalsiyum karbonat paket toz 500 mg',
@@ -1867,7 +1773,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Ezme', tool: StepTool.havan, minutes: 2, notWith: {'Cam havan': _cam}),
       PrescriptionStep('Elekten geçirme', tool: StepTool.elek, minutes: 2),
     ],
-    batches: [30, 10, 20, 60, 15, 45],
   ),
   OrderTemplate(
     formula: 'Kâfurlu mentollü pudra',
@@ -1887,7 +1792,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.havan, minutes: 4, notWith: {'Cam havan': _cam}),
       PrescriptionStep('Elekten geçirme', tool: StepTool.elek, minutes: 2),
     ],
-    batches: [100, 50, 30, 200, 60, 40],
   ),
   OrderTemplate(
     formula: 'Mikonazol nitrat pudrası %2',
@@ -1906,7 +1810,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.havan, minutes: 4, notWith: {'Cam havan': _cam}),
       PrescriptionStep('Elekten geçirme', tool: StepTool.elek, minutes: 2),
     ],
-    batches: [100, 50, 30, 200, 60, 40],
   ),
   // Eldeki maddelerle yapılabilen yeni formüller (2026-10-29; kaynakları formül kitabında).
   OrderTemplate(
@@ -1927,7 +1830,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Çözme', tool: StepTool.isitma, minutes: 4),
       PrescriptionStep('Soğutma', tool: StepTool.kapsul, minutes: 8),
     ],
-    batches: [100, 50, 30, 200, 60, 40],
   ),
   OrderTemplate(
     formula: 'Su patı (çinko oksit ve talk, FN)',
@@ -1948,7 +1850,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Ezme', tool: StepTool.havan, orWith: _levhada, minutes: 1, notWith: {'Cam havan': _cam}),
       PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3, notWith: {'Cam havan': _cam}),
     ],
-    batches: [100, 50, 30, 200, 60, 40],
   ),
   OrderTemplate(
     formula: 'Mentollü vazelin %1 (FN)',
@@ -1966,7 +1867,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Ezme', tool: StepTool.havan, orWith: _levhada, minutes: 1, notWith: {'Cam havan': _cam}),
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.karistirma, orWith: _havanda, minutes: 4),
     ],
-    batches: [100, 50, 30, 200, 60, 40],
   ),
   OrderTemplate(
     formula: 'İhtiyol %1 ve çinko oksit %15\'li sarı vazelin',
@@ -1986,7 +1886,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3, notWith: {'Cam havan': _cam}),
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.karistirma, orWith: _havanda, minutes: 4),
     ],
-    batches: [100, 50, 30, 200, 60, 40],
   ),
   OrderTemplate(
     formula: 'Salisilik asitli emülsiye edici merhem %5',
@@ -2005,7 +1904,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3, notWith: {'Cam havan': _cam, 'Çelik spatül': _celikSA}),
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.karistirma, orWith: _havanda, minutes: 4, notWith: {'Çelik spatül': _celikSA}),
     ],
-    batches: [100, 50, 30, 200, 60, 40],
   ),
   OrderTemplate(
     formula: 'Propilen glikollü sulu krem %20',
@@ -2022,7 +1920,6 @@ const List<OrderTemplate> bookTemplates = [
     steps: [
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.karistirma, orWith: _havanda, minutes: 4),
     ],
-    batches: [100, 50, 30, 200, 60, 40],
   ),
   OrderTemplate(
     formula: 'Etanollü el antiseptiği %80 (WHO)',
@@ -2042,7 +1939,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Karıştırma', tool: StepTool.beher, minutes: 2),
       PrescriptionStep('Hacme tamamlama', tool: StepTool.mezur, minutes: 2),
     ],
-    batches: [100, 50, 250, 500, 200, 150],
   ),
   OrderTemplate(
     formula: 'İzopropanollü el antiseptiği %75 (WHO)',
@@ -2062,7 +1958,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Karıştırma', tool: StepTool.beher, minutes: 2),
       PrescriptionStep('Hacme tamamlama', tool: StepTool.mezur, minutes: 2),
     ],
-    batches: [100, 50, 250, 500, 200, 150],
   ),
   OrderTemplate(
     formula: 'Asetik asit çözeltisi %5 (kolposkopi)',
@@ -2080,7 +1975,6 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Karıştırma', tool: StepTool.beher, minutes: 2),
       PrescriptionStep('Hacme tamamlama', tool: StepTool.mezur, minutes: 2),
     ],
-    batches: [100, 50, 20, 30, 200, 40],
   ),
   OrderTemplate(
     formula: 'Kalamin losyonu (fenolsüz, bentonit magmalı)',
@@ -2104,6 +1998,5 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.havan, minutes: 4, notWith: {'Cam havan': _cam}),
       PrescriptionStep('Hacme tamamlama', tool: StepTool.mezur, minutes: 2),
     ],
-    batches: [100, 50, 200, 150, 250, 30],
   ),
 ];

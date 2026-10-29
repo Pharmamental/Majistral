@@ -120,24 +120,15 @@ const _capsuleFill = 0.20;
 double _n(String s) => double.parse(s.replaceAll(',', '.'));
 
 /// Reçetenin harcadığı maddeler, gram olarak (su dahil; su bedava). Yazılışı
-/// okur: "%5", "1,5 g", "30 mg", "10 mL", "ad 50 g", "ad 30 kapsül"; not satırı
-/// "Formül 100 g için yazılmış; sen 30 g hazırla." ise miktarları ölçekler.
+/// okur: "%5", "1,5 g", "30 mg", "10 mL", "ad 100 g", "ad 30 kapsül". Reçete
+/// hep 100 g ya da 100 mL için yazılı (2026-10-29), stok bu kadar düşer.
 Map<String, double> gramsFor(PrescriptionOrder order) {
-  var scale = 1.0;
   double? total;
-  final note = RegExp(r'^Formül ([\d,]+) (?:g|mL) için yazılmış; sen ([\d,]+) (?:g|mL) hazırla\.')
-      .firstMatch(order.batchNote ?? '');
-  if (note != null) {
-    scale = _n(note.group(2)!) / _n(note.group(1)!);
-    total = _n(note.group(2)!);
-  }
   ({String name, String written})? ad;
-  if (total == null) {
-    for (final i in order.ingredients) {
-      if (!i.written.startsWith('ad ')) continue;
-      final [q, unit] = i.written.substring(3).split(' ');
-      if (unit == 'g' || unit == 'mL') total = _n(q);
-    }
+  for (final i in order.ingredients) {
+    if (!i.written.startsWith('ad ')) continue;
+    final [q, unit] = i.written.substring(3).split(' ');
+    if (unit == 'g' || unit == 'mL') total = _n(q);
   }
   final grams = <String, double>{};
   for (final i in order.ingredients) {
@@ -148,7 +139,7 @@ Map<String, double> gramsFor(PrescriptionOrder order) {
       ad = (name: i.name, written: w);
     } else {
       final [q, unit] = w.split(' ');
-      var g = _n(q) * scale;
+      var g = _n(q);
       if (unit == 'mg') g /= 1000;
       if (unit == 'mL') g *= _density[i.name] ?? 1;
       grams[i.name] = g;
@@ -159,7 +150,7 @@ Map<String, double> gramsFor(PrescriptionOrder order) {
     final rest = grams.values.fold(0.0, (a, b) => a + b);
     grams[ad.name] = unit == 'kapsül'
         ? _n(q) * _capsuleFill - rest
-        : _n(q) * scale * (unit == 'mL' ? (_density[ad.name] ?? 1) : 1) - rest;
+        : _n(q) * (unit == 'mL' ? (_density[ad.name] ?? 1) : 1) - rest;
   }
   return grams;
 }

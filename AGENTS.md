@@ -44,7 +44,7 @@ lib/
 ├── theme/             tokens (renk, boşluk, köşe, AppText yazı stilleri), app_theme
 ├── models/            shop_item (ShopItem, Station), prescription, prep_job, formula (formül kitabı)
 ├── data/              stations, lab_tools (laboratuvardaki aletler), market_items, orders
-│                      (elle yazılmış 6 reçete + hâl üretici), order_book (kitaptan 106 reçete
+│                      (elle yazılmış 6 reçete + reçete üretici), order_book (kitaptan 106 reçete
 │                      şablonu), references (kaynaklar), formulary +
 │                      formulary/<kategori>.dart (311 formül, kategori başına en az 50)
 ├── logic/             job_store (kabul edilen reçeteler, adım başlatma, acele, telefona kayıt,
@@ -223,11 +223,9 @@ lib/
   reçetede, 500 civarı reçete"): markette 39 madde, hepsi en az 10 reçetede; reçetede geçmeyen
   madde markette durmaz (benzil benzoat, kafur, LCD, rezorsin, PEG 400/3350, setil alkol, stearik
   asit, GMS, Tween, Span çıktı). 40 maddeyle kitaptan en çok ~70 formül tamamen yapılabiliyor;
-  bu yüzden 68 temel reçete (elle yazılmış 6 + kitaptan 62, `order_book.dart`) her biri 7-10
-  hâlle gelir: farklı miktar, hekim (dala göre) ve hasta; her üç hâlden birinde formül temel
-  miktarıyla yazılır, hazırlanacak miktar notta ("Formül 100 g için; sen 30 g hazırla").
-  0,1 g altı mg yazılır. Hâller sırayla dizilir, aynı formül duvarda arka arkaya gelmez.
-  Her reçetenin tek kimliği `PrescriptionOrder.key` (ilk hâlde adı); iş, duvar ve teslim kaydı
+  bu yüzden 68 temel reçete (elle yazılmış 6 + kitaptan 62, `order_book.dart`) farklı miktarla
+  7-10 hâl olarak geliyordu; bu 2026-10-29'da kalktı (aşağıda "Miktar bilgi").
+  Her reçetenin tek kimliği `PrescriptionOrder.key` (adı); iş, duvar ve teslim kaydı
   bununla tutulur (`order` alanı; eski kayıtta yoksa ad). Oyuna giren kitap formüllerinden
   raf ömrü olmayan 60'ına USP <795>'in genel süresi yazıldı (sulu koruyucusuz 14 gün buzdolabı,
   sulu koruyuculu 35 gün, susuz 180 gün; sulu krem ve setomakrogol krem koruyuculu, izopropanol
@@ -241,11 +239,19 @@ lib/
   balmumu, noniyonik hidrofil krem, basit merhem, emülsiye edici merhem); kitapta duran 34 formül
   bunlarla oyuna girdi. Kitaba eldeki maddelerle yapılabilen 11 yeni formül yazıldı (İspanya ve
   Brezilya ulusal formülerleri, WHO el antiseptikleri, IARC kolposkopi, BAD özel listesi); 10'u
-  oyunda (benzoik asit çözeltisi eczane stok çözeltisi, yalnız kitapta). Yeni şablonlar 6 hâlle
-  gelir, tek şablonda geçen madde varsa 10; toplam ~800 reçete. "Etkin maddeler" markette üçe
+  oyunda (benzoik asit çözeltisi eczane stok çözeltisi, yalnız kitapta). "Etkin maddeler" markette üçe
   bölündü (deri, antiseptik ve uyuşturucu, ağızdan alınanlar). Bir formülün miktarı ikinci
   bağımsız kaynakta görülmediyse girmez: NRF 11.2/11.3/11.4/11.60 çalkalama losyonları ve pudra
   ile klotrimazollü üre patı ve çinko merhemi yalnız Altmeyer'de görüldüğü için bekliyor.
+- **Miktar bilgi, mekanik değil** (Tuğrul, 2026-10-29, "100 gramda hangi maddeden kaç g var onu
+  yaz ama oyunun bir mekaniği olmasın"): "Formül 100 g için; sen 30 g hazırla" ve farklı
+  miktarlı hâller kalktı. Her formül tek reçete (112 reçete; "her formül tek reçete"), duvar
+  sırayla döndürür. Gram ve mL'li formül hep 100 g ya da 100 mL için yazılır (kitapta 50 g ya da
+  1000 g olsa da çevrilir); kapsül ve paket toz kendi sayısıyla (30 kapsül), kapsül numarası
+  bilgi satırında ("3 numara kapsül", `PrescriptionOrder.note`). 0,1 g altı mg yazılır. Raftaki
+  stok bu 100 g'lık miktar kadar düşer ("Evet, 100 g üzerinden"); paket boyları eski medyan
+  gramajla seçilmişti, yeniden ayarlanmadı. Her madde en az bir reçetede geçer (eski "en az 10
+  reçetede" kuralı hâllerle sayılıyordu). Eski kayıttaki "· 2" hâl kimlikleri okunmaz.
 - Formül kitabı (Tuğrul, 2026-10-28, /goal): 6 kategori farmasötik şekle göre (USP <1151>, Ph. Eur.
   şekil monografları): merhem ve patlar, kremler, jeller, çözeltiler, süspansiyonlar, tozlar ve
   kapsüller; her birinde 50, toplam 300 (`lib/data/formulary/`). Her formül üç soruyu cevaplar: ne
