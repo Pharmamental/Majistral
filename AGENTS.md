@@ -214,7 +214,7 @@ lib/
   https://claude.ai/artifact/K3XFvUP2j2Ws7Kypt5x7HT. Üretici `tools/ikon_blok/uretici.html`
   (`svgIkon`), PNG'ler `py -3 tools/ikon_blok/export.py` ile; geometri değişmedi.
 - Kimyasal sekmesi (Tuğrul, 2026-10-29): madde, onu isteyen ilk reçete duvara gelince açılır;
-  o güne dek soluk, renksiz ikonlu ve kilitli durur, alınmaz ("Bu maddeyi isteyen ilk reçete
+  o güne dek soluk, renksiz ikonlu ve kilitli durur, adı yazmaz ("Kilitli madde"), alınmaz ("Bu maddeyi isteyen ilk reçete
   gelince açılır."). Açılanlar kayıtta (`wall_v1`, `seen`; `JobStore.chemicalUnlocked`); eski
   kayıtta o güne dek gelmiş reçetelerden türetilir. Grupta açıklar üstte, kilitliler altta.
   Rafta gram değil paket adedi yazar ("Sahip olunan: 3 adet", açılmış paket bir sayılır;

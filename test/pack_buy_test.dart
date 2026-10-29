@@ -28,6 +28,11 @@ void main() {
     await tester.tap(find.text('Kimyasallar'));
     await tester.pumpAndSettle();
 
+    // Kilitli maddenin adı görünmez (Tuğrul, 2026-10-29).
+    final locked = packs.keys.firstWhere((c) => !store.chemicalUnlocked(c));
+    expect(find.text(locked), findsNothing);
+    expect(find.text('Kilitli madde'), findsWidgets);
+
     final vazelin = packs['Beyaz Vazelin']!;
     expect(find.text('Paketi ${vazelin.price} para · Sahip olunan: 0 adet'), findsOneWidget);
     await tester.tap(find.text('Al').first); // ilk grubun ilk açık maddesi: Beyaz Vazelin

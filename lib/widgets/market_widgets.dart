@@ -428,7 +428,7 @@ class ShopItemTile extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(item.name, style: AppText.title(size: 17, color: locked ? AppColors.inkMuted : AppColors.ink)),
+                Text(locked ? 'Kilitli madde' : item.name, style: AppText.title(size: 17, color: locked ? AppColors.inkMuted : AppColors.ink)),
                 const SizedBox(height: AppSpace.xs),
                 Text(
                   locked ? 'Bu maddeyi isteyen ilk reçete gelince açılır.' : item.description,
