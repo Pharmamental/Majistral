@@ -215,7 +215,7 @@ class _GamePainter extends CustomPainter {
       c.drawRect(Rect.fromLTWH(0, s.height * .3, s.width, s.height * .34), Paint()..color = AppColors.surface.withValues(alpha: .93));
       _text(c, 'Tamam!', Offset(s.width / 2, s.height * .38), size: 24);
       _text(c, '★' * game.stars + '☆' * (3 - game.stars), Offset(s.width / 2, s.height * .47), size: 40, color: AppColors.star);
-      _text(c, 'Kalite %${game.q.round()} · süre başladı', Offset(s.width / 2, s.height * .57), size: 14, color: AppColors.inkMuted);
+      _text(c, 'Kalite %${game.q.round()}. Süre başladı.', Offset(s.width / 2, s.height * .57), size: 14, color: AppColors.inkMuted);
     }
   }
 
@@ -366,7 +366,7 @@ class _Spin {
 /// Ezme: önce iri kristaller kırılır, sonra havan eli bastırarak dairesel sürtülür.
 class _Ezme extends MiniGame {
   @override
-  String get hint => 'Önce iri kristallere dokunup kır. Sonra havanın içinde parmağınla daire çiz; çok hızlı çizersen toz kaçar.';
+  String get hint => 'Önce iri kristallere dokunup kır. Sonra havanın içinde parmağınla daire çiz. Çok hızlı çizersen toz kaçar.';
   final _big = [for (final d in const [Offset(-.35, .1), Offset(.1, -.05), Offset(.38, .12), Offset(-.05, .18)]) [d.dx, d.dy, 2.0]];
   final _spin = _Spin();
   double _p = 0, _spill = 0;
@@ -489,7 +489,7 @@ class _Levigasyon extends MiniGame {
       _rect(c, Rect.fromCenter(center: f, width: 80, height: 12), fill: const Color(0xFFB8C2CC), stroke: const Color(0xFF8D98A4), radius: 6);
     }
     if (_phase == 0) {
-      _gauge(c, s, h - 40, 'Kıvam: kuru ‹ › cıvık', _k, lo: .5, hi: .7);
+      _gauge(c, s, h - 40, 'Kıvam', _k, lo: .5, hi: .7);
     } else {
       _gauge(c, s, h - 40, 'Taneler', 1 - _grains.where((g) => g[2] > 0).length / 14, fill: AppColors.kobalt);
     }
@@ -499,7 +499,7 @@ class _Levigasyon extends MiniGame {
 /// Geometrik seyreltme: her turda havandakinin eşiti kadar baz eklenir (1 › 2 › 4 › 8).
 class _Seyreltme extends MiniGame {
   @override
-  String get hint => 'Havandakinin EŞİTİ kadar baz ekle: basılı tut, sağdaki çubuk havandakine eşit olunca bırak. Dört tur.';
+  String get hint => 'Havandaki kadar baz ekle. Basılı tut, sağdaki çubuk havandakiyle eşitlenince bırak. Bunu dört kez yapacaksın.';
   double _m = 1, _add = 0;
   int _round = 0;
   bool _holding = false;
@@ -627,7 +627,7 @@ class _Emulsifikasyon extends MiniGame {
 /// Soğutma: krem 40 °C'ye inene dek ritimle karıştırılır; ritim kaçarsa topak.
 class _Sogutma extends MiniGame {
   @override
-  String get hint => 'Krem 70°\'den 40°\'ye soğuyor. Dıştaki halka çembere oturduğu anda dokun; kaçırırsan kremde topak oluşur.';
+  String get hint => 'Krem 70 dereceden 40 dereceye soğuyor. Dıştaki halka çembere oturduğu anda dokun. Kaçırırsan kremde topak oluşur.';
   static const _per = .9;
   final _rand = Random(5);
   final _lumps = <Offset>[];
@@ -814,7 +814,7 @@ class _Sisirme extends MiniGame {
 /// Hacme tamamlama: çizgiye yaklaşınca damla damla; menisküsün alt kenarı çizgide.
 class _Hacim extends MiniGame {
   @override
-  String get hint => 'Basılı tut, su aksın; çizgiye yaklaşınca damla damla akar. Büyütmede sıvının kavisli yüzeyinin ALT kenarını çizgiye getirip "Tamam"a bas.';
+  String get hint => 'Basılı tut, su aksın. Çizgiye yaklaşınca damla damla akar. Sıvının kavisli yüzeyinin alt kenarı çizgiye gelince "Tamam"a bas.';
   @override
   String get action => 'Tamam';
   double _v = 0;
@@ -867,7 +867,7 @@ class _Hacim extends MiniGame {
 /// Kapsül doldurma: toz plakadaki kapsüllerin üstünden yayılır, sonra bastırılır.
 class _Kapsul extends MiniGame {
   @override
-  String get hint => 'Parmağını kapsül sıralarının üstünden sürükleyerek tozu yay. Hepsi dolunca "Bastır"a bas; eksik kalan kapsül kaliteyi düşürür.';
+  String get hint => 'Parmağını kapsül sıralarının üstünden sürükleyerek tozu yay. Hepsi dolunca "Bastır"a bas. Eksik kalan kapsül kaliteyi düşürür.';
   @override
   String get action => 'Bastır';
   static const _cols = 6;

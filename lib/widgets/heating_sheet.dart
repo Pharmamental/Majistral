@@ -25,7 +25,7 @@ Future<void> openHeating(
           Text(magistralName, style: AppText.label(size: 14)),
           const SizedBox(height: AppSpace.xs),
           Text(
-            'Termometreyi 70–75°\'de tut; tutunca eritme başlar.',
+            'Termometreyi 70 ile 75 derece arasında tut. Tutturunca eritme başlar.',
             textAlign: TextAlign.center,
             style: AppText.body(size: 14, color: AppColors.inkMuted),
           ),

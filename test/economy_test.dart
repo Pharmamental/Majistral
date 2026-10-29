@@ -151,13 +151,13 @@ void main() {
       final step = pudra.steps.first;
       expect(store.stepDuration(step), Duration(seconds: (step.minutes * 60 * 0.7).round()));
       await store.startStep(jobOf(store, order)!.id, ezme);
-      expect(store.whyNot(ezme, jobOf(store, pudra)!), startsWith('Dolu'));
+      expect(store.whyNot(ezme, jobOf(store, pudra)!), startsWith('Bu adım şu an'));
     });
 
-    test('parsel 4-6 sırayla açılır; çiçek tek tek satın alınır', () async {
+    test('parsel 4-6 sırayla açılır; oyuncu çiçeğini tek tek satar', () async {
       SharedPreferences.setMockInitialValues({
         'economy_v1': jsonEncode({'coins': 5000, 'debt': 0, 'stock': {}, 'tools': []}),
-        'garden_v1': jsonEncode(Garden(grown: {'Papatya'}).toJson()),
+        'garden_v1': jsonEncode(Garden(grown: {'Papatya'}, flowers: {'Mürver': 2}).toJson()),
       });
       final store = await JobStore.load(now: () => clock);
       expect(store.nextParcelPrice, parcelPrices.first);
@@ -165,10 +165,11 @@ void main() {
       expect(store.garden.beds, hasLength(Garden.openBeds + 1));
       expect(store.nextParcelPrice, parcelPrices[1]);
       expect(store.coins, 5000 - 800);
-      expect(await store.buyFlower('Mürver'), isTrue);
-      expect(await store.buyFlower('Mürver'), isTrue);
-      expect(store.garden.flowers['Mürver'], 2);
-      expect(store.coins, 5000 - 800 - 2 * flowerPrices[3]!);
+      expect(await store.sellFlower('Mürver'), isTrue);
+      expect(await store.sellFlower('Mürver'), isTrue);
+      expect(await store.sellFlower('Mürver'), isFalse, reason: 'elinde kalmadı');
+      expect(store.garden.flowers['Mürver'], 0);
+      expect(store.coins, 5000 - 800 + 2 * flowerSellPrices[3]!);
       final reopened = await JobStore.load(now: () => clock);
       expect(reopened.garden.beds, hasLength(Garden.openBeds + 1));
       expect(reopened.coins, store.coins);

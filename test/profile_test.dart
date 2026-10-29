@@ -106,11 +106,11 @@ void main() {
     ));
     await tester.tap(find.text('aç'));
     await tester.pump(const Duration(milliseconds: 1500));
-    expect(find.text('Ezme · Bronz'), findsOneWidget);
+    expect(find.text('Ezme için Bronz madalya'), findsOneWidget);
     expect(find.text('5 kez hazırladın'), findsOneWidget);
     expect(tester.takeException(), isNull);
     await tester.pump(const Duration(seconds: 4));
-    expect(find.text('Ezme · Bronz'), findsNothing);
+    expect(find.text('Ezme için Bronz madalya'), findsNothing);
   });
 
   testWidgets('Profil boşken ad yer tutucusu ve ilk adım; "yapılmadı" duvarı yok', (tester) async {
@@ -126,7 +126,7 @@ void main() {
     expect(find.textContaining('yapılmadı'), findsNothing);
     await tester.tap(find.text('Reçetelere git'));
     await tester.pumpAndSettle();
-    expect(find.textContaining('Gelen reçeteler'), findsOneWidget);
+    expect(find.textContaining('Duvarda 4 reçete'), findsOneWidget);
   });
 
   testWidgets('Profil: diploma, ustalık ve koleksiyon teslimden sonra dolar', (tester) async {
@@ -140,13 +140,13 @@ void main() {
     await tester.tap(find.text('Profil').last);
     await tester.pumpAndSettle();
     expect(find.text('ECZACILIK DİPLOMASI'), findsOneWidget);
-    expect(find.text('1 reçete teslim edildi'), findsOneWidget);
-    expect(find.text('Eczacı unvanına 9 reçete'), findsOneWidget);
+    expect(find.text('1 reçete teslim ettin'), findsOneWidget);
+    expect(find.text('Eczacı olmana 9 reçete kaldı'), findsOneWidget);
     expect(find.text('Vitrin'), findsOneWidget);
     await scrollPage(tester, up: true); // diploma ve raf kayar, sekmeler üstte kalır
     expect(find.text('Koleksiyon'), findsOneWidget);
-    expect(find.text('×1'), findsNWidgets(3)); // yalnız denenen üç teknik
-    expect(find.text('Bronz için 4 kez daha'), findsNWidgets(3));
+    expect(find.text('1 kez'), findsNWidgets(3)); // yalnız denenen üç teknik
+    expect(find.text('Bronz için 4 kez daha yap'), findsNWidgets(3));
     expect(find.text('Laboratuvarda henüz denemediğin ${labTools().length - 3} teknik daha var.'), findsOneWidget);
 
     await tester.tap(find.text('Koleksiyon'));
@@ -290,8 +290,8 @@ void showcaseTests() {
     await tester.tap(find.bySemanticsLabel('Vitrinde boş yer, fanus koy').first);
     await tester.pumpAndSettle();
     expect(find.text('Vitrine ne koyalım?'), findsOneWidget);
-    expect(find.text('Oyun etkisi: duvara reçete yeri +1'), findsOneWidget);
-    expect(find.text('0/5 çiçek · teslim emeği +%10'), findsWidgets); // Lavanta kilitli
+    expect(find.text('Duvarda 1 reçete daha birikir'), findsOneWidget);
+    expect(find.text('Hiç çiçeğin yok. Teslimde emek parası %10 artar.'), findsWidgets); // Lavanta kilitli
     await tester.tap(find.descendant(of: find.byType(GrowPanel), matching: find.text('Papatya')));
     await tester.pumpAndSettle();
     expect(find.bySemanticsLabel('Vitrinde Papatya fanusu'), findsOneWidget);

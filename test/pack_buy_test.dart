@@ -34,7 +34,7 @@ void main() {
     expect(find.text('Kilitli madde'), findsWidgets);
 
     final vazelin = packs['Beyaz Vazelin']!;
-    expect(find.text('Paketi ${vazelin.price} para · Sahip olunan: 0 adet'), findsOneWidget);
+    expect(find.text('Paketi ${vazelin.price} para. Sahip olunan: 0 adet'), findsOneWidget);
     await tester.tap(find.text('Al').first); // ilk grubun ilk açık maddesi: Beyaz Vazelin
     await tester.pumpAndSettle();
     expect(store.packsOf('Beyaz Vazelin'), 0, reason: '"Al" hemen satın almaz');

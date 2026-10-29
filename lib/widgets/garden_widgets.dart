@@ -66,7 +66,7 @@ class GardenBed extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final text = label ?? (open ? 'Parsel $number · tohum ek' : 'Parsel $number · kilitli');
+    final text = label ?? (open ? 'Parsel $number boş, tohum ek' : 'Parsel $number kilitli');
     return Semantics(
       button: onTap != null,
       label: text,

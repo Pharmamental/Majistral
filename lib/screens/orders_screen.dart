@@ -73,13 +73,12 @@ class _OrdersScreenState extends State<OrdersScreen> with SecondTick {
     final hand = _hand(store);
     final incoming = store.wall;
     final next = store.untilNextArrival;
-    final wallLine = [
-      'Gelen reçeteler · ${incoming.length}/${store.wallLimit}',
-      next == null ? 'duvar dolu' : 'yenisi ${formatRemaining(next)} sonra',
-    ].join(' · ');
+    final wallLine = next == null
+        ? 'Duvarda ${incoming.length} reçete var, duvar dolu.'
+        : 'Duvarda ${incoming.length} reçete var. Yenisi ${formatRemaining(next)} sonra gelir.';
     int count(OrderStatus s) => hand.where((e) => e.status == s).length;
     final parts = [
-      '${hand.length} elinde',
+      hand.isEmpty ? 'Elinde reçete yok' : 'Elinde ${hand.length} reçete var',
       if (count(OrderStatus.hazir) > 0) '${count(OrderStatus.hazir)} hazır',
       if (count(OrderStatus.bekliyor) > 0) '${count(OrderStatus.bekliyor)} seni bekliyor',
       if (count(OrderStatus.suruyor) > 0) '${count(OrderStatus.suruyor)} hazırlanıyor',
@@ -103,7 +102,7 @@ class _OrdersScreenState extends State<OrdersScreen> with SecondTick {
                     const SizedBox(width: AppSpace.md),
                     Expanded(
                       child: Text(
-                        parts.join(' · '),
+                        parts.join(', '),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: AppText.label(size: 12),

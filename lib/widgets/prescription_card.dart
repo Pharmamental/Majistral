@@ -83,7 +83,7 @@ class PrescriptionCard extends StatelessWidget {
                       ),
                       Text.rich(
                         TextSpan(children: [
-                          TextSpan(text: '${order.doctorName} · ${order.doctorBranch} · Hasta '),
+                          TextSpan(text: '${order.doctorName} (${order.doctorBranch}), hasta '),
                           TextSpan(
                             text: order.patientName,
                             style: AppText.label(size: 12, color: AppColors.ink),

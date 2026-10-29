@@ -333,7 +333,10 @@ Future<void> _openShowcasePicker(BuildContext context, int slot, {required Rect 
         for (final p in driedPlants)
           if (garden.grown.contains(p.name) || (garden.flowers[p.name] ?? 0) >= Garden.fanusCost) p.name,
       };
-      String locked(String name) => '${garden.flowers[name] ?? 0}/${Garden.fanusCost} çiçek';
+      String locked(String name) => switch (garden.flowers[name] ?? 0) {
+            0 => 'Hiç çiçeğin yok.',
+            final n => 'Elinde $n çiçek var.',
+          };
       final plants = [
         ...driedPlants.where((p) => grown.contains(p.name)),
         ...driedPlants.where((p) => !grown.contains(p.name)),
@@ -348,10 +351,10 @@ Future<void> _openShowcasePicker(BuildContext context, int slot, {required Rect 
             const SizedBox(height: AppSpace.xs),
             Text(
               grown.isEmpty
-                  ? 'Bir fanus için o bitkiden ${Garden.fanusCost} çiçek gerekir. Çiçek bahçede yetişir '
-                      'ya da markette tek tek satılır.'
-                  : 'Rafa bir fanus seç. Yeni fanus ${Garden.fanusCost} çiçek harcar. '
-                      'Aynı gruptan iki fanus etkiyi katlamaz.',
+                  ? 'Bir fanus için o bitkiden ${Garden.fanusCost} çiçek gerekir. Çiçekleri bahçede '
+                      'yetiştirirsin.'
+                  : 'Rafa koyacağın fanusu seç. Yeni bir fanus ${Garden.fanusCost} çiçek harcar. '
+                      'Aynı gruptan iki fanus koyarsan yalnız güçlü olanı işe yarar.',
               style: AppText.body(size: 14, color: AppColors.inkMuted),
             ),
             const SizedBox(height: AppSpace.md),
@@ -395,8 +398,8 @@ Future<void> _openShowcasePicker(BuildContext context, int slot, {required Rect 
                                       Text(latin, style: AppText.label(size: 12)),
                                       Text(
                                         grown.contains(name)
-                                            ? 'Oyun etkisi: $effectText'
-                                            : '${locked(name)} · $effectText',
+                                            ? effectText
+                                            : '${locked(name)} $effectText.',
                                         style: AppText.label(size: 12, color: AppColors.ink),
                                       ),
                                     ],
@@ -514,11 +517,11 @@ class _Diploma extends StatelessWidget {
             const SizedBox(height: AppSpace.sm),
             // Ortalama yıldız yok: tek teslimden ortalama yanıltır, yıldızı da yalnız acele düşürür.
             Text(
-              delivered == 0 ? 'İlk reçeteni bekliyor' : '$delivered reçete teslim edildi',
+              delivered == 0 ? 'İlk reçeteni bekliyor' : '$delivered reçete teslim ettin',
               style: AppText.body(size: 13, weight: FontWeight.w600),
             ),
             if (next != null)
-              Text('${next.title} unvanına ${next.from - delivered} reçete', style: AppText.label(size: 12)),
+              Text('${next.title} olmana ${next.from - delivered} reçete kaldı', style: AppText.label(size: 12)),
           ],
         ),
       ),
@@ -692,7 +695,7 @@ class _MasteryRow extends StatelessWidget {
               children: [
                 Text(name, style: AppText.body(size: 15, weight: FontWeight.w700)),
                 Text(
-                  next == null ? '${tiers[tier].title} · en üst kademe' : '${next.title} için ${next.from - count} kez daha',
+                  next == null ? 'En yüksek madalya: ${tiers[tier].title}' : '${next.title} için ${next.from - count} kez daha yap',
                   style: AppText.label(size: 12),
                 ),
               ],
@@ -702,7 +705,7 @@ class _MasteryRow extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Text('×$count', style: AppText.title(size: 16)),
+              Text('$count kez', style: AppText.title(size: 16)),
               Text(tiers[tier].title, style: AppText.label(size: 12, color: AppColors.ink)),
             ],
           ),

@@ -50,7 +50,7 @@ Future<void> openToolSheet(BuildContext context, LabTool tool, {required Rect fr
               const SizedBox(height: AppSpace.sm),
               Text(
                 busy != null
-                    ? 'Şu an ${busy.job.magistralName}: ${busy.run.label}, '
+                    ? 'Şu an ${busy.job.magistralName} için ${busy.run.label.toLowerCase()} sürüyor, '
                           '${formatRemaining(busy.run.end.difference(store.now()))} kaldı.'
                     : jobs.isEmpty
                     ? 'Laboratuvarda reçete yok. Reçeteler\'de duvardan bir reçete al.'
@@ -145,7 +145,7 @@ class _JobRow extends StatelessWidget {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  ok ? 'Sıradaki adım: ${step!.label} · ${step.minutes} dk' : reason,
+                  ok ? 'Sıradaki adım ${step!.label.toLowerCase()}, ${step.minutes} dk sürer.' : reason,
                   style: AppText.label(size: 12, color: ok ? AppColors.accentText : AppColors.inkMuted),
                 ),
                 // Alet uyarısı (ASHP): adım kartına geçince seçim değil, uyarı.

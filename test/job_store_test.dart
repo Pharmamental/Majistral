@@ -64,7 +64,7 @@ void main() {
     final job = await take(store, order);
     expect(store.whyNot(ezme, job), isNull);
     expect(store.whyNot(eritme, job), 'Bu reçetede bu adım yok.');
-    expect(store.whyNot(levigasyon, job), 'Bu adım daha sonra; önce Ezme.');
+    expect(store.whyNot(levigasyon, job), 'Önce ezme yapılmalı.');
     await store.startStep(jobOf(store, order)!.id, levigasyon);
     expect(jobOf(store, order)!.runs, isEmpty);
 
@@ -73,14 +73,14 @@ void main() {
     clock = clock.add(const Duration(minutes: 1));
     final j = jobOf(store, order)!;
     expect(store.whyNot(levigasyon, j), isNull);
-    expect(store.whyNot(ezme, j), 'Bu adım bitti.');
+    expect(store.whyNot(ezme, j), 'Bu adımı zaten yaptın.');
   });
 
   test('kremde yağ fazı eritilir, su fazındakiler çözülür, kapsülde emülsiyon yapılıp soğutulur', () async {
     final store = await JobStore.load(now: () => clock);
     var job = await take(store, cream); // eritme 6, çözme 4, emülsifikasyon 9, soğutma 8
     expect(store.whyNot(seyreltme, job), 'Bu reçetede bu adım yok.');
-    expect(store.whyNot(emulsiyon, job), 'Bu adım daha sonra; önce Eritme.');
+    expect(store.whyNot(emulsiyon, job), 'Önce eritme yapılmalı.');
     for (final (step, minutes) in [(eritme, 6), (cozme, 4), (emulsiyon, 9), (sogutma, 8)]) {
       await store.startStep(job.id, step); // termometre oyunu ekranda; burada doğrudan başlar
       clock = clock.add(Duration(minutes: minutes));
@@ -109,7 +109,7 @@ void main() {
 
     clock = clock.add(const Duration(minutes: 1)); // ezme bitti; levigasyon kartı dolu
     final sa = jobOf(store, order)!;
-    expect(store.whyNot(levigasyon, sa), 'Dolu: ${zno.magistralName} bitince yapabilirsin.');
+    expect(store.whyNot(levigasyon, sa), 'Bu adım şu an ${zno.magistralName} için çalışıyor. O bitince başlatabilirsin.');
     clock = clock.add(const Duration(minutes: 4));
     expect(store.whyNot(levigasyon, jobOf(store, order)!), isNull);
   });

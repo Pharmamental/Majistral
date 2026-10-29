@@ -101,7 +101,7 @@ class _AchievementToastState extends State<AchievementToast> with SingleTickerPr
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('${widget.step} · $tierName', maxLines: 1, overflow: TextOverflow.ellipsis, style: AppText.title(size: 15)),
+                  Text('${widget.step} için $tierName madalya', maxLines: 1, overflow: TextOverflow.ellipsis, style: AppText.title(size: 15)),
                   Text('${widget.count} kez hazırladın', maxLines: 1, style: AppText.label(size: 12)),
                 ],
               ),

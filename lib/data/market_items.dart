@@ -35,17 +35,17 @@ ShopItem _chem(String name, String description, String image, Color color) => Sh
 // Oyundaki reçetelerin bütün hammaddeleri, rollerine göre. Önce 39 madde
 // (Tuğrul, 2026-10-28: "30-40 civarı madde, her madde en az 10 reçetede"),
 // sonra farklı majistral sayısı artsın diye 62 (Tuğrul, 2026-10-29, "Madde +
-// yeni formül"). Reçetelerde geçmeyen madde markette durmaz; reçeteye yeni madde
+// yeni formül"). Reçetelerde geçmeyen madde markette durmaz. Reçeteye yeni madde
 // girerse buraya da eklenir (test/market_items_test.dart). Liste ve kaynakları
-// beyinde: knowledge/concepts/majistral-hammaddeler.md. Fiyatlar taslak; ekonomi
+// beyinde: knowledge/concepts/majistral-hammaddeler.md. Fiyatlar taslak. Ekonomi
 // önerisi knowledge/concepts/majistral-ekonomi.md.
 final List<ChemicalGroup> chemicalGroups = [
   (
     title: 'Bazlar ve yağlar',
     subtitle: 'Merhemin gövdesi',
     items: [
-      _chem('Beyaz Vazelin', 'Deriyi ince bir örtüyle kapatır, nemi içeride tutar. Suyla yıkanmaz; merhemlerin en temel bazı.', 'vazelin', _mavi),
-      _chem('Sarı Vazelin', 'Ağartılmamış vazelin. Beyazı gibi deriyi örter; rengin önemli olmadığı merhemlerde kullanılır.', 'sari_vazelin', _altin),
+      _chem('Beyaz Vazelin', 'Deriyi ince bir örtüyle kapatır, nemi içeride tutar. Suyla yıkanmaz. Merhemlerin en temel bazı.', 'vazelin', _mavi),
+      _chem('Sarı Vazelin', 'Ağartılmamış vazelin. Beyazı gibi deriyi örter. Rengin önemli olmadığı merhemlerde kullanılır.', 'sari_vazelin', _altin),
       _chem('Sıvı Parafin', 'Akışkan, kokusuz yağ. Toza birkaç damla katılınca toz pürüzsüz bir macuna döner.', 'sivi_parafin', _altin),
       _chem('Susuz Lanolin', 'Koyun yününden gelen yağ. Kendi ağırlığının iki katı kadar suyu içine alabilir.', 'lanolin', _yesil),
       _chem('Katı Parafin', 'Mum gibi sert bir yağ. Merhemi koyulaştırır, akmasını önler.', 'kati_parafin', _mavi),
@@ -87,8 +87,8 @@ final List<ChemicalGroup> chemicalGroups = [
       _chem('Distile Su', 'Saflaştırılmış su. Çözeltilerin ve kremlerin sulu kısmı.', 'distile_su', _yesil),
       _chem('Gliserin', 'Tatlımsı, koyu bir sıvı. Nemi çeker, deriyi yumuşak tutar.', 'gliserin', _altin),
       _chem('Propilen Glikol', 'Renksiz bir sıvı. Bazı maddeleri çözer, deriyi nemli tutar.', 'propilen_glikol', _altin),
-      _chem('İzopropil Alkol', 'Çabuk uçan alkol. Maddeleri çözer; ter ve sivilce losyonlarını taşır.', 'izopropil_alkol', _mercan),
-      _chem('Etanol %96', 'Güçlü alkol. Maddeleri çözer, mikrop öldürür; suyla seyreltilip %70 yapılır.', 'etanol', _mavi),
+      _chem('İzopropil Alkol', 'Çabuk uçan alkol. Maddeleri çözer. Ter ve sivilce losyonlarını taşır.', 'izopropil_alkol', _mercan),
+      _chem('Etanol %96', 'Güçlü alkol. Maddeleri çözer, mikrop öldürür. Suyla seyreltilip %70 yapılır.', 'etanol', _mavi),
       _chem('Metilparaben', 'Koruyucu. Kremin sulu kısmında mikrop ve küf üremesini önler.', 'metilparaben', _mercan),
       _chem('Propilparaben', 'Koruyucu. Kremin yağlı kısmına katılır, metilparabenle birlikte çalışır.', 'propilparaben', _mavi),
       _chem('Potasyum Sorbat', 'Koruyucu. Jel ve kremde küf ve maya üremesini önler.', 'potasyum_sorbat', _mercan),
@@ -108,14 +108,14 @@ final List<ChemicalGroup> chemicalGroups = [
     subtitle: 'Reçeteye adını veren maddeler',
     items: [
       _chem('Salisilik Asit', 'Kalınlaşmış, pul pul deriyi yumuşatıp soyar. Nasır, siğil ve kepekte kullanılır.', 'salisilik_asit', _mor),
-      _chem('Çinko Oksit', 'Beyaz bir toz. Deride koruyucu bir tabaka yapar, ıslak deriyi kurutur; pişikte sık kullanılır.', 'cinko_oksit', _gri),
+      _chem('Çinko Oksit', 'Beyaz bir toz. Deride koruyucu bir tabaka yapar, ıslak deriyi kurutur. Pişikte sık kullanılır.', 'cinko_oksit', _gri),
       _chem('Üre', 'Deriye su bağlar. Az miktarda nemlendirir, çok miktarda sertleşmiş deriyi yumuşatır.', 'ure', _mavi),
       _chem('Laktik Asit', 'Deriyi nemlendirir, pullanan üst tabakayı yavaşça soyar.', 'laktik_asit', _mavi),
       _chem('Kükürt', 'Sivilcede ve uyuzda kullanılır. Çoğu zaman salisilik asitle birlikte yazılır.', 'kukurt', _mor),
       _chem('İhtiyol', 'Kükürtlü, koyu kahverengi bir sıvı. Çıbanı ve iltihaplı deriyi yatıştırır.', 'ihtiyol', _altin),
       _chem('Ditranol', 'Sedef hastalığının kalın plaklarında kullanılır. Deriyi ve çamaşırı boyar.', 'ditranol', _altin),
       _chem('Mentol', 'Deride serinlik hissi verir, kaşıntıyı hafifletir.', 'mentol', _altin),
-      _chem('Kâfur', 'Serinletir; kaşıntıyı ve hafif ağrıyı azaltır.', 'kafur', _mor),
+      _chem('Kâfur', 'Serinletir, kaşıntıyı ve hafif ağrıyı azaltır.', 'kafur', _mor),
       _chem('Kalamin', 'Pembe renkli çinko oksit. Kaşıntılı, tahriş olmuş deriyi yatıştırır.', 'kalamin', _mercan),
       _chem('Krotamiton', 'Uyuz tedavisinde ve kaşıntıyı gidermede kullanılan yağlı bir sıvı.', 'krotamiton', _mor),
       _chem('Allantoin', 'Tahriş olmuş deriyi yatıştırır, kendini yenilemesine yardım eder.', 'allantoin', _mor),
@@ -130,7 +130,7 @@ final List<ChemicalGroup> chemicalGroups = [
     subtitle: 'Yara, ağız ve kulak için',
     items: [
       _chem('Setrimid', 'Mikrop öldüren bir antiseptik. Küçük yara ve kesik kremlerinde kullanılır.', 'setrimid', _mor),
-      _chem('Povidon İyot', 'İyotlu bir antiseptik. Yarayı temizler; gargarada da kullanılır.', 'povidon_iyot', _altin),
+      _chem('Povidon İyot', 'İyotlu bir antiseptik. Yarayı temizler. Gargarada da kullanılır.', 'povidon_iyot', _altin),
       _chem('Klorheksidin Glukonat %20', 'Derişik antiseptik çözelti. Seyreltilince gargarada ve ağız bakımında kullanılır.', 'klorheksidin', _mercan),
       _chem('Hidrojen Peroksit %30', 'Çok derişik peroksit, seyreltilmeden kullanılmaz. Seyreltilince yarayı ve ağzı köpürterek temizler.', 'hidrojen_peroksit', _gri),
       _chem('Buzlu Asetik Asit', 'Saf, susuz sirke asidi. Kulak damlasında kulağı asitleştirip mikrobun üremesini zorlaştırır.', 'asetik_asit', _mavi),
@@ -142,7 +142,7 @@ final List<ChemicalGroup> chemicalGroups = [
     title: 'Ağızdan alınanlar ve tuzlar',
     subtitle: 'Çözelti, kapsül ve paket toz',
     items: [
-      _chem('Sodyum Bikarbonat', 'Karbonat. Fazla asidi dengeler; kulak kirini yumuşatan damlada da kullanılır.', 'sodyum_bikarbonat', _mavi),
+      _chem('Sodyum Bikarbonat', 'Karbonat. Fazla asidi dengeler. Kulak kirini yumuşatan damlada da kullanılır.', 'sodyum_bikarbonat', _mavi),
       _chem('Sodyum Klorür', 'Sofra tuzu. Sodyum desteğinde ve bazı kremlerde nem tutucu olarak kullanılır.', 'sodyum_klorur', _gri),
       _chem('Sodyum Florür', 'Diş minesini güçlendirir, çürüğü önler.', 'sodyum_florur', _mavi),
       _chem('Kalsiyum Karbonat', 'Kalsiyum desteği verir, mide asidini bağlar.', 'kalsiyum_karbonat', _gri),
@@ -152,7 +152,7 @@ final List<ChemicalGroup> chemicalGroups = [
   ),
 ];
 
-/// Bir hammaddenin marketteki kısa açıklaması (reçetedeki görevi); yoksa null.
+/// Bir hammaddenin marketteki kısa açıklaması (reçetedeki görevi). Yoksa null.
 String? chemicalRole(String name) {
   for (final g in chemicalGroups) {
     for (final i in g.items) {

@@ -5,7 +5,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:game/data/dried_plants.dart';
-import 'package:game/data/economy.dart';
 import 'package:game/data/lab_tools.dart';
 import 'package:game/data/orders.dart';
 import 'package:game/logic/job_store.dart';
@@ -34,11 +33,12 @@ void main() {
       final tiers = [for (final p in driedPlants) if (p.group == g) p.tier]..sort();
       expect(tiers, [1, 2, 2, 3], reason: g.title);
     }
-    expect(driedPlantNamed('Papatya')!.effectText, 'duvara reçete yeri +1');
-    expect(driedPlantNamed('Mürver')!.effectText, 'duvara reçete yeri +2');
-    expect(driedPlantNamed('Ihlamur')!.effectText, 'duvara reçete yeri +1');
-    expect(driedPlantNamed('Gelincik')!.effectText, 'günde 3 acele kaliteyi düşürmez');
-    expect(driedPlantNamed('Sarı kantaron')!.effectText, 'teslim emeği +%15');
+    expect(driedPlantNamed('Papatya')!.effectText, 'Duvarda 1 reçete daha birikir');
+    expect(driedPlantNamed('Mürver')!.effectText, 'Duvarda 2 reçete daha birikir');
+    expect(driedPlantNamed('Adaçayı')!.effectText, 'Günün ilk acelesi kaliteyi düşürmez');
+    expect(driedPlantNamed('Gelincik')!.effectText, 'Günün ilk 3 acelesi kaliteyi düşürmez');
+    expect(driedPlantNamed('Sarı kantaron')!.effectText, 'Teslimde emek parası %15 artar');
+    expect(driedPlantNamed('Ekinezya')!.effectText, 'Bahçedeki bitkiler %30 daha hızlı büyür');
   });
 
   // Tuğrul, 2026-10-29: teslimlerin %50'si tohum; ağırlıklar tür başına sık 60,
@@ -133,7 +133,7 @@ void main() {
       expect(reopened.garden.seeds, {'Papatya': 1});
     });
 
-    test('vitrine yeni fanus 5 çiçekle konur, çiçek markette tek tek alınır', () async {
+    test('vitrine yeni fanus 5 çiçekle konur', () async {
       SharedPreferences.setMockInitialValues({
         'economy_v1': jsonEncode({'coins': 1000, 'debt': 0, 'stock': {}, 'tools': []}),
         'garden_v1': jsonEncode(Garden(flowers: {'Papatya': 4}).toJson()),
@@ -141,8 +141,7 @@ void main() {
       final store = await JobStore.load(now: () => clock);
       await store.setShowcase(0, 'Papatya');
       expect(store.showcase[0], isNull, reason: '4 çiçek yetmez');
-      expect(await store.buyFlower('Papatya'), isTrue);
-      expect(store.coins, 1000 - flowerPrices[1]!);
+      store.garden.flowers['Papatya'] = 5;
       await store.setShowcase(0, 'Papatya');
       expect(store.showcase[0], 'Papatya');
       expect(store.garden.flowers['Papatya'], 0);

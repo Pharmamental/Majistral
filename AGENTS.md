@@ -8,6 +8,18 @@ reçete gelir, oyuncu istasyonlarda hazırlığı kurar, iş gerçek zamanda bit
 Tuğrul yazılımcı değil. Önce tek cümleyle sonuç, kısa cümle, günlük dil. Teknik terim gerekiyorsa
 yanında ne demek olduğunu yaz. Komut ya da dosya adını ancak Tuğrul'un bir şey yapması gerekiyorsa göster.
 
+## Oyundaki metinlerin üslubu
+Tuğrul, 2026-10-29: "duvara reçete yeri +1 gibi ifadeler… oyunda kullandığın üslubu ve cümle
+kalıplarını beğenmiyorum". Oyundaki her yazı, oyuncuyla konuşan düz bir Türkçe cümle olur.
+- Matematik ve tablo dili yok: "+1", "+%10", "×2", "0/5", "3/4" yazma; "Duvarda 1 reçete daha
+  birikir", "2 Papatya", "Elinde 3 tane var" yaz. Yüzde ancak cümlenin içinde ("%30 daha hızlı").
+- Etiket ve iki nokta kalıbı yok: "Oyun etkisi: …", "Büyüme: 2 sa", "Dolu: …", "Sıradaki adım:
+  …" yerine cümle kur ("2 sa sonra olgunlaşır", "Sıradaki adım ezme, 1 dk sürer.").
+- "·" ile parça dizme, noktalı virgül ve büyük harfle vurgu ("EŞİTİ", "ALT") yok.
+- Oyuncuya "sen" diye, etken çatıyla seslen: "teslim edildi", "kurutuldu", "acele edildi"
+  değil "teslim ettin", "kuruttun", "acele ettin".
+- Kısa tut; düğmede tek eylem ("Sat", "Teslim et", "Acele et"), açıklama düğmenin üstünde.
+
 ## Önce oku
 - **Tasarım belgesi (bağlayıcı, taslak 1):** https://claude.ai/artifact/9ytxK1M2T3wpncCGRKi86x
   Kod onunla çelişirse dur ve Tuğrul'a sor; belgeyi koda uysun diye sessizce değiştirme.
@@ -192,21 +204,27 @@ lib/
   nadir 12 sa; "oyun süresi" diye yazar), olgunlaşınca bozulmaz; olgun parsele dokununca
   hasat: bir kurutulmuş çiçek (`garden.flowers`). Bir bitkinin fanusu o bitkiden 5 çiçekle
   açılır (`Garden.fanusCost`): vitrine ilk konuşta 5 çiçek harcanır, fanus kalıcıdır
-  (`garden.grown`; raftan kaldırıp geri koymak çiçek harcamaz). Çiçek markette "Çiçekler"
-  sekmesinde tek tek satılır (`flowerPrices` sık 60, orta 180, nadir 500; 5 çiçek eski tohum
-  fiyatı 300/900/2500), fanusu açık bitkinin çiçeği satılmaz. Gübre, nadir tohum garantisi
+  (`garden.grown`; raftan kaldırıp geri koymak çiçek harcamaz). **Oyuncu çiçeğini markette
+  satar** (Tuğrul, 2026-10-29, "malum çiçekleri satıyoruz orada"): "Çiçekler" sekmesinde her
+  bitki için "Sıradan çiçek", fanusunun etkisi, "Elinde 3 tane var" (yoksa "Elinde hiç yok")
+  ve "Sat" (bir tane, `JobStore.sellFlower`); fiyat yazmaz. Satış fiyatı yer tutucu
+  (`flowerSellPrices` 10/30/80, teslim başına ortalama ~13 para). Dükkândan çiçek alma kalktı.
+  Kademe adı "sık" değil "sıradan". Gübre, nadir tohum garantisi
   ve tohum satın alma kalktı (eski kayıttaki o alanlar okunmaz). Bahçenin üstündeki kâğıtta
-  tohumlar "×2", çiçekler "3/5" diye yazar. `unlockAll` vitrini açmaz; bahçeden önce rafa
-  konmuş fanus açık sayılır; seçicide kilitliler soluk, "0/5 çiçek" ve etkisi yazılı. Duvar
+  tohum ve çiçekler "2 Papatya" diye yazar. `unlockAll` vitrini açmaz; bahçeden önce rafa
+  konmuş fanus açık sayılır; seçicide kilitliler soluk, "Elinde 3 çiçek var." ya da "Hiç
+  çiçeğin yok." ve etkisi yazılı. Duvar
   ve acele sınırı vitrine göre (`JobStore.wallLimit`, `protectedRushesLeft`), cilt fanusu
-  teslim emeğini artırır. Bitki para karşılığı satılmaz.
+  teslim emeğini artırır.
   Parsel 4-6 parayla açılır (800/1600/3200). Kurutma askısı henüz yok. Vitrindeki fanus küçük oyun etkisi verir, aynı gruptan iki fanus
   toplanmaz, en güçlüsü sayılır: çaylar duvar (Papatya +1, Ihlamur/Rezene +1, Mürver +2;
   ekonomi 2. turu, "önerilerle": +3 az oynayanın teslimini %34 artırıyordu), boğaz günde
   1/2/3 acelenin kaliteyi düşürmemesi (Adaçayı, Kekik/Hatmi, Gelincik; acele hakkı artırmak
   para kaybettirdiği için değersizdi), cilt teslim emeği (Aynısefa
   %5, Lavanta/Defne %10, Kantaron %15), ferahlatıcı bahçe hızı (Nane %10, Biberiye/Okaliptüs
-  %20, Ekinezya %30). Etkiler ekranda "oyun etkisi" diye yazar, sahte farmakoloji kurulmaz.
+  %20, Ekinezya %30). Etki ekranda etiketsiz, düz cümleyle yazar ("Duvarda 1 reçete daha
+  birikir", "Günün ilk acelesi kaliteyi düşürmez", "Teslimde emek parası %10 artar",
+  "Bahçedeki bitkiler %20 daha hızlı büyür"); sahte farmakoloji kurulmaz.
   Market sekmeleri dört (Hızlandırma, İstasyonlar, Kimyasallar, Çiçekler); `PillTabs` yazısı
   yalnız sığmadığında küçülür (`test/market_screen_test.dart`, 360 dp).
   Formüller sekmesi kaldırıldı (ekranı git geçmişinde); formül verisi duruyor

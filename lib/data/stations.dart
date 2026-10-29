@@ -5,10 +5,10 @@ import '../theme/tokens.dart';
 
 // Market istasyonları laboratuvarın adımlarıdır (Tuğrul, 2026-10-29): her adımın
 // bir istasyonu var, adı adımın adı. İlk kart ücretsiz basit alet, sonrakiler
-// satın alınan daha iyi alet; yükseltme yalnız o adımın süresini kısaltır
+// satın alınan daha iyi alet. Yükseltme yalnız o adımın süresini kısaltır
 // ([ShopItem.faster]). Aletler eczanede gerçekten bulunan aletler (ASHP nonsteril
-// majistral bülteni; beyin: majistral-alet-ve-makineler). Yüzdeler ve fiyatlar
-// yer tutucu; kapalı testte ayarlanacak. Yeni aletlerin ikonu henüz çizilmedi.
+// majistral bülteni. Beyin: majistral-alet-ve-makineler). Yüzdeler ve fiyatlar
+// yer tutucu. Kapalı testte ayarlanacak. Yeni aletlerin ikonu henüz çizilmedi.
 
 const List<Station> stations = [
   Station(
@@ -148,7 +148,7 @@ const List<Station> stations = [
       ),
       ShopItem(
         name: 'Su ceketli kap',
-        description: 'Çeperinden musluk suyu dolaşır; krem buzsuz ve düzenli soğur. Soğutmayı %30 kısaltır.',
+        description: 'Çeperinden musluk suyu dolaşır. Krem buzsuz ve düzenli soğur. Soğutmayı %30 kısaltır.',
         icon: Icons.soup_kitchen_outlined,
         color: AppColors.goodCondition,
         price: 600,
@@ -208,7 +208,7 @@ const List<Station> stations = [
       ),
       ShopItem(
         name: 'Yüksek devirli karıştırıcı',
-        description: 'Jel yapıcıyı girdapta dağıtır; topak olmaz, çabuk şişer. Şişirmeyi %30 kısaltır.',
+        description: 'Jel yapıcıyı girdapta dağıtır. Topak olmaz, çabuk şişer. Şişirmeyi %30 kısaltır.',
         icon: Icons.science_outlined,
         color: AppColors.goodCondition,
         price: 500,
@@ -228,7 +228,7 @@ const List<Station> stations = [
       ),
       ShopItem(
         name: 'Şişe üstü dispenser',
-        description: 'Taşıyıcıyı ayarlı hacimde tek basışta verir; çizgiye son damlalar kalır. '
+        description: 'Taşıyıcıyı ayarlı hacimde tek basışta verir. Çizgiye son damlalar kalır. '
             'Hacme tamamlamayı %30 kısaltır.',
         icon: Icons.straighten_rounded,
         color: AppColors.goodCondition,
@@ -259,7 +259,7 @@ const List<Station> stations = [
   ),
 ];
 
-/// Adımın market istasyonu; reçetede olup markette olmayan adımda null.
+/// Adımın market istasyonu. Reçetede olup markette olmayan adımda null.
 Station? stationFor(String step) {
   for (final s in stations) {
     if (s.name == step) return s;

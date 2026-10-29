@@ -43,7 +43,7 @@ class _MarketScreenState extends State<MarketScreen> {
           color: AppColors.wall,
           child: Column(
             children: [
-              const TabHeader(title: 'Market', subtitle: 'Alet ve kimyasal al', trailing: CoinPill()),
+              const TabHeader(title: 'Market', subtitle: 'Alet ve kimyasal al, çiçek sat', trailing: CoinPill()),
               Padding(
                 padding: const EdgeInsets.fromLTRB(AppSpace.lg, 0, AppSpace.lg, AppSpace.lg),
                 child: PillTabs<MarketTab>(
@@ -73,8 +73,8 @@ class _MarketScreenState extends State<MarketScreen> {
             const ShopItemTile(item: adSpeedUp, highlight: true),
             const SizedBox(height: AppSpace.md),
             Text(
-              'Günde en çok 5 kez. Hızlandırma yalnız bekleme süresini kısaltır, '
-              'hazırlama adımlarını atlatmaz. Her acele kaliteyi de yarıya indirir.',
+              'Günde 5 kez kullanabilirsin. Reklam yalnız bekleme süresini kısaltır, '
+              'adımları senin yerine yapmaz. Her acele kaliteyi de yarıya indirir.',
               style: AppText.body(size: 13),
             ),
           ],
@@ -107,8 +107,8 @@ class _MarketScreenState extends State<MarketScreen> {
                   item: item,
                   locked: !store.chemicalUnlocked(item.name),
                   detail: packs[item.name] == null
-                      ? 'Eczanenin cihazından, bedava'
-                      : 'Paketi ${item.price} para · Sahip olunan: ${store.packsOf(item.name)} adet',
+                      ? 'Eczanenin cihazı üretir, bedava.'
+                      : 'Paketi ${item.price} para. Sahip olunan: ${store.packsOf(item.name)} adet',
                 ),
                 const SizedBox(height: AppSpace.md),
               ],
@@ -116,15 +116,15 @@ class _MarketScreenState extends State<MarketScreen> {
             ],
           ],
         );
-      // Kurutulmuş çiçek tek tek satılır; bir fanus 5 çiçek ister (Tuğrul, 2026-10-29).
+      // Oyuncu bahçeden topladığı çiçeği burada tek tek satar (Tuğrul, 2026-10-29).
       case MarketTab.cicekler:
         final plants = [...driedPlants]..sort((a, b) => a.tier.compareTo(b.tier));
         return ListView(
           padding: listPadding,
           children: [
             Text(
-              'Vitrindeki her fanus o bitkiden ${Garden.fanusCost} çiçek ister. Bahçede '
-              'yetişmesini beklemek istemediğin çiçeği buradan tek tek al.',
+              'Bahçeden topladığın çiçekleri burada satabilirsin. Vitrine fanus koymak için '
+              'aynı bitkiden ${Garden.fanusCost} çiçek gerektiğini unutma.',
               style: AppText.body(size: 13, color: AppColors.ink),
             ),
             const SizedBox(height: AppSpace.lg),
@@ -138,20 +138,19 @@ class _MarketScreenState extends State<MarketScreen> {
   }
 }
 
-/// Markette bir kurutulmuş çiçek: fanus ikonu, adı, fiyatı, fanusa kaç çiçek
-/// kaldığı ve "Al" (bir tane). Fanusu açık bitkinin çiçeği alınmaz.
+/// Markette bir kurutulmuş çiçek: fanus ikonu, adı, fanusunun etkisi, kaç tane
+/// olduğu ve "Sat" (bir tane). Fiyat yazmaz (Tuğrul, 2026-10-29).
 class _FlowerTile extends StatelessWidget {
   const _FlowerTile({required this.plant});
 
   final DriedPlant plant;
 
+  static const _rarity = {1: 'Sıradan', 2: 'Orta', 3: 'Nadir'};
+
   @override
   Widget build(BuildContext context) {
     final store = JobScope.of(context);
-    final price = flowerPrices[plant.tier]!;
-    final open = store.garden.grown.contains(plant.name);
     final have = store.garden.flowers[plant.name] ?? 0;
-    const rarity = {1: 'Sık', 2: 'Orta', 3: 'Nadir'};
     return Container(
       padding: const EdgeInsets.all(AppSpace.lg),
       decoration: BoxDecoration(
@@ -177,14 +176,12 @@ class _FlowerTile extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(plant.name, style: AppText.title(size: 17)),
+                Text('${_rarity[plant.tier]} çiçek', style: AppText.label(size: 12)),
+                const SizedBox(height: AppSpace.xs),
+                Text('${plant.effectText}.', style: AppText.body(size: 13, color: AppColors.inkMuted)),
                 const SizedBox(height: AppSpace.xs),
                 Text(
-                  '${rarity[plant.tier]} · Oyun etkisi: ${plant.effectText}',
-                  style: AppText.body(size: 13, color: AppColors.inkMuted),
-                ),
-                const SizedBox(height: AppSpace.xs),
-                Text(
-                  open ? 'Fanusu açık' : 'Tanesi $price para · Elinde $have/${Garden.fanusCost} çiçek',
+                  have == 0 ? 'Elinde hiç yok' : 'Elinde $have tane var',
                   style: AppText.label(size: 12, color: AppColors.ink),
                 ),
               ],
@@ -193,13 +190,11 @@ class _FlowerTile extends StatelessWidget {
           const SizedBox(width: AppSpace.md),
           SizedBox(
             width: 104,
-            child: open
-                ? Text('Elinde', textAlign: TextAlign.center, style: AppText.label(size: 14, color: AppColors.ink))
-                : ChunkyButton(
-                    compact: true,
-                    label: 'Al',
-                    onPressed: store.coins >= price ? () => store.buyFlower(plant.name) : null,
-                  ),
+            child: ChunkyButton(
+              compact: true,
+              label: 'Sat',
+              onPressed: have > 0 ? () => store.sellFlower(plant.name) : null,
+            ),
           ),
         ],
       ),

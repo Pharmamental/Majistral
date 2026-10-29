@@ -97,10 +97,10 @@ class _ThermometerPanelState extends State<ThermometerPanel> with SingleTickerPr
   }
 
   String _statusText() {
-    if (_success) return 'Isı ideal aralıkta sabit tutuldu!';
-    if (_temperature < widget.idealMin) return 'Soğuk, basılı tutarak ısıt';
-    if (_temperature > widget.idealMax) return 'Çok sıcak, bırakıp soğut';
-    return 'İdeal aralıkta! Sabit tut...';
+    if (_success) return 'Sıcaklığı tutturdun!';
+    if (_temperature < widget.idealMin) return 'Soğuk. Basılı tutup ısıt.';
+    if (_temperature > widget.idealMax) return 'Çok sıcak. Bırak, biraz soğusun.';
+    return 'Tam kıvamında, böyle tut.';
   }
 
   // Düzen: üstte başlık ve hedef aralık, ortada termometre ve büyük sıcaklık,
@@ -182,7 +182,7 @@ class _ThermometerPanelState extends State<ThermometerPanel> with SingleTickerPr
               onPointerCancel: (_) => setState(() => _isHolding = false),
               child: Semantics(
                 button: true,
-                label: 'Isıt: basılı tut',
+                label: 'Isıtmak için basılı tut',
                 child: Container(
                   key: const Key('flame-button'),
                   width: 96,
@@ -202,13 +202,13 @@ class _ThermometerPanelState extends State<ThermometerPanel> with SingleTickerPr
               ),
             ),
             const SizedBox(height: AppSpace.sm),
-            Text('Basılı tut: ısıt · bırak: soğut', style: AppText.label(size: 12)),
+            Text('Basılı tutarsan ısınır, bırakırsan soğur.', style: AppText.label(size: 12)),
           ] else ...[
             const Icon(Icons.check_circle_rounded, color: AppColors.success, size: 44),
             const SizedBox(height: AppSpace.lg),
             SizedBox(
               width: double.infinity,
-              child: ChunkyButton.secondary(label: 'Tekrar Dene', onPressed: _retry),
+              child: ChunkyButton.secondary(label: 'Tekrar dene', onPressed: _retry),
             ),
           ],
         ],

@@ -28,10 +28,11 @@ const startCoins = 100;
 /// Bahçenin 4., 5. ve 6. parseli.
 const parcelPrices = [800, 1600, 3200];
 
-/// Markette tek bir kurutulmuş çiçek: sık, orta, nadir (Tuğrul, 2026-10-29,
-/// "marketten çiçeği 1er 1er satabilir"). Bir fanus 5 çiçek ister; 5 çiçeğin
-/// bedeli eski tohum fiyatı (300 / 900 / 2500).
-const flowerPrices = {1: 60, 2: 180, 3: 500};
+/// Oyuncu kurutulmuş çiçeğini markette tek tek satar: sıradan, orta, nadir
+/// (Tuğrul, 2026-10-29, "marketten çiçeği 1er 1er satabilir"; dükkândan çiçek
+/// alma kalktı). Yer tutucu: teslim başına ortalama ~13 para eder (tohum yarı
+/// ihtimalle, kademe ağırlıkları %47/%43/%10), emek parasının üçte biri kadar.
+const flowerSellPrices = {1: 10, 2: 30, 3: 80};
 
 const freeChemicals = {'Distile Su'};
 

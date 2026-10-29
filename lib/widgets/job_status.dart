@@ -58,23 +58,23 @@ Future<void> deliverJob(BuildContext context, int id) async {
               children: [
                 const Icon(Icons.toll_rounded, size: 22, color: AppColors.star),
                 const SizedBox(width: AppSpace.xs),
-                Text('+${pay.coins}', style: AppText.title(size: 22)),
+                Text('${pay.coins}', style: AppText.title(size: 22)),
               ],
             ),
             Text(
-              'Malzeme ${pay.material} + emek ${pay.labor}',
+              'Malzeme parası ${pay.material}, emek parası ${pay.labor}',
               textAlign: TextAlign.center,
               style: AppText.label(size: 12, color: AppColors.ink),
             ),
             if (pay.dailyBonus)
               Text(
-                'Günün ilk $dailyBonusDeliveries teslimi: emek iki kat',
+                'Günün ilk $dailyBonusDeliveries teslimi emeği iki kat öder',
                 textAlign: TextAlign.center,
                 style: AppText.label(size: 12, color: AppColors.hazirText),
               ),
             if (store.debt > 0)
               Text(
-                'Depoya kalan borç ${store.debt}',
+                'Ecza deposuna ${store.debt} para borcun kaldı',
                 textAlign: TextAlign.center,
                 style: AppText.label(size: 12, color: AppColors.bekliyorText),
               ),
@@ -89,7 +89,7 @@ Future<void> deliverJob(BuildContext context, int id) async {
                 const SizedBox(width: AppSpace.sm),
                 Flexible(
                   child: Text(
-                    'Bahçe için $drop tohumu kazandın',
+                    '$drop tohumu kazandın, bahçeye ekebilirsin',
                     style: AppText.label(size: 13, color: AppColors.ink),
                   ),
                 ),
@@ -130,7 +130,7 @@ class _JobStatusState extends State<JobStatus> with SecondTick {
       return SizedBox(
         width: double.infinity,
         child: ChunkyButton.success(
-          label: 'Hazır · Teslim Et',
+          label: 'Teslim et',
           icon: Icons.check_circle_rounded,
           onPressed: () => deliverJob(context, job.id),
         ),
@@ -212,16 +212,16 @@ class _RushButton extends StatelessWidget {
             const SizedBox(height: AppSpace.sm),
             Text('Acele et', textAlign: TextAlign.center, style: AppText.title(size: 22)),
             const SizedBox(height: AppSpace.md),
-            Text('${run.label}: $before › $after', style: AppText.body(weight: FontWeight.w600)),
+            Text('Kalan süre $before › $after', style: AppText.body(weight: FontWeight.w600)),
             const SizedBox(height: AppSpace.xs),
             Text(
               store.protectedRushesLeft > 0
-                  ? 'Vitrindeki fanus bu acelede kaliteyi korur (bugün ${store.protectedRushesLeft} kez).'
-                  : 'Kalite de yarıya iner: aceleyle karıştırılan merhem homojen olmaz.',
+                  ? 'Vitrindeki fanus bu acelede kaliteyi korur. Bugün ${store.protectedRushesLeft} kez daha korur.'
+                  : 'Kalite de yarıya iner, aceleyle karıştırılan merhem homojen olmaz.',
               style: AppText.body(size: 14),
             ),
             const SizedBox(height: AppSpace.xs),
-            Text('Bugün ${store.rushesLeft} hakkın var.', style: AppText.label()),
+            Text('Bugün ${store.rushesLeft} acele hakkın kaldı.', style: AppText.label()),
             const SizedBox(height: AppSpace.xl),
             ChunkyButton(
               label: 'Reklam izle',
@@ -242,7 +242,7 @@ class _RushButton extends StatelessWidget {
     final store = JobScope.of(context);
     final left = store.rushesLeft;
     return ChunkyButton.secondary(
-      label: left > 0 ? 'Acele et · $left hak' : 'Bugünkü acele hakkın bitti',
+      label: left > 0 ? 'Acele et' : 'Bugünkü acele hakkın bitti',
       icon: Icons.bolt_rounded,
       onPressed: store.canRush(job) ? () => _confirm(context) : null,
     );

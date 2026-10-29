@@ -309,16 +309,16 @@ class JobStore extends ChangeNotifier {
     return i < parcelPrices.length ? parcelPrices[i] : null;
   }
 
-  /// Markette tek bir kurutulmuş çiçek alır (Tuğrul, 2026-10-29).
-  Future<bool> buyFlower(String plant) async {
+  /// Elindeki bir kurutulmuş çiçeği markette satar (Tuğrul, 2026-10-29).
+  Future<bool> sellFlower(String plant) async {
     final p = driedPlantNamed(plant);
-    if (p == null) return false;
-    final ok = await _spend(
-      flowerPrices[p.tier]!,
-      () => _garden.flowers[plant] = (_garden.flowers[plant] ?? 0) + 1,
-    );
-    if (ok) await _saveGarden();
-    return ok;
+    final have = _garden.flowers[plant] ?? 0;
+    if (p == null || have < 1) return false;
+    _garden.flowers[plant] = have - 1;
+    _coins += flowerSellPrices[p.tier]!;
+    await _saveGarden();
+    await _saveEconomy();
+    return true;
   }
 
   /// Reçeteyi almak için eksik olan paketlerin bedeli (0: raf yetiyor).
@@ -510,10 +510,10 @@ class JobStore extends ChangeNotifier {
     if (!steps.any((s) => s.label == tool.name)) return 'Bu reçetede bu adım yok.';
     if (step.label != tool.name) {
       final later = steps.skip(job.runs.length).any((s) => s.label == tool.name);
-      return later ? 'Bu adım daha sonra; önce ${step.label}.' : 'Bu adım bitti.';
+      return later ? 'Önce ${step.label.toLowerCase()} yapılmalı.' : 'Bu adımı zaten yaptın.';
     }
     final runs = runsOn(tool);
-    if (runs.isNotEmpty) return 'Dolu: ${runs.first.job.magistralName} bitince yapabilirsin.';
+    if (runs.isNotEmpty) return 'Bu adım şu an ${runs.first.job.magistralName} için çalışıyor. O bitince başlatabilirsin.';
     return null;
   }
 
@@ -594,8 +594,8 @@ class JobStore extends ChangeNotifier {
     if (job == null || !canRush(job)) return;
     final protected = protectedRushesLeft > 0;
     final note = protected
-        ? 'Acele edildi; vitrindeki fanus kaliteyi korudu.'
-        : 'Acele edildi: her acele kaliteyi yarıya indirir.';
+        ? 'Acele ettin, vitrindeki fanus kaliteyi korudu.'
+        : 'Acele ettin, kalite yarıya indi.';
     final run = running(job)!;
     _jobs[_jobs.indexOf(job)] = job.copyWith(
       runs: [...job.runs.take(job.runs.length - 1), run.copyWith(end: now().add(stepLeftAfterRush(job)))],

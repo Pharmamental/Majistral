@@ -1,23 +1,23 @@
 /// Bitkinin eczanedeki kullanım grubu ve vitrindeyken verdiği oyun etkisi
 /// (Tuğrul, 2026-10-29). Gruplar bitkilerin gerçek kullanımından; etkiler
-/// eczanenin oyun etkisi, bitkinin ilacı değil (ekranda "oyun etkisi" yazar).
+/// eczanenin oyun etkisi, bitkinin ilacı değil.
 enum PlantGroup {
-  cay('Çaylar', 'duvara reçete yeri'),
-  bogaz('Boğaz ve öksürük', 'kaliteyi korumuş acele'),
-  cilt('Cilt ve yara', 'teslim emeği'),
-  ferah('Ferahlatıcı', 'bahçe hızı');
+  cay('Çaylar'),
+  bogaz('Boğaz ve öksürük'),
+  cilt('Cilt ve yara'),
+  ferah('Ferahlatıcı');
 
-  const PlantGroup(this.title, this.effect);
+  const PlantGroup(this.title);
 
   final String title;
-  final String effect;
 
-  /// Etkinin yazısı: "duvara reçete yeri +2", "günde 2 acele kaliteyi düşürmez",
-  /// "teslim emeği +%10", "bahçe hızı +%20".
+  /// Etkinin cümlesi (Tuğrul, 2026-10-29: "+1" gibi kısaltma yok, düz cümle):
+  /// "Duvarda 2 reçete daha birikir", "Günün ilk 2 acelesi kaliteyi düşürmez".
   String effectText(int bonus) => switch (this) {
-        cay => 'duvara reçete yeri +$bonus',
-        bogaz => 'günde $bonus acele kaliteyi düşürmez',
-        cilt || ferah => '$effect +%$bonus',
+        cay => 'Duvarda $bonus reçete daha birikir',
+        bogaz => bonus == 1 ? 'Günün ilk acelesi kaliteyi düşürmez' : 'Günün ilk $bonus acelesi kaliteyi düşürmez',
+        cilt => 'Teslimde emek parası %$bonus artar',
+        ferah => 'Bahçedeki bitkiler %$bonus daha hızlı büyür',
       };
 }
 
@@ -36,7 +36,7 @@ class DriedPlant {
   final String file;
   final PlantGroup group;
 
-  /// Kademe: 1 sık, 2 orta, 3 nadir. Etkinin gücü ve büyüme süresi buna bağlı.
+  /// Kademe: 1 sıradan, 2 orta, 3 nadir. Etkinin gücü ve büyüme süresi buna bağlı.
   final int tier;
 
   /// Bahçede olgunlaşınca çiçeğinin ya da yaprağının rengi.

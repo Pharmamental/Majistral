@@ -35,7 +35,7 @@ class ReferencesScreen extends StatelessWidget {
               children: [
                 Text(
                   'Formüller bu kaynaklardan derlendi ve kendi sözlerimizle yazıldı. Her formül en az iki '
-                  'kaynağa dayanır. İçerik taslak; yayından önce öğretim üyesi onayından geçecek.',
+                  'kaynağa dayanır. İçerik taslak, yayından önce öğretim üyesi onayından geçecek.',
                   style: AppText.body(size: 13, color: AppColors.inkMuted),
                 ),
                 for (final kind in ReferenceKind.values)

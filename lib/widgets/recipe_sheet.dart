@@ -51,7 +51,7 @@ Future<void> openRecipe(
                     ],
                   ),
                   Text(
-                    '${order.doctorName} · ${order.doctorBranch} · Hasta ${order.patientName}',
+                    '${order.doctorName} (${order.doctorBranch}), hasta ${order.patientName}',
                     style: AppText.label(size: 12),
                   ),
                   const SizedBox(height: AppSpace.lg),
@@ -128,15 +128,15 @@ Future<void> openRecipe(
             if (missing > 0) ...[
               Text(
                 store.coins >= missing
-                    ? "Rafta yetmeyen madde var: Al'a basınca eksik paketler kasadan alınır."
-                    : 'Rafta yetmeyen madde var; kasa yetmediği için ecza deposu veresiye verir, ilk teslimden kesilir.',
+                    ? "Rafta eksik madde var. Al'a basınca eksik paketleri $missing paraya alırsın."
+                    : 'Rafta eksik madde var. Kasan yetmediği için ecza deposu veresiye verir, borcu ilk teslimden keser.',
                 textAlign: TextAlign.center,
                 style: AppText.label(size: 12, color: AppColors.ink),
               ),
               const SizedBox(height: AppSpace.sm),
             ],
             ChunkyButton(
-              label: missing > 0 ? 'Al · eksik paket $missing' : 'Al',
+              label: 'Al',
               icon: Icons.add_rounded,
               onPressed: () {
                 final route = ModalRoute.of(sheetContext);

@@ -34,7 +34,7 @@ class _LabScreenState extends State<LabScreen> with SecondTick {
     final status = [
       if (busy > 0) '$busy adım çalışıyor',
       if (waiting > 0) '$waiting reçete seni bekliyor',
-    ].join(' · ');
+    ].join(', ');
 
     // Başlık duvarda, adım kartları gri laboratuvar tezgâhında (Tuğrul, 2026-10-27); liste tezgâhın
     // içinde kayar, tezgâh çizgisi yerinde kalır.

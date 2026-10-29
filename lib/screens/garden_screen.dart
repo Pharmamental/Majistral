@@ -63,7 +63,7 @@ class _GardenScreenState extends State<GardenScreen> with SecondTick {
                           builder: (c) => GardenBed(
                             number: i + 1,
                             open: false,
-                            label: 'Parsel ${i + 1} · ${store.nextParcelPrice} ile aç',
+                            label: 'Parsel ${i + 1}, ${store.nextParcelPrice} paraya açılır',
                             onTap: () => _openParcel(c, store, i),
                           ),
                         )
@@ -95,7 +95,9 @@ class _GardenScreenState extends State<GardenScreen> with SecondTick {
         progress: bed.progressAt(now),
         color: Color(plant.color),
         ready: ready,
-        label: ready ? '${plant.name} · hazır' : '${plant.name} · ${formatRemaining(bed.readyAt.difference(now))}',
+        label: ready
+            ? '${plant.name} toplanmaya hazır'
+            : '${plant.name}, ${formatRemaining(bed.readyAt.difference(now))} sonra olgunlaşır',
         onTap: () => ready ? _harvest(c, store, i) : _openGrowing(c, store, i),
       ),
     );
@@ -162,22 +164,22 @@ class _SeedShelf extends StatelessWidget {
           const SizedBox(height: AppSpace.sm),
           if (seeds.isEmpty)
             Text(
-              'Teslim ettiğin reçetelerin yarısı bir tohum getirir.',
+              'Reçete teslim ettikçe tohum kazanırsın.',
               style: AppText.body(size: 14, color: AppColors.inkMuted),
             )
           else
             Wrap(
               spacing: AppSpace.sm,
               runSpacing: AppSpace.sm,
-              children: [for (final p in seeds) _SeedChip(plant: p, text: '${p.name} ×${garden.seeds[p.name]}')],
+              children: [for (final p in seeds) _SeedChip(plant: p, text: '${garden.seeds[p.name]} ${p.name}')],
             ),
           const SizedBox(height: AppSpace.lg),
           Text('Çiçeklerin', style: AppText.title(size: 18)),
           const SizedBox(height: AppSpace.sm),
           if (flowers.isEmpty)
             Text(
-              'Hasat ettiğin her bitki bir çiçek verir. ${Garden.fanusCost} çiçek bir fanus açar. '
-              'Çiçek markette tek tek de satılır.',
+              'Olgunlaşan bitkiyi toplayınca bir çiçek kurutursun. Aynı bitkiden '
+              '${Garden.fanusCost} çiçek biriktirince fanusu açılır.',
               style: AppText.body(size: 14, color: AppColors.inkMuted),
             )
           else
@@ -186,14 +188,14 @@ class _SeedShelf extends StatelessWidget {
               runSpacing: AppSpace.sm,
               children: [
                 for (final p in flowers)
-                  _SeedChip(plant: p, text: '${p.name} ${garden.flowers[p.name]}/${Garden.fanusCost}'),
+                  _SeedChip(plant: p, text: '${garden.flowers[p.name]} ${p.name}'),
               ],
             ),
           const SizedBox(height: AppSpace.md),
           Text(
             effects.isEmpty
-                ? '${Garden.fanusCost} çiçeği biriken bitkiyi Profil\'deki vitrine koy; oyun etkisi kazanırsın.'
-                : 'Vitrindeki oyun etkileri: ${effects.join(' · ')}',
+                ? 'Bir bitkiden ${Garden.fanusCost} çiçek biriktirince fanusunu Profil\'deki vitrine koyabilirsin.'
+                : '${effects.join('. ')}.',
             style: AppText.label(size: 12, color: AppColors.inkMuted),
           ),
         ],
@@ -217,7 +219,7 @@ Future<void> _openParcel(BuildContext context, JobStore store, int bed) {
           Text('Parsel ${bed + 1}', style: AppText.title(size: 20)),
           const SizedBox(height: AppSpace.xs),
           Text(
-            'Bir parsel daha: aynı anda bir bitki daha yetiştirirsin. Kasada ${store.coins} para var.',
+            'Bu parseli açarsan aynı anda bir bitki daha yetiştirebilirsin. Kasanda ${store.coins} para var.',
             style: AppText.body(size: 14, color: AppColors.inkMuted),
           ),
           const SizedBox(height: AppSpace.lg),
@@ -284,7 +286,7 @@ class _PlantInfo extends StatelessWidget {
             children: [
               Text(plant.name, style: AppText.body(size: 15, weight: FontWeight.w700)),
               Text(plant.latin, style: AppText.label(size: 12)),
-              Text('Oyun etkisi: ${plant.effectText}', style: AppText.label(size: 12, color: AppColors.ink)),
+              Text(plant.effectText, style: AppText.label(size: 12, color: AppColors.ink)),
               if (trailing != null) Text(trailing!, style: AppText.label(size: 12)),
             ],
           ),
@@ -307,12 +309,12 @@ Future<void> _openSeedPicker(BuildContext context, JobStore store, int bed) {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text('Parsel ${bed + 1}: ne ekelim?', style: AppText.title(size: 20)),
+          Text('Bu parsele ne ekelim?', style: AppText.title(size: 20)),
           const SizedBox(height: AppSpace.xs),
           Text(
             seeds.isEmpty
-                ? 'Tohumun yok. Teslim ettiğin reçetelerin yarısı bir tohum getirir.'
-                : 'Büyüme süreleri oyun süresidir, gerçek büyüme değil.',
+                ? 'Hiç tohumun yok. Reçete teslim ettikçe tohum kazanırsın.'
+                : 'Bitkiler oyunda gerçek hayattan çok daha hızlı büyür.',
             style: AppText.body(size: 14, color: AppColors.inkMuted),
           ),
           const SizedBox(height: AppSpace.md),
@@ -339,8 +341,8 @@ Future<void> _openSeedPicker(BuildContext context, JobStore store, int bed) {
                           padding: const EdgeInsets.all(AppSpace.sm),
                           child: _PlantInfo(
                             plant: p,
-                            trailing: '${store.garden.seeds[p.name]} tohum · '
-                                'Büyüme: ${formatRemaining(p.growTime * (1 - speed / 100))}',
+                            trailing: '${store.garden.seeds[p.name]} tohumun var. '
+                                '${formatRemaining(p.growTime * (1 - speed / 100))} sonra olgunlaşır.',
                           ),
                         ),
                       ),
@@ -375,7 +377,7 @@ Future<void> _openGrowing(BuildContext context, JobStore store, int bed) {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              _PlantInfo(plant: plant, trailing: 'Olgunlaşmaya ${formatRemaining(left)}'),
+              _PlantInfo(plant: plant, trailing: '${formatRemaining(left)} sonra olgunlaşır.'),
               const SizedBox(height: AppSpace.md),
               Text(
                 _flowerProgress(store.garden, plant.name),
@@ -391,14 +393,14 @@ Future<void> _openGrowing(BuildContext context, JobStore store, int bed) {
   );
 }
 
-/// Bitkinin fanusuna kaç çiçek kaldığı: "Elinde 3 Papatya çiçeği. Fanus için 2 tane daha."
+/// Bitkinin fanusuna kaç çiçek kaldığı: "Elinde 3 Papatya çiçeği var. Fanus için 2 tane daha gerek."
 String _flowerProgress(Garden garden, String plant) {
-  if (garden.grown.contains(plant)) return '$plant fanusu açık; vitrine koyabilirsin.';
+  if (garden.grown.contains(plant)) return '$plant fanusu açık, vitrine koyabilirsin.';
   final have = garden.flowers[plant] ?? 0;
   final need = Garden.fanusCost - have;
   return need <= 0
-      ? 'Elinde $have $plant çiçeği: fanusu vitrine koyabilirsin.'
-      : 'Elinde $have $plant çiçeği. Fanus için $need tane daha.';
+      ? 'Elinde $have $plant çiçeği var, fanusunu vitrine koyabilirsin.'
+      : 'Elinde $have $plant çiçeği var. Fanus için $need tane daha gerek.';
 }
 
 /// Olgun parsel: hasat et; bir çiçek kurutulur, 5 çiçek bir fanus açar.
@@ -421,10 +423,10 @@ Future<void> _harvest(BuildContext context, JobStore store, int bed) async {
         children: [
           Image.asset(plant.imagePath, width: 96, height: 96),
           const SizedBox(height: AppSpace.md),
-          Text('Bir ${plant.name} çiçeği kurutuldu', textAlign: TextAlign.center, style: AppText.title(size: 20)),
+          Text('${plant.name} çiçeğini kuruttun', textAlign: TextAlign.center, style: AppText.title(size: 20)),
           const SizedBox(height: AppSpace.xs),
           Text(
-            '${_flowerProgress(store.garden, plant.name)} Oyun etkisi: ${plant.effectText}.',
+            _flowerProgress(store.garden, plant.name),
             textAlign: TextAlign.center,
             style: AppText.body(size: 14, color: AppColors.inkMuted),
           ),
