@@ -58,7 +58,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   // Unvan yalnız diplomada yazar; başlıkta tekrar etmez (2026-10-28).
-                  TabHeader(title: 'Profil', subtitle: 'Diploman ve ilerlemen'),
+                  TabHeader(title: 'Profil', subtitle: 'Diploman ve ilerlemen', sign: TabSign.profil),
+                  SizedBox(height: AppSpace.lg),
                   Padding(
                     padding: EdgeInsets.fromLTRB(AppSpace.lg, 0, AppSpace.lg, AppSpace.lg),
                     child: _Diploma(),

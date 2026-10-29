@@ -4,6 +4,7 @@ import '../logic/job_store.dart';
 import '../models/prep_job.dart';
 import '../models/prescription.dart';
 import '../theme/tokens.dart';
+import '../widgets/back_pill.dart';
 import '../widgets/counter_top.dart';
 import '../widgets/grow_panel.dart';
 import '../widgets/job_status.dart';
@@ -92,27 +93,9 @@ class _OrdersScreenState extends State<OrdersScreen> with SecondTick {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              TabHeader(title: 'Reçeteler', subtitle: parts.join(', '), sign: TabSign.receteler),
               Padding(
                 padding: const EdgeInsets.fromLTRB(AppSpace.xl, AppSpace.md, AppSpace.xl, 0),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.baseline,
-                  textBaseline: TextBaseline.alphabetic,
-                  children: [
-                    Text('Reçeteler', style: AppText.display(size: 24)),
-                    const SizedBox(width: AppSpace.md),
-                    Expanded(
-                      child: Text(
-                        parts.join(', '),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: AppText.label(size: 12),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(AppSpace.xl, AppSpace.sm, AppSpace.xl, 0),
                 child: Text(wallLine, style: AppText.label(size: 12, color: AppColors.ink)),
               ),
               SingleChildScrollView(

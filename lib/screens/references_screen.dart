@@ -19,7 +19,7 @@ class ReferencesScreen extends StatelessWidget {
       children: [
         ColoredBox(
           color: AppColors.wall,
-          child: TabHeader(title: 'Kaynaklar', subtitle: '${allReferences.length} güvenilir kaynak'),
+          child: TabHeader(title: 'Kaynaklar', subtitle: '${allReferences.length} güvenilir kaynak', sign: TabSign.diger),
         ),
         const Divider(height: 1, color: AppColors.line),
         Expanded(

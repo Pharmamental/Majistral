@@ -124,6 +124,8 @@ void main() {
     expect(find.text('Stajyer eczacı'), findsOneWidget); // unvan yalnız diplomada
     expect(find.text('İlk reçeteni bekliyor'), findsOneWidget);
     expect(find.textContaining('yapılmadı'), findsNothing);
+    await tester.ensureVisible(find.text('Reçetelere git'));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('Reçetelere git'));
     await tester.pumpAndSettle();
     expect(find.textContaining('Duvarda 4 reçete'), findsOneWidget);

@@ -43,7 +43,13 @@ class _MarketScreenState extends State<MarketScreen> {
           color: AppColors.wall,
           child: Column(
             children: [
-              const TabHeader(title: 'Market', subtitle: 'Alet ve kimyasal al, çiçek sat', trailing: CoinPill()),
+              TabHeader(
+                title: 'Market',
+                subtitle: 'Alet ve kimyasal al, çiçek sat',
+                sign: TabSign.market,
+                trailing: CoinPill(onGlass: TabSign.market.leaf),
+              ),
+              const SizedBox(height: AppSpace.lg),
               Padding(
                 padding: const EdgeInsets.fromLTRB(AppSpace.lg, 0, AppSpace.lg, AppSpace.lg),
                 child: PillTabs<MarketTab>(

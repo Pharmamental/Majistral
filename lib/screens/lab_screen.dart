@@ -43,7 +43,11 @@ class _LabScreenState extends State<LabScreen> with SecondTick {
       children: [
         ColoredBox(
           color: AppColors.wall,
-          child: TabHeader(title: 'Laboratuvar', subtitle: status.isEmpty ? 'Hiçbir adım çalışmıyor' : status),
+          child: TabHeader(
+            title: 'Laboratuvar',
+            subtitle: status.isEmpty ? 'Hiçbir adım çalışmıyor' : status,
+            sign: TabSign.laboratuvar,
+          ),
         ),
         Expanded(
           child: LabBench(

@@ -80,6 +80,13 @@ lib/
   az yuvarlak (`AppRadius.paper` 6, `paperInner` 4); basılan her şey (düğme, sekme, çip) tam hap;
   eşya ve madde ikonlarının kutusu daire. Her öğeye aynı köşeyi verme.
 - Birincil aksiyon altta (başparmak bölgesi): kartın en altı ya da ekranın sabit alt çubuğu.
+- Sekme başlığı yaldızlı cam tabela (Tuğrul, 2026-10-29, "yaldızlı cam güzel ama her sekmenin
+  kendine özel tasarımı olsun"; alternatifler https://claude.ai/artifact/7Kw617fR1DpTUGLSGhH5JJ):
+  ekranın üstünde tam genişlik koyu cam, ad varak harfle, durum cümlesi açık varak tonunda,
+  altta varak şerit (`TabHeader`, `TabSign`). Cam ve varak sekmenin malzemesinden: Reçeteler
+  kobalt + altın, Laboratuvar arduvaz + gümüş, Market bordo + altın, Bahçe yeşil + altın,
+  Profil ceviz + altın, Diğer ve Kaynaklar mürekkep laciverti + bakır. Para göstergesi camın
+  üstünde yarı saydam, kenarı varak (`CoinPill(onGlass:)`). Yeni sekme kendi `TabSign`'ını alır.
 - Öğrenme ekranları (Laboratuvar, alet penceresi) sade; kutlama (yıldız animasyonu) yalnız teslimde.
 - Durum yalnız renkle anlatılmaz: seçimde onay işareti, sayaçta ikon + metin.
 - Seçici düğmeler (Tuğrul, 2026-10-27): kobalt hap seçime hızlı (180 ms) ve doğrusal kayar, yazı

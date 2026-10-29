@@ -35,9 +35,14 @@ class _GardenScreenState extends State<GardenScreen> with SecondTick {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const ColoredBox(
+        ColoredBox(
           color: AppColors.wall,
-          child: TabHeader(title: 'Bahçe', subtitle: 'Tıbbi bitki yetiştir, vitrine koy', trailing: CoinPill()),
+          child: TabHeader(
+            title: 'Bahçe',
+            subtitle: 'Tıbbi bitki yetiştir, vitrine koy',
+            sign: TabSign.bahce,
+            trailing: CoinPill(onGlass: TabSign.bahce.leaf),
+          ),
         ),
         Expanded(
           child: GardenGround(

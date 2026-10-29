@@ -47,7 +47,7 @@ class _MoreScreenState extends State<MoreScreen> {
       children: [
         const ColoredBox(
           color: AppColors.wall,
-          child: TabHeader(title: 'Diğer', subtitle: 'Kaynaklar ve daha fazlası'),
+          child: TabHeader(title: 'Diğer', subtitle: 'Kaynaklar ve daha fazlası', sign: TabSign.diger),
         ),
         const Divider(height: 1, color: AppColors.line),
         Expanded(
