@@ -1,6 +1,9 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
 import '../logic/job_store.dart';
+import '../models/prescription.dart';
 import '../models/shop_item.dart';
 import '../theme/tokens.dart';
 import 'chunky_button.dart';
@@ -10,7 +13,11 @@ import 'paper_tape.dart';
 // Satın alma (2026-10-29): aletler ve kimyasal paketleri kasadaki parayla
 // alınır (data/economy.dart). Reklam düğmesi henüz bağlı değil.
 
-/// İstasyon adı + yatay kaydırılan kademe kartları (paslı → iyi → gelişmiş).
+/// Bir istasyon = bir laboratuvar adımı. Yükseltme yolu (Tuğrul, 2026-10-29, "E"):
+/// kartın başında adımın ikonu ve adı; altında aletler bir yolun durakları gibi.
+/// Elde olanlar yeşil halkalı ve yeşil çizgiyle bağlı, sıradaki kesik kobalt halkalı
+/// ve altında kaç kat hızlandırdığı. En altta sıradaki aletin düğmesi ya da "Elinde".
+/// Süre, kısalma çipi ve "para gerek" yazısı yok (Tuğrul).
 class StationSection extends StatelessWidget {
   const StationSection({super.key, required this.station});
 
@@ -18,166 +25,179 @@ class StationSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpace.xl),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(station.name, style: AppText.title(size: 20)),
-              Text(
-                'Daha iyi alet bu adımı kısaltır',
-                style: AppText.label(size: 12, color: AppColors.ink),
-              ),
-            ],
-          ),
+    final store = JobScope.of(context);
+    final tiers = station.tiers;
+    final next = tiers.where((t) => !store.ownsTool(t)).firstOrNull;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: AppSpace.lg),
+      child: Container(
+        padding: const EdgeInsets.all(AppSpace.lg),
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(AppRadius.paper),
+          border: Border.all(color: AppColors.line),
         ),
-        const SizedBox(height: AppSpace.md),
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          padding: const EdgeInsets.symmetric(horizontal: AppSpace.lg),
-          // Kartlar en uzun açıklamaya göre eşit boyda; düğmeler aynı hizada.
-          child: IntrinsicHeight(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
               children: [
-                for (var i = 0; i < station.tiers.length; i++) ...[
-                  StationTierCard(
-                    tier: station.tiers[i],
-                    level: i + 1,
-                    levels: station.tiers.length,
-                  ),
-                  if (i != station.tiers.length - 1)
-                    const SizedBox(width: AppSpace.md),
-                ],
+                Container(
+                  width: 56,
+                  height: 56,
+                  alignment: Alignment.center,
+                  decoration: const BoxDecoration(color: AppColors.iconWell, shape: BoxShape.circle),
+                  child: Image.asset(stepIconPath(station.name), width: 48, height: 48),
+                ),
+                const SizedBox(width: AppSpace.md),
+                Expanded(child: Text(station.name, style: AppText.title(size: 22))),
               ],
             ),
+            const SizedBox(height: AppSpace.lg),
+            LayoutBuilder(
+              builder: (context, constraints) {
+                final n = tiers.length;
+                final width = math.min(112.0, constraints.maxWidth / n);
+                final gap = n == 1 ? 0.0 : (constraints.maxWidth - width * n) / (n - 1);
+                double center(int i) => i * (width + gap) + width / 2;
+                return Stack(
+                  children: [
+                    // Duraklar arası çizgi: iki ucu da eldeyse yeşil.
+                    for (var i = 1; i < n; i++)
+                      Positioned(
+                        left: center(i - 1),
+                        width: center(i) - center(i - 1),
+                        top: _TierNode.ring / 2 - 2,
+                        height: 4,
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                            color: store.ownsTool(tiers[i]) ? AppColors.success : AppColors.line,
+                            borderRadius: BorderRadius.circular(2),
+                          ),
+                        ),
+                      ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        for (final tier in tiers)
+                          SizedBox(width: width, child: _TierNode(tier: tier, owned: store.ownsTool(tier))),
+                      ],
+                    ),
+                  ],
+                );
+              },
+            ),
+            const SizedBox(height: AppSpace.lg),
+            if (next == null)
+              Container(
+                height: 44,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: AppColors.successSoft,
+                  borderRadius: BorderRadius.circular(AppRadius.pill),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.check_rounded, size: 18, color: AppColors.successDark),
+                    const SizedBox(width: AppSpace.xs),
+                    Text('Elinde', style: AppText.label(size: 15, color: AppColors.successDark)),
+                  ],
+                ),
+              )
+            else
+              ChunkyButton(
+                compact: true,
+                label: '${next.price} ile al',
+                icon: Icons.toll_rounded,
+                // Para yetmiyorsa düğme kapalı (2026-10-29).
+                onPressed: store.coins >= next.price ? () => store.buyTool(next) : null,
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Yolun bir durağı: halkalı alet ikonu, adı ve altında durumu.
+class _TierNode extends StatelessWidget {
+  const _TierNode({required this.tier, required this.owned});
+
+  final ShopItem tier;
+  final bool owned;
+
+  static const double ring = 64;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        SizedBox.square(
+          dimension: ring,
+          child: CustomPaint(
+            painter: _RingPainter(color: owned ? AppColors.success : AppColors.kobalt, dashed: !owned),
+            child: Center(
+              child: Container(
+                width: ring - 10,
+                height: ring - 10,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: owned ? AppColors.iconWell : AppColors.surface,
+                  shape: BoxShape.circle,
+                ),
+                child: tier.imagePath != null
+                    ? Image.asset(tier.imagePath!, width: 44, height: 44)
+                    : Icon(tier.icon, color: AppColors.inkMuted, size: 28),
+              ),
+            ),
           ),
+        ),
+        const SizedBox(height: AppSpace.sm),
+        Text(tier.name, textAlign: TextAlign.center, style: AppText.label(size: 13, color: AppColors.ink)),
+        Text(
+          !owned
+              ? '%${tier.faster} daha hızlı'
+              : tier.price == 0
+                  ? 'Bedava'
+                  : 'Elinde',
+          textAlign: TextAlign.center,
+          style: AppText.label(size: 12, color: AppColors.inkMuted),
         ),
       ],
     );
   }
 }
 
-class StationTierCard extends StatelessWidget {
-  const StationTierCard({
-    super.key,
-    required this.tier,
-    required this.level,
-    required this.levels,
-  });
+/// Durak halkası: elde olan düz yeşil, sıradaki kesik kobalt.
+class _RingPainter extends CustomPainter {
+  const _RingPainter({required this.color, required this.dashed});
 
-  final ShopItem tier;
-
-  /// Yükseltme yolundaki yeri.
-  final int level;
-  final int levels;
-
-  @override
-  Widget build(BuildContext context) {
-    final store = JobScope.of(context);
-    final owned = store.ownsTool(tier);
-    return Container(
-      width: 184,
-      padding: const EdgeInsets.all(AppSpace.lg),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(AppRadius.paper),
-        border: Border.all(
-          color: owned ? tier.color : AppColors.line,
-          width: owned ? 2 : 1,
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              _Thumb(item: tier, size: 56),
-              const Spacer(),
-              _LevelPips(level: level, levels: levels, color: tier.color),
-            ],
-          ),
-          const SizedBox(height: AppSpace.md),
-          Text(tier.name, style: AppText.title(size: 18)),
-          const SizedBox(height: AppSpace.xs),
-          Text(
-            tier.description,
-            style: AppText.body(size: 13, color: AppColors.inkMuted),
-          ),
-          const SizedBox(height: AppSpace.md),
-          const Spacer(),
-          SizedBox(
-            width: double.infinity,
-            child: owned
-                ? Container(
-                    height: 44,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: AppColors.surfaceMuted,
-                      borderRadius: BorderRadius.circular(AppRadius.pill),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(
-                          Icons.check_rounded,
-                          size: 18,
-                          color: AppColors.inkMuted,
-                        ),
-                        const SizedBox(width: AppSpace.xs),
-                        Text('Elinde', style: AppText.label()),
-                      ],
-                    ),
-                  )
-                : ChunkyButton(
-                    compact: true,
-                    label: '${tier.price}',
-                    icon: Icons.toll_rounded,
-                    // Para yetmiyorsa düğme kapalı (2026-10-29).
-                    onPressed: store.coins >= tier.price ? () => store.buyTool(tier) : null,
-                  ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-/// Kademe göstergesi: dolu nokta sayısı = kademe.
-class _LevelPips extends StatelessWidget {
-  const _LevelPips({
-    required this.level,
-    required this.levels,
-    required this.color,
-  });
-
-  final int level;
-  final int levels;
   final Color color;
+  final bool dashed;
 
   @override
-  Widget build(BuildContext context) {
-    return Semantics(
-      label: 'Kademe $level',
-      child: Row(
-        children: [
-          for (var i = 1; i <= levels; i++)
-            Container(
-              width: 8,
-              height: 8,
-              margin: const EdgeInsets.only(left: AppSpace.xs),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: i <= level ? color : AppColors.line,
-              ),
-            ),
-        ],
-      ),
-    );
+  void paint(Canvas canvas, Size size) {
+    const stroke = 3.0;
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = stroke;
+    final rect = (Offset.zero & size).deflate(stroke / 2);
+    if (!dashed) {
+      canvas.drawOval(rect, paint);
+      return;
+    }
+    const dashes = 16;
+    const sweep = 2 * math.pi / dashes;
+    for (var i = 0; i < dashes; i++) {
+      canvas.drawArc(rect, i * sweep, sweep * .6, false, paint);
+    }
   }
+
+  @override
+  bool shouldRepaint(_RingPainter old) => old.color != color || old.dashed != dashed;
 }
 
 class _Thumb extends StatelessWidget {

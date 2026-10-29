@@ -99,6 +99,12 @@ lib/
   Kapsül doldurma aleti › Yarı otomatik kapsül makinesi (bunlar %30). Yeni 8 aletin ikonu
   çizilmedi (market genel ikon gösteriyor). Yeni adım eklenince istasyonu da eklenir
   (`test/steps_test.dart` denetler). Spatüller grubu çıktı; çelik spatül uyarısı adımda.
+  Kart "yükseltme yolu" (Tuğrul, 2026-10-29, "E"; alternatifler
+  https://claude.ai/artifact/MbXw222ewKvyqcM54UAm57): her istasyon tek kart, başta adımın
+  büyük ikonu ve adı, altında aletler bir yolun durakları (elde: yeşil halka ve yeşil çizgi,
+  altında "Bedava" ya da "Elinde"; sıradaki: kesik kobalt halka, altında "%30 daha hızlı"),
+  en altta "1800 ile al" ya da "Elinde" (`StationSection`). Süre ("4 dk 30 sn sürer"),
+  sağ üstte yüzde çipi ve "… para daha gerek" yazısı yok; para yetmezse düğme yalnız kapalı.
 - Adımlar gerçek teknikler (Tuğrul, 2026-10-28, "asıl önemlileri koy"): kontrol, etiket ve
   ambalaj adım değil, laboratuvarda ambalaj aleti durmaz (markette Ambalaj grubu 2026-10-29'da
   çıktı). Merhem: Ezme › Levigasyon › Geometrik seyreltme (salisilik asit); Levigasyon ›

@@ -79,7 +79,7 @@ class _MarketScreenState extends State<MarketScreen> {
         return ListView.separated(
           padding: EdgeInsets.only(top: AppSpace.lg, bottom: bottom),
           itemCount: stations.length,
-          separatorBuilder: (context, index) => const SizedBox(height: AppSpace.xxl),
+          separatorBuilder: (context, index) => const SizedBox(height: AppSpace.lg),
           itemBuilder: (context, index) => StationSection(station: stations[index]),
         );
       case MarketTab.kimyasallar:
