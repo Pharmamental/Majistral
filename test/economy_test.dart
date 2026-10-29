@@ -118,28 +118,29 @@ void main() {
       expect(store.coins, pay - 55);
     });
 
-    test('alet alınır ve adımı değiştirir: Unguator %30, değirmen %50, termostatlı banyo %25', () async {
+    test('yükseltme yalnız kendi adımını kısaltır: değirmen levigasyonu %50, Unguator seyreltmeyi %30', () async {
       SharedPreferences.setMockInitialValues({
         'economy_v1': jsonEncode({'coins': 10000, 'debt': 0, 'stock': {}, 'tools': []}),
       });
       final store = await JobStore.load(now: () => clock);
-      final levigasyon = order.steps[1];
+      final [ezme, levigasyon, seyreltme] = order.steps;
       final eritme = prescriptionOrders[2].steps.first;
+      Duration full(PrescriptionStep s) => Duration(minutes: s.minutes);
       expect(store.stepDuration(levigasyon), const Duration(minutes: 3));
-      expect(await store.buyTool(_tool('Unguator')), isTrue);
-      expect(store.coins, 10000 - 2500);
-      expect(await store.buyTool(_tool('Unguator')), isFalse, reason: 'ikinci kez alınmaz');
-      expect(store.stepDuration(levigasyon), const Duration(seconds: 126));
-      await store.buyTool(_tool('Merhem değirmeni'));
+      expect(await store.buyTool(_tool('Merhem değirmeni')), isTrue);
+      expect(store.coins, 10000 - 4000);
+      expect(await store.buyTool(_tool('Merhem değirmeni')), isFalse, reason: 'ikinci kez alınmaz');
+      expect(store.stepDuration(levigasyon), const Duration(seconds: 90));
+      expect(store.stepDuration(seyreltme), full(seyreltme), reason: 'değirmen seyreltmeye dokunmaz');
+      await store.buyTool(_tool('Unguator'));
+      expect(store.stepDuration(seyreltme), Duration(seconds: (seyreltme.minutes * 60 * 0.7).round()));
       expect(store.stepDuration(levigasyon), const Duration(seconds: 90));
       await store.buyTool(_tool('Termostatlı su banyosu'));
       expect(store.stepDuration(eritme), const Duration(minutes: 4, seconds: 30));
-      // Ezme spatülle değil havanda (toz): kısalmaz.
-      final pudraEzme = prescriptionOrders[3].steps.first;
-      expect(store.stepDuration(pudraEzme), Duration(minutes: pudraEzme.minutes));
+      expect(store.stepDuration(ezme), full(ezme));
     });
 
-    test('Wedgwood havan alınınca Ezme iki reçetede birden çalışır', () async {
+    test('Wedgwood havan Ezme\'yi kısaltır; kart yine tek reçetede çalışır', () async {
       SharedPreferences.setMockInitialValues({
         'economy_v1': jsonEncode({'coins': 2000, 'debt': 0, 'stock': {}, 'tools': []}),
       });
@@ -148,11 +149,11 @@ void main() {
       final pudra = prescriptionOrders[3]; // ezme ile başlar
       await take(store, order);
       await take(store, pudra);
+      await store.buyTool(_tool('Wedgwood havan'));
+      final step = pudra.steps.first;
+      expect(store.stepDuration(step), Duration(seconds: (step.minutes * 60 * 0.7).round()));
       await store.startStep(jobOf(store, order)!.id, ezme);
       expect(store.whyNot(ezme, jobOf(store, pudra)!), startsWith('Dolu'));
-      await store.buyTool(_tool('Wedgwood havan'));
-      expect(store.capacity(ezme), 2);
-      expect(store.whyNot(ezme, jobOf(store, pudra)!), isNull);
     });
 
     test('parsel 4-6 sırayla açılır; tohum satın alınır, eldeyse alınmaz', () async {

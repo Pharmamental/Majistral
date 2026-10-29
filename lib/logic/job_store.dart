@@ -8,7 +8,6 @@ import '../data/dried_plants.dart';
 import '../data/economy.dart';
 import '../data/lab_tools.dart';
 import '../data/orders.dart';
-import '../data/stations.dart';
 import '../models/garden.dart';
 import '../models/prep_job.dart';
 import '../models/prescription.dart';
@@ -346,39 +345,12 @@ class JobStore extends ChangeNotifier {
 
   // ---- Aletlerin etkisi (2026-10-29)
 
-  ShopItem? _tier(String name) {
-    for (final s in stations) {
-      for (final t in s.tiers) {
-        if (t.name == name) return t;
-      }
-    }
-    return null;
-  }
-
-  bool _owns(String name) {
-    final t = _tier(name);
-    return t != null && ownsTool(t);
-  }
-
-  /// Adımın süresi, eldeki aletlerle: Unguator spatülle yapılan adımları %30,
-  /// merhem değirmeni %50, termostatlı su banyosu ısıtmayı %25 kısaltır.
+  /// Adımın süresi, eldeki aletlerle: adımın marketteki yükseltmesi alınınca
+  /// o aletin yüzdesi kadar kısalır (Tuğrul, 2026-10-29: yükseltme yalnız süre).
   Duration stepDuration(PrescriptionStep step) {
-    var factor = 1.0;
-    final spatula = step.tool == StepTool.karistirma || step.orWith.contains(StepTool.karistirma);
-    if (spatula) {
-      if (_owns('Merhem değirmeni')) {
-        factor = 0.5;
-      } else if (_owns('Unguator')) {
-        factor = 0.7;
-      }
-    }
-    if (step.tool == StepTool.isitma && _owns('Termostatlı su banyosu')) factor = 0.75;
-    return Duration(seconds: (step.minutes * 60 * factor).round());
+    final faster = upgradeFor(step.label, owns: ownsTool)?.faster ?? 0;
+    return Duration(seconds: (step.minutes * 60 * (100 - faster) / 100).round());
   }
-
-  /// Bir adım kartı aynı anda kaç reçetede çalışır: Wedgwood havan alınınca
-  /// Ezme iki reçetede birden (paralel yuva).
-  int capacity(LabTool tool) => tool.name == 'Ezme' && _owns('Wedgwood havan') ? 2 : 1;
 
   /// [bed]. parsele tohum eker; vitrindeki ferahlatıcı fanus büyümeyi hızlandırır.
   Future<bool> plant(int bed, String plant) =>
@@ -509,7 +481,7 @@ class JobStore extends ChangeNotifier {
       return later ? 'Bu adım daha sonra; önce ${step.label}.' : 'Bu adım bitti.';
     }
     final runs = runsOn(tool);
-    if (runs.length >= capacity(tool)) return 'Dolu: ${runs.first.job.magistralName} bitince yapabilirsin.';
+    if (runs.isNotEmpty) return 'Dolu: ${runs.first.job.magistralName} bitince yapabilirsin.';
     return null;
   }
 

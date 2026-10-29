@@ -26,9 +26,7 @@ class StationSection extends StatelessWidget {
             children: [
               Text(station.name, style: AppText.title(size: 20)),
               Text(
-                station.upgradePath
-                    ? 'Basitten gelişmişe'
-                    : 'Her işin ayrı aleti',
+                'Daha iyi alet bu adımı kısaltır',
                 style: AppText.label(size: 12, color: AppColors.ink),
               ),
             ],
@@ -46,7 +44,7 @@ class StationSection extends StatelessWidget {
                 for (var i = 0; i < station.tiers.length; i++) ...[
                   StationTierCard(
                     tier: station.tiers[i],
-                    level: station.upgradePath ? i + 1 : null,
+                    level: i + 1,
                     levels: station.tiers.length,
                   ),
                   if (i != station.tiers.length - 1)
@@ -65,14 +63,14 @@ class StationTierCard extends StatelessWidget {
   const StationTierCard({
     super.key,
     required this.tier,
-    this.level,
-    this.levels = 3,
+    required this.level,
+    required this.levels,
   });
 
   final ShopItem tier;
 
-  /// Yükseltme yolundaki yeri; farklı işlerin aletlerinde (havanlar) yok.
-  final int? level;
+  /// Yükseltme yolundaki yeri.
+  final int level;
   final int levels;
 
   @override
@@ -97,8 +95,7 @@ class StationTierCard extends StatelessWidget {
             children: [
               _Thumb(item: tier, size: 56),
               const Spacer(),
-              if (level != null)
-                _LevelPips(level: level!, levels: levels, color: tier.color),
+              _LevelPips(level: level, levels: levels, color: tier.color),
             ],
           ),
           const SizedBox(height: AppSpace.md),

@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:game/data/lab_tools.dart';
 import 'package:game/data/orders.dart';
+import 'package:game/data/stations.dart';
 import 'package:game/models/prescription.dart';
 import 'package:game/models/shop_item.dart';
 
@@ -45,7 +46,7 @@ void main() {
     }
   });
 
-  test('kart adımı yapan aleti yazar; Unguator alınınca karıştırma ona geçer', () {
+  test('kart adımı yapan aleti yazar; yükseltme alınınca onu', () {
     String equipment(List tools, String step) => tools.firstWhere((t) => t.name == step).equipment;
     // Satın alma öncesi: yalnız ücretsiz kademeler elde (unlockAll'dan bağımsız).
     bool free(ShopItem i) => i.price == 0;
@@ -53,7 +54,24 @@ void main() {
     expect(equipment(labTools(owns: free), 'Kapsül doldurma'), 'Kapsül doldurma aleti');
     const bought = {'Unguator', 'Termostatlı su banyosu'};
     final upgraded = labTools(owns: (i) => free(i) || bought.contains(i.name));
-    expect(equipment(upgraded, 'Geometrik seyreltme'), 'Unguator · Porselen havan');
+    expect(equipment(upgraded, 'Geometrik seyreltme'), 'Unguator');
     expect(equipment(upgraded, 'Eritme'), 'Termostatlı su banyosu');
+    expect(equipment(upgraded, 'Levigasyon'), 'Porselen havan · Merhem taşı ve spatül');
+  });
+
+  // Kural (Tuğrul, 2026-10-29): markette her adımın istasyonu; basit alet
+  // ücretsiz, daha iyisi parayla ve yalnız süreyi kısaltır.
+  test('marketin istasyonları laboratuvarın adımları, her birinde süre kısaltan yükseltme', () {
+    expect([for (final s in stations) s.name], [for (final t in labTools()) t.name]);
+    for (final s in stations) {
+      expect(s.tiers.first.price, 0, reason: '${s.name}: ilk alet ücretsiz');
+      expect(s.tiers.first.faster, 0, reason: s.name);
+      final paid = s.tiers.skip(1).toList();
+      expect(paid, isNotEmpty, reason: '${s.name}: yükseltme yok');
+      for (final t in paid) {
+        expect(t.price, greaterThan(0), reason: t.name);
+        expect(t.faster, inInclusiveRange(1, 99), reason: t.name);
+      }
+    }
   });
 }

@@ -86,9 +86,19 @@ lib/
   Adım kutusu beyaz, ikon açık gri dairede (`AppColors.iconWell`; cam ikonlar beyazda kayboluyordu).
 - Aletler (Tuğrul, 2026-10-27): alet seçme ekranı yok; duvardan "Al" reçeteyi kabul eder. Aletler
   markette (`stations`); laboratuvarda adım kartlarının "neyle yapılır" satırında görünür.
-  Havanlar ve spatüller farklı işlerin aletleri (`Station.upgradePath = false`); kademeli
-  gruplarda (merhem taşı → Unguator → merhem değirmeni, su banyosu) yalnız sahip olunan en
-  yükseği yazar. Sahip olunan = ücretsiz kademe ya da satın alınan (`JobStore.ownsTool`).
+  Sahip olunan = ücretsiz kademe ya da satın alınan (`JobStore.ownsTool`).
+- **KURAL: Marketin istasyonları laboratuvarın adımlarıdır** (Tuğrul, 2026-10-29, "ŞART"): her
+  adımın aynı adlı, aynı sıradaki istasyonu var; ilk kart ücretsiz basit alet, sonraki satın
+  alınan daha iyi alet. Yükseltme yalnız o adımın süresini kısaltır (`ShopItem.faster`), başka
+  etki (paralel yuva, kalite) yok. Ezme: Porselen havan › Wedgwood havan (%30); Levigasyon:
+  Merhem taşı ve spatül › Merhem değirmeni (%50); Geometrik seyreltme: › Unguator (%30);
+  Eritme: › Termostatlı su banyosu (%25); Çözme: Beher ve baget › Isıtıcılı manyetik
+  karıştırıcı; Emülsifikasyon: Porselen kapsül › El homojenizatörü; Soğutma: › Su ceketli kap;
+  Elekten geçirme: Elek › Titreşimli elek; Karıştırma: › Pervaneli karıştırıcı; Şişirme: ›
+  Yüksek devirli karıştırıcı; Hacme tamamlama: Mezür › Şişe üstü dispenser; Kapsül doldurma:
+  Kapsül doldurma aleti › Yarı otomatik kapsül makinesi (bunlar %30). Yeni 8 aletin ikonu
+  çizilmedi (market genel ikon gösteriyor). Yeni adım eklenince istasyonu da eklenir
+  (`test/steps_test.dart` denetler). Spatüller grubu çıktı; çelik spatül uyarısı adımda.
 - Adımlar gerçek teknikler (Tuğrul, 2026-10-28, "asıl önemlileri koy"): kontrol, etiket ve
   ambalaj adım değil, laboratuvarda ambalaj aleti durmaz (markette Ambalaj grubu 2026-10-29'da
   çıktı). Merhem: Ezme › Levigasyon › Geometrik seyreltme (salisilik asit); Levigasyon ›
@@ -109,7 +119,7 @@ lib/
   reçetelerdeki adım adlarından türetir; yeni adımlı reçete eklenince kart kendiliğinden gelir,
   `test/steps_test.dart` denetler. Alet kuralları (salisilik asitte çelik spatül, cam havan toz
   ezmez) adımın `notWith`'inde kalır, seçim değil, adım başlatılırken "Dikkat:" uyarısı.
-  Market yükseltmeleri (Unguator, termostatlı banyo) kartın "neyle yapılır" yazısını değiştirir.
+  Adımın market yükseltmesi alınınca kartın "neyle yapılır" yazısı o aletin adı olur.
 - Laboratuvar (Tuğrul, 2026-10-27): her adımı oyuncu başlatır. Adım kartına basınca kabul edilmiş
   reçeteler açılır (`widgets/tool_sheet.dart`); o adımı şimdi başlatabilenler kobalt vurgulu,
   başlatamayanların altında nedeni (`JobStore.whyNot`: "bu adım daha sonra", "bu reçetede bu
@@ -279,11 +289,11 @@ lib/
   harcanır (`gramsFor`: yüzde, ad, not satırı, kapsül 0,2 g laktoz); "Al" anında raftan düşer,
   eksik paket kasadan alınır, kasa yetmezse ecza deposu veresiye verir, borç teslimden kesilir
   (oyuncu hiç takılmaz; 1★ teslim bile malzemesini öder, test denetler). Başta her maddeden bir
-  paket + 100 para. Distile su bedava. Aletler satın alınır ve etkisi var: Unguator spatüllü
-  adımları %30, merhem değirmeni %50, termostatlı banyo ısıtmayı %25 kısaltır, Wedgwood Ezme'yi
-  aynı anda iki reçetede yaptırır (`stepDuration`, `capacity`). Cam havan ve tüp doldurma aleti
+  paket + 100 para. Distile su bedava. Aletler satın alınır, her biri kendi adımını kısaltır
+  (`stepDuration`; liste yukarıda "Marketin istasyonları"). Cam havan ve tüp doldurma aleti
   marketten çıktı (hiçbir adımı değiştirmiyordu); cam havan uyarıları adımlarda duruyor.
-  Giderler 14 800 (aletler 9 200 + parsel 5 600); emek 11 bu toplamdan çözüldü. Para göstergesi
+  Giderler 14 800 (aletler 9 200 + parsel 5 600); emek 11 bu toplamdan çözüldü. 2026-10-29'da
+  8 yeni alet eklendi (5 900), aletler 15 100, giderler 20 700 oldu; emek yeniden ayarlanmadı. Para göstergesi
   Market ve Bahçe başlığında (`CoinPill`), teslim penceresinde döküm. Reklam ve bildirim henüz
   yok; acele düğmesi onay penceresiyle çalışıyor.
 - Eski deneme (Temmuz 2026, tek dosya) git geçmişinde: ilk commit `0bd231c`. 2026-10-25'te market

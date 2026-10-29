@@ -11,6 +11,7 @@ class ShopItem {
     this.cardColor,
     this.imagePath,
     this.price = 0,
+    this.faster = 0,
   });
 
   final String name;
@@ -21,15 +22,16 @@ class ShopItem {
   final Color? cardColor;
   final String? imagePath;
   final int price;
+
+  /// Alet elde olunca istasyonun adımı yüzde kaç kısa sürer.
+  final int faster;
 }
 
-/// Bir alet grubu. [upgradePath] doğruysa kartlar basit → gelişmiş sırasıyla
-/// bir yükseltme yoludur; yanlışsa (havanlar, spatüller) aynı işin değil,
-/// farklı işlerin aletleridir ve kademe gösterilmez.
+/// Bir laboratuvar adımının market istasyonu: [name] adımın adı, kartlar
+/// basit → gelişmiş sırasıyla bir yükseltme yolu.
 class Station {
-  const Station({required this.name, required this.tiers, this.upgradePath = true});
+  const Station({required this.name, required this.tiers});
 
   final String name;
   final List<ShopItem> tiers;
-  final bool upgradePath;
 }

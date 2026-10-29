@@ -28,28 +28,27 @@ const unlockAll = true;
 /// `JobStore.ownsTool`'dan gelir.
 bool isOwned(ShopItem item) => item.price == 0;
 
-List<ShopItem> _owned(String group, bool Function(ShopItem) owns) =>
-    stations.firstWhere((s) => s.name == group).tiers.where(owns).toList();
+/// Alet türünün ücretsiz, basit hâli.
+String equipmentName(StepTool kind) => switch (kind) {
+  StepTool.havan => 'Porselen havan',
+  StepTool.karistirma => 'Merhem taşı ve spatül',
+  StepTool.isitma => 'Ocak ve su banyosu',
+  StepTool.kapsul => 'Porselen kapsül',
+  StepTool.beher => 'Beher ve baget',
+  StepTool.mezur => 'Mezür',
+  StepTool.elek => 'Elek',
+  StepTool.kapsulAleti => 'Kapsül doldurma aleti',
+};
 
-/// Alet türünün laboratuvardaki adı. Kademeli gruplarda sahip olunan en
-/// yükseği: merhem taşında spatülle karıştırılır, Unguator ya da değirmen
-/// alınınca karıştırma o makineye geçer.
-String equipmentName(StepTool kind, {bool Function(ShopItem item) owns = isOwned}) {
-  final mixers = _owned('Merhem karıştırma', owns);
-  return switch (kind) {
-    StepTool.havan => 'Porselen havan',
-    StepTool.karistirma => mixers.length == 1 ? 'Merhem taşı ve spatül' : mixers.last.name,
-    StepTool.isitma => _owned('Isıtma', owns).last.name,
-    StepTool.kapsul => 'Porselen kapsül',
-    StepTool.beher => 'Beher ve baget',
-    StepTool.mezur => 'Mezür',
-    StepTool.elek => 'Elek',
-    StepTool.kapsulAleti => 'Kapsül doldurma aleti',
-  };
+/// Adımın satın alınmış en iyi aleti; yoksa null (basit aletlerle yapılır).
+ShopItem? upgradeFor(String step, {bool Function(ShopItem item) owns = isOwned}) {
+  final bought = stationFor(step)?.tiers.where((t) => t.price > 0 && owns(t));
+  return bought == null || bought.isEmpty ? null : bought.last;
 }
 
 /// Laboratuvarın adım kartları: reçetelerde geçen her adım adı bir kez, ilk
-/// geçtiği sırayla. Kart reçetelerden türediği için reçetede olup
+/// geçtiği sırayla. Kart adımı yapan basit aletleri yazar; adımın marketteki
+/// yükseltmesi alınınca onu. Kart reçetelerden türediği için reçetede olup
 /// laboratuvarda olmayan adım kalmaz.
 List<LabTool> labTools({
   bool Function(ShopItem item) owns = isOwned,
@@ -66,7 +65,7 @@ List<LabTool> labTools({
       LabTool(
         name: name,
         imagePath: stepIconPath(name),
-        equipment: {for (final kind in k) equipmentName(kind, owns: owns)}.join(' · '),
+        equipment: upgradeFor(name, owns: owns)?.name ?? {for (final kind in k) equipmentName(kind)}.join(' · '),
       ),
   ];
 }
