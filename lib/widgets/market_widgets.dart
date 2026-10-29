@@ -4,6 +4,7 @@ import '../logic/job_store.dart';
 import '../models/shop_item.dart';
 import '../theme/tokens.dart';
 import 'chunky_button.dart';
+import 'paper_tape.dart';
 
 // Satın alma (2026-10-29): aletler ve kimyasal paketleri kasadaki parayla
 // alınır (data/economy.dart). Reklam düğmesi henüz bağlı değil.
@@ -201,14 +202,107 @@ class _Thumb extends StatelessWidget {
   }
 }
 
+const _grayscale = ColorFilter.matrix([
+  0.2126, 0.7152, 0.0722, 0, 0, //
+  0.2126, 0.7152, 0.0722, 0, 0, //
+  0.2126, 0.7152, 0.0722, 0, 0, //
+  0, 0, 0, 1, 0,
+]);
+
+/// Kimyasal grubunun başlığı (Tuğrul, 2026-10-29, "ortala ve daha fark
+/// edilir"): eski eczane rafındaki etiket gibi ortada, çift çizgi çerçeveli
+/// beyaz kâğıt; üstünde bant. Altında grubun kaçı açık.
+class ChemicalGroupHeader extends StatelessWidget {
+  const ChemicalGroupHeader({
+    super.key,
+    required this.title,
+    required this.subtitle,
+    required this.unlocked,
+    required this.total,
+  });
+
+  final String title;
+  final String subtitle;
+  final int unlocked;
+  final int total;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Stack(
+        clipBehavior: Clip.none,
+        alignment: Alignment.topCenter,
+        children: [
+          Container(
+            margin: const EdgeInsets.only(top: AppSpace.md),
+            constraints: const BoxConstraints(minWidth: 240, maxWidth: 320),
+            padding: const EdgeInsets.all(AppSpace.xs),
+            decoration: BoxDecoration(
+              color: AppColors.surface,
+              borderRadius: BorderRadius.circular(AppRadius.paper),
+              boxShadow: const [BoxShadow(color: Color(0x33301C10), blurRadius: 6, offset: Offset(0, 3))],
+            ),
+            child: Container(
+              padding: const EdgeInsets.fromLTRB(AppSpace.xl, AppSpace.lg, AppSpace.xl, AppSpace.md),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(AppRadius.paperInner),
+                border: Border.all(color: AppColors.ink, width: 1.5),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(title, textAlign: TextAlign.center, style: AppText.title(size: 22)),
+                  const SizedBox(height: AppSpace.xs),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(width: 24, height: 1.5, color: AppColors.inkMuted),
+                      const SizedBox(width: AppSpace.sm),
+                      Flexible(
+                        child: Text(
+                          subtitle,
+                          textAlign: TextAlign.center,
+                          style: AppText.label(size: 13, color: AppColors.inkMuted),
+                        ),
+                      ),
+                      const SizedBox(width: AppSpace.sm),
+                      Container(width: 24, height: 1.5, color: AppColors.inkMuted),
+                    ],
+                  ),
+                  const SizedBox(height: AppSpace.sm),
+                  Text(
+                    unlocked == total ? '$total maddenin hepsi açık' : '$total maddeden $unlocked açık',
+                    style: AppText.label(size: 12, color: AppColors.ink),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const PaperTape(width: 64, height: 20),
+        ],
+      ),
+    );
+  }
+}
+
 /// Liste satırı: kimyasal ya da reklam. Düğme sağda, başparmak tarafında.
 class ShopItemTile extends StatelessWidget {
-  const ShopItemTile({super.key, required this.item, this.highlight = false, this.detail, this.onBuy});
+  const ShopItemTile({
+    super.key,
+    required this.item,
+    this.highlight = false,
+    this.locked = false,
+    this.detail,
+    this.onBuy,
+  });
 
   final ShopItem item;
 
-  /// Açıklamanın altındaki ek satır (kimyasalda paket ve raftaki miktar).
+  /// Açıklamanın altındaki ek satır (kimyasalda raftaki paket sayısı).
   final String? detail;
+
+  /// Henüz onu isteyen reçete gelmemiş kimyasal: soluk, kilitli, alınmaz.
+  final bool locked;
 
   /// Satın alma; null ise düğme kapalı.
   final VoidCallback? onBuy;
@@ -221,7 +315,11 @@ class ShopItemTile extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(AppSpace.lg),
       decoration: BoxDecoration(
-        color: highlight ? AppColors.successSoft : AppColors.surface,
+        color: highlight
+            ? AppColors.successSoft
+            : locked
+                ? AppColors.surfaceMuted
+                : AppColors.surface,
         borderRadius: BorderRadius.circular(AppRadius.paper),
         border: Border.all(
           color: highlight ? AppColors.success : AppColors.line,
@@ -230,19 +328,25 @@ class ShopItemTile extends StatelessWidget {
       ),
       child: Row(
         children: [
-          _Thumb(item: item, size: 48),
+          // Kilitli maddenin ikonu renksiz ve soluk.
+          locked
+              ? Opacity(
+                  opacity: 0.45,
+                  child: ColorFiltered(colorFilter: _grayscale, child: _Thumb(item: item, size: 48)),
+                )
+              : _Thumb(item: item, size: 48),
           const SizedBox(width: AppSpace.md),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(item.name, style: AppText.title(size: 17)),
+                Text(item.name, style: AppText.title(size: 17, color: locked ? AppColors.inkMuted : AppColors.ink)),
                 const SizedBox(height: AppSpace.xs),
                 Text(
-                  item.description,
+                  locked ? 'Bu maddeyi isteyen ilk reçete gelince açılır.' : item.description,
                   style: AppText.body(size: 13, color: AppColors.inkMuted),
                 ),
-                if (detail != null) ...[
+                if (detail != null && !locked) ...[
                   const SizedBox(height: AppSpace.xs),
                   Text(detail!, style: AppText.label(size: 12, color: AppColors.ink)),
                 ],
@@ -258,6 +362,14 @@ class ShopItemTile extends StatelessWidget {
                     label: item.buttonLabel,
                     onPressed: () {},
                   )
+                : locked
+                    ? Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.lock_rounded, color: AppColors.inkMuted, size: 22),
+                          Text('Kilitli', style: AppText.label(size: 13, color: AppColors.inkMuted)),
+                        ],
+                      )
                 : item.price == 0
                     ? Text('Bedava', textAlign: TextAlign.center, style: AppText.label(size: 14, color: AppColors.ink))
                     : ChunkyButton(

@@ -87,20 +87,29 @@ class _MarketScreenState extends State<MarketScreen> {
           padding: listPadding,
           children: [
             for (final group in chemicalGroups) ...[
-              Text(group.title, style: AppText.title(size: 20)),
-              Text(group.subtitle, style: AppText.label(size: 12, color: AppColors.ink)),
-              const SizedBox(height: AppSpace.md),
-              for (final item in group.items) ...[
+              ChemicalGroupHeader(
+                title: group.title,
+                subtitle: group.subtitle,
+                unlocked: group.items.where((i) => store.chemicalUnlocked(i.name)).length,
+                total: group.items.length,
+              ),
+              const SizedBox(height: AppSpace.lg),
+              // Açık maddeler önce, kilitliler grubun sonunda.
+              for (final item in [
+                ...group.items.where((i) => store.chemicalUnlocked(i.name)),
+                ...group.items.where((i) => !store.chemicalUnlocked(i.name)),
+              ]) ...[
                 ShopItemTile(
                   item: item,
+                  locked: !store.chemicalUnlocked(item.name),
                   detail: packs[item.name] == null
                       ? 'Eczanenin cihazından, bedava'
-                      : 'Paket ${packs[item.name]!.grams} g · rafta ${store.stockOf(item.name).floor()} g',
+                      : 'Sahip olunan: ${store.packsOf(item.name)} adet',
                   onBuy: packs[item.name] != null && store.coins >= item.price ? () => store.buyPack(item.name) : null,
                 ),
                 const SizedBox(height: AppSpace.md),
               ],
-              const SizedBox(height: AppSpace.lg),
+              const SizedBox(height: AppSpace.xl),
             ],
           ],
         );

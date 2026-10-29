@@ -73,6 +73,7 @@ class JobStore extends ChangeNotifier {
     final wall = <IncomingOrder>[];
     int? nextId;
     DateTime? due;
+    List<String>? seen;
     try {
       for (final item in jsonDecode(prefs.getString(_key) ?? '[]') as List) {
         final job = PrepJob.fromJson(item as Map<String, dynamic>);
@@ -88,6 +89,7 @@ class JobStore extends ChangeNotifier {
         }
         nextId = saved['nextId'] as int;
         due = DateTime.fromMillisecondsSinceEpoch(saved['due'] as int);
+        if (saved['seen'] case final List list) seen = [for (final c in list) c as String];
       }
     } on Object {
       // Bozuk kayıt oyunu açılmaz hâle getirmesin; boş başla.
@@ -97,6 +99,14 @@ class JobStore extends ChangeNotifier {
     }
     final store = JobStore._(
         prefs, clock, jobs, known, wall, nextId ?? 0, due ?? clock().add(arrivalEvery), random ?? math.Random());
+    // Kilit kaydından önceki oyun: o güne dek gelmiş reçetelerin maddeleri açık.
+    if (seen != null) {
+      store._seenChemicals.addAll(seen);
+    } else {
+      for (var i = 0; i < math.min(store._nextId, known.length); i++) {
+        store._see(known[i]);
+      }
+    }
     try {
       final raw = prefs.getString(_gardenKey);
       if (raw != null) store._garden = Garden.fromJson(jsonDecode(raw) as Map<String, dynamic>);
@@ -243,6 +253,12 @@ class JobStore extends ChangeNotifier {
 
   /// Raftaki madde, gram.
   double stockOf(String chemical) => _stock[chemical] ?? 0;
+
+  /// Raftaki paket sayısı; açılmış paket de bir paket sayılır.
+  int packsOf(String chemical) {
+    final p = packs[chemical];
+    return p == null ? 0 : (stockOf(chemical) / p.grams - 1e-9).ceil().clamp(0, 1 << 30);
+  }
 
   /// Son teslimin parası (teslim penceresi gösterir).
   Payout? get lastPayout => _lastPayout;
@@ -407,8 +423,16 @@ class JobStore extends ChangeNotifier {
 
   void _arrive() {
     final order = _orders[_nextId % _orders.length];
+    _see(order);
     _wall.add(IncomingOrder(id: _nextId++, magistralName: order.magistralName, orderKey: order.key));
   }
+
+  /// Markette açık kimyasallar (Tuğrul, 2026-10-29): bir madde, onu isteyen
+  /// ilk reçete duvara gelince açılır; o güne dek kilitli durur.
+  bool chemicalUnlocked(String chemical) => _seenChemicals.contains(chemical);
+  final Set<String> _seenChemicals = {};
+
+  void _see(PrescriptionOrder order) => _seenChemicals.addAll(order.ingredients.map((i) => i.name));
 
   /// Uygulama kapalıyken dolan sayaçlar da sayılır: her geliş kendi anında
   /// olur ve sayaç o andan başlar. Duvar dolunca geliş bekletilir.
@@ -618,6 +642,7 @@ class JobStore extends ChangeNotifier {
         'wall': [for (final o in _wall) o.toJson()],
         'nextId': _nextId,
         'due': _due.millisecondsSinceEpoch,
+        'seen': _seenChemicals.toList(),
       }),
     );
   }
