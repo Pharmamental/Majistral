@@ -32,12 +32,13 @@ ShopItem _chem(String name, String description, String image, Color color) => Sh
       price: packs[name]?.price ?? 0,
     );
 
-// Oyundaki reçetelerin bütün hammaddeleri (Tuğrul, 2026-10-28: "30-40 civarı
-// madde, her madde en az 10 reçetede"): 39 madde, rollerine göre. Reçetelerde
-// geçmeyen madde markette durmaz; reçeteye yeni madde girerse buraya da eklenir
-// (test/market_items_test.dart). İlk liste ve kaynakları beyinde:
-// knowledge/concepts/majistral-hammaddeler.md. Fiyatlar taslak; ekonomi önerisi
-// knowledge/concepts/majistral-ekonomi.md.
+// Oyundaki reçetelerin bütün hammaddeleri, rollerine göre. Önce 39 madde
+// (Tuğrul, 2026-10-28: "30-40 civarı madde, her madde en az 10 reçetede"),
+// sonra farklı majistral sayısı artsın diye 62 (Tuğrul, 2026-10-29, "Madde +
+// yeni formül"). Reçetelerde geçmeyen madde markette durmaz; reçeteye yeni madde
+// girerse buraya da eklenir (test/market_items_test.dart). Liste ve kaynakları
+// beyinde: knowledge/concepts/majistral-hammaddeler.md. Fiyatlar taslak; ekonomi
+// önerisi knowledge/concepts/majistral-ekonomi.md.
 final List<ChemicalGroup> chemicalGroups = [
   (
     title: 'Bazlar ve yağlar',
@@ -49,6 +50,8 @@ final List<ChemicalGroup> chemicalGroups = [
       _chem('Susuz Lanolin', 'Koyun yünü yağı; ağırlığının iki katı su çekebilir', 'lanolin', _yesil),
       _chem('Katı Parafin', 'Merhemi sertleştirip kıvam verir', 'kati_parafin', _mavi),
       _chem('Beyaz Balmumu', 'Kıvam artırır; USP beyaz merheminde', 'balmumu', _mercan),
+      _chem('Sarı Balmumu', 'Ağartılmamış balmumu; USP sarı merheminde', 'sari_balmumu', _altin),
+      _chem('Kolesterol', 'Vazelinin su çekmesini sağlar; hidrofil vazelinde', 'kolesterol', _altin),
     ],
   ),
   (
@@ -60,6 +63,9 @@ final List<ChemicalGroup> chemicalGroups = [
       _chem('Setomakrogol Krem', 'Sodyum lauril sülfatsız, hassas cilde uygun krem bazı', 'setomakrogol_krem', _mor),
       _chem('Beyaz Merhem', 'Vazelin ve %5 beyaz balmumu: USP hidrokarbon bazı', 'beyaz_merhem', _mercan),
       _chem('PEG Merhemi', 'Suda çözünen polietilen glikol bazı; povidon iyotta', 'peg_merhemi', _yesil),
+      _chem('Noniyonik Hidrofil Krem', 'İyonsuz emülgatörlü krem bazı (DAB); mantar kremlerinde', 'noniyonik_krem', _yesil),
+      _chem('Basit Merhem', 'Lanolin, parafin ve setostearil alkollü yağlı baz (BP)', 'basit_merhem', _altin),
+      _chem('Emülsiye Edici Merhem', 'Suyla karışabilen susuz baz (BP); sulu kremin yağ kısmı', 'emulsiye_edici_merhem', _mercan),
     ],
   ),
   (
@@ -70,6 +76,8 @@ final List<ChemicalGroup> chemicalGroups = [
       _chem('Stearil Alkol', 'Hidrofil merhemin yağ fazı, kıvam verir', 'stearil_alkol', _yesil),
       _chem('Sodyum Lauril Sülfat', 'Anyonik emülgatör (HLB 40), hidrofil merhemde', 'sodyum_lauril_sulfat', _mavi),
       _chem('Hidroksietilselüloz', 'Jel yapıcı; suda şişip berrak jel olur', 'hidroksietilseluloz', _yesil),
+      _chem('Hidroksipropilselüloz', 'Alkolde de şişen jel yapıcı; alkollü jellerde', 'hidroksipropilseluloz', _altin),
+      _chem('Bentonit', 'Suda şişen kil; süspansiyonu çökmeden tutar', 'bentonit', _yesil),
     ],
   ),
   (
@@ -80,8 +88,10 @@ final List<ChemicalGroup> chemicalGroups = [
       _chem('Gliserin', 'Nemlendirici, suyla karışır', 'gliserin', _altin),
       _chem('Propilen Glikol', 'Nemlendirici ve çözücü; hidrofil merhemin su fazında', 'propilen_glikol', _altin),
       _chem('İzopropil Alkol', 'Çözücü; ter kesici ve akne spiritlerinin taşıyıcısı', 'izopropil_alkol', _mercan),
+      _chem('Etanol %96', 'Çözücü ve antiseptik; seyreltilip %70 yapılır', 'etanol', _mavi),
       _chem('Metilparaben', 'Koruyucu; su fazında çözülür', 'metilparaben', _mercan),
       _chem('Propilparaben', 'Koruyucu; yağ fazına eklenir', 'propilparaben', _mavi),
+      _chem('Potasyum Sorbat', 'Koruyucu; jel ve kremde küfü önler', 'potasyum_sorbat', _mercan),
     ],
   ),
   (
@@ -94,24 +104,50 @@ final List<ChemicalGroup> chemicalGroups = [
     ],
   ),
   (
-    title: 'Etkin maddeler',
+    title: 'Deri için etkin maddeler',
     subtitle: 'Reçeteye adını veren maddeler',
     items: [
       _chem('Salisilik Asit', 'Keratolitik: kalınlaşmış deriyi yumuşatıp soyar', 'salisilik_asit', _mor),
       _chem('Çinko Oksit', 'Cildi korur, kurutur, bariyer oluşturur', 'cinko_oksit', _gri),
       _chem('Üre', 'Nemlendirici ve keratolitik, %10–40', 'ure', _mavi),
+      _chem('Laktik Asit', 'Nemlendirir, kepeklenen deriyi soyar', 'laktik_asit', _mavi),
       _chem('Kükürt', 'Uyuz ve aknede; sık salisilik asitle birlikte', 'kukurt', _mor),
       _chem('İhtiyol', 'Koyu, kükürtlü sıvı; çıban ve iltihaplı deride', 'ihtiyol', _altin),
-      _chem('Mentol', 'Serinletir, kaşıntıyı giderir', 'mentol', _altin),
       _chem('Ditranol', 'Sedef plaklarında; deriyi ve çamaşırı boyar', 'ditranol', _altin),
+      _chem('Mentol', 'Serinletir, kaşıntıyı giderir', 'mentol', _altin),
+      _chem('Kâfur', 'Serinletir, kaşıntıyı ve hafif ağrıyı azaltır', 'kafur', _mor),
+      _chem('Kalamin', 'Pembe çinko oksit; kaşıntılı deriyi yatıştırır', 'kalamin', _mercan),
+      _chem('Krotamiton', 'Uyuzda ve kaşıntıda kullanılan yağlı sıvı', 'krotamiton', _mor),
+      _chem('Allantoin', 'Tahriş olmuş deriyi yatıştırır, yenilenmesine yardım eder', 'allantoin', _mor),
+      _chem('Mikonazol Nitrat', 'Mantar ilacı; deri ve pamukçuk mantarında', 'mikonazol', _yesil),
+      _chem('Klotrimazol', 'Mantar ilacı; ayak ve kasık mantarında', 'klotrimazol', _mor),
+      _chem('Benzoik Asit', 'Mantara karşı; Whitfield merheminde salisilik asitle', 'benzoik_asit', _altin),
+      _chem('Alüminyum Klorür', 'Ter bezlerini tıkayan ter kesici; hekzahidrat tuzu', 'aluminyum_klorur', _yesil),
+    ],
+  ),
+  (
+    title: 'Antiseptik ve uyuşturucu',
+    subtitle: 'Yara, ağız ve kulak için',
+    items: [
       _chem('Setrimid', 'Katyonik antiseptik; küçük yara kremlerinde', 'setrimid', _mor),
       _chem('Povidon İyot', 'İyotlu antiseptik; yara ve gargarada', 'povidon_iyot', _altin),
       _chem('Klorheksidin Glukonat %20', 'Antiseptik derişik çözelti; gargarada seyreltilir', 'klorheksidin', _mercan),
-      _chem('Alüminyum Klorür', 'Ter bezlerini tıkayan ter kesici; hekzahidrat tuzu', 'aluminyum_klorur', _yesil),
+      _chem('Hidrojen Peroksit %30', 'Derişik peroksit; seyreltilip yara ve ağızda köpürterek temizler', 'hidrojen_peroksit', _gri),
+      _chem('Buzlu Asetik Asit', 'Susuz asetik asit; kulak damlasında ortamı asitleştirir', 'asetik_asit', _mavi),
+      _chem('Lidokain Hidroklorür', 'Lokal anestezik; deriyi ve ağzı uyuşturur', 'lidokain', _mavi),
+      _chem('Benzokain', 'Lokal anestezik; yüzeyde ağrıyı ve kaşıntıyı keser', 'benzokain', _altin),
+    ],
+  ),
+  (
+    title: 'Ağızdan alınanlar ve tuzlar',
+    subtitle: 'Çözelti, kapsül ve paket toz',
+    items: [
       _chem('Sodyum Bikarbonat', 'Asidi nötralleştirir; asidozda ve kulak kirinde', 'sodyum_bikarbonat', _mavi),
       _chem('Sodyum Klorür', 'Tuz; sodyumu düşük hastada destek, kremde nem tutucu', 'sodyum_klorur', _gri),
       _chem('Sodyum Florür', 'Diş minesini güçlendirir, çürüğü önler', 'sodyum_florur', _mavi),
+      _chem('Kalsiyum Karbonat', 'Kalsiyum desteği ve mide asidini bağlar', 'kalsiyum_karbonat', _gri),
       _chem('Folik Asit', 'B9 vitamini; folat eksikliği anemisinde', 'folik_asit', _altin),
+      _chem('Askorbik Asit', 'C vitamini; eksikliğinde ve destek olarak', 'askorbik_asit', _altin),
     ],
   ),
 ];

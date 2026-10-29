@@ -52,6 +52,21 @@ const merhemRefs = <Reference>[
         'makaleleri. Avoxa – Mediengruppe Deutscher Apotheker, Eschborn.',
     url: 'https://www.pharmazeutische-zeitung.de',
   ),
+  Reference(
+    id: 'merhem-bad',
+    kind: ReferenceKind.devlet,
+    citation: 'Buckley DA, Root T, Bath S (BAD Specials Working Group). Specials Recommended by the British '
+        'Association of Dermatologists for Skin Disease (BAD Specials List 2014). British Association of '
+        'Dermatologists, Londra, 2014.',
+    url: 'https://www.communitypharmacy.scot.nhs.uk/media/1483/bad-specials-booklet-final-3.pdf',
+  ),
+  Reference(
+    id: 'merhem-fn-po',
+    kind: ReferenceKind.farmakope,
+    citation: 'Formulario Nacional, preparados oficinales: FN/2003/PO/017 Pasta al agua, FN/2003/PO/021 Pomada '
+        'alcanforada, FN/2003/PO/031 Vaselina mentolada. AEMPS ve BOE, Madrid.',
+    url: 'https://www.aemps.gob.es/profesional-sanitario/farmacopea-formulacion-magistral/formulario-nacional/',
+  ),
 ];
 
 const merhemFormulas = <Formula>[
@@ -84,6 +99,7 @@ const merhemFormulas = <Formula>[
       FormulaStep('Soğutma', 'Karışım banyodan alınır, donana kadar karıştırılarak soğutulur.'),
     ],
     refs: ['usp-nf', 'remington'],
+    shelfLife: '180 gün, oda sıcaklığında, sıkı kapalı (susuz; USP <795>)',
   ),
   Formula(
     name: 'Hidrofil vazelin (USP)',
@@ -101,6 +117,7 @@ const merhemFormulas = <Formula>[
       FormulaStep('Soğutma', 'Banyodan alınır, katılaşana kadar karıştırmaya devam edilir.'),
     ],
     refs: ['usp-nf', 'ansel'],
+    shelfLife: '180 gün, oda sıcaklığında, sıkı kapalı (susuz; USP <795>)',
   ),
   Formula(
     name: 'Basit merhem (BP, beyaz)',
@@ -357,6 +374,7 @@ const merhemFormulas = <Formula>[
       FormulaStep('Geometrik seyreltme', 'Kalan basit merhem kademeli olarak katılır.'),
     ],
     refs: ['bp', 'martindale'],
+    shelfLife: '180 gün, oda sıcaklığında, sıkı kapalı (susuz; USP <795>)',
   ),
   Formula(
     name: 'Çinko merhemi %10 (DAB)',
@@ -409,6 +427,7 @@ const merhemFormulas = <Formula>[
       FormulaStep('Geometrik seyreltme', 'Kalan baz eşit parçalar hâlinde katılarak pat tamamlanır.'),
     ],
     refs: ['merhem-dab', 'nrf', 'merhem-altmeyer'],
+    shelfLife: '180 gün, oda sıcaklığında, sıkı kapalı (susuz; USP <795>)',
   ),
   Formula(
     name: 'Lipofil çinko oksit patı %30 (NRF)',
@@ -480,6 +499,7 @@ const merhemFormulas = <Formula>[
       FormulaStep('Geometrik seyreltme', 'Kalan vazelin eşit parçalar hâlinde katılarak karıştırılır.'),
     ],
     refs: ['bp', 'martindale'],
+    shelfLife: '180 gün, oda sıcaklığında, sıkı kapalı (susuz; USP <795>)',
   ),
   // ------------------------------------------------- Salisilik asit ve kükürt
   Formula(
@@ -498,6 +518,7 @@ const merhemFormulas = <Formula>[
       FormulaStep('Soğutma', 'Merhem donana kadar karıştırılarak soğutulur.'),
     ],
     refs: ['bp', 'martindale'],
+    shelfLife: '180 gün, oda sıcaklığında, sıkı kapalı (susuz; USP <795>)',
   ),
   Formula(
     name: 'Salisilik asitli vazelin %5',
@@ -633,6 +654,7 @@ const merhemFormulas = <Formula>[
       FormulaStep('Geometrik seyreltme', 'Kalan PEG merhemi kademeli olarak katılır.'),
     ],
     refs: ['usp-nf', 'remington'],
+    shelfLife: '180 gün, oda sıcaklığında, sıkı kapalı (susuz; USP <795>)',
   ),
   Formula(
     name: 'Whitfield merhemi (bileşik benzoik asit merhemi, BP)',
@@ -651,6 +673,7 @@ const merhemFormulas = <Formula>[
       FormulaStep('Soğutma', 'Merhem donana kadar karıştırılarak soğutulur.'),
     ],
     refs: ['bp', 'merhem-bnf'],
+    shelfLife: '180 gün, oda sıcaklığında, sıkı kapalı (susuz; USP <795>)',
   ),
   Formula(
     name: 'Bileşik undesilenik asit merhemi (USP)',
@@ -801,6 +824,7 @@ const merhemFormulas = <Formula>[
       FormulaStep('Soğutma', 'Banyodan alınan merhem donana kadar karıştırılır.'),
     ],
     refs: ['usp-nf', 'martindale'],
+    shelfLife: '180 gün, oda sıcaklığında, sıkı kapalı (susuz; USP <795>)',
   ),
   Formula(
     name: 'Dibukain merhemi %1',
@@ -882,5 +906,89 @@ const merhemFormulas = <Formula>[
       FormulaStep('Geometrik seyreltme', 'Kalan baz eşit parçalar hâlinde katılarak karıştırılır.'),
     ],
     refs: ['nrf', 'merhem-pz'],
+  ),
+  // ---------- 62 maddeye çıkış (2026-10-29): eldeki maddelerle yapılabilen yeni formüller ----------
+  Formula(
+    name: 'Kâfurlu merhem %10 (FN)',
+    category: FormulaCategory.merhem,
+    use: 'Burkulma, ezilme ve kas kasılmasına bağlı eklem ve kas ağrısında ağrıyı ve kaşıntıyı hafifletmek için ince sürülür.',
+    ingredients: [
+      Ingredient('Rasemik kâfur', '10 g'),
+      Ingredient('Beyaz balmumu', '8 g'),
+      Ingredient('Beyaz vazelin', 'ad 100 g'),
+    ],
+    steps: [
+      FormulaStep('Eritme', 'Vazelin ve balmumu su banyosunda 50–70 °C\'de birlikte eritilir.'),
+      FormulaStep('Çözme', 'Kâfur eriyiğe katılır ve karıştırılarak tamamen çözülür.'),
+      FormulaStep('Soğutma', 'Merhem donana kadar karıştırılarak soğutulur; kâfur uçmasın diye kap kapalı tutulur.'),
+    ],
+    refs: ['fn-es', 'merhem-fn-po', 'jel-fda-analgesic'],
+    shelfLife: '3 ay, ışıktan korunarak 30 °C altında',
+  ),
+  Formula(
+    name: 'Su patı (çinko oksit ve talk, FN)',
+    category: FormulaCategory.merhem,
+    use: 'Sulanan ve kızarık deride, pişik ve kıvrım yeri tahrişinde kurutucu ve büzücü olarak sürülür; sıcaklık hissini de azaltır.',
+    ingredients: [
+      Ingredient('Çinko oksit', '25 g'),
+      Ingredient('Talk', '25 g'),
+      Ingredient('Gliserol', '25 g'),
+      Ingredient('Arıtılmış su', '25 g'),
+    ],
+    steps: [
+      FormulaStep('Karıştırma', 'Su ve gliserol beherde bagetle karıştırılır.'),
+      FormulaStep('Ezme', 'Çinko oksit ve talk havanda birlikte ince toz hâline getirilir.'),
+      FormulaStep('Levigasyon', 'Toz karışımı sıvıya azar azar katılıp sürtülerek ince ve homojen bir pat yapılır.'),
+    ],
+    refs: ['fn-es', 'merhem-fn-po', 'jel-fda-protectant'],
+    shelfLife: '3 ay; ayrışırsa kullanmadan önce karıştırılır',
+  ),
+  Formula(
+    name: 'Mentollü vazelin %1 (FN)',
+    category: FormulaCategory.merhem,
+    use: 'Kaşıntılı egzama ve dermatitte, böcek sokmasında kaşıntıyı yatıştırmak ve kabukları yumuşatmak için sürülür.',
+    ingredients: [
+      Ingredient('Rasemik mentol', '1 g'),
+      Ingredient('Beyaz vazelin', 'ad 100 g'),
+    ],
+    steps: [
+      FormulaStep('Ezme', 'Mentol kristalleri havanda toz hâline getirilir.'),
+      FormulaStep('Geometrik seyreltme', 'Vazelin havanda tokmakla azar azar katılarak mentol tamamen dağılana kadar işlenir.'),
+    ],
+    refs: ['fn-es', 'merhem-fn-po', 'jel-fda-analgesic'],
+    shelfLife: '3 ay, ışık ve nemden korunarak 25 °C altında',
+  ),
+  Formula(
+    name: 'İhtiyol %1 ve çinko oksit %15\'li sarı vazelin',
+    category: FormulaCategory.merhem,
+    use: 'Alevlenmiş, kaşıntılı atopik egzamada iltihabı yatıştırmak ve cildi korumak için günde iki kez sürülür.',
+    ingredients: [
+      Ingredient('İhtiyol (amonyum bitüminosülfonat)', '1 g'),
+      Ingredient('Çinko oksit', '15 g'),
+      Ingredient('Sarı vazelin', 'ad 100 g'),
+    ],
+    steps: [
+      FormulaStep('Elekten geçirme', 'Çinko oksit topakları dağılsın diye ince elekten geçirilir.'),
+      FormulaStep('Levigasyon', 'Çinko oksit vazelinin küçük bir kısmıyla pürüzsüz hamur yapılır.'),
+      FormulaStep('Geometrik seyreltme', 'İhtiyol ve kalan vazelin eşit parçalar hâlinde katılarak merhem homojen renge gelene kadar karıştırılır.'),
+    ],
+    refs: ['merhem-bad', 'merhem-dmd', 'jel-fda-protectant', 'usp-795'],
+    shelfLife: '180 gün, oda sıcaklığında, sıkı kapalı (susuz; USP <795>)',
+  ),
+  Formula(
+    name: 'Salisilik asitli emülsiye edici merhem %5',
+    category: FormulaCategory.merhem,
+    use: 'Kalın pullu sedef, kalınlaşmış egzama, nasır ve keratozis pilariste pulları yumuşatıp kaldırmak için sürülür; suyla yıkanabilir.',
+    ingredients: [
+      Ingredient('Salisilik asit', '5 g'),
+      Ingredient('Emülsiyon yapıcı merhem', 'ad 100 g'),
+    ],
+    steps: [
+      FormulaStep('Ezme', 'Salisilik asit porselen havanda ince toz olana kadar ezilir; metal spatül kullanılmaz.'),
+      FormulaStep('Levigasyon', 'Toz merhemin küçük bir kısmıyla pürüzsüz bir hamur yapılır.'),
+      FormulaStep('Geometrik seyreltme', 'Kalan merhem eşit parçalar hâlinde katılarak karıştırılır.'),
+    ],
+    refs: ['merhem-bad', 'merhem-dmd', 'bp', 'usp-795'],
+    shelfLife: '180 gün, oda sıcaklığında, sıkı kapalı (susuz; USP <795>)',
   ),
 ];

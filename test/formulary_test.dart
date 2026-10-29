@@ -9,10 +9,12 @@ import 'package:game/models/formula.dart';
 import 'package:game/models/prescription.dart';
 
 void main() {
-  test('altı kategoride 50\'şer, toplam 300 formül; adlar tekrarlanmıyor', () {
-    expect(formulary, hasLength(300));
+  // 300 formülle başladı (6 × 50); 2026-10-29'da eldeki maddelerle yapılabilen
+  // yeni formüller eklendi.
+  test('altı kategoride en az 50\'şer formül; adlar tekrarlanmıyor', () {
+    expect(formulary.length, greaterThanOrEqualTo(300));
     for (final c in FormulaCategory.values) {
-      expect(formulasOf(c), hasLength(50), reason: c.title);
+      expect(formulasOf(c).length, greaterThanOrEqualTo(50), reason: c.title);
     }
     final names = [for (final f in formulary) f.name];
     expect(names.toSet(), hasLength(names.length));

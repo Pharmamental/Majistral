@@ -16,6 +16,20 @@ const cozeltiRefs = <Reference>[
         '(çevrim içi başvuru kitabı). Ruhr-Universität Bochum kökenli, sürekli güncellenir.',
     url: 'https://www.altmeyers.org',
   ),
+  Reference(
+    id: 'cozelti-who-handrub',
+    kind: ReferenceKind.devlet,
+    citation: 'WHO. Guide to Local Production: WHO-recommended Handrub Formulations (WHO/IER/PSP/2010.5). '
+        'Dünya Sağlık Örgütü, Cenevre, 2010.',
+    url: 'https://www.who.int/publications/i/item/WHO-IER-PSP-2010.5',
+  ),
+  Reference(
+    id: 'cozelti-iarc-kolposkopi',
+    kind: ReferenceKind.devlet,
+    citation: 'Prendiville W, Sankaranarayanan R. Colposcopy and Treatment of Cervical Precancer, Ek 5. IARC '
+        'Technical Publication No. 45. Uluslararası Kanser Araştırma Ajansı (IARC/WHO), Lyon, 2017.',
+    url: 'https://publications.iarc.who.int/Book-And-Report-Series/Iarc-Technical-Publications/Colposcopy-And-Treatment-Of-Cervical-Precancer-2017',
+  ),
 ];
 
 const cozeltiFormulas = <Formula>[
@@ -312,6 +326,7 @@ const cozeltiFormulas = <Formula>[
       FormulaStep('Hacme tamamlama', 'Saf suyla 100 mL\'ye tamamla.'),
     ],
     refs: ['usp-nf', 'tf', 'martindale'],
+    shelfLife: '14 gün, buzdolabında (sulu, koruyucusuz; USP <795>)',
   ),
   Formula(
     name: 'Hidrojen peroksit çözeltisi %6',
@@ -326,6 +341,7 @@ const cozeltiFormulas = <Formula>[
       FormulaStep('Hacme tamamlama', 'Saf suyla 100 mL\'ye tamamla.'),
     ],
     refs: ['bp', 'martindale'],
+    shelfLife: '14 gün, buzdolabında (sulu, koruyucusuz; USP <795>)',
   ),
   Formula(
     name: 'Lugol çözeltisi (kuvvetli iyot çözeltisi %5)',
@@ -755,6 +771,7 @@ const cozeltiFormulas = <Formula>[
       FormulaStep('Hacme tamamlama', 'Propilen glikolle 100 mL\'ye tamamla.'),
     ],
     refs: ['usp-nf', 'martindale'],
+    shelfLife: '180 gün, oda sıcaklığında, sıkı kapalı (susuz; USP <795>)',
   ),
   Formula(
     name: 'Karbamid peroksit kulak damlası %6,5',
@@ -819,6 +836,7 @@ const cozeltiFormulas = <Formula>[
       FormulaStep('Hacme tamamlama', 'Soğuyunca saf suyla 100 mL\'ye tamamla.'),
     ],
     refs: ['tf', 'remington'],
+    shelfLife: '35 gün, oda sıcaklığında ya da buzdolabında (sulu, koruyuculu; USP <795>)',
   ),
   Formula(
     name: 'İzopropil alkol %70',
@@ -834,5 +852,71 @@ const cozeltiFormulas = <Formula>[
       FormulaStep('Hacme tamamlama', 'Saf suyla 100 mL\'ye tamamla.'),
     ],
     refs: ['usp-nf', 'remington'],
+  ),
+  // ---------- 62 maddeye çıkış (2026-10-29): eldeki maddelerle yapılabilen yeni formüller ----------
+  Formula(
+    name: 'Benzoik asit çözeltisi %5',
+    category: FormulaCategory.cozelti,
+    use: 'Ağızdan alınan karışımlara az miktarda katılan koruyucu stok çözeltidir; mantar ve küf üremesini önler.',
+    ingredients: [
+      Ingredient('Benzoik asit', '5 g'),
+      Ingredient('Propilen glikol', '75 mL'),
+      Ingredient('Arıtılmış su (kaynatılıp soğutulmuş)', 'ad 100 mL'),
+    ],
+    steps: [
+      FormulaStep('Çözme', 'Benzoik asidi propilen glikolde karıştırarak tamamen çöz.'),
+      FormulaStep('Hacme tamamlama', 'Suyu küçük paylarla, durmadan karıştırarak ekle ve 100 mL\'ye tamamla.'),
+    ],
+    refs: ['bp', 'suspansiyon-bpc1973'],
+    shelfLife: '35 gün, oda sıcaklığında, sıkı kapalı (sulu, koruyuculu; USP <795>)',
+  ),
+  Formula(
+    name: 'Etanollü el antiseptiği %80 (WHO)',
+    category: FormulaCategory.cozelti,
+    use: 'Sağlık çalışanlarının ellerini yıkamadan, ovarak mikroptan arındırmak için kullanılır.',
+    ingredients: [
+      Ingredient('Etanol %96', '83,33 mL'),
+      Ingredient('Hidrojen peroksit %3', '4,17 mL'),
+      Ingredient('Gliserol %98', '1,45 mL'),
+      Ingredient('Arıtılmış su (steril ya da kaynatılıp soğutulmuş)', 'ad 100 mL'),
+    ],
+    steps: [
+      FormulaStep('Karıştırma', 'Etanole önce hidrojen peroksidi, sonra gliserolü ekle; gliserol kalıbını biraz suyla çalkalayıp kaba boşalt.'),
+      FormulaStep('Hacme tamamlama', 'Suyla 100 mL\'ye tamamla, kapağı hemen kapatıp hafifçe çalkala.'),
+    ],
+    refs: ['cozelti-who-handrub', 'fnfb3'],
+    shelfLife: '35 gün, oda sıcaklığında, sıkı kapalı (etanol ≥%40, koruyuculu; USP <795>); kullanmadan önce 72 saat bekletilir (WHO)',
+  ),
+  Formula(
+    name: 'İzopropanollü el antiseptiği %75 (WHO)',
+    category: FormulaCategory.cozelti,
+    use: 'Etanol bulunmadığında ellerin yıkamadan, ovarak mikroptan arındırılması için kullanılır.',
+    ingredients: [
+      Ingredient('İzopropil alkol %99,8', '75,15 mL'),
+      Ingredient('Hidrojen peroksit %3', '4,17 mL'),
+      Ingredient('Gliserol %98', '1,45 mL'),
+      Ingredient('Arıtılmış su (steril ya da kaynatılıp soğutulmuş)', 'ad 100 mL'),
+    ],
+    steps: [
+      FormulaStep('Karıştırma', 'İzopropil alkole hidrojen peroksidi ve gliserolü ekleyip karıştır.'),
+      FormulaStep('Hacme tamamlama', 'Suyla 100 mL\'ye tamamla, buharlaşmasın diye kapağı hemen kapat.'),
+    ],
+    refs: ['cozelti-who-handrub', 'fnfb3'],
+    shelfLife: '35 gün, oda sıcaklığında, sıkı kapalı (izopropanol ≥%40, koruyuculu; USP <795>); kullanmadan önce 72 saat bekletilir (WHO)',
+  ),
+  Formula(
+    name: 'Asetik asit çözeltisi %5 (kolposkopi)',
+    category: FormulaCategory.cozelti,
+    use: 'Kolposkopide rahim ağzına sürülür; anormal hücreli alanlar beyazlaşarak görünür olur.',
+    ingredients: [
+      Ingredient('Buzlu asetik asit', '5 mL'),
+      Ingredient('Distile su', '95 mL'),
+    ],
+    steps: [
+      FormulaStep('Karıştırma', 'Asidi suyun içine dikkatle ekle, tersini yapma; iyice karıştır.'),
+      FormulaStep('Hacme tamamlama', 'Distile suyla 100 mL\'ye tamamla.'),
+    ],
+    refs: ['cozelti-iarc-kolposkopi', 'fnfb3'],
+    shelfLife: 'Aynı gün; artan çözelti gün sonunda atılır (IARC)',
   ),
 ];

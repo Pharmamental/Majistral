@@ -1009,6 +1009,7 @@ const suspansiyonFormulas = <Formula>[
       FormulaStep('Hacme tamamlama', 'Suyla 100 mL\'ye tamamlayın.'),
     ],
     refs: ['usp-nf', 'ansel'],
+    shelfLife: '14 gün, buzdolabında (sulu, koruyucusuz; USP <795>)',
   ),
   // Dışa uygulanan çalkalama losyonları ve linimentler.
   Formula(
@@ -1176,5 +1177,27 @@ const suspansiyonFormulas = <Formula>[
       FormulaStep('Hacme tamamlama', 'Suyla 100 mL\'ye tamamlayın.'),
     ],
     refs: ['bp', 'suspansiyon-marriott'],
+  ),
+  // ---------- 62 maddeye çıkış (2026-10-29): eldeki maddelerle yapılabilen yeni formüller ----------
+  Formula(
+    name: 'Kalamin losyonu (fenolsüz, bentonit magmalı)',
+    category: FormulaCategory.suspansiyon,
+    use: 'Böcek ısırığı, güneş yanığı ve suçiçeğinde kaşıntıyı ve tahrişi yatıştırmak için sürülür.',
+    ingredients: [
+      Ingredient('Kalamin', '8 g'),
+      Ingredient('Çinko oksit', '8 g'),
+      Ingredient('Gliserol', '2 mL'),
+      Ingredient('Bentonit magması %5', '25 mL'),
+      Ingredient('Arıtılmış su', 'ad 100 mL'),
+    ],
+    steps: [
+      FormulaStep('Şişirme', 'Bentoniti sıcak suya serpip bekleterek magma yap, sonra eşit hacim suyla incelt.'),
+      FormulaStep('Ezme', 'Kalamin ve çinko oksidi havanda birlikte ince toz olana dek ez.'),
+      FormulaStep('Levigasyon', 'Tozları gliserol ve biraz seyreltik magmayla sürterek pürüzsüz macun yap.'),
+      FormulaStep('Geometrik seyreltme', 'Kalan magmayı azar azar katıp her seferinde karıştır.'),
+      FormulaStep('Hacme tamamlama', 'Şişeye aktarıp suyla 100 mL\'ye tamamla; kullanmadan önce çalkalanır.'),
+    ],
+    refs: ['fn-es', 'fnfb3', 'usp-nf'],
+    shelfLife: '2 hafta (Formulario Nacional)',
   ),
 ];

@@ -74,6 +74,30 @@ const packs = <String, ({int grams, int price})>{
   'Sodyum Klorür': (grams: 100, price: 5),
   'Sodyum Florür': (grams: 1, price: 5),
   'Folik Asit': (grams: 1, price: 30),
+  // 62 maddeye çıkış (2026-10-29): aynı kural, fiyat benzer maddenin gram fiyatından.
+  'Sarı Balmumu': (grams: 25, price: 10),
+  'Kolesterol': (grams: 25, price: 20),
+  'Noniyonik Hidrofil Krem': (grams: 500, price: 100),
+  'Basit Merhem': (grams: 500, price: 70),
+  'Emülsiye Edici Merhem': (grams: 250, price: 45),
+  'Hidroksipropilselüloz': (grams: 10, price: 20),
+  'Bentonit': (grams: 50, price: 5),
+  'Etanol %96': (grams: 250, price: 30),
+  'Potasyum Sorbat': (grams: 1, price: 5),
+  'Laktik Asit': (grams: 50, price: 15),
+  'Kâfur': (grams: 10, price: 10),
+  'Kalamin': (grams: 100, price: 25),
+  'Krotamiton': (grams: 50, price: 40),
+  'Allantoin': (grams: 5, price: 10),
+  'Mikonazol Nitrat': (grams: 10, price: 30),
+  'Klotrimazol': (grams: 5, price: 30),
+  'Benzoik Asit': (grams: 25, price: 10),
+  'Hidrojen Peroksit %30': (grams: 100, price: 15),
+  'Buzlu Asetik Asit': (grams: 10, price: 5),
+  'Lidokain Hidroklorür': (grams: 10, price: 35),
+  'Benzokain': (grams: 25, price: 30),
+  'Kalsiyum Karbonat': (grams: 250, price: 10),
+  'Askorbik Asit': (grams: 250, price: 25),
 };
 
 /// Sıvıların yoğunluğu (g/mL); stok gramla tutulur. Yuvarlak farmakope değerleri.
@@ -83,6 +107,11 @@ const _density = {
   'Propilen Glikol': 1.036,
   'Sıvı Parafin': 0.86,
   'Klorheksidin Glukonat %20': 1.06,
+  'Etanol %96': 0.81,
+  'Hidrojen Peroksit %30': 1.11,
+  'Buzlu Asetik Asit': 1.05,
+  'Laktik Asit': 1.21,
+  'Krotamiton': 1.01,
 };
 
 /// Bir kapsüle giren laktoz (3 numara 0,30 mL × ~0,6 g/mL; tahmin).

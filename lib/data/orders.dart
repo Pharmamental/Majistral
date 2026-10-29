@@ -206,7 +206,7 @@ const List<OrderTemplate> _handwritten = [
   ),
 ];
 
-/// Oyundaki bütün reçeteler (yaklaşık 500): elle yazılmış altı reçete ve
+/// Oyundaki bütün reçeteler (yaklaşık 800, 112 farklı majistral): elle yazılmış altı reçete ve
 /// formül kitabından gelenler, her biri birkaç hâliyle. Sıra hâllere göre
 /// dizilir (önce her formülün ilk hâli, sonra ikincisi…), böylece duvarda aynı
 /// formül arka arkaya gelmez.

@@ -217,6 +217,7 @@ const jelFormulas = <Formula>[
       FormulaStep('Hacme tamamlama', 'Su eklenip 100 g\'a tamamlanır, kapak sıkı kapatılır.'),
     ],
     refs: ['allen', 'remington'],
+    shelfLife: '35 gün, oda sıcaklığında ya da buzdolabında (sulu, koruyuculu; USP <795>)',
   ),
   Formula(
     name: 'Poloksamer 407 jeli %20',
@@ -344,6 +345,7 @@ const jelFormulas = <Formula>[
       FormulaStep('Hacme tamamlama', 'Su ile 100 g\'a tamamlanır.'),
     ],
     refs: ['jel-fda-protectant', 'martindale'],
+    shelfLife: '35 gün, oda sıcaklığında ya da buzdolabında (sulu, koruyuculu; USP <795>)',
   ),
 
   // ---------------------------------------------------------------- Lokal anestezik ve kaşıntı jelleri
@@ -365,6 +367,7 @@ const jelFormulas = <Formula>[
       FormulaStep('Hacme tamamlama', 'Su ile 100 g\'a tamamlanır.'),
     ],
     refs: ['usp-nf', 'allen'],
+    shelfLife: '35 gün, oda sıcaklığında ya da buzdolabında (sulu, koruyuculu; USP <795>)',
   ),
   Formula(
     name: 'Lidokainli jel %4',
@@ -384,6 +387,7 @@ const jelFormulas = <Formula>[
       FormulaStep('Hacme tamamlama', 'Su ile 100 g\'a tamamlanır.'),
     ],
     refs: ['jel-fda-analgesic', 'allen'],
+    shelfLife: '35 gün, oda sıcaklığında ya da buzdolabında (sulu, koruyuculu; USP <795>)',
   ),
   Formula(
     name: 'Lidokain-adrenalin-tetrakain (LAT) jeli',
@@ -441,6 +445,7 @@ const jelFormulas = <Formula>[
       FormulaStep('Hacme tamamlama', 'Su azar azar eklenip 100 g\'a tamamlanır.'),
     ],
     refs: ['jel-fda-analgesic', 'martindale'],
+    shelfLife: '14 gün, buzdolabında (sulu, koruyucusuz; USP <795>)',
   ),
   Formula(
     name: 'Benzokainli ağız jeli %20',
@@ -680,6 +685,7 @@ const jelFormulas = <Formula>[
       FormulaStep('Hacme tamamlama', 'Su azar azar katılıp 100 g\'a tamamlanır.'),
     ],
     refs: ['usp-nf', 'jel-fda-acne'],
+    shelfLife: '14 gün, buzdolabında (sulu, koruyucusuz; USP <795>)',
   ),
   Formula(
     name: 'Salisilik asitli jel %6',
@@ -698,6 +704,7 @@ const jelFormulas = <Formula>[
       FormulaStep('Hacme tamamlama', 'Su ile 100 g\'a tamamlanır.'),
     ],
     refs: ['usp-nf', 'martindale'],
+    shelfLife: '14 gün, buzdolabında (sulu, koruyucusuz; USP <795>)',
   ),
   Formula(
     name: 'Benzoil peroksitli jel %5',
@@ -882,6 +889,7 @@ const jelFormulas = <Formula>[
       FormulaStep('Hacme tamamlama', 'Su ile 100 g\'a tamamlanır.'),
     ],
     refs: ['jel-fda-protectant', 'martindale'],
+    shelfLife: '35 gün, oda sıcaklığında ya da buzdolabında (sulu, koruyuculu; USP <795>)',
   ),
 
   // ---------------------------------------------------------------- Mantar jelleri
@@ -902,6 +910,7 @@ const jelFormulas = <Formula>[
       FormulaStep('Hacme tamamlama', 'Su azar azar katılıp 100 g\'a tamamlanır.'),
     ],
     refs: ['jel-fda-antifungal', 'martindale'],
+    shelfLife: '14 gün, buzdolabında (sulu, koruyucusuz; USP <795>)',
   ),
   Formula(
     name: 'Tolnaftatlı jel %1',
@@ -940,6 +949,7 @@ const jelFormulas = <Formula>[
       FormulaStep('Hacme tamamlama', 'Su ile 100 g\'a tamamlanır.'),
     ],
     refs: ['jel-fda-antifungal', 'martindale'],
+    shelfLife: '35 gün, oda sıcaklığında ya da buzdolabında (sulu, koruyuculu; USP <795>)',
   ),
 
   // ---------------------------------------------------------------- Ağız ve diş jelleri

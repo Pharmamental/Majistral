@@ -29,18 +29,20 @@ void main() {
     expect(sold.toSet(), hasLength(sold.length));
   });
 
-  // Tuğrul, 2026-10-28: "30-40 civarı madde, her madde en az 10 reçetede,
-  // 500 civarı reçete".
-  test('markette 30-40 madde var, her biri en az 10 reçetede geçiyor', () {
-    expect(sold.length, inInclusiveRange(30, 40));
+  // Tuğrul, 2026-10-28: "30-40 civarı madde, her madde en az 10 reçetede";
+  // 2026-10-29: "farklı majistral sayımız çok az" → 62 madde, 100'ün üstünde
+  // farklı majistral.
+  test('markette 55-65 madde var, her biri en az 10 reçetede geçiyor', () {
+    expect(sold.length, inInclusiveRange(55, 65));
     for (final name in sold) {
       final n = prescriptionOrders.where((o) => o.ingredients.any((i) => i.name == name)).length;
       expect(n, greaterThanOrEqualTo(10), reason: name);
     }
   });
 
-  test('yaklaşık 500 reçete; kimlikler tek, ilk altısı elle yazılanlar', () {
-    expect(prescriptionOrders.length, inInclusiveRange(480, 520));
+  test('100\'ün üstünde farklı majistral, en az 500 reçete; kimlikler tek, ilk altısı elle yazılanlar', () {
+    expect(prescriptionOrders.map((o) => o.formula).toSet().length, greaterThan(100));
+    expect(prescriptionOrders.length, greaterThanOrEqualTo(500));
     final keys = [for (final o in prescriptionOrders) o.key];
     expect(keys.toSet(), hasLength(keys.length));
     expect(prescriptionOrders.first.key, '%5 Salisilik Asitli Vazelin');

@@ -187,4 +187,11 @@ const coreReferences = <Reference>[
     citation: 'International Journal of Pharmaceutical Compounding (IJPC): hakemli majistral formül makaleleri.',
     url: 'https://www.ijpc.com',
   ),
+  Reference(
+    id: 'fnfb3',
+    kind: ReferenceKind.farmakope,
+    citation: 'Formulário Nacional da Farmacopeia Brasileira, 3. baskı. Agência Nacional de Vigilância Sanitária '
+        '(ANVISA), Brasília, 2026 (RDC nº 1.025/2026).',
+    url: 'https://bibliotecadigital.anvisa.gov.br/jspui/bitstream/anvisa/21044/3/FNFB3%20c%20ficha%20e%20capa.pdf',
+  ),
 ];

@@ -209,6 +209,7 @@ const tozFormulas = <Formula>[
       FormulaStep('Elekten geçirme', 'Pudra elekten geçirilip ıslak topaklar dağıtılır.'),
     ],
     refs: ['ansel', 'allen', 'martindale'],
+    shelfLife: '180 gün, oda sıcaklığında, sıkı kapalı (susuz; USP <795>)',
   ),
   Formula(
     name: 'Nistatin pudrası 100.000 IU/g',
@@ -255,6 +256,7 @@ const tozFormulas = <Formula>[
       FormulaStep('Elekten geçirme', 'Karışım elekten geçirilir.'),
     ],
     refs: ['usp-nf', 'martindale'],
+    shelfLife: '180 gün, oda sıcaklığında, sıkı kapalı (susuz; USP <795>)',
   ),
   Formula(
     name: 'Klotrimazol pudrası %1',
@@ -429,6 +431,7 @@ const tozFormulas = <Formula>[
       FormulaStep('Elekten geçirme', 'Toz elekten geçirilir, sonra 500 mg\'lık 30 pakete bölünür.'),
     ],
     refs: ['martindale', 'toz-bnfc'],
+    shelfLife: '180 gün, oda sıcaklığında, sıkı kapalı (susuz; USP <795>)',
   ),
   Formula(
     name: 'Sodyum klorür paket toz 500 mg',

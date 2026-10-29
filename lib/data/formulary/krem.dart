@@ -330,6 +330,7 @@ const kremFormulas = <Formula>[
       FormulaStep('Geometrik seyreltme', 'Merhemi sulu kreme eşit porsiyonlarla katıp homojen olana dek karıştır.'),
     ],
     refs: ['krem-dmd', 'bp'],
+    shelfLife: '35 gün, oda sıcaklığında ya da buzdolabında (sulu, koruyuculu; USP <795>)',
   ),
 
   // ---------------------------------------------------------------- Üre ve nemlendiriciler
@@ -430,6 +431,7 @@ const kremFormulas = <Formula>[
       FormulaStep('Geometrik seyreltme', 'Laktik asidi önce az miktar kremle, sonra kalanla azar azar karıştır.'),
     ],
     refs: ['krem-dmd', 'martindale'],
+    shelfLife: '35 gün, oda sıcaklığında ya da buzdolabında (sulu, koruyuculu; USP <795>)',
   ),
   Formula(
     name: 'Dekspantenol ve gliserollü krem %5',
@@ -852,6 +854,7 @@ const kremFormulas = <Formula>[
       FormulaStep('Geometrik seyreltme', 'Macunu kalan kremle eşit porsiyonlarla karıştır.'),
     ],
     refs: ['krem-zl', 'martindale', 'bp'],
+    shelfLife: '14 gün, buzdolabında (sulu, koruyucusuz; USP <795>)',
   ),
   Formula(
     name: 'Mikonazol nitratlı krem %2',
@@ -867,6 +870,7 @@ const kremFormulas = <Formula>[
       FormulaStep('Geometrik seyreltme', 'Macunu kalan kremle azar azar karıştır.'),
     ],
     refs: ['who-mf', 'martindale', 'bp'],
+    shelfLife: '14 gün, buzdolabında (sulu, koruyucusuz; USP <795>)',
   ),
   Formula(
     name: 'Permetrinli krem %5',
@@ -908,5 +912,21 @@ const kremFormulas = <Formula>[
       FormulaStep('Geometrik seyreltme', 'Yağlı sıvı krotamitonu kreme küçük porsiyonlarla işle.'),
     ],
     refs: ['bp', 'martindale'],
+    shelfLife: '35 gün, oda sıcaklığında ya da buzdolabında (sulu, koruyuculu; USP <795>)',
+  ),
+  // ---------- 62 maddeye çıkış (2026-10-29): eldeki maddelerle yapılabilen yeni formüller ----------
+  Formula(
+    name: 'Propilen glikollü sulu krem %20',
+    category: FormulaCategory.krem,
+    use: 'Çok kuru, pullanan deride nemlendirici ve koruyucu olarak; üreli kremler işe yaramadığında ya da tahriş ettiğinde kullanılır.',
+    ingredients: [
+      Ingredient('Propilen glikol', '20 g'),
+      Ingredient('Sulu krem', 'ad 100 g'),
+    ],
+    steps: [
+      FormulaStep('Geometrik seyreltme', 'Propilen glikol krem içine küçük porsiyonlarla katılıp her seferinde homojen olana kadar karıştırılır.'),
+    ],
+    refs: ['merhem-bad', 'krem-dmd', 'usp-795'],
+    shelfLife: '35 gün, oda sıcaklığında ya da buzdolabında (sulu, koruyuculu; USP <795>)',
   ),
 ];

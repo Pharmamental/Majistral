@@ -44,9 +44,9 @@ lib/
 ├── theme/             tokens (renk, boşluk, köşe, AppText yazı stilleri), app_theme
 ├── models/            shop_item (ShopItem, Station), prescription, prep_job, formula (formül kitabı)
 ├── data/              stations, lab_tools (laboratuvardaki aletler), market_items, orders
-│                      (elle yazılmış 6 reçete + hâl üretici), order_book (kitaptan 62 reçete
+│                      (elle yazılmış 6 reçete + hâl üretici), order_book (kitaptan 106 reçete
 │                      şablonu), references (kaynaklar), formulary +
-│                      formulary/<kategori>.dart (300 formül, 6 × 50)
+│                      formulary/<kategori>.dart (311 formül, kategori başına en az 50)
 ├── logic/             job_store (kabul edilen reçeteler, adım başlatma, acele, telefona kayıt,
 │                      JobScope ile ekranlara verilir)
 ├── screens/           home (alt çubuklu kabuk), orders (Reçeteler), lab (Laboratuvar), market,
@@ -201,11 +201,20 @@ lib/
   etkisi" diye yazar, sahte farmakoloji kurulmaz.
   Formüller sekmesi kaldırıldı (ekranı git geçmişinde); formül verisi duruyor
   (`GameTabBar`). Seçim her yerde aynı: adı kobalt yazı + altında kısa kobalt çizgi (`SelectionMark`); alt çubukta çizgi sekmeden sekmeye kayar, yolda uzayıp yerinde kısalır (`_SlidingMark`, Tuğrul 2026-10-27); daire seçimle renk değiştirmez. İkonlar `uretici.html` "Sekmeler" grubunda.
-- Market hammaddeleri (2026-10-26): `chemicalGroups`, 6 rol grubunda; liste ve kaynakları
+- Market hammaddeleri (2026-10-26): `chemicalGroups`, rol gruplarında; liste ve kaynakları
   beyinde (`knowledge/concepts/majistral-hammaddeler.md`). Reçeteye yeni madde girerse markete de
   eklenir; her maddenin oyuncak blok ikonu olur (`test/market_items_test.dart` ikisini de denetler).
   İkonlar `tools/ikon_blok/uretici.html`'de; görünüşte benzer kardeş maddeler (setostearil/stearil,
   iki paraben, hazır baz kavanozları) aynı kapta çizilir, kapak rengiyle ayrılır.
+- Kimyasal sekmesi (Tuğrul, 2026-10-29): madde, onu isteyen ilk reçete duvara gelince açılır;
+  o güne dek soluk, renksiz ikonlu ve kilitli durur, alınmaz ("Bu maddeyi isteyen ilk reçete
+  gelince açılır."). Açılanlar kayıtta (`wall_v1`, `seen`; `JobStore.chemicalUnlocked`); eski
+  kayıtta o güne dek gelmiş reçetelerden türetilir. Grupta açıklar üstte, kilitliler altta.
+  Rafta gram değil paket adedi yazar ("Sahip olunan: 3 adet", açılmış paket bir sayılır;
+  `JobStore.packsOf`); paket gramı da yazmaz. Grup başlığı ortada, eski eczane rafı etiketi
+  gibi: çift çizgili beyaz kâğıt, üstünde bant, altında "8 maddeden 5 açık"
+  (`ChemicalGroupHeader`). Açıklamalar sade: ne olduğu ve ne işe yaradığı, bir iki kısa
+  cümle; teknik terim yok ya da yanında anlamı (reçete penceresi de `chemicalRole` ile okur).
 - **500 reçete, 39 madde** (Tuğrul, 2026-10-28, "30-40 civarı madde, her madde en az 10
   reçetede, 500 civarı reçete"): markette 39 madde, hepsi en az 10 reçetede; reçetede geçmeyen
   madde markette durmaz (benzil benzoat, kafur, LCD, rezorsin, PEG 400/3350, setil alkol, stearik
@@ -221,6 +230,18 @@ lib/
   ≥%40 koruyucu sayıldı). Dışarıda: polihexanid jelleri (enjeksiyonluk su), %70 izopropil alkol,
   plasebo kapsülü, nötralleştirme ve süzme adımlı formüller (laboratuvarda kartları yok).
   Şablonlar scratchpad'deki betikle üretildi, artık elle düzenlenir.
+- **62 madde, 112 farklı majistral** (Tuğrul, 2026-10-29, "farklı majistral sayımız çok az",
+  "Madde + yeni formül"): markete 23 madde eklendi (etanol, hidrojen peroksit, lidokain,
+  benzokain, mikonazol, klotrimazol, potasyum sorbat, HPC, bentonit, kalamin, kâfur, krotamiton,
+  laktik/benzoik/buzlu asetik/askorbik asit, kalsiyum karbonat, allantoin, kolesterol, sarı
+  balmumu, noniyonik hidrofil krem, basit merhem, emülsiye edici merhem); kitapta duran 34 formül
+  bunlarla oyuna girdi. Kitaba eldeki maddelerle yapılabilen 11 yeni formül yazıldı (İspanya ve
+  Brezilya ulusal formülerleri, WHO el antiseptikleri, IARC kolposkopi, BAD özel listesi); 10'u
+  oyunda (benzoik asit çözeltisi eczane stok çözeltisi, yalnız kitapta). Yeni şablonlar 6 hâlle
+  gelir, tek şablonda geçen madde varsa 10; toplam ~800 reçete. "Etkin maddeler" markette üçe
+  bölündü (deri, antiseptik ve uyuşturucu, ağızdan alınanlar). Bir formülün miktarı ikinci
+  bağımsız kaynakta görülmediyse girmez: NRF 11.2/11.3/11.4/11.60 çalkalama losyonları ve pudra
+  ile klotrimazollü üre patı ve çinko merhemi yalnız Altmeyer'de görüldüğü için bekliyor.
 - Formül kitabı (Tuğrul, 2026-10-28, /goal): 6 kategori farmasötik şekle göre (USP <1151>, Ph. Eur.
   şekil monografları): merhem ve patlar, kremler, jeller, çözeltiler, süspansiyonlar, tozlar ve
   kapsüller; her birinde 50, toplam 300 (`lib/data/formulary/`). Her formül üç soruyu cevaplar: ne
@@ -285,7 +306,7 @@ lib/
 - **Ekonomi kodda** (Tuğrul, 2026-10-29, "Evet, önerilerle"; `data/economy.dart`, kayıt
   `economy_v1`, hesap beyinde `knowledge/concepts/majistral-ekonomi.md` 2. tur). Tek para.
   Teslim = malzeme bedeli (hep tam) + adım başına 11 emek × yıldız (%100/%70/%40); günün ilk 3
-  teslimi emek ×2; cilt fanusu emeğe %5-15. Kimyasal paketle alınır (`packs`, 38 madde), gramla
+  teslimi emek ×2; cilt fanusu emeğe %5-15. Kimyasal paketle alınır (`packs`, 61 madde), gramla
   harcanır (`gramsFor`: yüzde, ad, not satırı, kapsül 0,2 g laktoz); "Al" anında raftan düşer,
   eksik paket kasadan alınır, kasa yetmezse ecza deposu veresiye verir, borç teslimden kesilir
   (oyuncu hiç takılmaz; 1★ teslim bile malzemesini öder, test denetler). Başta her maddeden bir

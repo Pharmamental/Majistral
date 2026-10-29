@@ -575,7 +575,124 @@ const IKONLAR=[
   {d:'M22,42H62C64,56 66,70 66,84H18C18,70 20,56 22,42Z',c:R.yesil}, // gövde
   {d:rr(18,36,48,10,5),c:D(R.yesil,.15)},            // ağız kenarı
   {d:rr(27,58,30,9,4),c:L(R.yesil,.55),flat:1}]},    // gövde bandı
+ // ===== 62 maddeye çıkış (Tuğrul, 2026-10-29, "farklı majistral sayımız çok az"). Her
+ // ikon maddenin kaynağından ya da kullanımından; kardeş maddeler aynı kapta.
+ // Etanol, izopropil alkolün kardeşi: aynı şişe, mavi kapak.
+ {grup:'Yeni maddeler',dosya:'etanol',ad:'Etanol %96',kutu:'#CFE4F7',parts:[
+  {d:rr(38,10,24,20,6),c:R.mavi},
+  {d:rr(30,28,40,58,12),c:R.cam},
+  {d:rr(34,50,32,22,4),c:R.krem,flat:1},
+  {d:'M40,61H60',c:R.mavi,line:1}]},
+ // Hidrojen peroksit ışıktan korunur: koyu şişe, ağzından taşan köpük.
+ {grup:'Yeni maddeler',dosya:'hidrojen_peroksit',ad:'Hidrojen Peroksit %30',kutu:'#E4E8EE',parts:[
+  {d:rr(40,22,20,16,4),c:'#6B4A35'},                // boyun
+  {d:rr(28,34,44,52,12),c:'#6B4A35'},               // koyu şişe
+  {d:rr(34,52,32,20,4),c:R.krem,flat:1},
+  {d:circ(42,22,7),c:'#FFFFFF'},{d:circ(56,20,8),c:'#FFFFFF'},
+  {d:circ(49,12,6.5),c:'#FFFFFF'},{d:circ(63,27,5),c:'#FFFFFF'}]}, // köpük
+ // Lidokain diş hekiminin uyuşturucusu: karpül (cam kartuş); ADA renk kodunda lidokain açık mavi.
+ {grup:'Yeni maddeler',dosya:'lidokain',ad:'Lidokain Hidroklorür',kutu:'#CFE4F7',rot:-30,parts:[
+  {d:rr(12,42,12,16,3),c:'#5C6B7A'},                // lastik piston
+  {d:rr(20,39,60,22,9),c:R.cam},                    // cam gövde
+  {d:rr(42,39,12,22,2),c:'#8CCBEB',flat:1},          // renk bandı
+  {d:rr(78,42,12,16,3),c:R.metal}]},                // alüminyum kapak
+ // Hidroksipropilselüloz odun hamurundan: kütük kesiti.
+ {grup:'Yeni maddeler',dosya:'hidroksipropilseluloz',ad:'Hidroksipropilselüloz',kutu:'#C9EFE6',parts:[
+  {d:circ(50,52,33),c:R.kahve},                     // kabuk
+  {d:circ(50,52,28),c:'#E6C38E',flat:1},             // odun
+  // yıllık halkalar: öz kenara kaymış, halkalar bir yanda sık (gerçek kütük gibi)
+  {d:'M30,54C30,38 42,32 52,32C64,32 72,42 70,54C68,66 58,72 48,72C38,72 30,66 30,54Z'
+    +'M40,54C40,46 46,42 52,42C58,42 62,48 61,54C60,60 55,63 50,63C45,63 40,60 40,54Z',c:D('#E6C38E',.22),line:1}]},
+ // Benzokain boğaz pastillerinde: iki pastil.
+ {grup:'Yeni maddeler',dosya:'benzokain',ad:'Benzokain',kutu:'#FFE3A6',parts:[
+  {d:circ(36,62,20),c:'#F5A25D'},
+  {d:circ(62,50,20),c:'#F5A25D'},
+  {d:circ(62,50,11),c:L('#F5A25D',.45),line:1}]},
+ // Mikonazol ve klotrimazol mantar kremlerinde: aynı krem tüpü, kapak ve bant rengiyle ayrılır.
+ {grup:'Yeni maddeler',dosya:'mikonazol',ad:'Mikonazol Nitrat',kutu:'#C9EFE6',rot:-18,parts:tup(R.yesil)},
+ {grup:'Yeni maddeler',dosya:'klotrimazol',ad:'Klotrimazol',kutu:'#D9D2FA',rot:-18,parts:tup(R.mor)},
+ // Sorbik asit adını üvez ağacından (Sorbus) alır; ilk kez üvez meyvesinden elde edildi.
+ {grup:'Yeni maddeler',dosya:'potasyum_sorbat',ad:'Potasyum Sorbat',kutu:'#FFD6C2',parts:[
+  {d:cap(72,14,50,60,4),c:R.kahve},                 // dal
+  {d:leaf(66,22,-50,22,6),c:'#5F8F4E'},{d:leaf(66,22,40,22,6),c:'#5F8F4E'},
+  {d:leaf(58,38,-60,20,6),c:'#5F8F4E'},{d:leaf(58,38,30,20,6),c:'#5F8F4E'},
+  ...[[44,62],[58,62],[37,74],[51,74],[65,74],[44,85]].map(([x,y])=>({d:circ(x,y,8),c:'#E8553D'}))]}, // meyve salkımı
+ // Hazır bazlar: aynı merhem kavanozu.
+ {grup:'Yeni maddeler',dosya:'noniyonik_krem',ad:'Noniyonik Hidrofil Krem',kutu:'#C9EFE6',parts:kavanoz('#4FAFA8')},
+ {grup:'Yeni maddeler',dosya:'basit_merhem',ad:'Basit Merhem',kutu:'#F3E1CF',parts:kavanoz(R.kahve)},
+ {grup:'Yeni maddeler',dosya:'emulsiye_edici_merhem',ad:'Emülsiye Edici Merhem',kutu:'#FFD6C2',parts:kavanoz('#E07A9A')},
+ // Allantoin karakafesotunun (Symphytum) kökünde ve yaprağında bulunur: yaprak ve çan çiçekler.
+ {grup:'Yeni maddeler',dosya:'allantoin',ad:'Allantoin',kutu:'#D9D2FA',parts:[
+  stem([[44,86],[46,50],[56,22],[70,18]],3,'#6F8F55'), // eğilen sap
+  {d:leaf(44,84,-40,50,14),c:'#5F8F4E'},
+  {d:leaf(46,66,38,34,10),c:'#5F8F4E'},
+  // sarkan çan çiçekler: dar sap ucu, aşağıda geniş ağız, dalgalı kenar
+  {d:'M56,22C50,24 48,32 48,40C48,44 46,46 44,48C48,50 52,48 54,50C56,48 60,50 64,48C62,46 60,44 60,40C60,32 60,24 56,22Z',c:'#9C7BD0'},
+  {d:'M70,18C64,20 62,28 62,36C62,40 60,42 58,44C62,46 66,44 68,46C70,44 74,46 78,44C76,42 74,40 74,36C74,28 74,20 70,18Z',c:'#B49AE0'}]},
+ // Askorbik asit: C vitamini, portakal dilimi.
+ {grup:'Yeni maddeler',dosya:'askorbik_asit',ad:'Askorbik Asit',kutu:'#FFE3A6',parts:[
+  {d:'M12,72A38,38 0 0 1 88,72Z',c:R.turuncu},      // kabuk
+  {d:'M19,72A31,31 0 0 1 81,72Z',c:'#FFB347',flat:1},// dilim
+  {d:'M50,70L28,52M50,70L50,44M50,70L72,52',c:'#FFE3B8',line:1}]},
+ // Kalsiyum karbonat deniz kabuğunun ve tebeşirin maddesi: tarak kabuğu.
+ {grup:'Yeni maddeler',dosya:'kalsiyum_karbonat',ad:'Kalsiyum Karbonat',kutu:'#E4E8EE',parts:[
+  {d:rr(38,76,24,10,3),c:D('#F4D6C6',.12)},          // kabuk kulakçığı
+  {d:'M50,80L18,48C16,32 32,18 50,18C68,18 84,32 82,48Z',c:'#F4D6C6'},
+  {d:'M50,78L28,34M50,78L42,22M50,78L58,22M50,78L72,34',c:D('#F4D6C6',.18),line:1}]},
+ // Bentonit volkan külünden oluşan kil: saat camında çatlak kil topağı.
+ {grup:'Yeni maddeler',dosya:'bentonit',ad:'Bentonit',kutu:'#E3F1E3',parts:[
+  {d:'M10,60H90C84,74 68,80 50,80C32,80 16,74 10,60Z',c:R.cam},
+  {d:'M22,62C20,46 32,38 50,38C68,38 80,46 78,62Z',c:'#A9A48F'},
+  {d:'M30,52L40,50L46,56L58,52L68,55',c:D('#A9A48F',.25),line:1}]}, // kuruyan kilin çatlağı
+ // Benzoik asit ilk kez aselbent (Styrax) reçinesinden elde edildi: reçine parçaları.
+ {grup:'Yeni maddeler',dosya:'benzoik_asit',ad:'Benzoik Asit',kutu:'#FFF0B8',parts:[
+  // köşeli, camsı damla parçaları; üstlerinde ışık parıltısı
+  {d:'M14,84L18,64L32,58L44,66L46,84Z',c:'#D2802A'},
+  {d:'M54,84L56,66L70,60L84,68L86,84Z',c:'#C26F22'},
+  {d:'M30,70L32,46L46,34L62,38L68,56L60,72Z',c:'#E8A13C'},
+  {d:'M38,50L46,40L52,42L42,54Z',c:L('#E8A13C',.55),flat:1},
+  {d:'M60,70L68,64L72,66L64,74Z',c:L('#C26F22',.5),flat:1}]},
+ // Buzlu asetik asit 16,6 °C'de donar: buz kristalli cam şişe.
+ {grup:'Yeni maddeler',dosya:'asetik_asit',ad:'Buzlu Asetik Asit',kutu:'#CFE4F7',parts:[
+  {d:rr(38,10,24,14,6),c:R.krem},                   // cam tıpa
+  {d:rr(40,22,20,16,4),c:R.cam},
+  {d:rr(26,34,48,52,13),c:R.cam},
+  {d:'M32,80L36,56L42,80ZM44,80L50,46L56,80ZM58,80L64,58L68,80Z',c:'#FFFFFF',flat:1}]}, // buz
+ // Kalamin losyonu pembedir: pembe losyon şişesi.
+ {grup:'Yeni maddeler',dosya:'kalamin',ad:'Kalamin',kutu:'#FFD6C2',parts:[
+  {d:rr(40,12,20,16,5),c:R.krem},
+  {d:rr(28,26,44,58,16),c:'#EFA39B'},
+  {d:rr(34,46,32,22,5),c:R.krem,flat:1},
+  {d:'M40,57H60',c:'#EFA39B',line:1}]},
+ // Laktik asit ekşiyen sütten (yoğurttan) adını alır: yoğurt kâsesi.
+ {grup:'Yeni maddeler',dosya:'laktik_asit',ad:'Laktik Asit',kutu:'#CFE4F7',parts:[
+  {d:'M14,52H86C84,72 70,84 50,84C30,84 16,72 14,52Z',c:R.mavi},
+  {d:'M16,54C18,40 30,30 44,32C48,24 58,24 62,32C74,32 82,42 84,54Z',c:'#FFFFFF'}, // kabaran yoğurt
+  {d:cap(60,40,84,18,5),c:R.metal}]},                // kaşık sapı
+ // Krotamiton uyuzda: büyüteç altında uyuz akarı.
+ {grup:'Yeni maddeler',dosya:'krotamiton',ad:'Krotamiton',kutu:'#D9D2FA',parts:[
+  {d:cap(58,60,82,84,10),c:R.kahve},                // sap
+  {d:circ(42,44,27)+circ(42,44,20),c:R.metal},      // çerçeve
+  {d:circ(42,46,7),c:'#C98B6B',flat:1},              // akar
+  {d:'M36,42L30,38M36,46L29,46M36,50L30,54M48,42L54,38M48,46L55,46M48,50L54,54',c:'#C98B6B',line:1},
+  {d:circ(42,44,20),c:R.cam,glass:1,op:.35}]},
+ // Sarı balmumu, beyaz balmumunun ağartılmamışı: aynı petek, koyu sarı.
+ {grup:'Yeni maddeler',dosya:'sari_balmumu',ad:'Sarı Balmumu',kutu:'#FFF0B8',parts:[
+  ...[[38,38],[62,38],[26,59],[50,59],[74,59]].map(([x,y])=>({d:hx(x,y,13.5),c:'#E5B53E'})),
+  ...[[38,38],[62,38],[26,59],[50,59],[74,59]].map(([x,y])=>({d:hx(x,y,7),c:D('#E5B53E',.18),flat:1}))]},
+ // Kolesterolden en zengin besin yumurta sarısı: kırık yumurta.
+ {grup:'Yeni maddeler',dosya:'kolesterol',ad:'Kolesterol',kutu:'#FFF0B8',parts:[
+  {d:circ(50,52,15),c:R.sari},                      // sarı
+  {d:'M22,58C22,76 34,86 50,86C66,86 78,76 78,58L70,64L62,56L54,64L46,56L38,64L30,56Z',c:'#F4E6D2'}]},
 ];
+
+// Mantar kremi tüpü: kıvrık uç, krem gövde, [c] renginde bant ve kapak.
+function tup(c){return[
+ {d:rr(26,10,48,9,3),c:R.metal},
+ {d:'M28,17H72L66,66H34Z',c:R.krem},
+ {d:'M30,34H70L68,48H32Z',c,flat:1},
+ {d:rr(43,64,14,8,2),c:R.metal},
+ {d:rr(38,70,24,15,5),c}]}
 
 // ===== Vitrin: fanusta tıbbi bitki kurusu (Tuğrul, 2026-10-28, "çooook iyi").
 // Ceviz taban + pirinç ad levhası + cam kubbe; glass:1 parçalar yan yüzsüz, yarı saydam,
