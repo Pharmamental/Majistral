@@ -210,12 +210,12 @@ class _GamePainter extends CustomPainter {
     if (game.flash > 0) {
       c.drawRect(Offset.zero & s, Paint()..color = _red.withValues(alpha: game.flash.clamp(0, 1) * .35));
     }
-    _text(c, 'Kalite %${game.q.round()}', const Offset(12, 14), size: 13, color: AppColors.inkMuted, align: TextAlign.left);
+    _text(c, 'Kaliten şu an %${game.q.round()}.', const Offset(12, 14), size: 13, color: AppColors.inkMuted, align: TextAlign.left);
     if (game.done) {
       c.drawRect(Rect.fromLTWH(0, s.height * .3, s.width, s.height * .34), Paint()..color = AppColors.surface.withValues(alpha: .93));
       _text(c, 'Tamam!', Offset(s.width / 2, s.height * .38), size: 24);
       _text(c, '★' * game.stars + '☆' * (3 - game.stars), Offset(s.width / 2, s.height * .47), size: 40, color: AppColors.star);
-      _text(c, 'Kalite %${game.q.round()}. Süre başladı.', Offset(s.width / 2, s.height * .57), size: 14, color: AppColors.inkMuted);
+      _text(c, 'Kaliten %${game.q.round()} oldu. Süre başladı.', Offset(s.width / 2, s.height * .57), size: 14, color: AppColors.inkMuted);
     }
   }
 

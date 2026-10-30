@@ -90,12 +90,13 @@ void main() {
     expect(store.isReady(job), isTrue);
   });
 
-  test('alet kuralı uyarı olarak adımda durur: salisilik asitte çelik spatül, cam havan', () {
+  test('alet kuralı uyarı olarak adımda durur: salisilik asitte çelik spatül', () {
     final steps = {for (final s in order.steps) s.label: s};
-    expect(steps['Ezme']!.notWith['Çelik spatül'], contains('çelikle tepkimeye girer'));
-    expect(zno.steps.first.notWith['Cam havan'], 'Cam havan kaygandır, tozu ezmez.');
+    expect(steps['Ezme']!.notWith['Çelik spatül'], 'Salisilik asit çelikle tepkimeye girer. Plastik spatül kullan.');
+    // Oyuncu alet seçmediği için cam havan uyarısı kalktı (2026-10-30).
+    expect(zno.steps.first.notWith, isEmpty);
     // Aletler satın alınır (2026-10-29): yalnız ücretsiz kademeler elde.
-    expect(tools['Levigasyon']!.equipment, 'Porselen havan · Merhem taşı ve spatül');
+    expect(tools['Levigasyon']!.equipment, 'Porselen havan ya da merhem taşı ve spatül');
   });
 
   test('bir adım kartı aynı anda tek reçetede çalışır; farklı kartlar farklı reçetelerde aynı anda', () async {

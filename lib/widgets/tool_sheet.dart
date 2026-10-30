@@ -153,7 +153,18 @@ class _JobRow extends StatelessWidget {
                   for (final caution in step!.notWith.values.toSet())
                     Padding(
                       padding: const EdgeInsets.only(top: 2),
-                      child: Text('Dikkat: $caution', style: AppText.label(size: 12, color: AppColors.bekliyorText)),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.only(top: 1, right: 4),
+                            child: Icon(Icons.warning_amber_rounded, size: 14, color: AppColors.bekliyorText),
+                          ),
+                          Expanded(
+                            child: Text(caution, style: AppText.label(size: 12, color: AppColors.bekliyorText)),
+                          ),
+                        ],
+                      ),
                     ),
               ],
             ),

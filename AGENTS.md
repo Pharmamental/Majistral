@@ -135,15 +135,16 @@ lib/
   (`PrescriptionStep.orWith`); salisilik asitte çelik spatül hiçbir adımda yok. Kaynak: Fırat Üni.
   merhem beceri kılavuzu, Ankara Üni. föyleri, USP, PTCB. Alet inceleme sayfası (20 alet, kaynaklı):
   https://claude.ai/artifact/RSKXpt9XPG4epnxApKCk7h Kurallar ASHP bülteninden
-  (salisilik asit çelikle tepkir, cam havan toz ezmez) adımın `notWith`'inde; parşömen çıktı.
+  (salisilik asit çelikle tepkir) adımın `notWith`'inde; parşömen çıktı.
   Kaynak listesi: C:\YZ\knowledge\concepts\majistral-alet-ve-makineler.md.
 - **KURAL: Reçetedeki her adım = laboratuvardaki bir kart** (Tuğrul, 2026-10-28). Reçetede
   "Maserasyon" yazıyorsa laboratuvarda "Maserasyon" kartı olur. Kartlar alet değil adımdır
   (Ezme, Levigasyon, Geometrik seyreltme, Eritme…); kart adımın ikonunu ve altında neyle
-  yapıldığını gösterir ("Merhem taşı ve spatül · Porselen havan"). `labTools()` kartları
+  yapıldığını gösterir ("Merhem taşı ve spatül ya da porselen havan"). `labTools()` kartları
   reçetelerdeki adım adlarından türetir; yeni adımlı reçete eklenince kart kendiliğinden gelir,
-  `test/steps_test.dart` denetler. Alet kuralları (salisilik asitte çelik spatül, cam havan toz
-  ezmez) adımın `notWith`'inde kalır, seçim değil, adım başlatılırken "Dikkat:" uyarısı.
+  `test/steps_test.dart` denetler. Alet kuralları (salisilik asitte çelik spatül) adımın `notWith`'inde
+  kalır, seçim değil, adım başlatılırken uyarı ikonuyla düz cümle ("Plastik spatül kullan.").
+  Cam havan uyarısı kalktı (Tuğrul, 2026-10-30): oyuncu alet seçmiyor, uyarıyla yapacağı bir şey yoktu.
   Adımın market yükseltmesi alınınca kartın "neyle yapılır" yazısı o aletin adı olur.
 - Laboratuvar (Tuğrul, 2026-10-27): her adımı oyuncu başlatır. Adım kartına basınca kabul edilmiş
   reçeteler açılır (`widgets/tool_sheet.dart`); o adımı şimdi başlatabilenler kobalt vurgulu,
@@ -364,7 +365,7 @@ lib/
   (oyuncu hiç takılmaz; 1★ teslim bile malzemesini öder, test denetler). Başta her maddeden bir
   paket + 100 para. Distile su bedava. Aletler satın alınır, her biri kendi adımını kısaltır
   (`stepDuration`; liste yukarıda "Marketin istasyonları"). Cam havan ve tüp doldurma aleti
-  marketten çıktı (hiçbir adımı değiştirmiyordu); cam havan uyarıları adımlarda duruyor.
+  marketten çıktı (hiçbir adımı değiştirmiyordu).
   Giderler 14 800 (aletler 9 200 + parsel 5 600); emek 11 bu toplamdan çözüldü. 2026-10-29'da
   8 yeni alet eklendi (5 900), aletler 15 100, giderler 20 700 oldu; emek yeniden ayarlanmadı. Para göstergesi
   Market ve Bahçe başlığında (`CoinPill`), teslim penceresinde döküm. Reklam ve bildirim henüz

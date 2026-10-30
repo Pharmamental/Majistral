@@ -33,8 +33,7 @@ import 'order_book.dart';
 // ya da havan eliyle. Toz ezildiği için cam havan ezme ve levigasyonda kullanılamaz.
 const _levhada = {StepTool.karistirma};
 const _havanda = {StepTool.havan};
-const _tozHavani = {'Cam havan': 'Cam havan kaygandır, tozu ezmez.'};
-const _celikSA = 'Salisilik asit çelikle tepkimeye girer; plastik spatül kullanılır.';
+const _celikSA = 'Salisilik asit çelikle tepkimeye girer. Plastik spatül kullan.';
 
 /// Oyunun ilk altı reçetesi, elle yazıldı; ilk hâlleri hep aynı hekim ve
 /// hastayla gelir. Hâl sayıları scratchpad'deki uret.py'deki ELLE ile aynı.
@@ -60,14 +59,14 @@ const List<OrderTemplate> _handwritten = [
         tool: StepTool.havan,
         orWith: _levhada,
         minutes: 1,
-        notWith: {..._tozHavani, 'Çelik spatül': _celikSA},
+        notWith: {'Çelik spatül': _celikSA},
       ),
       PrescriptionStep(
         'Levigasyon',
         tool: StepTool.havan,
         orWith: _levhada,
         minutes: 3,
-        notWith: {..._tozHavani, 'Çelik spatül': _celikSA},
+        notWith: {'Çelik spatül': _celikSA},
       ),
       PrescriptionStep(
         'Geometrik seyreltme',
@@ -95,7 +94,7 @@ const List<OrderTemplate> _handwritten = [
     ],
     steps: [
       // Çinko oksit ince tozdur; ezilmeden sıvı parafinle levige edilir (USP).
-      PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 5, notWith: _tozHavani),
+      PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 5),
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.karistirma, orWith: _havanda, minutes: 7),
     ],
   ),
@@ -147,8 +146,8 @@ const List<OrderTemplate> _handwritten = [
       Amount('Nişasta', 100, 'g', ad: true),
     ],
     steps: [
-      PrescriptionStep('Ezme', tool: StepTool.havan, minutes: 2, notWith: _tozHavani),
-      PrescriptionStep('Geometrik seyreltme', tool: StepTool.havan, minutes: 4, notWith: _tozHavani),
+      PrescriptionStep('Ezme', tool: StepTool.havan, minutes: 2),
+      PrescriptionStep('Geometrik seyreltme', tool: StepTool.havan, minutes: 4),
       PrescriptionStep('Elekten geçirme', tool: StepTool.elek, minutes: 3),
     ],
   ),
@@ -191,8 +190,8 @@ const List<OrderTemplate> _handwritten = [
       Amount('Laktoz', 30, 'kapsül', ad: true),
     ],
     steps: [
-      PrescriptionStep('Ezme', tool: StepTool.havan, minutes: 1, notWith: _tozHavani),
-      PrescriptionStep('Geometrik seyreltme', tool: StepTool.havan, minutes: 4, notWith: _tozHavani),
+      PrescriptionStep('Ezme', tool: StepTool.havan, minutes: 1),
+      PrescriptionStep('Geometrik seyreltme', tool: StepTool.havan, minutes: 4),
       PrescriptionStep('Elekten geçirme', tool: StepTool.elek, minutes: 2),
       PrescriptionStep('Kapsül doldurma', tool: StepTool.kapsulAleti, minutes: 6),
     ],

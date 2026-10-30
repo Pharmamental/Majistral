@@ -14,9 +14,8 @@ import '../models/prescription.dart';
 
 const _levhada = {StepTool.karistirma};
 const _havanda = {StepTool.havan};
-const _cam = 'Cam havan kaygandır, tozu ezmez.';
-const _celikSA = 'Salisilik asit çelikle tepkimeye girer; plastik spatül kullanılır.';
-const _celikIyot = 'İyot metalle tepkimeye girer; plastik spatül kullanılır.';
+const _celikSA = 'Salisilik asit çelikle tepkimeye girer. Plastik spatül kullan.';
+const _celikIyot = 'İyot metalle tepkimeye girer. Plastik spatül kullan.';
 
 const List<OrderTemplate> bookTemplates = [
   OrderTemplate(
@@ -271,7 +270,7 @@ const List<OrderTemplate> bookTemplates = [
     ],
     steps: [
       PrescriptionStep('Şişirme', tool: StepTool.beher, minutes: 10),
-      PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3, notWith: {'Cam havan': _cam}),
+      PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3),
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.karistirma, orWith: _havanda, minutes: 4),
       PrescriptionStep('Hacme tamamlama', tool: StepTool.mezur, minutes: 2),
     ],
@@ -361,7 +360,7 @@ const List<OrderTemplate> bookTemplates = [
       Amount('Sulu Krem', 80, 'g'),
     ],
     steps: [
-      PrescriptionStep('Ezme', tool: StepTool.havan, orWith: _levhada, minutes: 1, notWith: {'Cam havan': _cam}),
+      PrescriptionStep('Ezme', tool: StepTool.havan, orWith: _levhada, minutes: 1),
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.karistirma, orWith: _havanda, minutes: 4),
     ],
   ),
@@ -378,8 +377,8 @@ const List<OrderTemplate> bookTemplates = [
       Amount('Sulu Krem', 99, 'g'),
     ],
     steps: [
-      PrescriptionStep('Ezme', tool: StepTool.havan, orWith: _levhada, minutes: 1, notWith: {'Cam havan': _cam}),
-      PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3, notWith: {'Cam havan': _cam}),
+      PrescriptionStep('Ezme', tool: StepTool.havan, orWith: _levhada, minutes: 1),
+      PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3),
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.karistirma, orWith: _havanda, minutes: 4),
     ],
   ),
@@ -396,8 +395,8 @@ const List<OrderTemplate> bookTemplates = [
       Amount('Sulu Krem', 98, 'g'),
     ],
     steps: [
-      PrescriptionStep('Ezme', tool: StepTool.havan, orWith: _levhada, minutes: 1, notWith: {'Cam havan': _cam}),
-      PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3, notWith: {'Cam havan': _cam}),
+      PrescriptionStep('Ezme', tool: StepTool.havan, orWith: _levhada, minutes: 1),
+      PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3),
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.karistirma, orWith: _havanda, minutes: 4),
     ],
   ),
@@ -414,8 +413,8 @@ const List<OrderTemplate> bookTemplates = [
       Amount('Setomakrogol Krem', 98, 'g'),
     ],
     steps: [
-      PrescriptionStep('Ezme', tool: StepTool.havan, orWith: _levhada, minutes: 1, notWith: {'Cam havan': _cam}),
-      PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3, notWith: {'Cam havan': _cam}),
+      PrescriptionStep('Ezme', tool: StepTool.havan, orWith: _levhada, minutes: 1),
+      PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3),
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.karistirma, orWith: _havanda, minutes: 4),
     ],
   ),
@@ -433,8 +432,8 @@ const List<OrderTemplate> bookTemplates = [
       Amount('Sulu Krem', 98, 'g'),
     ],
     steps: [
-      PrescriptionStep('Ezme', tool: StepTool.havan, orWith: _levhada, minutes: 1, notWith: {'Cam havan': _cam, 'Çelik spatül': _celikSA}),
-      PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3, notWith: {'Cam havan': _cam, 'Çelik spatül': _celikSA}),
+      PrescriptionStep('Ezme', tool: StepTool.havan, orWith: _levhada, minutes: 1, notWith: {'Çelik spatül': _celikSA}),
+      PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3, notWith: {'Çelik spatül': _celikSA}),
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.karistirma, orWith: _havanda, minutes: 4, notWith: {'Çelik spatül': _celikSA}),
     ],
   ),
@@ -452,9 +451,9 @@ const List<OrderTemplate> bookTemplates = [
       Amount('Sulu Krem', 100, 'g', ad: true),
     ],
     steps: [
-      PrescriptionStep('Ezme', tool: StepTool.havan, orWith: _levhada, minutes: 1, notWith: {'Cam havan': _cam, 'Çelik spatül': _celikSA}),
+      PrescriptionStep('Ezme', tool: StepTool.havan, orWith: _levhada, minutes: 1, notWith: {'Çelik spatül': _celikSA}),
       PrescriptionStep('Elekten geçirme', tool: StepTool.elek, minutes: 2),
-      PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3, notWith: {'Cam havan': _cam, 'Çelik spatül': _celikSA}),
+      PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3, notWith: {'Çelik spatül': _celikSA}),
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.karistirma, orWith: _havanda, minutes: 4, notWith: {'Çelik spatül': _celikSA}),
     ],
   ),
@@ -471,8 +470,8 @@ const List<OrderTemplate> bookTemplates = [
       Amount('Sulu Krem', 95, 'g'),
     ],
     steps: [
-      PrescriptionStep('Ezme', tool: StepTool.havan, orWith: _levhada, minutes: 1, notWith: {'Cam havan': _cam, 'Çelik spatül': _celikSA}),
-      PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3, notWith: {'Cam havan': _cam, 'Çelik spatül': _celikSA}),
+      PrescriptionStep('Ezme', tool: StepTool.havan, orWith: _levhada, minutes: 1, notWith: {'Çelik spatül': _celikSA}),
+      PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3, notWith: {'Çelik spatül': _celikSA}),
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.karistirma, orWith: _havanda, minutes: 4, notWith: {'Çelik spatül': _celikSA}),
     ],
   ),
@@ -490,7 +489,7 @@ const List<OrderTemplate> bookTemplates = [
     ],
     steps: [
       PrescriptionStep('Elekten geçirme', tool: StepTool.elek, minutes: 2),
-      PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3, notWith: {'Cam havan': _cam}),
+      PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3),
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.karistirma, orWith: _havanda, minutes: 4),
     ],
   ),
@@ -508,7 +507,7 @@ const List<OrderTemplate> bookTemplates = [
     ],
     steps: [
       PrescriptionStep('Elekten geçirme', tool: StepTool.elek, minutes: 2),
-      PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3, notWith: {'Cam havan': _cam}),
+      PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3),
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.karistirma, orWith: _havanda, minutes: 4),
     ],
   ),
@@ -561,8 +560,8 @@ const List<OrderTemplate> bookTemplates = [
       Amount('Sulu Krem', 90, 'g'),
     ],
     steps: [
-      PrescriptionStep('Ezme', tool: StepTool.havan, orWith: _levhada, minutes: 1, notWith: {'Cam havan': _cam, 'Çelik spatül': _celikSA}),
-      PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3, notWith: {'Cam havan': _cam, 'Çelik spatül': _celikSA}),
+      PrescriptionStep('Ezme', tool: StepTool.havan, orWith: _levhada, minutes: 1, notWith: {'Çelik spatül': _celikSA}),
+      PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3, notWith: {'Çelik spatül': _celikSA}),
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.karistirma, orWith: _havanda, minutes: 4, notWith: {'Çelik spatül': _celikSA}),
     ],
   ),
@@ -714,7 +713,7 @@ const List<OrderTemplate> bookTemplates = [
     ],
     steps: [
       PrescriptionStep('Elekten geçirme', tool: StepTool.elek, minutes: 2),
-      PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3, notWith: {'Cam havan': _cam}),
+      PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3),
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.karistirma, orWith: _havanda, minutes: 4),
     ],
   ),
@@ -733,7 +732,7 @@ const List<OrderTemplate> bookTemplates = [
     ],
     steps: [
       PrescriptionStep('Elekten geçirme', tool: StepTool.elek, minutes: 2),
-      PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3, notWith: {'Cam havan': _cam}),
+      PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3),
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.karistirma, orWith: _havanda, minutes: 4),
     ],
   ),
@@ -751,7 +750,7 @@ const List<OrderTemplate> bookTemplates = [
     ],
     steps: [
       PrescriptionStep('Elekten geçirme', tool: StepTool.elek, minutes: 2),
-      PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3, notWith: {'Cam havan': _cam}),
+      PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3),
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.karistirma, orWith: _havanda, minutes: 4),
     ],
   ),
@@ -770,7 +769,7 @@ const List<OrderTemplate> bookTemplates = [
       Amount('Beyaz Vazelin', 50, 'g'),
     ],
     steps: [
-      PrescriptionStep('Ezme', tool: StepTool.havan, orWith: _levhada, minutes: 1, notWith: {'Cam havan': _cam, 'Çelik spatül': _celikSA}),
+      PrescriptionStep('Ezme', tool: StepTool.havan, orWith: _levhada, minutes: 1, notWith: {'Çelik spatül': _celikSA}),
       PrescriptionStep('Elekten geçirme', tool: StepTool.elek, minutes: 2),
       PrescriptionStep('Eritme', tool: StepTool.isitma, minutes: 6, interactive: true),
       PrescriptionStep('Karıştırma', tool: StepTool.kapsul, minutes: 3),
@@ -791,8 +790,8 @@ const List<OrderTemplate> bookTemplates = [
       Amount('Beyaz Vazelin', 100, 'g', ad: true),
     ],
     steps: [
-      PrescriptionStep('Ezme', tool: StepTool.havan, orWith: _levhada, minutes: 1, notWith: {'Cam havan': _cam, 'Çelik spatül': _celikSA}),
-      PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3, notWith: {'Cam havan': _cam, 'Çelik spatül': _celikSA}),
+      PrescriptionStep('Ezme', tool: StepTool.havan, orWith: _levhada, minutes: 1, notWith: {'Çelik spatül': _celikSA}),
+      PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3, notWith: {'Çelik spatül': _celikSA}),
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.karistirma, orWith: _havanda, minutes: 4, notWith: {'Çelik spatül': _celikSA}),
     ],
   ),
@@ -810,9 +809,9 @@ const List<OrderTemplate> bookTemplates = [
       Amount('Sarı Vazelin', 100, 'g', ad: true),
     ],
     steps: [
-      PrescriptionStep('Ezme', tool: StepTool.havan, orWith: _levhada, minutes: 1, notWith: {'Cam havan': _cam, 'Çelik spatül': _celikSA}),
+      PrescriptionStep('Ezme', tool: StepTool.havan, orWith: _levhada, minutes: 1, notWith: {'Çelik spatül': _celikSA}),
       PrescriptionStep('Elekten geçirme', tool: StepTool.elek, minutes: 2),
-      PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3, notWith: {'Cam havan': _cam, 'Çelik spatül': _celikSA}),
+      PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3, notWith: {'Çelik spatül': _celikSA}),
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.karistirma, orWith: _havanda, minutes: 4, notWith: {'Çelik spatül': _celikSA}),
     ],
   ),
@@ -831,7 +830,7 @@ const List<OrderTemplate> bookTemplates = [
     ],
     steps: [
       PrescriptionStep('Elekten geçirme', tool: StepTool.elek, minutes: 2),
-      PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3, notWith: {'Cam havan': _cam}),
+      PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3),
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.karistirma, orWith: _havanda, minutes: 4),
     ],
   ),
@@ -849,7 +848,7 @@ const List<OrderTemplate> bookTemplates = [
     ],
     steps: [
       PrescriptionStep('Elekten geçirme', tool: StepTool.elek, minutes: 2),
-      PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3, notWith: {'Cam havan': _cam}),
+      PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3),
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.karistirma, orWith: _havanda, minutes: 4),
     ],
   ),
@@ -867,7 +866,7 @@ const List<OrderTemplate> bookTemplates = [
     ],
     steps: [
       PrescriptionStep('Elekten geçirme', tool: StepTool.elek, minutes: 2),
-      PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3, notWith: {'Cam havan': _cam}),
+      PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3),
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.karistirma, orWith: _havanda, minutes: 4),
     ],
   ),
@@ -922,7 +921,7 @@ const List<OrderTemplate> bookTemplates = [
       Amount('Beyaz Vazelin', 100, 'g', ad: true),
     ],
     steps: [
-      PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3, notWith: {'Cam havan': _cam}),
+      PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3),
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.karistirma, orWith: _havanda, minutes: 4),
     ],
   ),
@@ -941,8 +940,8 @@ const List<OrderTemplate> bookTemplates = [
       Amount('Beyaz Vazelin', 100, 'g', ad: true),
     ],
     steps: [
-      PrescriptionStep('Ezme', tool: StepTool.havan, orWith: _levhada, minutes: 1, notWith: {'Cam havan': _cam, 'Çelik spatül': _celikSA}),
-      PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3, notWith: {'Cam havan': _cam, 'Çelik spatül': _celikSA}),
+      PrescriptionStep('Ezme', tool: StepTool.havan, orWith: _levhada, minutes: 1, notWith: {'Çelik spatül': _celikSA}),
+      PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3, notWith: {'Çelik spatül': _celikSA}),
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.karistirma, orWith: _havanda, minutes: 4, notWith: {'Çelik spatül': _celikSA}),
     ],
   ),
@@ -979,7 +978,7 @@ const List<OrderTemplate> bookTemplates = [
       Amount('PEG Merhemi', 90, 'g'),
     ],
     steps: [
-      PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3, notWith: {'Cam havan': _cam, 'Çelik spatül': _celikIyot}),
+      PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3, notWith: {'Çelik spatül': _celikIyot}),
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.karistirma, orWith: _havanda, minutes: 4, notWith: {'Çelik spatül': _celikIyot}),
     ],
   ),
@@ -997,8 +996,8 @@ const List<OrderTemplate> bookTemplates = [
       Amount('Beyaz Vazelin', 40, 'g'),
     ],
     steps: [
-      PrescriptionStep('Ezme', tool: StepTool.havan, orWith: _levhada, minutes: 1, notWith: {'Cam havan': _cam}),
-      PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3, notWith: {'Cam havan': _cam}),
+      PrescriptionStep('Ezme', tool: StepTool.havan, orWith: _levhada, minutes: 1),
+      PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3),
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.karistirma, orWith: _havanda, minutes: 4),
     ],
   ),
@@ -1018,9 +1017,9 @@ const List<OrderTemplate> bookTemplates = [
     ],
     steps: [
       PrescriptionStep('Elekten geçirme', tool: StepTool.elek, minutes: 2),
-      PrescriptionStep('Ezme', tool: StepTool.havan, minutes: 2, notWith: {'Cam havan': _cam}),
-      PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3, notWith: {'Cam havan': _cam}),
-      PrescriptionStep('Geometrik seyreltme', tool: StepTool.havan, minutes: 4, notWith: {'Cam havan': _cam}),
+      PrescriptionStep('Ezme', tool: StepTool.havan, minutes: 2),
+      PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3),
+      PrescriptionStep('Geometrik seyreltme', tool: StepTool.havan, minutes: 4),
     ],
   ),
   OrderTemplate(
@@ -1037,8 +1036,8 @@ const List<OrderTemplate> bookTemplates = [
       Amount('Talk', 50, 'g'),
     ],
     steps: [
-      PrescriptionStep('Ezme', tool: StepTool.havan, minutes: 2, notWith: {'Cam havan': _cam}),
-      PrescriptionStep('Geometrik seyreltme', tool: StepTool.havan, minutes: 4, notWith: {'Cam havan': _cam}),
+      PrescriptionStep('Ezme', tool: StepTool.havan, minutes: 2),
+      PrescriptionStep('Geometrik seyreltme', tool: StepTool.havan, minutes: 4),
       PrescriptionStep('Elekten geçirme', tool: StepTool.elek, minutes: 2),
     ],
   ),
@@ -1072,8 +1071,8 @@ const List<OrderTemplate> bookTemplates = [
       Amount('Talk', 100, 'g', ad: true),
     ],
     steps: [
-      PrescriptionStep('Ezme', tool: StepTool.havan, minutes: 2, notWith: {'Cam havan': _cam}),
-      PrescriptionStep('Geometrik seyreltme', tool: StepTool.havan, minutes: 4, notWith: {'Cam havan': _cam}),
+      PrescriptionStep('Ezme', tool: StepTool.havan, minutes: 2),
+      PrescriptionStep('Geometrik seyreltme', tool: StepTool.havan, minutes: 4),
       PrescriptionStep('Elekten geçirme', tool: StepTool.elek, minutes: 2),
     ],
   ),
@@ -1089,7 +1088,7 @@ const List<OrderTemplate> bookTemplates = [
       Amount('Sodyum Bikarbonat', 10, 'g'),
     ],
     steps: [
-      PrescriptionStep('Ezme', tool: StepTool.havan, minutes: 2, notWith: {'Cam havan': _cam}),
+      PrescriptionStep('Ezme', tool: StepTool.havan, minutes: 2),
       PrescriptionStep('Elekten geçirme', tool: StepTool.elek, minutes: 2),
     ],
   ),
@@ -1106,8 +1105,8 @@ const List<OrderTemplate> bookTemplates = [
       Amount('Laktoz', 9, 'g', ad: true),
     ],
     steps: [
-      PrescriptionStep('Ezme', tool: StepTool.havan, minutes: 2, notWith: {'Cam havan': _cam}),
-      PrescriptionStep('Geometrik seyreltme', tool: StepTool.havan, minutes: 4, notWith: {'Cam havan': _cam}),
+      PrescriptionStep('Ezme', tool: StepTool.havan, minutes: 2),
+      PrescriptionStep('Geometrik seyreltme', tool: StepTool.havan, minutes: 4),
       PrescriptionStep('Elekten geçirme', tool: StepTool.elek, minutes: 2),
     ],
   ),
@@ -1123,7 +1122,7 @@ const List<OrderTemplate> bookTemplates = [
       Amount('Sodyum Klorür', 15, 'g'),
     ],
     steps: [
-      PrescriptionStep('Ezme', tool: StepTool.havan, minutes: 2, notWith: {'Cam havan': _cam}),
+      PrescriptionStep('Ezme', tool: StepTool.havan, minutes: 2),
       PrescriptionStep('Elekten geçirme', tool: StepTool.elek, minutes: 2),
     ],
   ),
@@ -1139,7 +1138,7 @@ const List<OrderTemplate> bookTemplates = [
       Amount('Sodyum Klorür', 15, 'g'),
     ],
     steps: [
-      PrescriptionStep('Ezme', tool: StepTool.havan, minutes: 2, notWith: {'Cam havan': _cam}),
+      PrescriptionStep('Ezme', tool: StepTool.havan, minutes: 2),
       PrescriptionStep('Elekten geçirme', tool: StepTool.elek, minutes: 2),
       PrescriptionStep('Kapsül doldurma', tool: StepTool.kapsulAleti, minutes: 6),
     ],
@@ -1156,7 +1155,7 @@ const List<OrderTemplate> bookTemplates = [
       Amount('Sodyum Bikarbonat', 15, 'g'),
     ],
     steps: [
-      PrescriptionStep('Ezme', tool: StepTool.havan, minutes: 2, notWith: {'Cam havan': _cam}),
+      PrescriptionStep('Ezme', tool: StepTool.havan, minutes: 2),
       PrescriptionStep('Elekten geçirme', tool: StepTool.elek, minutes: 2),
       PrescriptionStep('Kapsül doldurma', tool: StepTool.kapsulAleti, minutes: 6),
     ],
@@ -1395,7 +1394,7 @@ const List<OrderTemplate> bookTemplates = [
     ],
     steps: [
       PrescriptionStep('Elekten geçirme', tool: StepTool.elek, minutes: 2),
-      PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3, notWith: {'Cam havan': _cam}),
+      PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3),
       PrescriptionStep('Şişirme', tool: StepTool.beher, minutes: 10),
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.karistirma, orWith: _havanda, minutes: 4),
       PrescriptionStep('Hacme tamamlama', tool: StepTool.mezur, minutes: 2),
@@ -1456,8 +1455,8 @@ const List<OrderTemplate> bookTemplates = [
       Amount('Noniyonik Hidrofil Krem', 99, 'g'),
     ],
     steps: [
-      PrescriptionStep('Ezme', tool: StepTool.havan, orWith: _levhada, minutes: 1, notWith: {'Cam havan': _cam}),
-      PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3, notWith: {'Cam havan': _cam}),
+      PrescriptionStep('Ezme', tool: StepTool.havan, orWith: _levhada, minutes: 1),
+      PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3),
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.karistirma, orWith: _havanda, minutes: 4),
     ],
   ),
@@ -1506,8 +1505,8 @@ const List<OrderTemplate> bookTemplates = [
       Amount('Noniyonik Hidrofil Krem', 98, 'g'),
     ],
     steps: [
-      PrescriptionStep('Ezme', tool: StepTool.havan, orWith: _levhada, minutes: 1, notWith: {'Cam havan': _cam}),
-      PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3, notWith: {'Cam havan': _cam}),
+      PrescriptionStep('Ezme', tool: StepTool.havan, orWith: _levhada, minutes: 1),
+      PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3),
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.karistirma, orWith: _havanda, minutes: 4),
     ],
   ),
@@ -1540,7 +1539,7 @@ const List<OrderTemplate> bookTemplates = [
       Amount('PEG Merhemi', 95, 'g'),
     ],
     steps: [
-      PrescriptionStep('Ezme', tool: StepTool.havan, minutes: 2, notWith: {'Cam havan': _cam}),
+      PrescriptionStep('Ezme', tool: StepTool.havan, minutes: 2),
       PrescriptionStep('Eritme', tool: StepTool.isitma, minutes: 6, interactive: true),
       PrescriptionStep('Çözme', tool: StepTool.isitma, minutes: 4),
       PrescriptionStep('Soğutma', tool: StepTool.kapsul, minutes: 8),
@@ -1580,7 +1579,7 @@ const List<OrderTemplate> bookTemplates = [
     ],
     steps: [
       PrescriptionStep('Elekten geçirme', tool: StepTool.elek, minutes: 2),
-      PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3, notWith: {'Cam havan': _cam}),
+      PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3),
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.karistirma, orWith: _havanda, minutes: 4),
     ],
   ),
@@ -1597,7 +1596,7 @@ const List<OrderTemplate> bookTemplates = [
       Amount('Yün Yağı Alkolleri Merhemi', 98, 'g'),
     ],
     steps: [
-      PrescriptionStep('Ezme', tool: StepTool.havan, minutes: 2, notWith: {'Cam havan': _cam, 'Çelik spatül': _celikSA}),
+      PrescriptionStep('Ezme', tool: StepTool.havan, minutes: 2, notWith: {'Çelik spatül': _celikSA}),
       PrescriptionStep('Elekten geçirme', tool: StepTool.elek, minutes: 2),
       PrescriptionStep('Eritme', tool: StepTool.isitma, minutes: 6, interactive: true),
       PrescriptionStep('Karıştırma', tool: StepTool.kapsul, minutes: 3, notWith: {'Çelik spatül': _celikSA}),
@@ -1635,7 +1634,7 @@ const List<OrderTemplate> bookTemplates = [
       Amount('Emülsiye Edici Merhem', 91, 'g'),
     ],
     steps: [
-      PrescriptionStep('Ezme', tool: StepTool.havan, minutes: 2, notWith: {'Cam havan': _cam, 'Çelik spatül': _celikSA}),
+      PrescriptionStep('Ezme', tool: StepTool.havan, minutes: 2, notWith: {'Çelik spatül': _celikSA}),
       PrescriptionStep('Elekten geçirme', tool: StepTool.elek, minutes: 2),
       PrescriptionStep('Eritme', tool: StepTool.isitma, minutes: 6, interactive: true),
       PrescriptionStep('Karıştırma', tool: StepTool.kapsul, minutes: 3, notWith: {'Çelik spatül': _celikSA}),
@@ -1656,8 +1655,8 @@ const List<OrderTemplate> bookTemplates = [
       Amount('PEG Merhemi', 91, 'g'),
     ],
     steps: [
-      PrescriptionStep('Ezme', tool: StepTool.havan, orWith: _levhada, minutes: 1, notWith: {'Cam havan': _cam, 'Çelik spatül': _celikSA}),
-      PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3, notWith: {'Cam havan': _cam, 'Çelik spatül': _celikSA}),
+      PrescriptionStep('Ezme', tool: StepTool.havan, orWith: _levhada, minutes: 1, notWith: {'Çelik spatül': _celikSA}),
+      PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3, notWith: {'Çelik spatül': _celikSA}),
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.karistirma, orWith: _havanda, minutes: 4, notWith: {'Çelik spatül': _celikSA}),
     ],
   ),
@@ -1679,7 +1678,7 @@ const List<OrderTemplate> bookTemplates = [
       PrescriptionStep('Elekten geçirme', tool: StepTool.elek, minutes: 2),
       PrescriptionStep('Eritme', tool: StepTool.isitma, minutes: 6, interactive: true),
       PrescriptionStep('Soğutma', tool: StepTool.kapsul, minutes: 8),
-      PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3, notWith: {'Cam havan': _cam}),
+      PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3),
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.karistirma, orWith: _havanda, minutes: 4),
     ],
   ),
@@ -1697,7 +1696,7 @@ const List<OrderTemplate> bookTemplates = [
     ],
     steps: [
       PrescriptionStep('Elekten geçirme', tool: StepTool.elek, minutes: 2),
-      PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3, notWith: {'Cam havan': _cam}),
+      PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3),
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.karistirma, orWith: _havanda, minutes: 4),
     ],
   ),
@@ -1733,8 +1732,7 @@ const List<OrderTemplate> bookTemplates = [
     ],
     steps: [
       PrescriptionStep('Ezme', tool: StepTool.havan, minutes: 2, notWith: {
-        'Cam havan': _cam,
-        'Çelik spatül': 'Askorbik asit metalle temas edince bozulur; plastik spatül kullanılır.',
+        'Çelik spatül': 'Askorbik asit metalle temas edince bozulur. Plastik spatül kullan.',
       }),
       PrescriptionStep('Elekten geçirme', tool: StepTool.elek, minutes: 2),
       PrescriptionStep('Kapsül doldurma', tool: StepTool.kapsulAleti, minutes: 6),
@@ -1753,7 +1751,7 @@ const List<OrderTemplate> bookTemplates = [
       Amount('Kalsiyum Karbonat', 15, 'g'),
     ],
     steps: [
-      PrescriptionStep('Ezme', tool: StepTool.havan, minutes: 2, notWith: {'Cam havan': _cam}),
+      PrescriptionStep('Ezme', tool: StepTool.havan, minutes: 2),
       PrescriptionStep('Elekten geçirme', tool: StepTool.elek, minutes: 2),
       PrescriptionStep('Kapsül doldurma', tool: StepTool.kapsulAleti, minutes: 6),
     ],
@@ -1770,7 +1768,7 @@ const List<OrderTemplate> bookTemplates = [
       Amount('Kalsiyum Karbonat', 15, 'g'),
     ],
     steps: [
-      PrescriptionStep('Ezme', tool: StepTool.havan, minutes: 2, notWith: {'Cam havan': _cam}),
+      PrescriptionStep('Ezme', tool: StepTool.havan, minutes: 2),
       PrescriptionStep('Elekten geçirme', tool: StepTool.elek, minutes: 2),
     ],
   ),
@@ -1788,8 +1786,8 @@ const List<OrderTemplate> bookTemplates = [
       Amount('Talk', 100, 'g', ad: true),
     ],
     steps: [
-      PrescriptionStep('Ezme', tool: StepTool.havan, minutes: 2, notWith: {'Cam havan': _cam}),
-      PrescriptionStep('Geometrik seyreltme', tool: StepTool.havan, minutes: 4, notWith: {'Cam havan': _cam}),
+      PrescriptionStep('Ezme', tool: StepTool.havan, minutes: 2),
+      PrescriptionStep('Geometrik seyreltme', tool: StepTool.havan, minutes: 4),
       PrescriptionStep('Elekten geçirme', tool: StepTool.elek, minutes: 2),
     ],
   ),
@@ -1806,8 +1804,8 @@ const List<OrderTemplate> bookTemplates = [
       Amount('Talk', 100, 'g', ad: true),
     ],
     steps: [
-      PrescriptionStep('Ezme', tool: StepTool.havan, minutes: 2, notWith: {'Cam havan': _cam}),
-      PrescriptionStep('Geometrik seyreltme', tool: StepTool.havan, minutes: 4, notWith: {'Cam havan': _cam}),
+      PrescriptionStep('Ezme', tool: StepTool.havan, minutes: 2),
+      PrescriptionStep('Geometrik seyreltme', tool: StepTool.havan, minutes: 4),
       PrescriptionStep('Elekten geçirme', tool: StepTool.elek, minutes: 2),
     ],
   ),
@@ -1847,8 +1845,8 @@ const List<OrderTemplate> bookTemplates = [
     ],
     steps: [
       PrescriptionStep('Karıştırma', tool: StepTool.beher, minutes: 2),
-      PrescriptionStep('Ezme', tool: StepTool.havan, orWith: _levhada, minutes: 1, notWith: {'Cam havan': _cam}),
-      PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3, notWith: {'Cam havan': _cam}),
+      PrescriptionStep('Ezme', tool: StepTool.havan, orWith: _levhada, minutes: 1),
+      PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3),
     ],
   ),
   OrderTemplate(
@@ -1864,7 +1862,7 @@ const List<OrderTemplate> bookTemplates = [
       Amount('Beyaz Vazelin', 100, 'g', ad: true),
     ],
     steps: [
-      PrescriptionStep('Ezme', tool: StepTool.havan, orWith: _levhada, minutes: 1, notWith: {'Cam havan': _cam}),
+      PrescriptionStep('Ezme', tool: StepTool.havan, orWith: _levhada, minutes: 1),
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.karistirma, orWith: _havanda, minutes: 4),
     ],
   ),
@@ -1883,7 +1881,7 @@ const List<OrderTemplate> bookTemplates = [
     ],
     steps: [
       PrescriptionStep('Elekten geçirme', tool: StepTool.elek, minutes: 2),
-      PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3, notWith: {'Cam havan': _cam}),
+      PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3),
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.karistirma, orWith: _havanda, minutes: 4),
     ],
   ),
@@ -1900,8 +1898,8 @@ const List<OrderTemplate> bookTemplates = [
       Amount('Emülsiye Edici Merhem', 100, 'g', ad: true),
     ],
     steps: [
-      PrescriptionStep('Ezme', tool: StepTool.havan, orWith: _levhada, minutes: 1, notWith: {'Cam havan': _cam, 'Çelik spatül': _celikSA}),
-      PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3, notWith: {'Cam havan': _cam, 'Çelik spatül': _celikSA}),
+      PrescriptionStep('Ezme', tool: StepTool.havan, orWith: _levhada, minutes: 1, notWith: {'Çelik spatül': _celikSA}),
+      PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3, notWith: {'Çelik spatül': _celikSA}),
       PrescriptionStep('Geometrik seyreltme', tool: StepTool.karistirma, orWith: _havanda, minutes: 4, notWith: {'Çelik spatül': _celikSA}),
     ],
   ),
@@ -1993,9 +1991,9 @@ const List<OrderTemplate> bookTemplates = [
     ],
     steps: [
       PrescriptionStep('Şişirme', tool: StepTool.beher, minutes: 10),
-      PrescriptionStep('Ezme', tool: StepTool.havan, minutes: 2, notWith: {'Cam havan': _cam}),
-      PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3, notWith: {'Cam havan': _cam}),
-      PrescriptionStep('Geometrik seyreltme', tool: StepTool.havan, minutes: 4, notWith: {'Cam havan': _cam}),
+      PrescriptionStep('Ezme', tool: StepTool.havan, minutes: 2),
+      PrescriptionStep('Levigasyon', tool: StepTool.havan, orWith: _levhada, minutes: 3),
+      PrescriptionStep('Geometrik seyreltme', tool: StepTool.havan, minutes: 4),
       PrescriptionStep('Hacme tamamlama', tool: StepTool.mezur, minutes: 2),
     ],
   ),

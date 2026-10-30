@@ -50,13 +50,13 @@ void main() {
     String equipment(List tools, String step) => tools.firstWhere((t) => t.name == step).equipment;
     // Satın alma öncesi: yalnız ücretsiz kademeler elde (unlockAll'dan bağımsız).
     bool free(ShopItem i) => i.price == 0;
-    expect(equipment(labTools(owns: free), 'Geometrik seyreltme'), 'Merhem taşı ve spatül · Porselen havan');
+    expect(equipment(labTools(owns: free), 'Geometrik seyreltme'), 'Merhem taşı ve spatül ya da porselen havan');
     expect(equipment(labTools(owns: free), 'Kapsül doldurma'), 'Kapsül doldurma aleti');
     const bought = {'Unguator', 'Termostatlı su banyosu'};
     final upgraded = labTools(owns: (i) => free(i) || bought.contains(i.name));
     expect(equipment(upgraded, 'Geometrik seyreltme'), 'Unguator');
     expect(equipment(upgraded, 'Eritme'), 'Termostatlı su banyosu');
-    expect(equipment(upgraded, 'Levigasyon'), 'Porselen havan · Merhem taşı ve spatül');
+    expect(equipment(upgraded, 'Levigasyon'), 'Porselen havan ya da merhem taşı ve spatül');
   });
 
   // Kural (Tuğrul, 2026-10-29): markette her adımın istasyonu; basit alet

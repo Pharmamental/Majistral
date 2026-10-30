@@ -88,13 +88,13 @@ Future<void> openRecipe(
                   _Section(
                     title: 'Hazırlık',
                     child: Wrap(
-                      crossAxisAlignment: WrapCrossAlignment.center,
+                      // İki satırlı ad olsa da ikonlar ve oklar aynı hizada kalır.
                       runSpacing: AppSpace.sm,
                       children: [
                         for (final (n, s) in order.steps.indexed) ...[
                           if (n > 0)
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: AppSpace.xs),
+                              padding: const EdgeInsets.fromLTRB(AppSpace.xs, AppSpace.xs, AppSpace.xs, 0),
                               child: Text('›', style: AppText.display(size: 22, color: AppColors.inkMuted)),
                             ),
                           _StepChip(step: s),
@@ -202,7 +202,11 @@ class _StepChip extends StatelessWidget {
           const SizedBox(height: AppSpace.xs),
           FittedBox(
             fit: BoxFit.scaleDown,
-            child: Text(step.label, style: AppText.label(size: 11, color: AppColors.ink)),
+            child: Text(
+              step.label.replaceAll(' ', '\n'),
+              textAlign: TextAlign.center,
+              style: AppText.label(size: 11, color: AppColors.ink),
+            ),
           ),
         ],
       ),

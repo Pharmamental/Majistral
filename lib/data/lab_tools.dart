@@ -65,7 +65,12 @@ List<LabTool> labTools({
       LabTool(
         name: name,
         imagePath: stepIconPath(name),
-        equipment: upgradeFor(name, owns: owns)?.name ?? {for (final kind in k) equipmentName(kind)}.join(' · '),
+        equipment: upgradeFor(name, owns: owns)?.name ?? _either([for (final kind in k) equipmentName(kind)]),
       ),
   ];
 }
+
+/// "Porselen havan ya da merhem taşı ve spatül": aletler düz cümleyle sıralanır.
+String _either(List<String> names) => [
+      for (final (i, n) in names.toSet().indexed) i == 0 ? n : n[0].toLowerCase() + n.substring(1),
+    ].join(' ya da ');

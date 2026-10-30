@@ -331,9 +331,14 @@ class _StepTile extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: AppSpace.xs),
+              // İki kelimelik ad iki satıra iner; yalnız en uzun kelime sığmazsa küçülür.
               FittedBox(
                 fit: BoxFit.scaleDown,
-                child: Text(label, maxLines: 1, style: AppText.label(size: 12, color: AppColors.ink)),
+                child: Text(
+                  label.replaceAll(' ', '\n'),
+                  textAlign: TextAlign.center,
+                  style: AppText.label(size: 12, color: AppColors.ink),
+                ),
               ),
               FittedBox(
                 fit: BoxFit.scaleDown,
