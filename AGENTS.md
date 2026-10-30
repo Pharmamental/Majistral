@@ -223,7 +223,8 @@ lib/
   bitki için "Sıradan çiçek", fanusunun etkisi, "Elinde 3 tane var" (yoksa "Elinde hiç yok")
   ve "Sat" (bir tane, `JobStore.sellFlower`); fiyat yazmaz. Satış fiyatı yer tutucu
   (`flowerSellPrices` 10/15/25; bir tohumun parası 10/30/75, teslim başına ortalama ~13 para). Dükkândan çiçek alma kalktı.
-  Kademe adı "sık" değil "sıradan". Gübre, nadir tohum garantisi
+  Kademe adları oyunda "Sıradan", "Sıradışı", "Nadir" (Tuğrul, 2026-10-30); bu dosyada "sık"
+  sıradan, "orta" sıradışı demektir. Gübre, nadir tohum garantisi
   ve tohum satın alma kalktı (eski kayıttaki o alanlar okunmaz). Bahçenin üstündeki kâğıtta
   tohum ve çiçekler "2 Papatya" diye yazar. `unlockAll` vitrini açmaz; bahçeden önce rafa
   konmuş fanus açık sayılır; seçicide bitkiler sıradan, orta, nadir diye dizilir,

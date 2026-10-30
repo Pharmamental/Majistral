@@ -150,7 +150,7 @@ class _FlowerTile extends StatelessWidget {
 
   final DriedPlant plant;
 
-  static const _rarity = {1: 'Sıradan', 2: 'Orta', 3: 'Nadir'};
+  static const _rarity = {1: 'Sıradan', 2: 'Sıradışı', 3: 'Nadir'};
 
   @override
   Widget build(BuildContext context) {

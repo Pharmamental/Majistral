@@ -36,7 +36,7 @@ class DriedPlant {
   final String file;
   final PlantGroup group;
 
-  /// Kademe: 1 sıradan, 2 orta, 3 nadir. Etkinin gücü ve büyüme süresi buna bağlı.
+  /// Kademe: 1 sıradan, 2 sıradışı, 3 nadir. Etkinin gücü ve büyüme süresi buna bağlı.
   final int tier;
 
   /// Bahçede olgunlaşınca çiçeğinin ya da yaprağının rengi.
