@@ -128,7 +128,8 @@ lib/
   Kart "yıldızlı aşama" (Tuğrul, 2026-10-30, "27", yeşil artıştan döndü; alternatifler
   https://claude.ai/artifact/QnoM8EjaAgcKmui6NRuFb8): her istasyon tek kart, ortada adımın adı,
   altında her alete bir yıldız (dolu elde, kesik kobalt sıradaki, silik sonraki; `_StageStars`),
-  aletin büyük ikonu, adı, "%30 daha hızlı", en altta yalnız fiyat ve hemen sağında para ikonu
+  solda sabit gri daire kutuda aletin ikonu (Tuğrul, 2026-10-30, yazı uzayınca kaymaz), adı,
+  "%30 daha hızlı", en altta yalnız fiyat ve hemen sağında para ikonu
   (Tuğrul, 2026-10-30, "direkt 900 ve hemen yanında para ikonu"; `ChunkyButton.price`) ya da "Elinde"
   (`StationSection`). Yıldızın ne verdiği yazmaz ("İkinci yıldızı bu alet verir" kalktı). Süre ("4 dk 30 sn sürer"),
   sağ üstte yüzde çipi ve "… para daha gerek" yazısı yok; para yetmezse düğme yalnız kapalı.

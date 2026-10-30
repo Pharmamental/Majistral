@@ -48,17 +48,20 @@ class StationSection extends StatelessWidget {
             const SizedBox(height: AppSpace.sm),
             _StageStars(total: tiers.length, reached: have + 1),
             const SizedBox(height: AppSpace.sm),
+            // İkon her kartta aynı yerde, sabit kutuda (Tuğrul, 2026-10-30): yazı uzayınca kaymaz.
             Row(
-              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SizedBox.square(
-                  dimension: 100,
+                Container(
+                  width: 100,
+                  height: 100,
+                  alignment: Alignment.center,
+                  decoration: const BoxDecoration(color: AppColors.iconWell, shape: BoxShape.circle),
                   child: tool.imagePath != null
-                      ? Image.asset(tool.imagePath!)
-                      : Icon(tool.icon, color: AppColors.inkMuted, size: 56),
+                      ? Image.asset(tool.imagePath!, width: 84, height: 84)
+                      : Icon(tool.icon, color: AppColors.inkMuted, size: 52),
                 ),
                 const SizedBox(width: AppSpace.md),
-                Flexible(
+                Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
