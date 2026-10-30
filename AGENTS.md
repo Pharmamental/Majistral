@@ -349,6 +349,19 @@ lib/
 - Şimdilik her şey açık (Tuğrul, 2026-10-28, "unlocked bir şey olmasın"): `unlockAll`
   (`data/lab_tools.dart`): market aletleri elde, koleksiyon tam, vitrine her fanus konur.
   Kazanma ve satın alma kuralları gelince false yapılır; testler iki duruma göre yazıldı.
+- **Hasta soruyor** (Tuğrul, 2026-10-30, "hasta soruyor mantıklı"; "reçetelerin normal sistemini
+  değiştirmeyeceğin"): reçete, adımlar ve teslim aynı kalır; bilgi teslimden sonra sınanır. Teslim
+  penceresi kapanınca hasta gelir (`askPatient`, `widgets/patient_sheet.dart`), reçete kapalıyken
+  3 şıktan birini seçersin. Günde en çok 3 soru (`dailyPatientQuestions`). Doğruda 10 para bahşiş
+  (`patientTip`, yer tutucu), yanlışta ceza yok, doğrusu gösterilir, hasta 1, 3 ve 7 gün sonra
+  yeniden gelir ("… yeniden geldi"; `PatientBook`, kayıt `patient_v1`); ilk seferde bilinen soru
+  dönmez. Soru türleri `models/patient_question.dart`: ilaç ne işe yarıyor (`orderUses` +
+  `useAnswers`, `data/patient_uses.dart`; yeni tıbbi bilgi yok, `usedFor`'dan kısaltıldı), raf
+  ömrü (yalnız USP <795>'in 14, 35, 180 günü) ve içindeki maddenin görevi (`chemicalRole`). Yanlış
+  şık bu ilaç için doğru olamaz; önce aynı aileden gelir (deri, ağız ve kulak, ağızdan alınan).
+  Yeni reçete eklenince `orderUses`'a da yazılır (`test/patient_test.dart` denetler). Kuşkulu
+  6 reçete (`unverifiedOrders`) hoca bakana kadar soru olmaz. Testler akışı
+  `patientQuestionsEnabled = false` ile sınar.
 - Mini oyunlar (Tuğrul, 2026-10-28): her laboratuvar adımında süre başlamadan önce o tekniğin
   hareketi birkaç saniye oynanır, gerçek yapılıştan türetildi (`widgets/mini_games.dart`,
   `miniGameFor`): ezmede kristal kırıp havanda dairesel sürtme, levigasyonda damla damla sıvı

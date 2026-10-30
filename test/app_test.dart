@@ -10,6 +10,7 @@ import 'package:game/logic/job_store.dart';
 import 'package:game/main.dart';
 import 'package:game/widgets/grow_panel.dart';
 import 'package:game/widgets/mini_games.dart';
+import 'package:game/widgets/patient_sheet.dart';
 
 import 'test_fonts.dart';
 import 'test_helpers.dart';
@@ -70,7 +71,10 @@ Future<void> _closeSheet(WidgetTester tester) async {
 void main() {
   setUpAll(loadAppFonts);
   // Adım akışı oyunsuz sınanır; mini oyunlar test/mini_games_test.dart'ta.
-  setUp(() => miniGamesEnabled = false);
+  setUp(() {
+    miniGamesEnabled = false;
+    patientQuestionsEnabled = false;
+  });
 
   testWidgets('alt çubukla bölümler arasında geçilir', (tester) async {
     await tester.pumpWidget(MajistralApp(store: await _store()));

@@ -9,6 +9,7 @@ import '../data/economy.dart';
 import '../data/lab_tools.dart';
 import '../data/orders.dart';
 import '../models/garden.dart';
+import '../models/patient_question.dart';
 import '../models/prep_job.dart';
 import '../models/prescription.dart';
 import '../models/shop_item.dart';
@@ -38,6 +39,7 @@ class JobStore extends ChangeNotifier {
   static const _profileKey = 'profile_v1';
   static const _gardenKey = 'garden_v1';
   static const _economyKey = 'economy_v1';
+  static const _patientKey = 'patient_v1';
 
   /// Duvarda en fazla birikecek reçete; vitrindeki çay fanusu artırır ([wallLimit]).
   /// 3'ten 4'e çıktı (ekonomi 2. tur, 2026-10-29): "X sonra dön" = 4 × 60 dk.
@@ -137,6 +139,12 @@ class JobStore extends ChangeNotifier {
       }
     } on Object {
       // Varsayılan adlarla devam.
+    }
+    try {
+      final raw = prefs.getString(_patientKey);
+      if (raw != null) store._patients = PatientBook.fromJson(jsonDecode(raw) as Map<String, dynamic>);
+    } on Object {
+      // Bozuk soru defteri boş başlar.
     }
     // Ekonomi: ilk açılışta kasada [startCoins], rafta her maddeden bir paket.
     try {
@@ -639,6 +647,37 @@ class JobStore extends ChangeNotifier {
     await _save();
     notifyListeners();
     return job;
+  }
+
+  PatientBook _patients = PatientBook();
+
+  /// Teslimden sonra hastanın sorusu (Tuğrul, 2026-10-30): önce zamanı gelen
+  /// eski soru, yoksa bu reçeteden henüz sorulmamış biri. Günde en çok
+  /// [dailyPatientQuestions] soru gelir; sorulacak soru yoksa null.
+  PatientQuestion? nextPatientQuestion(PrepJob job) {
+    if (_patients.day == _today && _patients.today >= dailyPatientQuestions) return null;
+    for (final id in _patients.dueAt(now())) {
+      final order = _orders.where((o) => id.startsWith('${o.key}|')).firstOrNull;
+      if (order == null) continue;
+      if (buildPatientQuestion(id, order, _random, returning: true) case final question?) return question;
+    }
+    final order = orderOf(job);
+    final fresh = questionIdsFor(order).where((id) => !_patients.asked.containsKey(id)).toList();
+    if (fresh.isEmpty) return null;
+    return buildPatientQuestion(fresh[_random.nextInt(fresh.length)], order, _random);
+  }
+
+  /// Hastanın sorusunu cevaplar; doğruysa bahşiş kasaya girer.
+  Future<bool> answerPatient(PatientQuestion question, int choice) async {
+    final right = choice == question.answer;
+    _patients.today = _patients.day == _today ? _patients.today + 1 : 1;
+    _patients.day = _today;
+    _patients.record(question.id, right: right, now: now());
+    if (right) _earn(patientTip);
+    await _prefs.setString(_patientKey, jsonEncode(_patients.toJson()));
+    await _saveEconomy();
+    notifyListeners();
+    return right;
   }
 
   Future<void> _save() async {
