@@ -15,6 +15,8 @@ class ChunkyButton extends StatefulWidget {
     this.edgeColor = AppColors.kobaltDark,
     this.foreground = Colors.white,
     this.compact = false,
+    this.price = false,
+    this.semanticLabel,
   });
 
   /// Kobalt değil, yeşil "hazır / teslim" düğmesi.
@@ -26,7 +28,9 @@ class ChunkyButton extends StatefulWidget {
     this.compact = false,
   })  : color = AppColors.success,
         edgeColor = AppColors.successDark,
-        foreground = Colors.white;
+        foreground = Colors.white,
+        price = false,
+        semanticLabel = null;
 
   /// Beyaz zeminli ikincil düğme.
   const ChunkyButton.secondary({
@@ -37,7 +41,9 @@ class ChunkyButton extends StatefulWidget {
     this.compact = false,
   })  : color = AppColors.surface,
         edgeColor = AppColors.line,
-        foreground = AppColors.kobalt;
+        foreground = AppColors.kobalt,
+        price = false,
+        semanticLabel = null;
 
   final String label;
   final VoidCallback? onPressed;
@@ -46,6 +52,12 @@ class ChunkyButton extends StatefulWidget {
   final Color edgeColor;
   final Color foreground;
   final bool compact;
+
+  /// Fiyat düğmesi (Tuğrul, 2026-10-30): ikon yazının hemen sağında, "900" ve para ikonu.
+  final bool price;
+
+  /// Ekran okuyucunun söylediği; yazı yalnız sayıysa eylemi de anlatır.
+  final String? semanticLabel;
 
   @override
   State<ChunkyButton> createState() => _ChunkyButtonState();
@@ -72,7 +84,7 @@ class _ChunkyButtonState extends State<ChunkyButton> {
     return Semantics(
       button: true,
       enabled: _enabled,
-      label: widget.label,
+      label: widget.semanticLabel ?? widget.label,
       excludeSemantics: true,
       child: GestureDetector(
         onTapDown: (_) => _setPressed(true),
@@ -111,7 +123,7 @@ class _ChunkyButtonState extends State<ChunkyButton> {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      if (widget.icon != null) ...[
+                      if (widget.icon != null && !widget.price) ...[
                         Icon(widget.icon, color: fg, size: widget.compact ? 20 : 22),
                         const SizedBox(width: AppSpace.sm),
                       ],
@@ -123,6 +135,10 @@ class _ChunkyButtonState extends State<ChunkyButton> {
                           style: AppText.button(size: 19, color: fg),
                         ),
                       ),
+                      if (widget.icon != null && widget.price) ...[
+                        const SizedBox(width: AppSpace.xs),
+                        Icon(widget.icon, color: fg, size: widget.compact ? 20 : 22),
+                      ],
                     ],
                   ),
                 ),

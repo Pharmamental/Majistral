@@ -95,8 +95,10 @@ class StationSection extends StatelessWidget {
             else
               ChunkyButton(
                 compact: true,
-                label: '${next.price} ile al',
+                label: '${next.price}',
                 icon: Icons.toll_rounded,
+                price: true,
+                semanticLabel: '${next.price} paraya al',
                 // Para yetmiyorsa düğme kapalı (2026-10-29).
                 onPressed: store.coins >= next.price ? () => store.buyTool(next) : null,
               ),

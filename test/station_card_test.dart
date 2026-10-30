@@ -8,6 +8,7 @@ import 'package:game/data/lab_tools.dart';
 import 'package:game/data/stations.dart';
 import 'package:game/logic/job_store.dart';
 import 'package:game/main.dart';
+import 'package:game/widgets/chunky_button.dart';
 
 import 'test_fonts.dart';
 
@@ -36,14 +37,15 @@ void main() {
     expect(find.textContaining('sürer'), findsNothing);
     expect(find.textContaining('para daha gerek'), findsNothing);
 
-    await tester.tap(find.text('900 ile al'));
+    await tester.tap(find.widgetWithText(ChunkyButton, '900'));
     await tester.pumpAndSettle();
     expect(store.coins, 1400);
-    expect(find.text('900 ile al'), findsNothing);
+    expect(find.widgetWithText(ChunkyButton, '900'), findsNothing);
+    expect(find.textContaining('ile al'), findsNothing);
     expect(find.text('Motorlu havan'), findsOneWidget, reason: 'sıradaki kademe gelir');
     expect(find.bySemanticsLabel('3 aşamanın 2 tanesi tamam'), findsWidgets);
-    expect(find.text('1400 ile al'), findsOneWidget);
-    await tester.tap(find.text('1400 ile al'));
+    expect(find.widgetWithText(ChunkyButton, '1400'), findsOneWidget);
+    await tester.tap(find.widgetWithText(ChunkyButton, '1400'));
     await tester.pumpAndSettle();
     expect(find.text('Elinde'), findsWidgets, reason: 'son kademe alınınca kart biter');
     expect(tester.takeException(), isNull);
