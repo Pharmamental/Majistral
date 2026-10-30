@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../data/economy.dart';
 import '../logic/job_store.dart';
 import '../models/patient_question.dart';
 import '../theme/tokens.dart';
@@ -87,7 +86,7 @@ class _PatientSheetState extends State<_PatientSheet> {
           if (chosen != null) ...[
             const SizedBox(height: AppSpace.sm),
             Text(
-              right ? 'Doğru bildin. Hasta $patientTip para bahşiş bıraktı.' : 'Bu sefer olmadı.',
+              right ? 'Doğru bildin. Hasta ${widget.store.patientTip} para bahşiş bıraktı.' : 'Bu sefer olmadı.',
               style: AppText.body(size: 15, weight: FontWeight.w700, color: right ? AppColors.hazirText : AppColors.bekliyorText),
             ),
             // Madde sorusunda açıklama doğru şıkla aynı; ikinci kez yazılmaz.

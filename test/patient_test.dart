@@ -2,7 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:game/data/economy.dart';
+import 'package:game/data/lab_tools.dart';
 import 'package:game/data/market_items.dart';
 import 'package:game/data/orders.dart';
 import 'package:game/data/patient_uses.dart';
@@ -49,7 +49,8 @@ void main() {
         }
       }
     }
-    expect(count, greaterThan(300));
+    expect(count, greaterThan(250));
+    expect(prescriptionOrders.expand(questionIdsFor).where((id) => id.endsWith('|shelf')), isEmpty);
   });
 
   test('kuşkulu reçeteden soru çıkmaz, deri ilacında diş şıkkı olmaz', () {
@@ -93,20 +94,26 @@ void main() {
     test('günde 3 soru; doğruda bahşiş, yanlış soru ertesi gün başka teslimde döner', () async {
       final store = await JobStore.load(now: () => clock, random: math.Random(1));
       final order = prescriptionOrders.first;
+      final tools = {for (final t in labTools()) t.name: t};
       await take(store, order);
-      final job = jobOf(store, order)!;
+      for (final s in order.steps) {
+        await store.startStep(jobOf(store, order)!.id, tools[s.label]!);
+        clock = clock.add(Duration(minutes: s.minutes));
+      }
+      final job = (await store.deliver(jobOf(store, order)!.id))!;
       final start = store.coins;
+      expect(store.patientTip, (store.lastPayout!.coins / 10).ceil());
 
       final first = store.nextPatientQuestion(job)!;
       expect(first.returning, isFalse);
       await store.answerPatient(first, first.answer);
-      expect(store.coins, start + patientTip);
+      expect(store.coins, start + store.patientTip);
 
       final second = store.nextPatientQuestion(job)!;
       expect(second.id, isNot(first.id), reason: 'sorulan soru tekrar gelmez');
       final wrong = (second.answer + 1) % 3;
       expect(await store.answerPatient(second, wrong), isFalse);
-      expect(store.coins, start + patientTip, reason: 'yanlışta ceza yok');
+      expect(store.coins, start + store.patientTip, reason: 'yanlışta ceza yok');
 
       final third = store.nextPatientQuestion(job)!;
       await store.answerPatient(third, third.answer);
@@ -114,7 +121,7 @@ void main() {
 
       clock = clock.add(const Duration(days: 1));
       final reopened = await JobStore.load(now: () => clock, random: math.Random(2));
-      final back = reopened.nextPatientQuestion(jobOf(reopened, order)!)!;
+      final back = reopened.nextPatientQuestion(job)!;
       expect(back.id, second.id);
       expect(back.returning, isTrue);
     });

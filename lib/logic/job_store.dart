@@ -667,6 +667,9 @@ class JobStore extends ChangeNotifier {
     return buildPatientQuestion(fresh[_random.nextInt(fresh.length)], order, _random);
   }
 
+  /// Doğru cevabın bahşişi: son teslimin parasının yüzdesi, yukarı yuvarlanır.
+  int get patientTip => ((_lastPayout?.coins ?? 0) * patientTipPercent / 100).ceil();
+
   /// Hastanın sorusunu cevaplar; doğruysa bahşiş kasaya girer.
   Future<bool> answerPatient(PatientQuestion question, int choice) async {
     final right = choice == question.answer;

@@ -352,12 +352,12 @@ lib/
 - **Hasta soruyor** (Tuğrul, 2026-10-30, "hasta soruyor mantıklı"; "reçetelerin normal sistemini
   değiştirmeyeceğin"): reçete, adımlar ve teslim aynı kalır; bilgi teslimden sonra sınanır. Teslim
   penceresi kapanınca hasta gelir (`askPatient`, `widgets/patient_sheet.dart`), reçete kapalıyken
-  3 şıktan birini seçersin. Günde en çok 3 soru (`dailyPatientQuestions`). Doğruda 10 para bahşiş
-  (`patientTip`, yer tutucu), yanlışta ceza yok, doğrusu gösterilir, hasta 1, 3 ve 7 gün sonra
+  3 şıktan birini seçersin. Günde en çok 3 soru (`dailyPatientQuestions`). Doğruda o teslimin
+  parasının %10'u bahşiş (`patientTipPercent`, Tuğrul, 2026-10-30), yanlışta ceza yok, doğrusu gösterilir, hasta 1, 3 ve 7 gün sonra
   yeniden gelir ("… yeniden geldi"; `PatientBook`, kayıt `patient_v1`); ilk seferde bilinen soru
-  dönmez. Soru türleri `models/patient_question.dart`: ilaç ne işe yarıyor (`orderUses` +
-  `useAnswers`, `data/patient_uses.dart`; yeni tıbbi bilgi yok, `usedFor`'dan kısaltıldı), raf
-  ömrü (yalnız USP <795>'in 14, 35, 180 günü) ve içindeki maddenin görevi (`chemicalRole`). Yanlış
+  dönmez. Soru türleri `models/patient_question.dart`, yalnız ikisi (Tuğrul, 2026-10-30, saklama
+  sorusu kalktı): ilacın endikasyonu (`orderUses` + `useAnswers`, `data/patient_uses.dart`; yeni
+  tıbbi bilgi yok, `usedFor`'dan kısaltıldı) ve içindeki maddenin işlevi (`chemicalRole`). Yanlış
   şık bu ilaç için doğru olamaz; önce aynı aileden gelir (deri, ağız ve kulak, ağızdan alınan).
   Yeni reçete eklenince `orderUses`'a da yazılır (`test/patient_test.dart` denetler). Kuşkulu
   6 reçete (`unverifiedOrders`) hoca bakana kadar soru olmaz. Testler akışı

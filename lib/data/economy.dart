@@ -36,8 +36,9 @@ const parcelPrices = [800, 1600, 3200];
 /// aynı kaldı (10, 30, 75).
 const flowerSellPrices = {1: 10, 2: 15, 3: 25};
 
-/// Hastanın sorusunu doğru bilince bıraktığı bahşiş (Tuğrul, 2026-10-30). Yer tutucu.
-const patientTip = 10;
+/// Hastanın sorusunu doğru bilince bıraktığı bahşiş: reçete parasının yüzdesi
+/// (Tuğrul, 2026-10-30, "reçete kazancının %10u"). Yanlışta ceza yok.
+const patientTipPercent = 10;
 
 /// Hasta günde en çok bu kadar soru sorar: çift emek ödeyen teslimlerle aynı.
 const dailyPatientQuestions = dailyBonusDeliveries;

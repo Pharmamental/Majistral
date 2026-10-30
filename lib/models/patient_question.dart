@@ -1,6 +1,5 @@
 import 'dart:math' as math;
 
-import '../data/formulary.dart';
 import '../data/market_items.dart';
 import '../data/patient_uses.dart';
 import 'prescription.dart';
@@ -18,7 +17,7 @@ class PatientQuestion {
     required this.returning,
   });
 
-  /// Reçetenin adı, "|" ve soru türü: "use", "shelf" ya da "item:Sıvı Parafin".
+  /// Reçetenin adı, "|" ve soru türü: "use" ya da "item:Sıvı Parafin".
   final String id;
   final PrescriptionOrder order;
   final String ask;
@@ -34,35 +33,11 @@ class PatientQuestion {
   final bool returning;
 }
 
-/// Raf ömrü USP <795>'in üç genel süresinden biriyse soruya girer; diğerlerini
-/// (3 ay, aynı gün) yanlış şıklarla karşılaştırmak yanıltıcı olur.
-const _shelves = <String, String>{
-  '14 gün': '14 gün, buzdolabında sakla.',
-  '35 gün': '35 gün, oda sıcaklığında ya da buzdolabında sakla.',
-  '180 gün': '180 gün, oda sıcaklığında sakla.',
-};
-
-const _shelfReasons = <String, String>{
-  '14 gün': 'Sulu ve koruyucusuz ilaç çabuk bozulur, buzdolabında 14 gün dayanır.',
-  '35 gün': 'Sulu ama koruyuculu ilaç 35 gün dayanır.',
-  '180 gün': 'Susuz ilaçta mikrop kolay üremez, 180 gün dayanır.',
-};
-
-String? _shelfOf(PrescriptionOrder order) {
-  final text = formulary.where((f) => f.name == order.formula).firstOrNull?.shelfLife;
-  if (text == null) return null;
-  for (final key in _shelves.keys) {
-    if (text.startsWith('$key,')) return key;
-  }
-  return null;
-}
-
 /// Bu reçeteden sorulabilecek sorular; kuşkulu reçetede yok.
 List<String> questionIdsFor(PrescriptionOrder order) {
   if (unverifiedOrders.contains(order.key)) return const [];
   return [
     if (orderUses.containsKey(order.key)) '${order.key}|use',
-    if (_shelfOf(order) != null) '${order.key}|shelf',
     for (final i in order.ingredients)
       if (i.name != 'Distile Su' && chemicalRole(i.name) != null) '${order.key}|item:${i.name}',
   ];
@@ -86,13 +61,6 @@ PatientQuestion? buildPatientQuestion(String id, PrescriptionOrder order, math.R
       ...others.where((k) => useFamilies[k] == family),
       ...others.where((k) => useFamilies[k] != family),
     ].take(2).map((k) => useAnswers[k]!).toList();
-  } else if (kind == 'shelf') {
-    final shelf = _shelfOf(order);
-    if (shelf == null) return null;
-    ask = 'Bu ilacı ne kadar kullanabilirim, nerede saklayayım?';
-    correct = _shelves[shelf]!;
-    explain = _shelfReasons[shelf]!;
-    wrong = [for (final k in _shelves.keys) if (k != shelf) _shelves[k]!];
   } else if (kind.startsWith('item:')) {
     final name = kind.substring('item:'.length);
     final role = chemicalRole(name);
