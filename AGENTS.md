@@ -226,8 +226,9 @@ lib/
   Kademe adı "sık" değil "sıradan". Gübre, nadir tohum garantisi
   ve tohum satın alma kalktı (eski kayıttaki o alanlar okunmaz). Bahçenin üstündeki kâğıtta
   tohum ve çiçekler "2 Papatya" diye yazar. `unlockAll` vitrini açmaz; bahçeden önce rafa
-  konmuş fanus açık sayılır; seçicide kilitliler soluk, etkisi yazılı, sağda çiçek
-  sayacı ("1/4") ve kilit. Duvar
+  konmuş fanus açık sayılır; seçicide bitkiler sıradan, orta, nadir diye dizilir,
+  kademe içinde açıklar üstte; kilitliler soluk, etkisi yazılı, sağda çiçek sayacı ("1/4")
+  ve kilit. Duvar
   ve acele sınırı vitrine göre (`JobStore.wallLimit`, `protectedRushesLeft`), cilt fanusu
   teslim emeğini artırır.
   Parsel 4-6 parayla açılır (800/1600/3200). Kurutma askısı henüz yok. Vitrindeki fanus küçük oyun etkisi verir, aynı gruptan iki fanus

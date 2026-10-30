@@ -333,9 +333,12 @@ Future<void> _openShowcasePicker(BuildContext context, int slot, {required Rect 
         for (final p in driedPlants)
           if (garden.canShow(p.name)) p.name,
       };
+      // Önce sıradanlar, sonra orta, en sonda nadirler (Tuğrul, 2026-10-30); kademede açıklar üstte.
       final plants = [
-        ...driedPlants.where((p) => grown.contains(p.name)),
-        ...driedPlants.where((p) => !grown.contains(p.name)),
+        for (final tier in [1, 2, 3]) ...[
+          ...driedPlants.where((p) => p.tier == tier && grown.contains(p.name)),
+          ...driedPlants.where((p) => p.tier == tier && !grown.contains(p.name)),
+        ],
       ];
       return Padding(
         padding: const EdgeInsets.all(AppSpace.lg),

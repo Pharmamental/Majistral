@@ -294,6 +294,8 @@ void showcaseTests() {
     expect(find.text('Vitrine ne koyalım?'), findsOneWidget);
     expect(find.text('Duvarda 1 reçete daha birikir'), findsWidgets);
     expect(find.text('0/4'), findsWidgets); // Lavanta kilitli, fanusu 4 çiçek ister
+    // Sıradan Aynısefa, orta Lavanta'nın üstünde; kitaptaki sırada Lavanta önce geliyordu.
+    expect(tester.getTopLeft(find.text('Aynısefa')).dy, lessThan(tester.getTopLeft(find.text('Lavanta')).dy));
     await tester.tap(find.descendant(of: find.byType(GrowPanel), matching: find.text('Papatya')));
     await tester.pumpAndSettle();
     expect(find.bySemanticsLabel('Vitrinde Papatya fanusu'), findsOneWidget);
