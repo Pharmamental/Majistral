@@ -16,8 +16,8 @@ import 'home_screen.dart';
 /// Bahçe sekmesi (Tuğrul, 2026-10-29): eczanenin arka bahçesinde tıbbi bitki
 /// yetiştirilir, hasat edilir, vitrine konur. Başlık duvarda, parseller çitin
 /// altındaki çimende. Teslimlerin yarısı tohum getirir ([Garden]); boş parsele
-/// dokununca tohum seçilir, olgun parsele dokununca hasat (bir çiçek); 5 çiçek
-/// bir fanus açar.
+/// dokununca tohum seçilir, olgun parsele dokununca hasat (sıradan 1, orta 2,
+/// nadir 3 çiçek); 3-5 çiçek bir fanus açar.
 class GardenScreen extends StatefulWidget {
   const GardenScreen({super.key});
 
@@ -183,8 +183,8 @@ class _SeedShelf extends StatelessWidget {
           const SizedBox(height: AppSpace.sm),
           if (flowers.isEmpty)
             Text(
-              'Olgunlaşan bitkiyi toplayınca bir çiçek kurutursun. Aynı bitkiden '
-              '${Garden.fanusCost} çiçek biriktirince fanusu açılır.',
+              'Olgunlaşan bitkiyi toplayınca çiçeğini kurutursun. Uzun büyüyen bitki daha çok '
+              'çiçek verir. Aynı bitkiden yeterince çiçek biriktirince fanusu açılır.',
               style: AppText.body(size: 14, color: AppColors.inkMuted),
             )
           else
@@ -199,7 +199,7 @@ class _SeedShelf extends StatelessWidget {
           const SizedBox(height: AppSpace.md),
           Text(
             effects.isEmpty
-                ? 'Bir bitkiden ${Garden.fanusCost} çiçek biriktirince fanusunu Profil\'deki vitrine koyabilirsin.'
+                ? 'Bir bitkiden yeterince çiçek biriktirince fanusunu Profil\'deki vitrine koyabilirsin.'
                 : '${effects.join('. ')}.',
             style: AppText.label(size: 12, color: AppColors.inkMuted),
           ),
@@ -347,7 +347,8 @@ Future<void> _openSeedPicker(BuildContext context, JobStore store, int bed) {
                           child: _PlantInfo(
                             plant: p,
                             trailing: '${store.garden.seeds[p.name]} tohumun var. '
-                                '${formatRemaining(p.growTime * (1 - speed / 100))} sonra olgunlaşır.',
+                                '${formatRemaining(p.growTime * (1 - speed / 100))} sonra olgunlaşır, '
+                                '${p.harvestYield} çiçek verir.',
                           ),
                         ),
                       ),
@@ -402,21 +403,20 @@ Future<void> _openGrowing(BuildContext context, JobStore store, int bed) {
 String _flowerProgress(Garden garden, String plant) {
   if (garden.grown.contains(plant)) return '$plant fanusu açık, vitrine koyabilirsin.';
   final have = garden.flowers[plant] ?? 0;
-  final need = Garden.fanusCost - have;
+  final need = driedPlantNamed(plant)!.fanusCost - have;
   return need <= 0
       ? 'Elinde $have $plant çiçeği var, fanusunu vitrine koyabilirsin.'
       : 'Elinde $have $plant çiçeği var. Fanus için $need tane daha gerek.';
 }
 
-/// Olgun parsel: hasat et; bir çiçek kurutulur, 5 çiçek bir fanus açar.
+/// Olgun parsel: hasat et; kademesi kadar çiçek kurutulur, yeterince çiçek bir fanus açar.
 Future<void> _harvest(BuildContext context, JobStore store, int bed) async {
   final from = rectOf(context);
   final navigator = Navigator.of(context);
   final name = await store.harvest(bed);
   if (name == null || !navigator.mounted) return;
   final plant = driedPlantNamed(name)!;
-  // Fanusu açık ya da 5 çiçeği biriken bitki vitrine konabilir.
-  final ready = store.garden.grown.contains(name) || (store.garden.flowers[name] ?? 0) >= Garden.fanusCost;
+  final ready = store.garden.canShow(name);
   await openGrowing<void>(
     navigator.context,
     from: from,
@@ -428,7 +428,11 @@ Future<void> _harvest(BuildContext context, JobStore store, int bed) async {
         children: [
           Image.asset(plant.imagePath, width: 96, height: 96),
           const SizedBox(height: AppSpace.md),
-          Text('${plant.name} çiçeğini kuruttun', textAlign: TextAlign.center, style: AppText.title(size: 20)),
+          Text(
+            plant.harvestYield == 1 ? '${plant.name} çiçeğini kuruttun' : '${plant.harvestYield} ${plant.name} çiçeği kuruttun',
+            textAlign: TextAlign.center,
+            style: AppText.title(size: 20),
+          ),
           const SizedBox(height: AppSpace.xs),
           Text(
             _flowerProgress(store.garden, plant.name),

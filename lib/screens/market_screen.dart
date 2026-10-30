@@ -5,7 +5,6 @@ import '../data/economy.dart';
 import '../data/market_items.dart';
 import '../data/stations.dart';
 import '../logic/job_store.dart';
-import '../models/garden.dart';
 import '../theme/tokens.dart';
 import '../widgets/back_pill.dart';
 import '../widgets/chunky_button.dart';
@@ -130,7 +129,7 @@ class _MarketScreenState extends State<MarketScreen> {
           children: [
             Text(
               'Bahçeden topladığın çiçekleri burada satabilirsin. Vitrine fanus koymak için '
-              'aynı bitkiden ${Garden.fanusCost} çiçek gerektiğini unutma.',
+              'aynı bitkiden çiçek biriktirmen gerektiğini unutma.',
               style: AppText.body(size: 13, color: AppColors.ink),
             ),
             const SizedBox(height: AppSpace.lg),

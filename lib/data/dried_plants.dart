@@ -60,6 +60,13 @@ class DriedPlant {
 
   /// Bahçedeki büyüme süresi (oyun süresi, gerçek büyüme değil; 2026-10-29).
   Duration get growTime => const [Duration(hours: 2), Duration(hours: 6), Duration(hours: 12)][tier - 1];
+
+  /// Hasatta verdiği çiçek ve fanusunun bedeli (Tuğrul, 2026-10-30, "Evet,
+  /// uygula"): sıradan 1 çiçek verir, fanusu 3 ister; orta 2 ve 4; nadir 3 ve 5.
+  /// Uzun büyüyen daha çok verir; düzenli oyuncu ilk fanusu ~2, Mürver'i ~23,
+  /// bütün vitrini ~45 günde açar (eskiden 8, 63, 97).
+  int get harvestYield => tier;
+  int get fanusCost => tier + 2;
 }
 
 const driedPlants = <DriedPlant>[

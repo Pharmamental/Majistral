@@ -210,13 +210,18 @@ lib/
   12,5; gruplar ~%47/%43/%10, tek bir orta bitki bir nadirin iki katı sık). Tohumlar birikir.
   Boş parsele dokununca tohum seçilip ekilir; bitki gerçek zamanda büyür (sık 2 sa, orta 6 sa,
   nadir 12 sa; "oyun süresi" diye yazar), olgunlaşınca bozulmaz; olgun parsele dokununca
-  hasat: bir kurutulmuş çiçek (`garden.flowers`). Bir bitkinin fanusu o bitkiden 5 çiçekle
-  açılır (`Garden.fanusCost`): vitrine ilk konuşta 5 çiçek harcanır, fanus kalıcıdır
+  hasat: kurutulmuş çiçek (`garden.flowers`). **Çiçek matematiği** (Tuğrul, 2026-10-30,
+  "Evet, uygula"): hasat sıradan 1, orta 2, nadir 3 çiçek verir (`DriedPlant.harvestYield`);
+  fanus o bitkiden sıradan 3, orta 4, nadir 5 çiçek ister (`DriedPlant.fanusCost`,
+  `Garden.canShow`). Düzenli oyuncu (günde 6 teslim) ilk fanusu ~2, Papatya'yı ~8, Mürver'i
+  ~23, bütün vitrini ~45 günde açar (eskiden 8, 13, 63, 97); az oynayan ~4, 12, 38, 76.
+  Ekim penceresi "… sonra olgunlaşır, 3 çiçek verir" yazar. Vitrine ilk konuşta bedel kadar
+  çiçek harcanır, fanus kalıcıdır
   (`garden.grown`; raftan kaldırıp geri koymak çiçek harcamaz). **Oyuncu çiçeğini markette
   satar** (Tuğrul, 2026-10-29, "malum çiçekleri satıyoruz orada"): "Çiçekler" sekmesinde her
   bitki için "Sıradan çiçek", fanusunun etkisi, "Elinde 3 tane var" (yoksa "Elinde hiç yok")
   ve "Sat" (bir tane, `JobStore.sellFlower`); fiyat yazmaz. Satış fiyatı yer tutucu
-  (`flowerSellPrices` 10/30/80, teslim başına ortalama ~13 para). Dükkândan çiçek alma kalktı.
+  (`flowerSellPrices` 10/15/25; bir tohumun parası 10/30/75, teslim başına ortalama ~13 para). Dükkândan çiçek alma kalktı.
   Kademe adı "sık" değil "sıradan". Gübre, nadir tohum garantisi
   ve tohum satın alma kalktı (eski kayıttaki o alanlar okunmaz). Bahçenin üstündeki kâğıtta
   tohum ve çiçekler "2 Papatya" diye yazar. `unlockAll` vitrini açmaz; bahçeden önce rafa

@@ -72,8 +72,15 @@ void main() {
     expect(garden.seeds, {'Papatya': 3});
   });
 
-  test('ek, hasat et: her hasat bir çiçek; 5 çiçek bir fanus açar; kayıttan geri okunur', () {
-    final garden = Garden(seeds: {'Ihlamur': 2, 'Papatya': 1}, flowers: {'Ihlamur': 3});
+  test('hasat ve fanus bedeli kademeye göre: sıradan 1 ve 3, orta 2 ve 4, nadir 3 ve 5', () {
+    for (final (name, yieldOf, cost) in [('Papatya', 1, 3), ('Ihlamur', 2, 4), ('Mürver', 3, 5)]) {
+      final p = driedPlantNamed(name)!;
+      expect((p.harvestYield, p.fanusCost), (yieldOf, cost), reason: name);
+    }
+  });
+
+  test('ek, hasat et: orta bitki iki çiçek verir, 4 çiçek fanusunu açar; kayıttan geri okunur', () {
+    final garden = Garden(seeds: {'Ihlamur': 2, 'Papatya': 1}, flowers: {'Ihlamur': 1});
     expect(garden.plant(0, 'Ihlamur', at), isTrue);
     expect(garden.seeds['Ihlamur'], 1);
     expect(garden.plant(0, 'Papatya', at), isFalse, reason: 'parsel dolu');
@@ -86,18 +93,20 @@ void main() {
     final copy = Garden.fromJson(jsonDecode(jsonEncode(garden.toJson())) as Map<String, dynamic>);
     expect(copy.beds[0]!.readyAt, garden.beds[0]!.readyAt);
     expect(copy.seeds, {'Ihlamur': 1});
-    expect(copy.flowers, {'Ihlamur': 3});
+    expect(copy.flowers, {'Ihlamur': 1});
 
     expect(garden.harvest(0, at.add(const Duration(hours: 6))), 'Ihlamur');
-    expect(garden.flowers['Ihlamur'], 4);
-    expect(garden.openFanus('Ihlamur'), isFalse, reason: '4 çiçek yetmez');
+    expect(garden.flowers['Ihlamur'], 3);
+    expect(garden.canShow('Ihlamur'), isFalse);
+    expect(garden.openFanus('Ihlamur'), isFalse, reason: '3 çiçek yetmez');
     expect(garden.plant(0, 'Ihlamur', at), isTrue);
     expect(garden.harvest(0, at.add(const Duration(hours: 6))), 'Ihlamur');
+    expect(garden.canShow('Ihlamur'), isTrue);
     expect(garden.openFanus('Ihlamur'), isTrue);
-    expect(garden.flowers['Ihlamur'], 0);
+    expect(garden.flowers['Ihlamur'], 1);
     expect(garden.grown, {'Ihlamur'});
     expect(garden.openFanus('Ihlamur'), isTrue, reason: 'açık fanus yeniden çiçek harcamaz');
-    expect(garden.flowers['Ihlamur'], 0);
+    expect(garden.flowers['Ihlamur'], 1);
   });
 
   test('eski kayıt (gübre, nadir sayacı) okunur, o alanlar atlanır', () {
@@ -133,15 +142,15 @@ void main() {
       expect(reopened.garden.seeds, {'Papatya': 1});
     });
 
-    test('vitrine yeni fanus 5 çiçekle konur', () async {
+    test('vitrine yeni Papatya fanusu 3 çiçekle konur', () async {
       SharedPreferences.setMockInitialValues({
         'economy_v1': jsonEncode({'coins': 1000, 'debt': 0, 'stock': {}, 'tools': []}),
-        'garden_v1': jsonEncode(Garden(flowers: {'Papatya': 4}).toJson()),
+        'garden_v1': jsonEncode(Garden(flowers: {'Papatya': 2}).toJson()),
       });
       final store = await JobStore.load(now: () => clock);
       await store.setShowcase(0, 'Papatya');
-      expect(store.showcase[0], isNull, reason: '4 çiçek yetmez');
-      store.garden.flowers['Papatya'] = 5;
+      expect(store.showcase[0], isNull, reason: '2 çiçek yetmez');
+      store.garden.flowers['Papatya'] = 3;
       await store.setShowcase(0, 'Papatya');
       expect(store.showcase[0], 'Papatya');
       expect(store.garden.flowers['Papatya'], 0);

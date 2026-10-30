@@ -7,7 +7,6 @@ import '../data/orders.dart';
 import '../logic/job_store.dart';
 import '../logic/profile_stats.dart';
 import '../models/formula.dart';
-import '../models/garden.dart';
 import '../models/prep_job.dart';
 import '../theme/tokens.dart';
 import 'home_screen.dart';
@@ -329,15 +328,18 @@ Future<void> _openShowcasePicker(BuildContext context, int slot, {required Rect 
     builder: (sheetContext) {
       final current = store.showcase[slot];
       final garden = store.garden;
-      // "grown": konabilecek fanuslar (açık ya da 5 çiçeği hazır).
+      // "grown": konabilecek fanuslar (açık ya da çiçeği hazır).
       final grown = {
         for (final p in driedPlants)
-          if (garden.grown.contains(p.name) || (garden.flowers[p.name] ?? 0) >= Garden.fanusCost) p.name,
+          if (garden.canShow(p.name)) p.name,
       };
-      String locked(String name) => switch (garden.flowers[name] ?? 0) {
-            0 => 'Hiç çiçeğin yok.',
-            final n => 'Elinde $n çiçek var.',
-          };
+      String locked(String name) {
+        final need = driedPlantNamed(name)!.fanusCost;
+        return switch (garden.flowers[name] ?? 0) {
+          0 => 'Hiç çiçeğin yok, fanusu $need çiçekle açılır.',
+          final n => 'Elinde $n çiçek var, fanusu $need çiçekle açılır.',
+        };
+      }
       final plants = [
         ...driedPlants.where((p) => grown.contains(p.name)),
         ...driedPlants.where((p) => !grown.contains(p.name)),
@@ -352,9 +354,9 @@ Future<void> _openShowcasePicker(BuildContext context, int slot, {required Rect 
             const SizedBox(height: AppSpace.xs),
             Text(
               grown.isEmpty
-                  ? 'Bir fanus için o bitkiden ${Garden.fanusCost} çiçek gerekir. Çiçekleri bahçede '
+                  ? 'Bir fanus için o bitkiden 3 ila 5 çiçek gerekir. Çiçekleri bahçede '
                       'yetiştirirsin.'
-                  : 'Rafa koyacağın fanusu seç. Yeni bir fanus ${Garden.fanusCost} çiçek harcar. '
+                  : 'Rafa koyacağın fanusu seç. Yeni bir fanus o bitkinin çiçeklerini harcar. '
                       'Aynı gruptan iki fanus koyarsan yalnız güçlü olanı işe yarar.',
               style: AppText.body(size: 14, color: AppColors.inkMuted),
             ),

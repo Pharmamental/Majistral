@@ -34,8 +34,8 @@ class Bed {
 ///   kademesine göre seçilir; ağırlıklar tür başına (sık 60, orta 27,5, nadir
 ///   12,5), böylece tek bir orta bitki bir nadirin iki katı sık gelir.
 /// - Tohumlar birikir. Ekilen tohum gerçek zamanda büyür, olgunlaşınca bozulmaz;
-///   hasatta bir kurutulmuş çiçek verir ([flowers]).
-/// - Bir bitkinin fanusu 5 çiçekle açılır ([fanusCost]); açılan fanus kalıcıdır
+///   hasatta kademesi kadar kurutulmuş çiçek verir ([DriedPlant.harvestYield]).
+/// - Bir bitkinin fanusu o bitkiden 3-5 çiçekle açılır ([DriedPlant.fanusCost]); açılan fanus kalıcıdır
 ///   ve vitrine konabilir ([grown]). Çiçek markette tek tek de satılır.
 class Garden {
   Garden({
@@ -58,9 +58,6 @@ class Garden {
 
   /// Tek bir türün ağırlığı, kademesine göre.
   static const tierWeights = {1: 60.0, 2: 27.5, 3: 12.5};
-
-  /// Bir fanusu açmak için gereken çiçek.
-  static const fanusCost = 5;
 
   final Map<String, int> seeds;
 
@@ -88,11 +85,17 @@ class Garden {
     return plant;
   }
 
-  /// [plant]'ın fanusunu açar: açıksa bir şey harcamaz, değilse 5 çiçek harcar.
+  /// [plant]'ın fanusu açık mı ya da açacak kadar çiçek birikti mi.
+  bool canShow(String plant) {
+    final p = driedPlantNamed(plant);
+    return grown.contains(plant) || (p != null && (flowers[plant] ?? 0) >= p.fanusCost);
+  }
+
+  /// [plant]'ın fanusunu açar: açıksa bir şey harcamaz, değilse fanus bedeli kadar çiçek harcar.
   bool openFanus(String plant) {
     if (grown.contains(plant)) return true;
-    if ((flowers[plant] ?? 0) < fanusCost) return false;
-    flowers[plant] = flowers[plant]! - fanusCost;
+    if (!canShow(plant)) return false;
+    flowers[plant] = flowers[plant]! - driedPlantNamed(plant)!.fanusCost;
     grown.add(plant);
     return true;
   }
@@ -108,12 +111,12 @@ class Garden {
     return true;
   }
 
-  /// Olgun bitkiyi hasat eder: bir çiçek verir. Olgun değilse null.
+  /// Olgun bitkiyi hasat eder: kademesi kadar çiçek verir. Olgun değilse null.
   String? harvest(int bed, DateTime now) {
     final b = beds[bed];
     if (b == null || !b.readyBy(now)) return null;
     beds[bed] = null;
-    flowers[b.plant] = (flowers[b.plant] ?? 0) + 1;
+    flowers[b.plant] = (flowers[b.plant] ?? 0) + (driedPlantNamed(b.plant)?.harvestYield ?? 1);
     return b.plant;
   }
 

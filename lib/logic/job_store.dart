@@ -196,7 +196,7 @@ class JobStore extends ChangeNotifier {
   final List<String?> _showcase = List.filled(showcaseSize, null);
 
   /// [slot]. yere [plant] fanusunu koyar (null: rafı boşaltır). Fanus ilk kez
-  /// konurken o bitkiden 5 çiçek harcanır, sonra kalıcıdır (2026-10-29;
+  /// konurken o bitkiden fanus bedeli kadar (3-5) çiçek harcanır, sonra kalıcıdır (2026-10-29;
   /// `unlockAll` vitrini açmaz). Başka yerdeyse oradan alınır, aynı fanus iki
   /// kez durmaz.
   Future<void> setShowcase(int slot, String? plant) async {

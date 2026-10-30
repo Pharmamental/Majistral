@@ -32,7 +32,9 @@ const parcelPrices = [800, 1600, 3200];
 /// (Tuğrul, 2026-10-29, "marketten çiçeği 1er 1er satabilir"; dükkândan çiçek
 /// alma kalktı). Yer tutucu: teslim başına ortalama ~13 para eder (tohum yarı
 /// ihtimalle, kademe ağırlıkları %47/%43/%10), emek parasının üçte biri kadar.
-const flowerSellPrices = {1: 10, 2: 30, 3: 80};
+/// Hasat 1/2/3 çiçek verince (2026-10-30) fiyat bölündü; bir tohumun parası
+/// aynı kaldı (10, 30, 75).
+const flowerSellPrices = {1: 10, 2: 15, 3: 25};
 
 const freeChemicals = {'Distile Su'};
 
