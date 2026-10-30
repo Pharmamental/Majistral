@@ -123,9 +123,8 @@ void main() {
     expect(find.text('Adını yaz'), findsOneWidget);
     expect(find.text('Stajyer eczacı'), findsOneWidget); // unvan yalnız diplomada
     expect(find.text('İlk reçeteni bekliyor'), findsOneWidget);
+    await openDrawer(tester, 'Ustalık');
     expect(find.textContaining('yapılmadı'), findsNothing);
-    await tester.ensureVisible(find.text('Reçetelere git'));
-    await tester.pumpAndSettle();
     await tester.tap(find.text('Reçetelere git'));
     await tester.pumpAndSettle();
     expect(find.textContaining('Duvarda 4 reçete'), findsOneWidget);
@@ -145,14 +144,14 @@ void main() {
     expect(find.text('1 reçete teslim ettin'), findsOneWidget);
     expect(find.text('Eczacı olmana 9 reçete kaldı'), findsOneWidget);
     expect(find.text('Vitrin'), findsOneWidget);
-    await scrollPage(tester, up: true); // diploma ve raf kayar, sekmeler üstte kalır
-    expect(find.text('Koleksiyon'), findsOneWidget);
+    await openDrawer(tester, 'Ustalık');
     expect(find.text('1 kez'), findsNWidgets(3)); // yalnız denenen üç teknik
     expect(find.text('Bronz için 4 kez daha yap'), findsNWidgets(3));
     expect(find.text('Laboratuvarda henüz denemediğin ${labTools().length - 3} teknik daha var.'), findsOneWidget);
 
-    await tester.tap(find.text('Koleksiyon'));
+    await tester.tap(find.text('Kapat'));
     await tester.pumpAndSettle();
+    await openDrawer(tester, 'Koleksiyon');
     final playable = playableFormulas(prescriptionOrders);
     final merhemPlayable = formulasOf(FormulaCategory.merhem).where((f) => playable.contains(f.name)).length;
     // Her şey açıkken koleksiyon tam görünür.
@@ -165,16 +164,70 @@ void main() {
     expect(find.descendant(of: find.byType(GrowPanel), matching: find.text(order.formula)), findsOneWidget);
     // Uzun liste kaydırılır; her şey açıkken ekrandakilerin hepsi işaretli.
     expect(find.byIcon(Icons.check_circle_rounded), unlockAll ? findsWidgets : findsOneWidget);
+    await tester.tap(find.text('Kapat').last);
+    await tester.pumpAndSettle();
     await tester.tap(find.text('Kapat'));
     await tester.pumpAndSettle();
 
-    await scrollPage(tester, up: false);
+    await tester.ensureVisible(find.byTooltip('Adları değiştir'));
+    await tester.pumpAndSettle();
     await tester.tap(find.byTooltip('Adları değiştir'));
     await tester.pumpAndSettle();
     await tester.enterText(find.byType(TextField).first, 'Tuğrul');
     await tester.tap(find.text('Kaydet'));
     await tester.pumpAndSettle();
     expect(find.text('Tuğrul'), findsOneWidget);
+  });
+
+  test('istatistik: gün, en uzun seri, en çok yapılan; sayaçlar kayıtta kalır', () async {
+    Delivery d(DateTime at, String name, List<String> steps) =>
+        Delivery(magistralName: name, stars: 3, at: at, steps: steps);
+    final deliveries = [
+      d(DateTime(2026, 10, 1, 9), 'a', const ['Ezme', 'Ezme']),
+      d(DateTime(2026, 10, 1, 20), 'b', const ['Ezme']),
+      d(DateTime(2026, 10, 2, 1), 'b', const ['Eritme']),
+      d(DateTime(2026, 10, 3, 23), 'b', const ['Eritme']),
+      d(DateTime(2026, 10, 7, 12), 'a', const ['Eritme']),
+    ];
+    expect(daysPlayed(deliveries), 4);
+    expect(longestStreak(deliveries), 3);
+    expect(topRecipe(deliveries), (name: 'b', count: 3));
+    expect(topStep(deliveries), (name: 'Eritme', count: 3)); // bir teslimde iki kez sayılmaz
+    expect(topRecipe(const []), isNull);
+    expect(longestStreak(const []), 0);
+
+    // Saat değişen gün (25 Ekim, 25 saat) seriyi bozmaz.
+    expect(longestStreak([d(DateTime(2026, 10, 25, 9), 'a', const []), d(DateTime(2026, 10, 26, 9), 'a', const [])]), 2);
+
+    final store = await JobStore.load(now: () => clock);
+    await prepareAndDeliver(store);
+    final earned = store.earned;
+    expect(earned, greaterThan(0));
+    final plant = driedPlants.first;
+    await store.giveSeed(plant.name);
+    expect(await store.plant(0, plant.name), isTrue);
+    clock = clock.add(plant.growTime);
+    await store.harvest(0);
+    final reopened = await JobStore.load(now: () => clock);
+    expect(reopened.earned, earned);
+    expect(reopened.garden.harvested, plant.harvestYield);
+  });
+
+  testWidgets('İstatistik çekmecesi pencerede açılır, 360 dp ekranda taşmaz', (tester) async {
+    tester.view.physicalSize = const Size(1080, 2340);
+    tester.view.devicePixelRatio = 3;
+    addTearDown(tester.view.reset);
+    final store = await JobStore.load(now: () => clock);
+    await prepareAndDeliver(store);
+    await tester.pumpWidget(MajistralApp(store: store));
+    await tester.tap(find.text('Profil').last);
+    await tester.pumpAndSettle();
+    expect(find.text('1 gün oynadın'), findsOneWidget);
+    await openDrawer(tester, 'İstatistik');
+    final inPanel = find.byType(GrowPanel);
+    expect(find.descendant(of: inPanel, matching: find.text('reçete teslim ettin')), findsOneWidget);
+    expect(find.descendant(of: inPanel, matching: find.textContaining('En çok ${order.magistralName}')), findsOneWidget);
+    expect(tester.takeException(), isNull);
   });
 
   test('defterde gün adı: bugün, dün, tarih; başka yılsa yıl da', () {
@@ -185,7 +238,7 @@ void main() {
     expect(dayLabel(DateTime(2025, 12, 31), now), '31 Aralık 2025');
   });
 
-  testWidgets('Defter: profilde son 3 teslim, tamamı güne göre gruplu açılır', (tester) async {
+  testWidgets('Defter: bütün teslimler güne göre gruplu, en yeni üstte', (tester) async {
     tester.view.physicalSize = const Size(1080, 2340);
     tester.view.devicePixelRatio = 3;
     addTearDown(tester.view.reset);
@@ -204,19 +257,15 @@ void main() {
     await tester.pumpWidget(MajistralApp(store: await JobStore.load(now: () => clock)));
     await tester.tap(find.text('Profil').last);
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Defter'));
-    await tester.pumpAndSettle();
-    await scrollPage(tester, up: true);
+    await openDrawer(tester, 'Defter');
 
-    expect(find.text('Son teslimlerin'), findsOneWidget);
-    expect(find.text(names[3]), findsOneWidget); // en yeni üstte
-    expect(find.text(names[0]), findsNothing); // en eski profilde görünmez
+    final inPanel = find.byType(GrowPanel);
     expect(find.text('11:05'), findsOneWidget);
     expect(find.text(prescriptionOrders[3].doctorName), findsOneWidget);
-
-    await tester.tap(find.text('Defterin tamamı (4 reçete) ›'));
-    await tester.pumpAndSettle();
-    final inPanel = find.byType(GrowPanel);
+    expect(
+      tester.getTopLeft(find.descendant(of: inPanel, matching: find.text(names[3]))).dy,
+      lessThan(tester.getTopLeft(find.descendant(of: inPanel, matching: find.text(names[0]))).dy),
+    );
     expect(find.descendant(of: inPanel, matching: find.text('Bugün')), findsOneWidget);
     expect(find.descendant(of: inPanel, matching: find.text('Dün')), findsOneWidget);
     expect(find.descendant(of: inPanel, matching: find.text(names[0])), findsOneWidget);
@@ -227,9 +276,11 @@ void main() {
 /// Formül kitabında bu adda formül var mı?
 bool referenceFormula(String name) => formulary.any((f) => f.name == name);
 
-/// Profil sayfasını kaydırır: yukarı (diploma ve raf gider) ya da aşağı (geri gelir).
-Future<void> scrollPage(WidgetTester tester, {required bool up}) async {
-  await tester.drag(find.byType(NestedScrollView), Offset(0, up ? -600 : 600));
+/// Profildeki çekmeceyi açar; dolap ekranın altında kalmışsa önce sayfa kayar.
+Future<void> openDrawer(WidgetTester tester, String title) async {
+  await tester.ensureVisible(find.bySemanticsLabel(RegExp('^$title\\.')));
+  await tester.pumpAndSettle();
+  await tester.tap(find.bySemanticsLabel(RegExp('^$title\\.')));
   await tester.pumpAndSettle();
 }
 

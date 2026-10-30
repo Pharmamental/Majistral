@@ -44,6 +44,46 @@ List<({String step, int tier, int count})> tierUps(List<Delivery> deliveries) {
   ];
 }
 
+/// Teslim yapılan farklı gün sayısı.
+int daysPlayed(List<Delivery> deliveries) => _days(deliveries).length;
+
+/// En uzun üst üste teslim serisi, gün olarak.
+int longestStreak(List<Delivery> deliveries) {
+  final days = _days(deliveries).toList()..sort();
+  var best = 0, run = 0;
+  for (final (i, day) in days.indexed) {
+    run = i > 0 && _isNextDay(days[i - 1], day) ? run + 1 : 1;
+    if (run > best) best = run;
+  }
+  return best;
+}
+
+Set<DateTime> _days(List<Delivery> deliveries) => {
+      for (final d in deliveries) DateTime.utc(d.at.year, d.at.month, d.at.day),
+    };
+
+bool _isNextDay(DateTime a, DateTime b) => b.difference(a).inDays == 1;
+
+/// En çok teslim edilen ilaç ve kaç kez; teslim yoksa null. Eşitlikte önce yapılan.
+({String name, int count})? topRecipe(List<Delivery> deliveries) =>
+    _top([for (final d in deliveries) d.magistralName]);
+
+/// En çok teslimde yapılan teknik ve kaç kez; teslim yoksa null.
+({String name, int count})? topStep(List<Delivery> deliveries) =>
+    _top([for (final d in deliveries) ...d.steps.toSet()]);
+
+({String name, int count})? _top(List<String> names) {
+  final counts = <String, int>{};
+  for (final n in names) {
+    counts[n] = (counts[n] ?? 0) + 1;
+  }
+  ({String name, int count})? best;
+  for (final MapEntry(:key, :value) in counts.entries) {
+    if (best == null || value > best.count) best = (name: key, count: value);
+  }
+  return best;
+}
+
 /// Teslim edilmiş reçetelerin formül kitabındaki adları (koleksiyon).
 Set<String> preparedFormulas(List<Delivery> deliveries, List<PrescriptionOrder> orders) => {
       for (final d in deliveries)

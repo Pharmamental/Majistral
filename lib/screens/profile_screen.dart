@@ -12,115 +12,231 @@ import '../theme/tokens.dart';
 import 'home_screen.dart';
 import '../widgets/back_pill.dart';
 import '../widgets/chunky_button.dart';
+import '../widgets/counter_top.dart';
 import '../widgets/grow_panel.dart';
-import '../widgets/market_widgets.dart';
 import '../widgets/mastery_medal.dart';
-
-enum _ProfileTab {
-  ustalik('Ustalık'),
-  koleksiyon('Koleksiyon'),
-  defter('Defter');
-
-  const _ProfileTab(this.label);
-
-  final String label;
-}
 
 /// Profil sekmesi (Tuğrul, 2026-10-28, "Diploma + ustalık + koleksiyon"):
 /// duvarda çerçeveli eczacılık diploması (ad, eczane, teslim sayısıyla yükselen
-/// unvan); altta Ustalık (denenen teknikler, kaç kez ve kademesi: bronz,
-/// gümüş, altın), Koleksiyon (oyunda hazırlanabilen formüllerden
-/// hazırladıkların, kategori kategori) ve Defter (eczanedeki majistral defteri
-/// gibi: son 3 teslim, tamamı bir dokunuşla). Hepsi teslim kaydından hesaplanır.
-class ProfileScreen extends StatefulWidget {
+/// unvan) ve vitrin; altında ceviz çekmece dolabı (Tuğrul, 2026-10-30, "Çekmece
+/// dolabı"; dört seçenek bir sıraya sığmıyordu). Çekmeceler Ustalık (denenen
+/// teknikler, kaç kez ve kademesi), Koleksiyon (oyunda hazırlanabilen
+/// formüllerden hazırladıkların), Defter (eczanedeki majistral defteri gibi,
+/// güne göre bütün teslimler) ve İstatistik; basınca yerinden pencere büyür.
+class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
-  @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
-}
-
-class _ProfileScreenState extends State<ProfileScreen> {
-  _ProfileTab _tab = _ProfileTab.ustalik;
+  // Raf kenarı, iki sıra çekmece ve sayfanın altındaki boşluk (taşan havan için).
+  static const double _chestHeight =
+      CounterTop.lip + AppSpace.md + _drawerHeight * 2 + AppSpace.sm + AppSpace.x3;
 
   @override
   Widget build(BuildContext context) {
-    // Diploma ve vitrin rafı sayfayla birlikte kayar, sekmeler üstte sabit kalır
-    // (2026-10-28): raf eklenince duvar ekranın yarısını alıyordu.
-    return ColoredBox(
-      color: AppColors.background,
-      child: NestedScrollView(
-        headerSliverBuilder: (context, _) => [
-          const SliverToBoxAdapter(
-            child: ColoredBox(
-              color: AppColors.wall,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  // Unvan yalnız diplomada yazar; başlıkta tekrar etmez (2026-10-28).
-                  TabHeader(title: 'Profil', subtitle: 'Diploman ve ilerlemen', sign: TabSign.profil),
-                  SizedBox(height: AppSpace.lg),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(AppSpace.lg, 0, AppSpace.lg, AppSpace.lg),
-                    child: _Diploma(),
-                  ),
-                  _ShowcaseShelf(),
-                ],
-              ),
-            ),
-          ),
-          SliverPersistentHeader(
-            pinned: true,
-            delegate: _TabsHeader(
-              PillTabs<_ProfileTab>(
-                values: _ProfileTab.values,
-                selected: _tab,
-                labelOf: (t) => t.label,
-                onChanged: (t) => setState(() => _tab = t),
-              ),
-            ),
-          ),
-        ],
-        body: switch (_tab) {
-          _ProfileTab.ustalik => const _MasteryList(),
-          _ProfileTab.koleksiyon => const _CollectionList(),
-          _ProfileTab.defter => const _Ledger(),
-        },
-      ),
-    );
-  }
-}
-
-/// Sekmeler: sayfa kayarken üstte sabit durur.
-class _TabsHeader extends SliverPersistentHeaderDelegate {
-  _TabsHeader(this.tabs);
-
-  final Widget tabs;
-
-  // PillTabs: 44 dokunma alanı + 2 × 4 iç boşluk + 2 × 1 çerçeve = 54.
-  static const double _height = AppSpace.md + 54 + AppSpace.md + 1;
-
-  @override
-  double get minExtent => _height;
-
-  @override
-  double get maxExtent => _height;
-
-  @override
-  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+    final bottom = MediaQuery.paddingOf(context).bottom;
     return ColoredBox(
       color: AppColors.wall,
-      child: Column(
-        children: [
-          Padding(padding: const EdgeInsets.fromLTRB(AppSpace.lg, AppSpace.md, AppSpace.lg, AppSpace.md), child: tabs),
-          const Divider(height: 1, color: AppColors.line),
+      child: CustomScrollView(
+        slivers: [
+          const SliverToBoxAdapter(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // Unvan yalnız diplomada yazar; başlıkta tekrar etmez (2026-10-28).
+                TabHeader(title: 'Profil', subtitle: 'Diploman ve ilerlemen', sign: TabSign.profil),
+                SizedBox(height: AppSpace.lg),
+                Padding(
+                  padding: EdgeInsets.fromLTRB(AppSpace.lg, 0, AppSpace.lg, AppSpace.lg),
+                  child: _Diploma(),
+                ),
+                _ShowcaseShelf(),
+              ],
+            ),
+          ),
+          // Ceviz ekranın altına kadar uzanır; kısa ekranda sayfa kayar.
+          SliverFillRemaining(
+            hasScrollBody: false,
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: _chestHeight + bottom),
+              child: const CounterTop(child: _DrawerChest()),
+            ),
+          ),
         ],
       ),
     );
   }
+}
+
+const double _drawerHeight = 124;
+
+/// Vitrinin altındaki dolap: dört çekmece, etiketlerinde tek cümlelik özet.
+class _DrawerChest extends StatelessWidget {
+  const _DrawerChest();
 
   @override
-  bool shouldRebuild(_TabsHeader old) => true;
+  Widget build(BuildContext context) {
+    final store = JobScope.of(context);
+    final deliveries = store.deliveries;
+    final tried = [for (final t in labTools()) if (stepCount(t.name, deliveries) > 0) t].length;
+    final prepared = (unlockAll ? playableFormulas(prescriptionOrders) : preparedFormulas(deliveries, prescriptionOrders)).length;
+    final empty = deliveries.isEmpty;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(AppSpace.md, AppSpace.md, AppSpace.md, 0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            children: [
+              _Drawer(
+                title: 'Ustalık',
+                note: empty ? 'Henüz teknik denemedin' : '$tried teknik denedin',
+                face: AppColors.counterPlanks[2],
+                onTap: (from) => _openMastery(context, from),
+              ),
+              const SizedBox(width: AppSpace.sm),
+              _Drawer(
+                title: 'Koleksiyon',
+                note: '$prepared formül hazırladın',
+                face: AppColors.counterPlanks[3],
+                onTap: (from) => _openCollection(context, from),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppSpace.sm),
+          Row(
+            children: [
+              _Drawer(
+                title: 'Defter',
+                note: empty ? 'Henüz teslimin yok' : 'Son teslimin ${_dayLower(dayLabel(deliveries.last.at, store.now()))}',
+                face: AppColors.counterPlanks[0],
+                onTap: (from) => _openLedger(context, from),
+              ),
+              const SizedBox(width: AppSpace.sm),
+              _Drawer(
+                title: 'İstatistik',
+                note: empty ? 'Henüz sayı yok' : '${daysPlayed(deliveries)} gün oynadın',
+                face: AppColors.counterPlanks[1],
+                onTap: (from) => _openStats(context, from),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
 }
+
+/// "Bugün" ve "Dün" cümle içinde küçük yazılır; tarih olduğu gibi kalır.
+String _dayLower(String day) => day == 'Bugün' ? 'bugün' : day == 'Dün' ? 'dün' : day;
+
+/// Çekmece: ceviz yüz, üstünde porselen etiket, altında pirinç topuz.
+class _Drawer extends StatelessWidget {
+  const _Drawer({required this.title, required this.note, required this.face, required this.onTap});
+
+  final String title;
+  final String note;
+  final Color face;
+
+  /// Çekmecenin ekrandaki yeriyle çağrılır; pencere oradan büyür.
+  final void Function(Rect from) onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Semantics(
+        button: true,
+        label: '$title. $note',
+        excludeSemantics: true,
+        child: Material(
+          color: face,
+          elevation: 2,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppRadius.paperInner),
+            side: const BorderSide(color: AppColors.counterGrain, width: 2),
+          ),
+          clipBehavior: Clip.antiAlias,
+          child: Builder(
+            builder: (drawerContext) => InkWell(
+              onTap: () => onTap(rectOf(drawerContext)),
+              child: SizedBox(
+                height: _drawerHeight,
+                child: Padding(
+                  padding: const EdgeInsets.all(AppSpace.md),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(AppSpace.sm),
+                        decoration: BoxDecoration(
+                          color: AppColors.surface,
+                          borderRadius: BorderRadius.circular(2),
+                          border: Border.all(color: _brass),
+                        ),
+                        child: Column(
+                          children: [
+                            Text(title, style: AppText.title(size: 17), maxLines: 1),
+                            FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(note, style: AppText.label(size: 12), maxLines: 1),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Center(
+                        child: Container(
+                          width: 18,
+                          height: 18,
+                          decoration: BoxDecoration(
+                            color: _brass,
+                            shape: BoxShape.circle,
+                            border: Border.all(color: AppColors.counterEdge, width: 2),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+const _brass = Color(0xFFB8924A);
+
+/// Çekmeceden büyüyen pencere: başlık, kayan içerik, Kapat.
+Future<void> _openDrawer(BuildContext context, Rect from, String title, WidgetBuilder content) {
+  return openGrowing<void>(
+    context,
+    from: from,
+    builder: (sheetContext) => Padding(
+      padding: const EdgeInsets.all(AppSpace.lg),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(title, style: AppText.title(size: 20)),
+          const SizedBox(height: AppSpace.md),
+          Flexible(child: content(sheetContext)),
+          const SizedBox(height: AppSpace.lg),
+          ChunkyButton.secondary(label: 'Kapat', onPressed: () => Navigator.of(sheetContext).pop()),
+        ],
+      ),
+    ),
+  );
+}
+
+Future<void> _openMastery(BuildContext context, Rect from) =>
+    _openDrawer(context, from, 'Ustalık', (_) => _MasteryList(page: context));
+
+Future<void> _openCollection(BuildContext context, Rect from) =>
+    _openDrawer(context, from, 'Koleksiyon', (_) => const _CollectionList());
+
+Future<void> _openStats(BuildContext context, Rect from) =>
+    _openDrawer(context, from, 'İstatistik', (_) => _Stats(page: context));
 
 /// Vitrin rafı (Tuğrul, 2026-10-28): diplomanın altında ceviz rafta üç yer.
 /// Oyuncu fanusta bitki kurularından seçip koyar (Chess.com, Steam, Clash
@@ -587,28 +703,23 @@ class _RenamePanelState extends State<_RenamePanel> {
   }
 }
 
-EdgeInsets _listPadding(BuildContext context) => EdgeInsets.fromLTRB(
-      AppSpace.lg,
-      AppSpace.lg,
-      AppSpace.lg,
-      AppSpace.x3 + MediaQuery.paddingOf(context).bottom,
-    );
-
 /// Ustalık: oyuncunun denediği teknikler, kaç kez yapıldığı ve kademesi.
 /// Denenmemiş teknikler satır satır "yapılmadı" diye dizilmez; tek cümleyle
 /// söylenir. Hiç teslim yoksa ilk adım gösterilir (NN/g boş durum ilkesi).
 class _MasteryList extends StatelessWidget {
-  const _MasteryList();
+  const _MasteryList({required this.page});
+
+  final BuildContext page;
 
   @override
   Widget build(BuildContext context) {
     final deliveries = JobScope.of(context).deliveries;
-    if (deliveries.isEmpty) return const _EmptyState();
+    if (deliveries.isEmpty) return _EmptyState(page: page);
     final all = labTools();
     final started = [for (final t in all) if (stepCount(t.name, deliveries) > 0) t];
     final rest = all.length - started.length;
     return ListView(
-      padding: _listPadding(context),
+      shrinkWrap: true,
       children: [
         Text(
           'Denediğin teknikler. Tekrar ettikçe bronz, gümüş ve altın olur.',
@@ -633,35 +744,88 @@ class _MasteryList extends StatelessWidget {
 
 /// Hiç teslim yokken: ne olduğunu söyler, ilk adıma götürür.
 class _EmptyState extends StatelessWidget {
-  const _EmptyState();
+  const _EmptyState({required this.page});
+
+  /// Profil sayfası: pencerenin içinden alt çubuğa ulaşılamaz.
+  final BuildContext page;
 
   @override
   Widget build(BuildContext context) {
     return ListView(
-      padding: _listPadding(context),
+      shrinkWrap: true,
       children: [
-        Container(
-          padding: const EdgeInsets.all(AppSpace.lg),
-          decoration: BoxDecoration(
-            color: AppColors.surface,
-            borderRadius: BorderRadius.circular(AppRadius.paper),
-            border: Border.all(color: AppColors.line),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('İlk reçeteni bekliyoruz', style: AppText.title(size: 18)),
-              const SizedBox(height: AppSpace.xs),
-              Text(
-                'Duvardan bir reçete al, laboratuvarda hazırla ve teslim et. '
-                'Kullandığın teknikler burada görünür.',
-                style: AppText.body(size: 14),
-              ),
-              const SizedBox(height: AppSpace.lg),
-              ChunkyButton(label: 'Reçetelere git', onPressed: () => HomeScreen.showTab(context, 0)),
-            ],
-          ),
+        Text('İlk reçeteni bekliyoruz', style: AppText.title(size: 18)),
+        const SizedBox(height: AppSpace.xs),
+        Text(
+          'Duvardan bir reçete al, laboratuvarda hazırla ve teslim et. '
+          'Yaptıkların burada görünür.',
+          style: AppText.body(size: 14),
         ),
+        const SizedBox(height: AppSpace.lg),
+        ChunkyButton(
+          label: 'Reçetelere git',
+          onPressed: () {
+            Navigator.of(context).pop();
+            HomeScreen.showTab(page, 0);
+          },
+        ),
+      ],
+    );
+  }
+}
+
+/// İstatistik (Tuğrul, 2026-10-30): oyunun sayıları, sayı ve yanında düz cümle.
+/// Yıldız sayısı "üç yıldızla" diye yazar: yıldızı acele düşürür, beceriyi ölçmez.
+class _Stats extends StatelessWidget {
+  const _Stats({required this.page});
+
+  final BuildContext page;
+
+  @override
+  Widget build(BuildContext context) {
+    final store = JobScope.of(context);
+    final deliveries = store.deliveries;
+    if (deliveries.isEmpty) return _EmptyState(page: page);
+    final recipe = topRecipe(deliveries);
+    final step = topStep(deliveries);
+    final rows = [
+      (deliveries.length, 'reçete teslim ettin'),
+      (daysPlayed(deliveries), 'gün oynadın'),
+      (longestStreak(deliveries), 'gün üst üste oynadın'),
+      (deliveries.where((d) => d.stars == 3).length, 'reçeteyi üç yıldızla teslim ettin'),
+      (store.rightAnswers, 'hasta sorusunu doğru bildin'),
+      (store.garden.harvested, 'kurutulmuş çiçek topladın'),
+      (store.earned, 'para kazandın'),
+    ];
+    return ListView(
+      shrinkWrap: true,
+      children: [
+        for (final (i, (count, text)) in rows.indexed) ...[
+          if (i > 0) const Divider(height: 1, color: AppColors.line),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: AppSpace.sm),
+            child: Row(
+              children: [
+                SizedBox(
+                  width: 72,
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerLeft,
+                    child: Text('$count', style: AppText.title(size: 22)),
+                  ),
+                ),
+                const SizedBox(width: AppSpace.md),
+                Expanded(child: Text(text, style: AppText.body(size: 14))),
+              ],
+            ),
+          ),
+        ],
+        const SizedBox(height: AppSpace.sm),
+        if (recipe != null) Text('En çok ${recipe.name} hazırladın, ${recipe.count} kez.', style: AppText.body(size: 14)),
+        if (step != null) ...[
+          const SizedBox(height: AppSpace.xs),
+          Text('En sık yaptığın teknik ${step.name}, ${step.count} kez.', style: AppText.body(size: 14)),
+        ],
       ],
     );
   }
@@ -728,7 +892,7 @@ class _CollectionList extends StatelessWidget {
         : preparedFormulas(JobScope.of(context).deliveries, prescriptionOrders);
     final playable = playableFormulas(prescriptionOrders);
     return ListView(
-      padding: _listPadding(context),
+      shrinkWrap: true,
       children: [
         Text(
           'Oyunda hazırlayabildiğin ${playable.length} formülden teslim ettiklerin. Formül kitabındaki '
@@ -865,47 +1029,11 @@ Future<void> _openCategory(
   );
 }
 
-/// Reçete defteri (Tuğrul, 2026-10-28): eczanedeki majistral defteri gibi.
-/// Profilde son 3 teslim; altında "Defterin tamamı" bütün geçmişi güne göre
-/// gruplanmış açar. Kayıt hiçbir teslimi silmez.
-class _Ledger extends StatelessWidget {
-  const _Ledger();
-
-  static const _recent = 3;
-
-  @override
-  Widget build(BuildContext context) {
-    final deliveries = JobScope.of(context).deliveries;
-    if (deliveries.isEmpty) return const _EmptyState();
-    final newest = deliveries.reversed.toList();
-    return ListView(
-      padding: _listPadding(context),
-      children: [
-        Text('Son teslimlerin', style: AppText.title(size: 16)),
-        const SizedBox(height: AppSpace.sm),
-        _LedgerPage(entries: newest.take(_recent).toList(), withDay: true),
-        if (newest.length > _recent) ...[
-          const SizedBox(height: AppSpace.md),
-          Builder(
-            builder: (buttonContext) => ChunkyButton.secondary(
-              label: 'Defterin tamamı (${newest.length} reçete) ›',
-              onPressed: () => _openLedger(buttonContext, newest, from: rectOf(buttonContext)),
-            ),
-          ),
-        ],
-      ],
-    );
-  }
-}
-
 /// Defter sayfası: kâğıtta satır satır teslimler.
 class _LedgerPage extends StatelessWidget {
-  const _LedgerPage({required this.entries, this.withDay = false});
+  const _LedgerPage({required this.entries});
 
   final List<Delivery> entries;
-
-  /// Satırda günü de yaz (profildeki kısa liste); tam defterde gün başlıkta.
-  final bool withDay;
 
   @override
   Widget build(BuildContext context) {
@@ -919,7 +1047,7 @@ class _LedgerPage extends StatelessWidget {
         children: [
           for (final (i, d) in entries.indexed) ...[
             if (i > 0) const Divider(height: 1, color: AppColors.line),
-            _LedgerRow(delivery: d, withDay: withDay),
+            _LedgerRow(delivery: d),
           ],
         ],
       ),
@@ -928,10 +1056,9 @@ class _LedgerPage extends StatelessWidget {
 }
 
 class _LedgerRow extends StatelessWidget {
-  const _LedgerRow({required this.delivery, required this.withDay});
+  const _LedgerRow({required this.delivery});
 
   final Delivery delivery;
-  final bool withDay;
 
   @override
   Widget build(BuildContext context) {
@@ -943,16 +1070,7 @@ class _LedgerRow extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: AppSpace.md, vertical: AppSpace.sm),
       child: Row(
         children: [
-          SizedBox(
-            width: withDay ? 64 : 44,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (withDay) Text(dayLabel(at, JobScope.of(context).now()), style: AppText.label(size: 12)),
-                Text(time, style: AppText.label(size: 12)),
-              ],
-            ),
-          ),
+          SizedBox(width: 44, child: Text(time, style: AppText.label(size: 12))),
           const SizedBox(width: AppSpace.sm),
           Expanded(
             child: Column(
@@ -995,43 +1113,32 @@ String dayLabel(DateTime at, DateTime now) {
   return '${at.day} ${_months[at.month - 1]}${at.year == now.year ? '' : ' ${at.year}'}';
 }
 
-/// Defterin tamamı: en yeniden eskiye, güne göre gruplanmış.
-Future<void> _openLedger(BuildContext context, List<Delivery> newest, {required Rect from}) {
-  final now = JobScope.of(context).now();
+/// Reçete defteri (Tuğrul, 2026-10-28): eczanedeki majistral defteri gibi, en
+/// yeniden eskiye, güne göre gruplanmış. Kayıt hiçbir teslimi silmez.
+Future<void> _openLedger(BuildContext context, Rect from) {
+  final store = JobScope.of(context);
+  final now = store.now();
   final days = <String, List<Delivery>>{};
-  for (final d in newest) {
+  for (final d in store.deliveries.reversed) {
     days.putIfAbsent(dayLabel(d.at, now), () => []).add(d);
   }
-  return openGrowing<void>(
+  return _openDrawer(
     context,
-    from: from,
-    builder: (sheetContext) => Padding(
-      padding: const EdgeInsets.all(AppSpace.lg),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text('Reçete defteri', style: AppText.title(size: 20)),
-          Text('${newest.length} reçete', style: AppText.label(size: 12)),
-          const SizedBox(height: AppSpace.md),
-          Flexible(
-            child: ListView(
-              shrinkWrap: true,
-              children: [
-                for (final MapEntry(key: day, value: entries) in days.entries) ...[
-                  Padding(
-                    padding: const EdgeInsets.only(top: AppSpace.sm, bottom: AppSpace.xs),
-                    child: Text(day, style: AppText.title(size: 15)),
-                  ),
-                  _LedgerPage(entries: entries),
-                ],
+    from,
+    'Reçete defteri',
+    (_) => days.isEmpty
+        ? _EmptyState(page: context)
+        : ListView(
+            shrinkWrap: true,
+            children: [
+              for (final MapEntry(key: day, value: entries) in days.entries) ...[
+                Padding(
+                  padding: const EdgeInsets.only(top: AppSpace.sm, bottom: AppSpace.xs),
+                  child: Text(day, style: AppText.title(size: 15)),
+                ),
+                _LedgerPage(entries: entries),
               ],
-            ),
+            ],
           ),
-          const SizedBox(height: AppSpace.lg),
-          ChunkyButton.secondary(label: 'Kapat', onPressed: () => Navigator.of(sheetContext).pop()),
-        ],
-      ),
-    ),
   );
 }

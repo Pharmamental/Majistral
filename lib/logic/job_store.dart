@@ -159,6 +159,7 @@ class JobStore extends ChangeNotifier {
         final e = jsonDecode(raw) as Map<String, dynamic>;
         store._coins = e['coins'] as int;
         store._debt = e['debt'] as int;
+        store._earned = e['earned'] as int? ?? 0;
         for (final MapEntry(:key, :value) in (e['stock'] as Map<String, dynamic>).entries) {
           store._stock[key] = (value as num).toDouble();
         }
@@ -264,6 +265,13 @@ class JobStore extends ChangeNotifier {
   /// Ecza deposuna veresiye borcu; teslimlerden kendiliğinden kesilir.
   int get debt => _debt;
 
+  /// Bugüne dek kazanılan para: teslim, bahşiş, çiçek satışı (istatistik).
+  int get earned => _earned;
+  int _earned = 0;
+
+  /// Doğru bilinen hasta sorusu (istatistik).
+  int get rightAnswers => _patients.rightAnswers;
+
   /// Raftaki madde, gram.
   double stockOf(String chemical) => _stock[chemical] ?? 0;
 
@@ -365,6 +373,7 @@ class JobStore extends ChangeNotifier {
 
   /// Teslim parasını öder; önce depo borcu kesilir.
   void _earn(int amount) {
+    _earned += amount;
     final cut = math.min(_debt, amount);
     _debt -= cut;
     _coins += amount - cut;
@@ -373,7 +382,7 @@ class JobStore extends ChangeNotifier {
   Future<void> _saveEconomy() async {
     await _prefs.setString(
       _economyKey,
-      jsonEncode({'coins': _coins, 'debt': _debt, 'stock': _stock, 'tools': _tools.toList()}),
+      jsonEncode({'coins': _coins, 'debt': _debt, 'earned': _earned, 'stock': _stock, 'tools': _tools.toList()}),
     );
     notifyListeners();
   }

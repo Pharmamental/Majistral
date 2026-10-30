@@ -329,7 +329,15 @@ lib/
 - Profil (Tuğrul, 2026-10-28, "Diploma + ustalık + koleksiyon"): duvarda ceviz çerçeveli eczacılık
   diploması (ad, eczane adı, kalemle değişir; avatar halkası ve unvan teslim sayısıyla yükselir:
   Stajyer eczacı 0, Eczacı 10, Uzman eczacı 30, Mesul müdür 60; eşikler yer tutucu). Altta
-  `PillTabs`: Ustalık ve Koleksiyon. Düzeltmeler (Tuğrul, 2026-10-28, "önce düzeltmeler"):
+  ceviz çekmece dolabı (Tuğrul, 2026-10-30, "Çekmece dolabı"; dört seçenek hap sırasına sığmıyordu;
+  alternatifler https://claude.ai/artifact/JaLdMBVCHWM5F2qd8KtSAm): 2 sıra 2 çekmece (Ustalık,
+  Koleksiyon, Defter, İstatistik), etikette tek cümle özet, basınca içerik yerinden pencere olarak
+  büyür (`_DrawerChest`, `_openDrawer`). Sekme ve seçim yok, sayfa diploma, vitrin, dolap diye kayar.
+  **İstatistik:** teslim, oynanan gün, en uzun seri, üç yıldızlı teslim, doğru bilinen hasta sorusu,
+  toplanan çiçek, kazanılan para, en çok yapılan ilaç ve teknik (`logic/profile_stats.dart`).
+  "Acele etmeden" değil "üç yıldızla" yazar: boğaz fanusu aceleyi saklar. Sayaçlar
+  `JobStore.earned` (`economy_v1`), `Garden.harvested` (`garden_v1`), `PatientBook.rightAnswers`
+  (`patient_v1`); 2026-10-30'dan önceki kayıtlarda sıfırdan başlar. Düzeltmeler (Tuğrul, 2026-10-28, "önce düzeltmeler"):
   ustalık yıldızla ölçülmez (yıldızı yalnız acele düşürüyor), kaç kez yapıldığıyla kademelenir
   (Başladın 1, Bronz 5, Gümüş 15, Altın 40; yer tutucu); yalnız denenen teknikler listelenir,
   kalanlar tek cümle. Koleksiyon yalnız oyunda hazırlanabilen formülleri sayar; oyunda reçetesi
@@ -339,7 +347,7 @@ lib/
   (`JobStore.deliveries`, anahtar `deliveries_v1`; adlar `profile_v1`). Her oyun reçetesinin formül
   kitabındaki karşılığı `PrescriptionOrder.formula`. Liderlik tablosu ve satılık çerçeve yok.
   Sonraya: reçete defteri, seri (onarma haklı), kazanılan çizimli avatar çerçeveleri.
-- Profil eklemeleri (Tuğrul, 2026-10-28): reçete defteri (son 3 teslim, tamamı güne göre gruplu);
+- Profil eklemeleri (Tuğrul, 2026-10-28): reçete defteri (bütün teslimler güne göre gruplu, en yeni üstte; çekmeceyle tek pencere);
   ustalıkta madalya halkası (`MasteryMedal`: Başladın gri, Bronz, Gümüş, Altın; dört çentik,
   renkler `AppColors.medal*`); Bronz, Gümüş ya da Altın'a çıkınca teslimde üstte koyu
   kırmızı-beyaz açılan kapsül kutucuğu ("Ezme · Bronz / 5 kez hazırladın", `achievement_toast.dart`;

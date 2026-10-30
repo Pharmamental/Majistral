@@ -43,6 +43,7 @@ class Garden {
     Map<String, int>? flowers,
     List<Bed?>? beds,
     Set<String>? grown,
+    this.harvested = 0,
   })  : seeds = seeds ?? {},
         flowers = flowers ?? {},
         beds = beds ?? List<Bed?>.filled(openBeds, null, growable: true),
@@ -67,6 +68,9 @@ class Garden {
 
   /// Fanusu açılmış, vitrine konabilen bitkiler.
   final Set<String> grown;
+
+  /// Bugüne dek hasat edilen çiçek sayısı (istatistik).
+  int harvested;
 
   /// Teslimde zar atar: yarı ihtimalle bir tohum düşer, adı döner; yoksa null.
   /// Vitrindeki ferahlatıcı fanus şansı [bonusPercent] kadar artırır (%30 artış %65 eder).
@@ -116,7 +120,9 @@ class Garden {
     final b = beds[bed];
     if (b == null || !b.readyBy(now)) return null;
     beds[bed] = null;
-    flowers[b.plant] = (flowers[b.plant] ?? 0) + (driedPlantNamed(b.plant)?.harvestYield ?? 1);
+    final yield_ = driedPlantNamed(b.plant)?.harvestYield ?? 1;
+    flowers[b.plant] = (flowers[b.plant] ?? 0) + yield_;
+    harvested += yield_;
     return b.plant;
   }
 
@@ -125,6 +131,7 @@ class Garden {
         'flowers': flowers,
         'beds': [for (final b in beds) b?.toJson()],
         'grown': grown.toList(),
+        'harvested': harvested,
       };
 
   factory Garden.fromJson(Map<String, dynamic> json) {
@@ -143,6 +150,7 @@ class Garden {
         for (var i = 0; i < math.max(openBeds, math.min(beds.length, allBeds)); i++) i < beds.length ? beds[i] : null,
       ],
       grown: {for (final g in json['grown'] as List) if (driedPlantNamed(g as String) != null) g},
+      harvested: json['harvested'] as int? ?? 0,
     );
   }
 }

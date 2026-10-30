@@ -148,7 +148,8 @@ PatientQuestion? buildPatientQuestion(String id, PrescriptionOrder order, math.R
 /// Sorulan soruların defteri. Yanlış bilinen soru 1, 3 ve 7 gün sonra yeniden
 /// gelir; üçünü de bilince biter. İlk seferde bilinen soru bir daha gelmez.
 class PatientBook {
-  PatientBook({Map<String, ({int box, DateTime? due})>? asked, this.day = '', this.today = 0}) : asked = asked ?? {};
+  PatientBook({Map<String, ({int box, DateTime? due})>? asked, this.day = '', this.today = 0, this.rightAnswers = 0})
+      : asked = asked ?? {};
 
   static const repeatDays = [1, 3, 7];
 
@@ -158,6 +159,9 @@ class PatientBook {
   /// [day] günü cevaplanan soru sayısı.
   String day;
   int today;
+
+  /// Bugüne dek doğru bilinen soru sayısı (istatistik).
+  int rightAnswers;
 
   /// Zamanı gelmiş sorular, en eskisi önde.
   List<String> dueAt(DateTime now) {
@@ -171,6 +175,7 @@ class PatientBook {
 
   void record(String id, {required bool right, required DateTime now}) {
     final box = asked[id]?.box;
+    if (right) rightAnswers++;
     if (!right) {
       asked[id] = (box: 1, due: now.add(Duration(days: repeatDays.first)));
     } else if (box == null || box >= repeatDays.length) {
@@ -186,6 +191,7 @@ class PatientBook {
         },
         'day': day,
         'today': today,
+        'right': rightAnswers,
       };
 
   factory PatientBook.fromJson(Map<String, dynamic> json) => PatientBook(
@@ -198,5 +204,6 @@ class PatientBook {
         },
         day: json['day'] as String,
         today: json['today'] as int,
+        rightAnswers: json['right'] as int? ?? 0,
       );
 }
