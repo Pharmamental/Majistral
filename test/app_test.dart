@@ -90,7 +90,7 @@ void main() {
 
     await tester.tap(find.text('Market'));
     await tester.pumpAndSettle();
-    expect(find.text('${stations.first.name} için ${stations.first.tiers.last.name}'), findsOneWidget);
+    expect(find.text('${stations.first.name} için ${stations.first.tiers[1].name}'), findsOneWidget);
   });
 
   testWidgets('gelen reçeteler duvarda; alınan tezgâha iner, tezgâhta sağa sola kaydırılır', (tester) async {

@@ -23,7 +23,7 @@ class ShopItem {
   final String? imagePath;
   final int price;
 
-  /// Alet elde olunca istasyonun adımı yüzde kaç kısa sürer.
+  /// Alet elde olunca istasyonun adımı basit alete göre yüzde kaç kısa sürer.
   final int faster;
 }
 

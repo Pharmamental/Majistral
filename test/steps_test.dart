@@ -72,6 +72,9 @@ void main() {
         expect(t.price, greaterThan(0), reason: t.name);
         expect(t.faster, inInclusiveRange(1, 99), reason: t.name);
       }
+      for (var i = 1; i < s.tiers.length; i++) {
+        expect(s.tiers[i].faster, greaterThan(s.tiers[i - 1].faster), reason: '${s.name}: sonraki alet daha hızlı');
+      }
     }
   });
 }

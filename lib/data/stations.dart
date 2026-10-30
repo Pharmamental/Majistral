@@ -9,6 +9,24 @@ import '../theme/tokens.dart';
 // ([ShopItem.faster]). Aletler eczanede gerçekten bulunan aletler (ASHP nonsteril
 // majistral bülteni. Beyin: majistral-alet-ve-makineler). Yüzdeler ve fiyatlar
 // yer tutucu. Kapalı testte ayarlanacak. Yeni aletlerin ikonu henüz çizilmedi.
+//
+// İkinci yükseltme (Tuğrul, 2026-10-30, "Evet, ekle"): yalnız eczane ölçeğinde gerçek
+// karşılığı bulunan istasyonlarda. [ShopItem.faster] her zaman basit alete göredir.
+// Motorlu havan: Retsch RM 200. Masaüstü homojenizatör: Ultra-Turrax türü rotor-stator.
+// Santrifüj karıştırıcı: çift asimetrik santrifüj (SpeedMixer). Hız verisi kaynaklarda
+// yok, %45 varsayım. Kaynaklar beyinde: majistral-alet-ve-makineler.
+
+/// Tek makine üç adımı hızlandırır: bir kez alınır, üç istasyonda da elde sayılır.
+const _santrifuj = ShopItem(
+  name: 'Santrifüj karıştırıcı',
+  imagePath: 'assets/images/ikon/ikon_santrifuj_karistirici.png',
+  description: 'Kabı hem döndürür hem savurur, içine pervane girmez, kabarcık bırakmaz. '
+      'Geometrik seyreltmeyi, karıştırmayı ve şişirmeyi %45 kısaltır.',
+  icon: Icons.autorenew,
+  color: AppColors.advanced,
+  price: 5500,
+  faster: 45,
+);
 
 const List<Station> stations = [
   Station(
@@ -29,6 +47,15 @@ const List<Station> stations = [
         color: AppColors.advanced,
         price: 900,
         faster: 30,
+      ),
+      ShopItem(
+        name: 'Motorlu havan',
+        imagePath: 'assets/images/ikon/ikon_motorlu_havan.png',
+        description: 'Havanı ve eli motor döndürür, tozu kapalı haznede ezer. Ezmeyi %45 kısaltır.',
+        icon: Icons.blender_outlined,
+        color: AppColors.advanced,
+        price: 1400,
+        faster: 45,
       ),
     ],
   ),
@@ -73,6 +100,7 @@ const List<Station> stations = [
         price: 2500,
         faster: 30,
       ),
+      _santrifuj,
     ],
   ),
   Station(
@@ -134,6 +162,15 @@ const List<Station> stations = [
         price: 1200,
         faster: 30,
       ),
+      ShopItem(
+        name: 'Masaüstü homojenizatör',
+        imagePath: 'assets/images/ikon/ikon_masaustu_homojenizator.png',
+        description: 'Güçlü motor ve dişli başlık damlacıkları iyice küçültür. Emülsifikasyonu %45 kısaltır.',
+        icon: Icons.soup_kitchen_outlined,
+        color: AppColors.advanced,
+        price: 1800,
+        faster: 45,
+      ),
     ],
   ),
   Station(
@@ -194,6 +231,7 @@ const List<Station> stations = [
         price: 800,
         faster: 30,
       ),
+      _santrifuj,
     ],
   ),
   Station(
@@ -214,6 +252,7 @@ const List<Station> stations = [
         price: 500,
         faster: 30,
       ),
+      _santrifuj,
     ],
   ),
   Station(

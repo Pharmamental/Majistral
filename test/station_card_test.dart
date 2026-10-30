@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:game/data/lab_tools.dart';
+import 'package:game/data/stations.dart';
 import 'package:game/logic/job_store.dart';
 import 'package:game/main.dart';
 
@@ -19,7 +21,7 @@ void main() {
     tester.view.devicePixelRatio = 3;
     addTearDown(tester.view.reset);
     SharedPreferences.setMockInitialValues({
-      'economy_v1': jsonEncode({'coins': 1000, 'debt': 0, 'stock': {}, 'tools': []}),
+      'economy_v1': jsonEncode({'coins': 2300, 'debt': 0, 'stock': {}, 'tools': []}),
     });
     final store = await JobStore.load(now: () => DateTime(2026, 10, 29, 9));
     await tester.pumpWidget(MajistralApp(store: store));
@@ -34,9 +36,36 @@ void main() {
 
     await tester.tap(find.text('900 ile al'));
     await tester.pumpAndSettle();
-    expect(store.coins, 100);
-    expect(find.text('Elinde'), findsWidgets);
+    expect(store.coins, 1400);
     expect(find.text('900 ile al'), findsNothing);
+    expect(find.text('Ezme için Motorlu havan'), findsOneWidget, reason: 'sıradaki kademe gelir');
+    expect(find.text('1400 ile al'), findsOneWidget);
+    await tester.tap(find.text('1400 ile al'));
+    await tester.pumpAndSettle();
+    expect(find.text('Elinde'), findsWidgets, reason: 'son kademe alınınca kart biter');
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('ortak makine bir kez alınır, üç adımı hızlandırır, alttaki alet sorulmaz', (tester) async {
+    tester.view.physicalSize = const Size(1080, 2400);
+    tester.view.devicePixelRatio = 3;
+    addTearDown(tester.view.reset);
+    SharedPreferences.setMockInitialValues({
+      'economy_v1': jsonEncode({'coins': 6000, 'debt': 0, 'stock': {}, 'tools': ['Yüksek devirli karıştırıcı']}),
+    });
+    final store = await JobStore.load(now: () => DateTime(2026, 10, 30, 9));
+    final makine = stationFor('Şişirme')!.tiers.last;
+    expect(await store.buyTool(makine), isTrue);
+    expect(store.coins, 500);
+    for (final adim in ['Geometrik seyreltme', 'Karıştırma', 'Şişirme']) {
+      expect(upgradeFor(adim, owns: store.ownsTool)?.name, makine.name, reason: adim);
+    }
+    await tester.pumpWidget(MajistralApp(store: store));
+    await tester.tap(find.text('Market'));
+    await tester.pumpAndSettle();
+    expect(find.text('Geometrik seyreltme için Santrifüj karıştırıcı'), findsOneWidget);
+    expect(find.text('Bu makine 3 adımı birden hızlandırır.'), findsWidgets);
+    expect(find.textContaining('Unguator'), findsNothing, reason: 'Unguator artık sorulmaz');
     expect(tester.takeException(), isNull);
   });
 }

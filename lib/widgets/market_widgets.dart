@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../data/stations.dart';
 import '../logic/job_store.dart';
 import '../models/shop_item.dart';
 import '../theme/tokens.dart';
@@ -23,8 +24,12 @@ class StationSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final store = JobScope.of(context);
-    final next = station.tiers.where((t) => !store.ownsTool(t)).firstOrNull;
-    final tool = next ?? station.tiers.last;
+    // Ortak makine başka istasyondan alınmış olabilir: elde olanın altındakiler sorulmaz.
+    final tiers = station.tiers;
+    final have = tiers.lastIndexWhere(store.ownsTool);
+    final next = have + 1 < tiers.length ? tiers[have + 1] : null;
+    final tool = next ?? tiers.last;
+    final shared = stations.where((s) => s.tiers.any((t) => t.name == tool.name)).length;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: AppSpace.lg),
       child: Container(
@@ -65,13 +70,17 @@ class StationSection extends StatelessWidget {
                           children: [
                             Text('Hazırlama hızı', style: AppText.label(size: 14, color: AppColors.ink)),
                             const SizedBox(height: AppSpace.xs),
-                            _SpeedBar(faster: tool.faster, owned: next == null),
+                            _SpeedBar(now: tiers[have].faster, faster: tool.faster, owned: next == null),
                             if (tool.faster > 0) ...[
                               const SizedBox(height: AppSpace.xs),
                               Text(
                                 '%${tool.faster} daha hızlı',
                                 style: AppText.label(size: 14, color: AppColors.successDark),
                               ),
+                            ],
+                            if (shared > 1) ...[
+                              const SizedBox(height: AppSpace.xs),
+                              Text('Bu makine $shared adımı birden hızlandırır.', style: AppText.label(size: 12)),
                             ],
                           ],
                         ),
@@ -117,8 +126,10 @@ class StationSection extends StatelessWidget {
 /// Hız çubuğu: çubuğun boyu gerçek hız farkını gösterir. %30 kısalan adım 1,43
 /// kat, %50 kısalan 2 kat hızlıdır; en hızlı alet çubuğun çoğunu doldurur.
 class _SpeedBar extends StatelessWidget {
-  const _SpeedBar({required this.faster, required this.owned});
+  const _SpeedBar({required this.now, required this.faster, required this.owned});
 
+  /// Eldeki aletin ve sıradaki aletin basit alete göre yüzdesi.
+  final int now;
   final int faster;
   final bool owned;
 
@@ -127,7 +138,8 @@ class _SpeedBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final gain = 100 / (100 - faster) - 1;
+    final base = 100 / (100 - now);
+    final gain = 100 / (100 - faster) - base;
     int part(double share) => (share * 1000).round();
     return Container(
       height: 24,
@@ -141,7 +153,7 @@ class _SpeedBar extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Expanded(
-            flex: part(1 / _fullSpeed),
+            flex: part(base / _fullSpeed),
             child: ColoredBox(color: owned ? AppColors.success : AppColors.kobalt),
           ),
           if (gain > 0)
@@ -149,7 +161,7 @@ class _SpeedBar extends StatelessWidget {
               flex: part(gain / _fullSpeed),
               child: const ColoredBox(color: AppColors.success),
             ),
-          Expanded(flex: part((_fullSpeed - 1 - gain) / _fullSpeed), child: const SizedBox()),
+          Expanded(flex: part((_fullSpeed - base - gain) / _fullSpeed), child: const SizedBox()),
         ],
       ),
     );

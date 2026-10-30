@@ -117,7 +117,13 @@ lib/
   Elekten geçirme: Elek › Titreşimli elek; Karıştırma: › Pervaneli karıştırıcı; Şişirme: ›
   Yüksek devirli karıştırıcı; Hacme tamamlama: Mezür › Şişe üstü dispenser; Kapsül doldurma:
   Kapsül doldurma aleti › Yarı otomatik kapsül makinesi (bunlar %30). Yeni 8 aletin ikonu
-  çizilmedi (market genel ikon gösteriyor). Yeni adım eklenince istasyonu da eklenir
+  çizilmedi (market genel ikon gösteriyor). İkinci yükseltme (Tuğrul, 2026-10-30, "Evet, ekle")
+  yalnız gerçek makinesi bulunan istasyonlarda, %45 ve yer tutucu fiyat: Ezme › Motorlu havan (1400),
+  Emülsifikasyon › Masaüstü homojenizatör (1800), Geometrik seyreltme, Karıştırma ve Şişirme ›
+  Santrifüj karıştırıcı (5500). Santrifüj tek makine: üç istasyonda aynı kart, bir kez alınır, üç
+  adımı birden hızlandırır, istisnası bu (`_santrifuj`, kartta "Bu makine 3 adımı birden
+  hızlandırır."). `ShopItem.faster` hep basit alete göredir. Eritme, soğutma, çözme, levigasyon,
+  hacme tamamlama, elek ve kapsülde kaynaklı üçüncü alet yok ya da oyuna ters düşüyor. Yeni adım eklenince istasyonu da eklenir
   (`test/steps_test.dart` denetler). Spatüller grubu çıktı; çelik spatül uyarısı adımda.
   Kart "yeşil artış" (Tuğrul, 2026-10-30, "23"; alternatifler
   https://claude.ai/artifact/QnoM8EjaAgcKmui6NRuFb8): her istasyon tek kart, koyu başlıkta
@@ -405,7 +411,7 @@ lib/
   (`stepDuration`; liste yukarıda "Marketin istasyonları"). Cam havan ve tüp doldurma aleti
   marketten çıktı (hiçbir adımı değiştirmiyordu).
   Giderler 14 800 (aletler 9 200 + parsel 5 600); emek 11 bu toplamdan çözüldü. 2026-10-29'da
-  8 yeni alet eklendi (5 900), aletler 15 100, giderler 20 700 oldu; 2026-10-30'da parsel 2 400'e indi, giderler 17 500 oldu; emek yeniden ayarlanmadı. Para göstergesi
+  8 yeni alet eklendi (5 900), aletler 15 100, giderler 20 700 oldu; 2026-10-30'da parsel 2 400'e indi, üç makine 8 700 ekledi, giderler 26 200 oldu; emek yeniden ayarlanmadı. Para göstergesi
   Market ve Bahçe başlığında (`CoinPill`), teslim penceresinde döküm. Reklam ve bildirim henüz
   yok; acele düğmesi onay penceresiyle çalışıyor.
 - Eski deneme (Temmuz 2026, tek dosya) git geçmişinde: ilk commit `0bd231c`. 2026-10-25'te market

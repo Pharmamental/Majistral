@@ -104,6 +104,39 @@ const IKONLAR=[
   {d:rr(16,70,64,15,6),c:R.kahve},                  // taban
   {d:cap(82,50,90,30,6),c:R.kahve},                 // kol
   {d:circ(90,28,5),c:R.altin}]},                    // tutamak
+ // ===== Makineler (2026-10-30): gerçek cihazların biçiminden, oyuncak gibi değil
+ // Motorlu havan: gövdede oturan porselen havan, üstten inen el, ön panel (Retsch RM 200).
+ {grup:'Makineler',dosya:'motorlu_havan',ad:'Motorlu havan',kutu:'#CFE4F7',parts:[
+  {d:rr(72,16,14,48,5),c:R.metal},                  // kolon
+  {d:rr(34,14,52,15,6),c:R.metal},                  // kol
+  {d:cap(47,27,47,48,10),c:R.kremKoyu},             // havan eli
+  {d:'M21,48H73C73,60 62,68 47,68C32,68 21,60 21,48Z',c:R.krem}, // havan
+  {d:rr(17,43,60,8,4),c:R.krem},                    // ağız kenarı
+  {d:'M30,56C39,60 55,60 64,56',c:R.mavi,line:1},
+  {d:rr(10,62,80,24,7),c:R.ekran},                  // gövde
+  {d:rr(17,68,36,12,3),c:R.yesil,flat:1},           // süre ekranı
+  {d:circ(74,74,6),c:R.mercan,flat:1}]},            // ayar düğmesi
+ // Masaüstü homojenizatör: ayakta motor, beherin içine inen ince mil ve dişli başlık (Ultra-Turrax).
+ {grup:'Makineler',dosya:'masaustu_homojenizator',ad:'Masaüstü homojenizatör',kutu:'#FFD6C2',parts:[
+  {d:rr(72,12,9,68,3),c:R.metal},                   // dikme
+  {d:rr(12,74,74,12,5),c:R.ekran},                  // taban
+  {d:rr(22,46,40,29,6),c:R.cam},                    // beher
+  {d:rr(25,58,34,15,4),c:R.krem},                   // emülsiyon
+  {d:rr(39,36,6,30,2),c:R.metal},                   // mil
+  {d:rr(35,62,14,8,2),c:R.metal},                   // dişli başlık
+  {d:rr(24,12,36,28,8),c:R.mavi},                   // motor
+  {d:'M32,22H52M32,29H52',c:'#FFFFFF',line:1},      // soğutma yarıkları
+  {d:rr(58,20,20,9,3),c:R.kahve}]},                 // kelepçe
+ // Santrifüj karıştırıcı: cam kapağın altında eğik duran kap, önde panel (SpeedMixer).
+ {grup:'Makineler',dosya:'santrifuj_karistirici',ad:'Santrifüj karıştırıcı',kutu:'#D9D2FA',parts:[
+  {d:'M38,20L60,28L53,46L31,38Z',c:R.krem},         // eğik kap
+  {d:'M33,31L55,39L53,46L31,38Z',c:R.mavi},         // kaptaki karışım
+  {d:rr(14,40,72,44,9),c:R.mor},                    // gövde
+  {d:rr(24,50,52,18,4),c:R.ekran,flat:1},           // panel
+  {d:'M31,59H52',c:R.yesil,line:1},
+  {d:circ(66,59,5),c:R.altin,flat:1},               // ayar düğmesi
+  {d:rr(10,78,80,9,4),c:R.ekran},                   // taban
+  {d:'M18,42C18,8 82,8 82,42Z',c:R.cam,glass:1}]},  // cam kapak
  // ===== Isıtma
  {grup:'Isıtma',dosya:'ocak_su_banyosu',ad:'Ocak ve su banyosu',kutu:'#FFD6C2',parts:[
   {d:rr(38,18,20,30,5),c:R.cam},                    // beher
