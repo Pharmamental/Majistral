@@ -45,7 +45,7 @@ const List<OrderTemplate> _handwritten = [
     magistralName: '%5 Salisilik Asitli Vazelin',
     formula: 'Salisilik asitli vazelin %5',
     purpose: 'Kalınlaşmış, nasırlı deriyi yumuşatma',
-    usedFor: 'Nasır, kallus ve siğil gibi kalınlaşmış deride',
+    usedFor: 'Nasır, kallus ve siğil gibi kalınlaşmış deriyi yumuşatır.',
     base: 50,
     unit: 'g',
     amounts: [
@@ -84,7 +84,7 @@ const List<OrderTemplate> _handwritten = [
     magistralName: 'Çinko Oksit Merhemi',
     formula: 'Çinko oksit merhemi %20 (USP)',
     purpose: 'Cildi koruyan, kurutan bariyer merhem',
-    usedFor: 'Pişik, sürtünme tahrişi ve hafif deri tahrişlerinde',
+    usedFor: 'Pişikte, sürtünme tahrişinde ve hafif deri tahrişlerinde deriyi korur.',
     base: 60,
     unit: 'g',
     amounts: [
@@ -105,7 +105,7 @@ const List<OrderTemplate> _handwritten = [
     magistralName: 'Hidrofil Merhem',
     formula: 'Hidrofil merhem (USP, yağ-su krem bazı)',
     purpose: 'Suyla yıkanabilen krem tipi baz',
-    usedFor: 'Etkin maddeleri taşıyan baz olarak; suyla kolay temizlenmesi istenen kremlerde',
+    usedFor: 'Etkin maddeleri taşıyan bazdır. Suyla kolay temizlenmesi istenen kremlerde işe yarar.',
     base: 1000,
     unit: 'g',
     amounts: [
@@ -138,7 +138,7 @@ const List<OrderTemplate> _handwritten = [
     magistralName: 'Çinko Oksitli Nişasta Pudrası',
     formula: 'Talksız çinko oksitli nişasta pudrası %10',
     purpose: 'Bez bölgesini kuru tutan, talksız koruyucu pudra',
-    usedFor: 'Bebeklerde pişik ve nemli deride; yüze sürülmez',
+    usedFor: 'Bebekte pişikte ve nemli deride işe yarar. Yüze sürme.',
     base: 100,
     unit: 'g',
     amounts: [
@@ -158,7 +158,7 @@ const List<OrderTemplate> _handwritten = [
     magistralName: 'Hidroksietilselüloz Jeli %2,5',
     formula: 'Hidroksietilselüloz jeli %2,5',
     purpose: 'Serinletici, yağsız sulu jel bazı',
-    usedFor: 'Etkin madde katılacak jellerde baz olarak; yağsız ürün istenen deride',
+    usedFor: 'Etkin madde katılacak jellerin bazıdır. Yağsız ürün istenen deride işe yarar.',
     base: 100,
     unit: 'g',
     amounts: [
@@ -181,7 +181,7 @@ const List<OrderTemplate> _handwritten = [
     magistralName: 'Folik Asit Kapsülü 1 mg',
     formula: 'Folik asit kapsülü 1 mg',
     purpose: 'Folat eksikliğini gideren vitamin kapsülü',
-    usedFor: 'Folat eksikliği anemisinde ve gebelik öncesi destekte',
+    usedFor: 'Folat eksikliği anemisinde ve gebelik öncesinde destek olur.',
     base: 30,
     unit: 'kapsül',
     capsule: '3 numara',
