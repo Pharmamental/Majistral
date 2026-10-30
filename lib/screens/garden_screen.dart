@@ -254,8 +254,10 @@ Future<void> _openParcel(BuildContext context, JobStore store, int bed) {
           ),
           const SizedBox(height: AppSpace.lg),
           ChunkyButton(
-            label: '$price ile aç',
+            label: '$price',
             icon: Icons.toll_rounded,
+            price: true,
+            semanticLabel: '$price paraya aç',
             onPressed: store.coins >= price
                 ? () {
                     store.buyParcel();
