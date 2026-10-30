@@ -232,7 +232,11 @@ lib/
   ve kilit. Duvar
   ve acele sınırı vitrine göre (`JobStore.wallLimit`, `protectedRushesLeft`), cilt fanusu
   teslim emeğini artırır.
-  Parsel 3 ve 4 parayla açılır (800/1600). Kurutma askısı henüz yok. Vitrindeki fanus küçük oyun etkisi verir, aynı gruptan iki fanus
+  Parsel 3 ve 4 parayla açılır (800/1600) ve hız değil kendi işini verir (Tuğrul, 2026-10-30,
+  "Bereketli + Tohumluk"; 2 parsel günde gelen ~3 tohumu zaten karşılıyor): 3. parsel bereketli,
+  her hasat 1 çiçek daha verir (koyu humus), 4. parsel tohumluk, çiçek yerine 2 tohum verir (kumlu
+  toprak, `Garden.fertileBed`, `seedBed`). Fanusu açılabilen bitki tohumluğa ekilmez
+  (`canPlantIn`), yoksa nadir tohum çoğaltılıp satılır. Parselin adı etiketin üstünde hep yazar. Kurutma askısı henüz yok. Vitrindeki fanus küçük oyun etkisi verir, aynı gruptan iki fanus
   toplanmaz, en güçlüsü sayılır: çaylar duvar (Papatya +1, Ihlamur/Rezene +1, Mürver +2;
   ekonomi 2. turu, "önerilerle": +3 az oynayanın teslimini %34 artırıyordu), boğaz günde
   1/2/3 acelenin kaliteyi düşürmemesi (Adaçayı, Kekik/Hatmi, Gelincik; acele hakkı artırmak

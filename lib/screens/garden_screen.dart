@@ -17,7 +17,7 @@ import 'home_screen.dart';
 /// yetiştirilir, hasat edilir, vitrine konur. Başlık duvarda, parseller çitin
 /// altındaki çimende. Teslimlerin yarısı tohum getirir ([Garden]); boş parsele
 /// dokununca tohum seçilir, olgun parsele dokununca hasat (sıradan 1, orta 2,
-/// nadir 3 çiçek); 3-5 çiçek bir fanus açar.
+/// nadir 3 çiçek); 3-5 çiçek bir fanus açar. 3. parsel bereketli, 4. tohumluk.
 class GardenScreen extends StatefulWidget {
   const GardenScreen({super.key});
 
@@ -68,12 +68,13 @@ class _GardenScreenState extends State<GardenScreen> with SecondTick {
                           builder: (c) => GardenBed(
                             number: i + 1,
                             open: false,
-                            label: 'Parsel ${i + 1}, ${store.nextParcelPrice} paraya açılır',
+                            kind: _bedName(i),
+                            label: '${store.nextParcelPrice} paraya açılır',
                             onTap: () => _openParcel(c, store, i),
                           ),
                         )
                       else
-                        GardenBed(number: i + 1, open: false),
+                        GardenBed(number: i + 1, open: false, kind: _bedName(i), label: 'Kilitli'),
                   ],
                 ),
               ],
@@ -87,7 +88,14 @@ class _GardenScreenState extends State<GardenScreen> with SecondTick {
   Widget _bed(BuildContext context, JobStore store, int i, Bed? bed, DateTime now) {
     if (bed == null) {
       return Builder(
-        builder: (c) => GardenBed(number: i + 1, open: true, onTap: () => _openSeedPicker(c, store, i)),
+        builder: (c) => GardenBed(
+          number: i + 1,
+          open: true,
+          kind: _bedName(i),
+          soil: _soilOf(i),
+          label: _bedName(i) == null ? null : 'Boş, tohum ek',
+          onTap: () => _openSeedPicker(c, store, i),
+        ),
       );
     }
     final plant = driedPlantNamed(bed.plant)!;
@@ -96,6 +104,8 @@ class _GardenScreenState extends State<GardenScreen> with SecondTick {
       builder: (c) => GardenBed(
         number: i + 1,
         open: true,
+        kind: _bedName(i),
+        soil: _soilOf(i),
         plant: plant.name,
         progress: bed.progressAt(now),
         color: Color(plant.color),
@@ -108,6 +118,19 @@ class _GardenScreenState extends State<GardenScreen> with SecondTick {
     );
   }
 }
+
+/// Parayla açılan parselin adı; öbürlerinin özel adı yok.
+String? _bedName(int bed) => switch (bed) {
+      Garden.fertileBed => 'Bereketli parsel',
+      Garden.seedBed => 'Tohumluk parsel',
+      _ => null,
+    };
+
+Color _soilOf(int bed) => switch (bed) {
+      Garden.fertileBed => AppColors.gardenSoilRich,
+      Garden.seedBed => AppColors.gardenSoilSeed,
+      _ => AppColors.gardenSoil,
+    };
 
 /// Parseller ikişer ikişer; her parselin altında etiketi olduğu için sabit
 /// oranlı ızgara yerine satır.
@@ -221,10 +244,12 @@ Future<void> _openParcel(BuildContext context, JobStore store, int bed) {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text('Parsel ${bed + 1}', style: AppText.title(size: 20)),
+          Text(_bedName(bed) ?? 'Parsel ${bed + 1}', style: AppText.title(size: 20)),
           const SizedBox(height: AppSpace.xs),
           Text(
-            'Bu parseli açarsan aynı anda bir bitki daha yetiştirebilirsin. Kasanda ${store.coins} para var.',
+            '${bed == Garden.seedBed ? 'Buradaki bitki çiçek yerine 2 tohum verir. Böylece seyrek gelen '
+                'tohumu çoğaltırsın. Fanusunu açabildiğin bitki buraya ekilmez.' : 'Buradaki her hasat '
+                '1 çiçek daha verir.'} Kasanda ${store.coins} para var.',
             style: AppText.body(size: 14, color: AppColors.inkMuted),
           ),
           const SizedBox(height: AppSpace.lg),
@@ -303,7 +328,12 @@ class _PlantInfo extends StatelessWidget {
 
 /// Boş parsel: eldeki tohumlardan birini seç, ek.
 Future<void> _openSeedPicker(BuildContext context, JobStore store, int bed) {
-  final seeds = [for (final p in driedPlants) if ((store.garden.seeds[p.name] ?? 0) > 0) p];
+  final garden = store.garden;
+  final seeds = [
+    for (final p in driedPlants)
+      if ((garden.seeds[p.name] ?? 0) > 0 && garden.canPlantIn(bed, p.name)) p,
+  ];
+  final hidden = bed == Garden.seedBed && garden.seeds.isNotEmpty;
   return openGrowing<void>(
     context,
     from: rectOf(context),
@@ -317,8 +347,12 @@ Future<void> _openSeedPicker(BuildContext context, JobStore store, int bed) {
           const SizedBox(height: AppSpace.xs),
           Text(
             seeds.isEmpty
-                ? 'Hiç tohumun yok. Reçete teslim ettikçe tohum kazanırsın.'
-                : 'Bitkiler oyunda gerçek hayattan çok daha hızlı büyür.',
+                ? hidden
+                    ? 'Fanusunu açabildiğin bitki buraya ekilmez. Başka bir tohum gelince dene.'
+                    : 'Hiç tohumun yok. Reçete teslim ettikçe tohum kazanırsın.'
+                : bed == Garden.seedBed
+                    ? 'Buradaki bitki çiçek yerine 2 tohum verir.'
+                    : 'Bitkiler oyunda gerçek hayattan çok daha hızlı büyür.',
             style: AppText.body(size: 14, color: AppColors.inkMuted),
           ),
           const SizedBox(height: AppSpace.md),
@@ -347,7 +381,7 @@ Future<void> _openSeedPicker(BuildContext context, JobStore store, int bed) {
                             plant: p,
                             trailing: '${store.garden.seeds[p.name]} tohumun var. '
                                 '${formatRemaining(p.growTime)} sonra olgunlaşır, '
-                                '${p.harvestYield} çiçek verir.',
+                                '${bed == Garden.seedBed ? '${Garden.seedBedYield} tohum' : '${garden.flowersFrom(bed, p)} çiçek'} verir.',
                           ),
                         ),
                       ),
@@ -415,7 +449,9 @@ Future<void> _harvest(BuildContext context, JobStore store, int bed) async {
   final name = await store.harvest(bed);
   if (name == null || !navigator.mounted) return;
   final plant = driedPlantNamed(name)!;
-  final ready = store.garden.canShow(name);
+  final seedBed = bed == Garden.seedBed;
+  final picked = store.garden.flowersFrom(bed, plant);
+  final ready = !seedBed && store.garden.canShow(name);
   await openGrowing<void>(
     navigator.context,
     from: from,
@@ -428,13 +464,19 @@ Future<void> _harvest(BuildContext context, JobStore store, int bed) async {
           Image.asset(plant.imagePath, width: 96, height: 96),
           const SizedBox(height: AppSpace.md),
           Text(
-            plant.harvestYield == 1 ? '${plant.name} çiçeğini kuruttun' : '${plant.harvestYield} ${plant.name} çiçeği kuruttun',
+            seedBed
+                ? '${Garden.seedBedYield} ${plant.name} tohumu topladın'
+                : picked == 1
+                    ? '${plant.name} çiçeğini kuruttun'
+                    : '$picked ${plant.name} çiçeği kuruttun',
             textAlign: TextAlign.center,
             style: AppText.title(size: 20),
           ),
           const SizedBox(height: AppSpace.xs),
           Text(
-            _flowerProgress(store.garden, plant.name),
+            seedBed
+                ? 'Elinde ${store.garden.seeds[name]} ${plant.name} tohumu var.'
+                : _flowerProgress(store.garden, plant.name),
             textAlign: TextAlign.center,
             style: AppText.body(size: 14, color: AppColors.inkMuted),
           ),

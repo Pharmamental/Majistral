@@ -54,6 +54,16 @@ class Garden {
   static const openBeds = 2;
   static const allBeds = 4;
 
+  /// Parayla açılan parseller hız değil, kendi işini verir (Tuğrul, 2026-10-30,
+  /// "Bereketli + Tohumluk"): bereketli toprak her hasatta 1 çiçek daha verir,
+  /// tohumluk çiçek yerine 2 tohum verir. Darboğaz nadir tohumun şansı olduğu için
+  /// tohumluk bütün vitrini 50 günden 42 güne, az oynayanda 83'ten 62'ye indirir.
+  static const fertileBed = 2;
+  static const seedBed = 3;
+
+  /// Tohumluktan alınan tohum.
+  static const seedBedYield = 2;
+
   /// Teslimin tohum getirme şansı.
   static const dropChance = 0.5;
 
@@ -105,24 +115,37 @@ class Garden {
     return true;
   }
 
+  /// Tohumluğa ekilebilir mi: fanusu açılabilen bitki çoğaltılmaz, yoksa oyuncu
+  /// nadir tohumu sonsuza dek çoğaltıp çiçek satarak para basar.
+  bool canPlantIn(int bed, String plant) => bed != seedBed || !canShow(plant);
+
+  /// [bed]. parselde [plant]'ın hasadının verdiği çiçek; tohumlukta sıfır.
+  int flowersFrom(int bed, DriedPlant plant) =>
+      bed == seedBed ? 0 : plant.harvestYield + (bed == fertileBed ? 1 : 0);
+
   /// [bed]. parsele [plant] tohumunu eker.
   bool plant(int bed, String plant, DateTime now) {
     final p = driedPlantNamed(plant);
-    if (p == null || beds[bed] != null || (seeds[plant] ?? 0) < 1) return false;
+    if (p == null || beds[bed] != null || (seeds[plant] ?? 0) < 1 || !canPlantIn(bed, plant)) return false;
     seeds[plant] = seeds[plant]! - 1;
     if (seeds[plant] == 0) seeds.remove(plant);
     beds[bed] = Bed(plant: plant, plantedAt: now, readyAt: now.add(p.growTime));
     return true;
   }
 
-  /// Olgun bitkiyi hasat eder: kademesi kadar çiçek verir. Olgun değilse null.
+  /// Olgun bitkiyi hasat eder: kademesi kadar çiçek, tohumlukta 2 tohum verir.
+  /// Olgun değilse null.
   String? harvest(int bed, DateTime now) {
     final b = beds[bed];
     if (b == null || !b.readyBy(now)) return null;
     beds[bed] = null;
-    final yield_ = driedPlantNamed(b.plant)?.harvestYield ?? 1;
-    flowers[b.plant] = (flowers[b.plant] ?? 0) + yield_;
-    harvested += yield_;
+    if (bed == seedBed) {
+      seeds[b.plant] = (seeds[b.plant] ?? 0) + seedBedYield;
+      return b.plant;
+    }
+    final picked = flowersFrom(bed, driedPlantNamed(b.plant)!);
+    flowers[b.plant] = (flowers[b.plant] ?? 0) + picked;
+    harvested += picked;
     return b.plant;
   }
 

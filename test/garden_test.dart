@@ -117,6 +117,32 @@ void main() {
     expect(garden.flowers['Ihlamur'], 1);
   });
 
+  test('bereketli parsel 1 çiçek fazla, tohumluk çiçek yerine 2 tohum verir; açılabilen fanus çoğaltılmaz', () {
+    final at = DateTime(2026, 10, 30, 9);
+    final garden = Garden(
+      seeds: {'Papatya': 2, 'Mürver': 1, 'Nane': 1},
+      beds: List<Bed?>.filled(Garden.allBeds, null, growable: true),
+      grown: {'Nane'},
+    );
+    final papatya = driedPlantNamed('Papatya')!;
+    expect(garden.plant(Garden.fertileBed, 'Papatya', at), isTrue);
+    garden.harvest(Garden.fertileBed, at.add(papatya.growTime));
+    expect(garden.flowers['Papatya'], papatya.harvestYield + 1);
+    expect(garden.harvested, papatya.harvestYield + 1);
+
+    expect(garden.plant(Garden.seedBed, 'Nane', at), isFalse, reason: 'fanusu açık');
+    garden.flowers['Papatya'] = papatya.fanusCost;
+    expect(garden.plant(Garden.seedBed, 'Papatya', at), isFalse, reason: 'fanusu açılabilir');
+    garden.flowers.clear();
+    final harvested = garden.harvested;
+    expect(garden.plant(Garden.seedBed, 'Papatya', at), isTrue);
+    expect(garden.seeds['Papatya'], isNull);
+    garden.harvest(Garden.seedBed, at.add(papatya.growTime));
+    expect(garden.seeds['Papatya'], Garden.seedBedYield);
+    expect(garden.flowers['Papatya'], isNull);
+    expect(garden.harvested, harvested, reason: 'tohum çiçek sayılmaz');
+  });
+
   test('eski kayıt (gübre, nadir sayacı) okunur, o alanlar atlanır', () {
     final old = Garden.fromJson({
       'seeds': {'Papatya': 1},

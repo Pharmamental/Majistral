@@ -40,6 +40,8 @@ class GardenBed extends StatelessWidget {
     required this.number,
     required this.open,
     this.label,
+    this.kind,
+    this.soil = AppColors.gardenSoil,
     this.plant,
     this.progress,
     this.color,
@@ -52,6 +54,11 @@ class GardenBed extends StatelessWidget {
 
   /// Etikette yazacak durum ("Papatya · 1 sa 20 dk"); boşsa parselin adı.
   final String? label;
+
+  /// Parselin özel adı ("Bereketli parsel"); etiketin üstünde hep yazar, çünkü
+  /// durum yazısı parselin ne olduğunu söylemez.
+  final String? kind;
+  final Color soil;
 
   /// Ekili bitkinin adı; çiçeğin biçimi buna göre ([bloomFormOf]).
   final String? plant;
@@ -69,7 +76,7 @@ class GardenBed extends StatelessWidget {
     final text = label ?? (open ? 'Parsel $number boş, tohum ek' : 'Parsel $number kilitli');
     return Semantics(
       button: onTap != null,
-      label: text,
+      label: kind == null ? text : '$kind. $text',
       excludeSemantics: true,
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
@@ -81,7 +88,7 @@ class GardenBed extends StatelessWidget {
               aspectRatio: 1.1,
               child: CustomPaint(
                 painter: open
-                    ? _BedPainter(progress: progress, color: color, plant: plant)
+                    ? _BedPainter(progress: progress, color: color, plant: plant, soil: soil)
                     : const _LockedBedPainter(),
                 child: open
                     ? null
@@ -94,7 +101,7 @@ class GardenBed extends StatelessWidget {
               ),
             ),
             const SizedBox(height: AppSpace.sm),
-            Center(child: _Tag(text: text, ready: ready)),
+            Center(child: _Tag(text: text, kind: kind, ready: ready)),
           ],
         ),
       ),
@@ -105,9 +112,10 @@ class GardenBed extends StatelessWidget {
 /// Parselin önüne iliştirilmiş küçük kâğıt etiket. Olgun bitkide onay işareti
 /// ve yeşil yazı (durum yalnız renkle anlatılmaz).
 class _Tag extends StatelessWidget {
-  const _Tag({required this.text, this.ready = false});
+  const _Tag({required this.text, this.kind, this.ready = false});
 
   final String text;
+  final String? kind;
   final bool ready;
 
   @override
@@ -119,20 +127,27 @@ class _Tag extends StatelessWidget {
         borderRadius: BorderRadius.circular(AppRadius.paperInner),
         boxShadow: const [BoxShadow(color: Color(0x33000000), blurRadius: 2, offset: Offset(0, 1))],
       ),
-      child: Row(
+      child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (ready) ...[
-            const Icon(Icons.check_circle_rounded, size: 14, color: AppColors.hazirText),
-            const SizedBox(width: AppSpace.xs),
-          ],
-          Flexible(
-            child: Text(
-              text,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: AppText.label(size: 12, color: ready ? AppColors.hazirText : AppColors.ink),
-            ),
+          if (kind != null) Text(kind!, maxLines: 1, style: AppText.title(size: 12)),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (ready) ...[
+                const Icon(Icons.check_circle_rounded, size: 14, color: AppColors.hazirText),
+                const SizedBox(width: AppSpace.xs),
+              ],
+              Flexible(
+                child: Text(
+                  text,
+                  maxLines: 2,
+                  textAlign: TextAlign.center,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppText.label(size: 12, color: ready ? AppColors.hazirText : AppColors.ink),
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -242,11 +257,12 @@ GrowthStage growthStageAt(double p) => p >= 1
 /// karıkta üç bitki evre evre büyür ([progress]); olgunlaşınca bitkiye özgü
 /// biçimde çiçek açar ([color], [plant]).
 class _BedPainter extends CustomPainter {
-  const _BedPainter({this.progress, this.color, this.plant});
+  const _BedPainter({this.progress, this.color, this.plant, required this.soil});
 
   final double? progress;
   final Color? color;
   final String? plant;
+  final Color soil;
 
   static const _leaf = Color(0xFF7FA05A),
       _leafDark = Color(0xFF55723A),
@@ -438,7 +454,7 @@ class _BedPainter extends CustomPainter {
     canvas.drawRRect(RRect.fromRectAndRadius(outer, r), Paint()..color = AppColors.counterLip);
     // Toprak.
     final soil = outer.deflate(frame);
-    canvas.drawRect(soil, Paint()..color = AppColors.gardenSoil);
+    canvas.drawRect(soil, Paint()..color = this.soil);
     // Karıklar: koyu oluk, hemen üstünde açık sırt.
     for (var i = 1; i <= 4; i++) {
       final y = soil.top + soil.height * i / 5;
@@ -500,7 +516,10 @@ class _BedPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(_BedPainter oldDelegate) =>
-      oldDelegate.progress != progress || oldDelegate.color != color || oldDelegate.plant != plant;
+      oldDelegate.progress != progress ||
+      oldDelegate.color != color ||
+      oldDelegate.plant != plant ||
+      oldDelegate.soil != soil;
 }
 
 /// Kilitli parsel: çimende kesik çizgili silik çerçeve (duvardaki boş reçete

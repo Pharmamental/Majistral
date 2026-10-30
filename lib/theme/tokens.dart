@@ -75,6 +75,8 @@ class AppColors {
   static const Color gardenSoil = Color(0xFF5E4130);
   static const Color gardenSoilDark = Color(0xFF3E2A1E); // karık
   static const Color gardenSoilLight = Color(0xFF7E5C45); // karık sırtı
+  static const Color gardenSoilRich = Color(0xFF3F2A1C); // bereketli parsel, koyu humus
+  static const Color gardenSoilSeed = Color(0xFF8A6A4C); // tohumluk parsel, kumlu toprak
   static const Color fence = awningLight;
   static const Color fenceShade = Color(0xFFD8CFBF);
 
