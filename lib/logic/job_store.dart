@@ -379,9 +379,8 @@ class JobStore extends ChangeNotifier {
     return Duration(seconds: (step.minutes * 60 * (100 - faster) / 100).round());
   }
 
-  /// [bed]. parsele tohum eker; vitrindeki ferahlatıcı fanus büyümeyi hızlandırır.
-  Future<bool> plant(int bed, String plant) =>
-      _gardenChange(() => _garden.plant(bed, plant, now(), speedPercent: showcaseBonus(PlantGroup.ferah)));
+  /// [bed]. parsele tohum eker.
+  Future<bool> plant(int bed, String plant) => _gardenChange(() => _garden.plant(bed, plant, now()));
 
   /// Olgun bitkiyi hasat eder (bir çiçek); adı döner, olgun değilse null.
   Future<String?> harvest(int bed) async {
@@ -635,7 +634,7 @@ class JobStore extends ChangeNotifier {
     ));
     await _prefs.setString(_deliveriesKey, jsonEncode([for (final d in _deliveries) d.toJson()]));
     // Teslimlerin yarısı bahçeye bir tohum getirir.
-    _lastDrop = _garden.dropSeed(_random);
+    _lastDrop = _garden.dropSeed(_random, bonusPercent: showcaseBonus(PlantGroup.ferah));
     await _prefs.setString(_gardenKey, jsonEncode(_garden.toJson()));
     await _save();
     notifyListeners();

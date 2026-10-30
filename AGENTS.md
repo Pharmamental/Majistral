@@ -234,10 +234,11 @@ lib/
   ekonomi 2. turu, "önerilerle": +3 az oynayanın teslimini %34 artırıyordu), boğaz günde
   1/2/3 acelenin kaliteyi düşürmemesi (Adaçayı, Kekik/Hatmi, Gelincik; acele hakkı artırmak
   para kaybettirdiği için değersizdi), cilt teslim emeği (Aynısefa
-  %5, Lavanta/Defne %10, Kantaron %15), ferahlatıcı bahçe hızı (Nane %10, Biberiye/Okaliptüs
-  %20, Ekinezya %30). Etki ekranda etiketsiz, düz cümleyle yazar ("Duvarda 1 reçete daha
-  birikir", "Günün ilk acelesi kaliteyi düşürmez", "Teslimde emek parası %10 artar",
-  "Bahçedeki bitkiler %20 daha hızlı büyür"); sahte farmakoloji kurulmaz.
+  %5, Lavanta/Defne %10, Kantaron %15), ferahlatıcı teslimin tohum şansı (Nane %55,
+  Biberiye/Okaliptüs %60, Ekinezya %65; Tuğrul, 2026-10-30, "okey A": bahçe hızı boşa
+  gidiyordu, darboğaz parsel değil tohum; bahçe hızı kalktı). Etki ekranda etiketsiz, düz
+  cümleyle yazar ("Duvarda 1 reçete daha birikir", "Günün ilk acelesi kaliteyi düşürmez",
+  "Teslimde emek parası %10 artar", "Teslimlerin %60'ı tohum getirir"); sahte farmakoloji kurulmaz.
   Market sekmeleri dört (Hızlandırma, İstasyonlar, Kimyasallar, Çiçekler); `PillTabs` yazısı
   yalnız sığmadığında küçülür (`test/market_screen_test.dart`, 360 dp).
   Formüller sekmesi kaldırıldı (ekranı git geçmişinde); formül verisi duruyor

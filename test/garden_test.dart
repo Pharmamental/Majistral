@@ -38,7 +38,16 @@ void main() {
     expect(driedPlantNamed('Adaçayı')!.effectText, 'Günün ilk acelesi kaliteyi düşürmez');
     expect(driedPlantNamed('Gelincik')!.effectText, 'Günün ilk 3 acelesi kaliteyi düşürmez');
     expect(driedPlantNamed('Sarı kantaron')!.effectText, 'Teslimde emek parası %15 artar');
-    expect(driedPlantNamed('Ekinezya')!.effectText, 'Bahçedeki bitkiler %30 daha hızlı büyür');
+    expect(driedPlantNamed('Nane')!.effectText, "Teslimlerin %55'i tohum getirir");
+    expect(driedPlantNamed('Biberiye')!.effectText, "Teslimlerin %60'ı tohum getirir");
+    expect(driedPlantNamed('Ekinezya')!.effectText, "Teslimlerin %65'i tohum getirir");
+  });
+
+  // Tuğrul, 2026-10-30, "okey A": ferahlatıcı fanus tohum şansını artırır.
+  test('ferahlatıcı fanusla tohum şansı yükselir', () {
+    expect(Garden().dropSeed(_Fixed(0.6)), isNull);
+    expect(Garden().dropSeed(_Fixed(0.6), bonusPercent: 15), isNotNull);
+    expect(Garden().dropSeed(_Fixed(0.66), bonusPercent: 15), isNull);
   });
 
   // Tuğrul, 2026-10-29: teslimlerin %50'si tohum; ağırlıklar tür başına sık 60,
@@ -86,9 +95,8 @@ void main() {
     expect(garden.plant(0, 'Papatya', at), isFalse, reason: 'parsel dolu');
     expect(garden.beds[0]!.readyAt, at.add(const Duration(hours: 6)));
     expect(garden.harvest(0, at.add(const Duration(hours: 1))), isNull, reason: 'olgun değil');
-    // %30 bahçe hızıyla Papatya 2 saat yerine 1 sa 24 dk.
-    expect(garden.plant(1, 'Papatya', at, speedPercent: 30), isTrue);
-    expect(garden.beds[1]!.readyAt, at.add(const Duration(hours: 1, minutes: 24)));
+    expect(garden.plant(1, 'Papatya', at), isTrue);
+    expect(garden.beds[1]!.readyAt, at.add(const Duration(hours: 2)));
 
     final copy = Garden.fromJson(jsonDecode(jsonEncode(garden.toJson())) as Map<String, dynamic>);
     expect(copy.beds[0]!.readyAt, garden.beds[0]!.readyAt);

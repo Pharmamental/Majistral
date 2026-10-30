@@ -69,8 +69,9 @@ class Garden {
   final Set<String> grown;
 
   /// Teslimde zar atar: yarı ihtimalle bir tohum düşer, adı döner; yoksa null.
-  String? dropSeed(math.Random rnd) {
-    if (rnd.nextDouble() >= dropChance) return null;
+  /// Vitrindeki ferahlatıcı fanus şansa [bonusPercent] puan ekler.
+  String? dropSeed(math.Random rnd, {int bonusPercent = 0}) {
+    if (rnd.nextDouble() >= dropChance + bonusPercent / 100) return null;
     final total = driedPlants.fold(0.0, (sum, p) => sum + tierWeights[p.tier]!);
     var roll = rnd.nextDouble() * total;
     var plant = driedPlants.last.name;
@@ -100,14 +101,13 @@ class Garden {
     return true;
   }
 
-  /// [bed]. parsele [plant] tohumunu eker; bahçe hızı ([speedPercent]) süreyi kısaltır.
-  bool plant(int bed, String plant, DateTime now, {int speedPercent = 0}) {
+  /// [bed]. parsele [plant] tohumunu eker.
+  bool plant(int bed, String plant, DateTime now) {
     final p = driedPlantNamed(plant);
     if (p == null || beds[bed] != null || (seeds[plant] ?? 0) < 1) return false;
     seeds[plant] = seeds[plant]! - 1;
     if (seeds[plant] == 0) seeds.remove(plant);
-    final grow = p.growTime * (1 - speedPercent / 100);
-    beds[bed] = Bed(plant: plant, plantedAt: now, readyAt: now.add(grow));
+    beds[bed] = Bed(plant: plant, plantedAt: now, readyAt: now.add(p.growTime));
     return true;
   }
 

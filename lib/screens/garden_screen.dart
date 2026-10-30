@@ -303,7 +303,6 @@ class _PlantInfo extends StatelessWidget {
 
 /// Boş parsel: eldeki tohumlardan birini seç, ek.
 Future<void> _openSeedPicker(BuildContext context, JobStore store, int bed) {
-  final speed = store.showcaseBonus(PlantGroup.ferah);
   final seeds = [for (final p in driedPlants) if ((store.garden.seeds[p.name] ?? 0) > 0) p];
   return openGrowing<void>(
     context,
@@ -347,7 +346,7 @@ Future<void> _openSeedPicker(BuildContext context, JobStore store, int bed) {
                           child: _PlantInfo(
                             plant: p,
                             trailing: '${store.garden.seeds[p.name]} tohumun var. '
-                                '${formatRemaining(p.growTime * (1 - speed / 100))} sonra olgunlaşır, '
+                                '${formatRemaining(p.growTime)} sonra olgunlaşır, '
                                 '${p.harvestYield} çiçek verir.',
                           ),
                         ),
