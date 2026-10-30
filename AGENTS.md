@@ -125,11 +125,11 @@ lib/
   hızlandırır."). `ShopItem.faster` hep basit alete göredir. Eritme, soğutma, çözme, levigasyon,
   hacme tamamlama, elek ve kapsülde kaynaklı üçüncü alet yok ya da oyuna ters düşüyor. Yeni adım eklenince istasyonu da eklenir
   (`test/steps_test.dart` denetler). Spatüller grubu çıktı; çelik spatül uyarısı adımda.
-  Kart "yeşil artış" (Tuğrul, 2026-10-30, "23"; alternatifler
-  https://claude.ai/artifact/QnoM8EjaAgcKmui6NRuFb8): her istasyon tek kart, koyu başlıkta
-  "Ezme için Wedgwood havan", altında aletin büyük ikonu ve hız çubuğu (mavi bugünkü hız, yeşil
-  aletin katacağı hız; boy gerçek hız farkından, `_SpeedBar`), "%30 daha hızlı", en altta
-  "1800 ile al" ya da "Elinde" (`StationSection`). Alınınca çubuk baştan sona yeşil. Süre ("4 dk 30 sn sürer"),
+  Kart "yıldızlı aşama" (Tuğrul, 2026-10-30, "27", yeşil artıştan döndü; alternatifler
+  https://claude.ai/artifact/QnoM8EjaAgcKmui6NRuFb8): her istasyon tek kart, ortada adımın adı,
+  altında her alete bir yıldız (dolu elde, kesik kobalt sıradaki, silik sonraki; `_StageStars`),
+  aletin büyük ikonu, adı, "%30 daha hızlı", en altta "1800 ile al" ya da "Elinde"
+  (`StationSection`). Yıldızın ne verdiği yazmaz ("İkinci yıldızı bu alet verir" kalktı). Süre ("4 dk 30 sn sürer"),
   sağ üstte yüzde çipi ve "… para daha gerek" yazısı yok; para yetmezse düğme yalnız kapalı.
 - Adımlar gerçek teknikler (Tuğrul, 2026-10-28, "asıl önemlileri koy"): kontrol, etiket ve
   ambalaj adım değil, laboratuvarda ambalaj aleti durmaz (markette Ambalaj grubu 2026-10-29'da

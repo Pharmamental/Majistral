@@ -14,9 +14,9 @@ import 'test_fonts.dart';
 void main() {
   setUpAll(loadAppFonts);
 
-  // Tuğrul, 2026-10-30: istasyon kartı yeşil artış; süre değil "%30 daha hızlı",
+  // Tuğrul, 2026-10-30: istasyon kartı yıldızlı aşama; süre değil "%30 daha hızlı",
   // "para gerek" yazısı ve sağ üstte yüzde çipi yok.
-  testWidgets('istasyon kartı yeşil artış: alınca kart "Elinde" olur', (tester) async {
+  testWidgets('istasyon kartı yıldızlı aşama: alınca sıradaki gelir, son alet "Elinde" olur', (tester) async {
     tester.view.physicalSize = const Size(1080, 2400);
     tester.view.devicePixelRatio = 3;
     addTearDown(tester.view.reset);
@@ -28,8 +28,10 @@ void main() {
     await tester.tap(find.text('Market'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Ezme için Wedgwood havan'), findsOneWidget);
-    expect(find.text('Hazırlama hızı'), findsWidgets);
+    expect(find.text('Ezme'), findsOneWidget);
+    expect(find.text('Wedgwood havan'), findsOneWidget);
+    expect(find.bySemanticsLabel('3 aşamanın 1 tanesi tamam'), findsWidgets);
+    expect(find.textContaining('yıldızı bu alet'), findsNothing);
     expect(find.text('%30 daha hızlı'), findsWidgets);
     expect(find.textContaining('sürer'), findsNothing);
     expect(find.textContaining('para daha gerek'), findsNothing);
@@ -38,7 +40,8 @@ void main() {
     await tester.pumpAndSettle();
     expect(store.coins, 1400);
     expect(find.text('900 ile al'), findsNothing);
-    expect(find.text('Ezme için Motorlu havan'), findsOneWidget, reason: 'sıradaki kademe gelir');
+    expect(find.text('Motorlu havan'), findsOneWidget, reason: 'sıradaki kademe gelir');
+    expect(find.bySemanticsLabel('3 aşamanın 2 tanesi tamam'), findsWidgets);
     expect(find.text('1400 ile al'), findsOneWidget);
     await tester.tap(find.text('1400 ile al'));
     await tester.pumpAndSettle();
@@ -63,7 +66,7 @@ void main() {
     await tester.pumpWidget(MajistralApp(store: store));
     await tester.tap(find.text('Market'));
     await tester.pumpAndSettle();
-    expect(find.text('Geometrik seyreltme için Santrifüj karıştırıcı'), findsOneWidget);
+    expect(find.text('Santrifüj karıştırıcı'), findsWidgets);
     expect(find.text('Bu makine 3 adımı birden hızlandırır.'), findsWidgets);
     expect(find.textContaining('Unguator'), findsNothing, reason: 'Unguator artık sorulmaz');
     expect(tester.takeException(), isNull);

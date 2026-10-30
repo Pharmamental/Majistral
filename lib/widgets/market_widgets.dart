@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
 import '../data/stations.dart';
@@ -11,11 +13,11 @@ import 'paper_tape.dart';
 // Satın alma (2026-10-29): aletler ve kimyasal paketleri kasadaki parayla
 // alınır (data/economy.dart). Reklam düğmesi henüz bağlı değil.
 
-/// Bir istasyon = bir laboratuvar adımı. Yeşil artış (Tuğrul, 2026-10-30, "23";
-/// alternatifler https://claude.ai/artifact/QnoM8EjaAgcKmui6NRuFb8): koyu başlıkta
-/// adım ve sıradaki alet, altında aletin büyük ikonu ve hız çubuğu. Mavi bugünkü hız,
-/// yeşil aletin katacağı hız; alınınca çubuk baştan sona yeşil olur. En altta aletin
-/// düğmesi ya da "Elinde". Süre, kısalma çipi ve "para gerek" yazısı yok (Tuğrul).
+/// Bir istasyon = bir laboratuvar adımı. Yıldızlı aşama (Tuğrul, 2026-10-30, "27";
+/// alternatifler https://claude.ai/artifact/QnoM8EjaAgcKmui6NRuFb8): ortada adımın adı,
+/// altında aşama yıldızları (dolu elde, kesik kobalt sıradaki, silik sonraki), aletin
+/// büyük ikonu, adı ve hızı. En altta aletin düğmesi ya da "Elinde". Süre, kısalma
+/// çipi ve "para gerek" yazısı yok (Tuğrul).
 class StationSection extends StatelessWidget {
   const StationSection({super.key, required this.station});
 
@@ -33,7 +35,7 @@ class StationSection extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: AppSpace.lg),
       child: Container(
-        clipBehavior: Clip.antiAlias,
+        padding: const EdgeInsets.all(AppSpace.lg),
         decoration: BoxDecoration(
           color: AppColors.surface,
           borderRadius: BorderRadius.circular(AppRadius.paper),
@@ -42,80 +44,62 @@ class StationSection extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Container(
-              color: AppColors.ink,
-              padding: const EdgeInsets.symmetric(horizontal: AppSpace.lg, vertical: AppSpace.sm),
-              child: Text(
-                '${station.name} için ${tool.name}',
-                style: AppText.title(size: 17, color: Colors.white),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(AppSpace.lg),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Row(
+            Text(station.name, textAlign: TextAlign.center, style: AppText.title(size: 20)),
+            const SizedBox(height: AppSpace.sm),
+            _StageStars(total: tiers.length, reached: have + 1),
+            const SizedBox(height: AppSpace.sm),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox.square(
+                  dimension: 100,
+                  child: tool.imagePath != null
+                      ? Image.asset(tool.imagePath!)
+                      : Icon(tool.icon, color: AppColors.inkMuted, size: 56),
+                ),
+                const SizedBox(width: AppSpace.md),
+                Flexible(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SizedBox.square(
-                        dimension: 104,
-                        child: tool.imagePath != null
-                            ? Image.asset(tool.imagePath!)
-                            : Icon(tool.icon, color: AppColors.inkMuted, size: 56),
-                      ),
-                      const SizedBox(width: AppSpace.md),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Hazırlama hızı', style: AppText.label(size: 14, color: AppColors.ink)),
-                            const SizedBox(height: AppSpace.xs),
-                            _SpeedBar(now: tiers[have].faster, faster: tool.faster, owned: next == null),
-                            if (tool.faster > 0) ...[
-                              const SizedBox(height: AppSpace.xs),
-                              Text(
-                                '%${tool.faster} daha hızlı',
-                                style: AppText.label(size: 14, color: AppColors.successDark),
-                              ),
-                            ],
-                            if (shared > 1) ...[
-                              const SizedBox(height: AppSpace.xs),
-                              Text('Bu makine $shared adımı birden hızlandırır.', style: AppText.label(size: 12)),
-                            ],
-                          ],
+                      Text(tool.name, style: AppText.title(size: 16)),
+                      if (tool.faster > 0)
+                        Text(
+                          '%${tool.faster} daha hızlı',
+                          style: AppText.label(size: 14, color: AppColors.accentText),
                         ),
-                      ),
+                      if (shared > 1) Text('Bu makine $shared adımı birden hızlandırır.', style: AppText.label(size: 12)),
                     ],
                   ),
-                  const SizedBox(height: AppSpace.md),
-                  if (next == null)
-                    Container(
-                      height: 44,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: AppColors.successSoft,
-                        borderRadius: BorderRadius.circular(AppRadius.pill),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(Icons.check_rounded, size: 18, color: AppColors.successDark),
-                          const SizedBox(width: AppSpace.xs),
-                          Text('Elinde', style: AppText.label(size: 15, color: AppColors.successDark)),
-                        ],
-                      ),
-                    )
-                  else
-                    ChunkyButton(
-                      compact: true,
-                      label: '${next.price} ile al',
-                      icon: Icons.toll_rounded,
-                      // Para yetmiyorsa düğme kapalı (2026-10-29).
-                      onPressed: store.coins >= next.price ? () => store.buyTool(next) : null,
-                    ),
-                ],
-              ),
+                ),
+              ],
             ),
+            const SizedBox(height: AppSpace.sm),
+            if (next == null)
+              Container(
+                height: 44,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: AppColors.successSoft,
+                  borderRadius: BorderRadius.circular(AppRadius.pill),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.check_rounded, size: 18, color: AppColors.successDark),
+                    const SizedBox(width: AppSpace.xs),
+                    Text('Elinde', style: AppText.label(size: 15, color: AppColors.successDark)),
+                  ],
+                ),
+              )
+            else
+              ChunkyButton(
+                compact: true,
+                label: '${next.price} ile al',
+                icon: Icons.toll_rounded,
+                // Para yetmiyorsa düğme kapalı (2026-10-29).
+                onPressed: store.coins >= next.price ? () => store.buyTool(next) : null,
+              ),
           ],
         ),
       ),
@@ -123,49 +107,90 @@ class StationSection extends StatelessWidget {
   }
 }
 
-/// Hız çubuğu: çubuğun boyu gerçek hız farkını gösterir. %30 kısalan adım 1,43
-/// kat, %50 kısalan 2 kat hızlıdır; en hızlı alet çubuğun çoğunu doldurur.
-class _SpeedBar extends StatelessWidget {
-  const _SpeedBar({required this.now, required this.faster, required this.owned});
+/// Aşama yıldızları: her alet bir yıldız. Durum yalnız renkle anlatılmaz; sıradaki
+/// kesik çizgili, ulaşılan dolu.
+class _StageStars extends StatelessWidget {
+  const _StageStars({required this.total, required this.reached});
 
-  /// Eldeki aletin ve sıradaki aletin basit alete göre yüzdesi.
-  final int now;
-  final int faster;
-  final bool owned;
-
-  /// Çubuğun tamamı bugünkü hızın kaç katı.
-  static const double _fullSpeed = 2.2;
+  final int total;
+  final int reached;
 
   @override
   Widget build(BuildContext context) {
-    final base = 100 / (100 - now);
-    final gain = 100 / (100 - faster) - base;
-    int part(double share) => (share * 1000).round();
-    return Container(
-      height: 24,
-      clipBehavior: Clip.antiAlias,
-      decoration: BoxDecoration(
-        color: AppColors.iconWell,
-        borderRadius: BorderRadius.circular(AppRadius.paperInner),
-        border: Border.all(color: AppColors.ink, width: 2),
-      ),
+    return Semantics(
+      container: true,
+      label: '$total aşamanın $reached tanesi tamam',
+      excludeSemantics: true,
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Expanded(
-            flex: part(base / _fullSpeed),
-            child: ColoredBox(color: owned ? AppColors.success : AppColors.kobalt),
-          ),
-          if (gain > 0)
-            Expanded(
-              flex: part(gain / _fullSpeed),
-              child: const ColoredBox(color: AppColors.success),
+          for (var i = 0; i < total; i++)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: AppSpace.xs),
+              child: SizedBox.square(
+                dimension: 40,
+                child: CustomPaint(
+                  painter: _StarPainter(
+                    fill: i < reached
+                        ? AppColors.star
+                        : i == reached
+                            ? AppColors.kobaltSoft
+                            : AppColors.surfaceMuted,
+                    edge: i < reached
+                        ? AppColors.medalDark[3]
+                        : i == reached
+                            ? AppColors.kobalt
+                            : AppColors.medalDark[0],
+                    dashed: i >= reached,
+                  ),
+                ),
+              ),
             ),
-          Expanded(flex: part((_fullSpeed - base - gain) / _fullSpeed), child: const SizedBox()),
         ],
       ),
     );
   }
+}
+
+class _StarPainter extends CustomPainter {
+  const _StarPainter({required this.fill, required this.edge, required this.dashed});
+
+  final Color fill;
+  final Color edge;
+  final bool dashed;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = size.center(Offset.zero);
+    final outer = size.width / 2 - 2;
+    final inner = outer * .48;
+    final star = Path();
+    for (var i = 0; i < 10; i++) {
+      final r = i.isEven ? outer : inner;
+      final a = -math.pi / 2 + i * math.pi / 5;
+      final at = center + Offset(math.cos(a), math.sin(a)) * r;
+      i == 0 ? star.moveTo(at.dx, at.dy) : star.lineTo(at.dx, at.dy);
+    }
+    star.close();
+    canvas.drawPath(star, Paint()..color = fill);
+    final line = Paint()
+      ..color = edge
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.4
+      ..strokeJoin = StrokeJoin.round;
+    if (!dashed) {
+      canvas.drawPath(star, line);
+      return;
+    }
+    for (final metric in star.computeMetrics()) {
+      for (var d = 0.0; d < metric.length; d += 7) {
+        canvas.drawPath(metric.extractPath(d, d + 4), line);
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(_StarPainter old) => old.fill != fill || old.edge != edge || old.dashed != dashed;
 }
 
 class _Thumb extends StatelessWidget {
