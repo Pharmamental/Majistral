@@ -3,12 +3,12 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:game/data/lab_tools.dart';
-import 'package:game/data/market_items.dart';
 import 'package:game/data/orders.dart';
 import 'package:game/data/patient_uses.dart';
 import 'package:game/logic/job_store.dart';
 import 'package:game/models/patient_question.dart';
-import 'package:game/widgets/patient_sheet.dart';
+import 'package:game/main.dart';
+import 'package:game/widgets/grow_panel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'test_fonts.dart';
@@ -127,32 +127,34 @@ void main() {
     });
   });
 
-  testWidgets('pencere: şıkka basınca açıklama ve Tamam gelir, telefonda taşmaz', (tester) async {
-    tester.view.physicalSize = const Size(1080, 1920);
+  testWidgets('soru pencere açmadan tezgâhta çıkar; cevaplayınca reçeteler geri gelir', (tester) async {
+    tester.view.physicalSize = const Size(1080, 2340);
     tester.view.devicePixelRatio = 3;
     addTearDown(tester.view.reset);
-    final store = await JobStore.load(now: () => at);
+    SharedPreferences.setMockInitialValues({});
+    final store = await JobStore.load(now: () => at, random: math.Random(4));
     final order = prescriptionOrders.first;
-    final q = buildPatientQuestion('${order.key}|item:Sıvı Parafin', order, math.Random(1))!;
-    await tester.pumpWidget(MaterialApp(
-      home: Scaffold(
-        body: Builder(
-          builder: (context) => TextButton(
-            onPressed: () => askPatient(context, store, q, from: const Rect.fromLTWH(10, 10, 40, 40)),
-            child: const Text('aç'),
-          ),
-        ),
-      ),
-    ));
-    await tester.tap(find.text('aç'));
+    final job = await take(store, order);
+    await tester.pumpWidget(MajistralApp(store: store));
     await tester.pumpAndSettle();
-    expect(find.text('İçindeki Sıvı Parafin ne işe yarıyor?'), findsOneWidget);
+    store.askPatient(job);
+    await tester.pumpAndSettle();
+
+    final q = store.pendingQuestion!;
+    expect(find.text(q.ask), findsOneWidget);
+    expect(find.byType(GrowPanel), findsNothing, reason: 'pencere açılmaz');
+    expect(find.text('Elinde 1 reçete var, 1 seni bekliyor'), findsOneWidget, reason: 'sayfa değişmez');
     expect(find.text('Tamam'), findsNothing);
 
-    await tester.tap(find.text(chemicalRole('Sıvı Parafin')!).first);
+    await tester.tap(find.text(q.options[q.answer]));
     await tester.pumpAndSettle();
     expect(find.textContaining('Doğru bildin'), findsOneWidget);
-    expect(find.text('Tamam'), findsOneWidget);
     expect(tester.takeException(), isNull);
+
+    await tester.tap(find.text('Tamam'));
+    await tester.pumpAndSettle();
+    expect(store.pendingQuestion, isNull);
+    expect(find.text(q.ask), findsNothing);
+    expect(find.text(order.magistralName), findsOneWidget);
   });
 }

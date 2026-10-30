@@ -10,7 +10,7 @@ import 'package:game/logic/job_store.dart';
 import 'package:game/main.dart';
 import 'package:game/widgets/grow_panel.dart';
 import 'package:game/widgets/mini_games.dart';
-import 'package:game/widgets/patient_sheet.dart';
+import 'package:game/widgets/patient_card.dart';
 
 import 'test_fonts.dart';
 import 'test_helpers.dart';

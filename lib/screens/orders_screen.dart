@@ -9,6 +9,7 @@ import '../widgets/counter_top.dart';
 import '../widgets/grow_panel.dart';
 import '../widgets/job_status.dart';
 import '../widgets/paper_tape.dart';
+import '../widgets/patient_card.dart';
 import '../widgets/prescription_card.dart';
 import '../widgets/recipe_sheet.dart';
 import '../widgets/second_tick.dart';
@@ -133,7 +134,30 @@ class _OrdersScreenState extends State<OrdersScreen> with SecondTick {
           child: KeyedSubtree(
             key: _counterKey,
             child: CounterTop(
-              child: hand.isEmpty
+              // Hasta sorunca tezgâhta küçük kâğıt çıkar, cevaplayınca reçeteler geri gelir.
+              child: AnimatedSwitcher(
+                duration: Duration(milliseconds: MediaQuery.disableAnimationsOf(context) ? 0 : 220),
+                layoutBuilder: (current, previous) => Stack(
+                  clipBehavior: Clip.none,
+                  fit: StackFit.expand,
+                  children: [...previous, ?current],
+                ),
+                child: _counterContent(store, hand),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _counterContent(JobStore store, List<_DeckEntry> hand) {
+    if (store.pendingQuestion case final question?) {
+      return PatientCard(key: ValueKey(question.id), store: store, question: question);
+    }
+    return KeyedSubtree(
+      key: const ValueKey('reçeteler'),
+      child: hand.isEmpty
                   ? const _EmptyCounter()
                   // Kartlar raf kenarına bantla asılı: bant raf kenarına taşar, bu
                   // yüzden sayfa kırpılmaz. Kartlar düz durur (Tuğrul, 2026-10-27).
@@ -161,10 +185,6 @@ class _OrdersScreenState extends State<OrdersScreen> with SecondTick {
                         ),
                       ),
                     ),
-            ),
-          ),
-        ),
-      ],
     );
   }
 }

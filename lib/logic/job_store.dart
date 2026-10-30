@@ -667,12 +667,38 @@ class JobStore extends ChangeNotifier {
     return buildPatientQuestion(fresh[_random.nextInt(fresh.length)], order, _random);
   }
 
+  /// Tezgâhta bekleyen soru ve verilen cevap (Tuğrul, 2026-10-30): pencere
+  /// açılmaz, soru Reçeteler sekmesinin tezgâhında küçük bir kâğıtta çıkar.
+  PatientQuestion? get pendingQuestion => _pending;
+  PatientQuestion? _pending;
+  int? get pendingChoice => _pendingChoice;
+  int? _pendingChoice;
+
+  /// Hasta tezgâha gelir; soracak soru yoksa bir şey olmaz.
+  void askPatient(PrepJob job) {
+    _pending = nextPatientQuestion(job);
+    _pendingChoice = null;
+    notifyListeners();
+  }
+
+  /// Soru kâğıdını tezgâhtan kaldırır.
+  void closePatient() {
+    _pending = null;
+    _pendingChoice = null;
+    notifyListeners();
+  }
+
   /// Doğru cevabın bahşişi: son teslimin parasının yüzdesi, yukarı yuvarlanır.
   int get patientTip => ((_lastPayout?.coins ?? 0) * patientTipPercent / 100).ceil();
 
   /// Hastanın sorusunu cevaplar; doğruysa bahşiş kasaya girer.
   Future<bool> answerPatient(PatientQuestion question, int choice) async {
     final right = choice == question.answer;
+    // Tezgâhtaki kâğıt bir kez cevaplanır.
+    if (identical(question, _pending)) {
+      if (_pendingChoice != null) return right;
+      _pendingChoice = choice;
+    }
     _patients.today = _patients.day == _today ? _patients.today + 1 : 1;
     _patients.day = _today;
     _patients.record(question.id, right: right, now: now());

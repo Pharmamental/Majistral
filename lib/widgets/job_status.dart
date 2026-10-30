@@ -12,7 +12,7 @@ import '../theme/tokens.dart';
 import 'achievement_toast.dart';
 import 'chunky_button.dart';
 import 'grow_panel.dart';
-import 'patient_sheet.dart';
+import 'patient_card.dart';
 import 'result_view.dart';
 import 'second_tick.dart';
 
@@ -106,11 +106,8 @@ Future<void> deliverJob(BuildContext context, int id) async {
       ),
     ),
   );
-  // Teslimden sonra hasta tezgâha gelir, ilacı sorar.
-  if (!patientQuestionsEnabled || !navigatorContext.mounted) return;
-  if (store.nextPatientQuestion(job) case final question?) {
-    await askPatient(navigatorContext, store, question, from: from);
-  }
+  // Teslimden sonra hasta tezgâha gelir, ilacı sorar; sayfa değişmez.
+  if (patientQuestionsEnabled) store.askPatient(job);
 }
 
 /// Kabul edilmiş reçetenin kartta durumu: adım şeridi; adım çalışıyorsa

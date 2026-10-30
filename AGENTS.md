@@ -351,8 +351,10 @@ lib/
   Kazanma ve satın alma kuralları gelince false yapılır; testler iki duruma göre yazıldı.
 - **Hasta soruyor** (Tuğrul, 2026-10-30, "hasta soruyor mantıklı"; "reçetelerin normal sistemini
   değiştirmeyeceğin"): reçete, adımlar ve teslim aynı kalır; bilgi teslimden sonra sınanır. Teslim
-  penceresi kapanınca hasta gelir (`askPatient`, `widgets/patient_sheet.dart`), reçete kapalıyken
-  3 şıktan birini seçersin. Günde en çok 3 soru (`dailyPatientQuestions`). Doğruda o teslimin
+  penceresi kapanınca hasta gelir; yeni sayfa ya da pencere açılmaz (Tuğrul, 2026-10-30, "sayfa
+  değişmeden"), soru Reçeteler'in tezgâhında bantlı küçük kâğıtta çıkar (`PatientCard`,
+  `widgets/patient_card.dart`, `JobStore.askPatient`), o sırada reçete kartları tezgâhtan çekilir,
+  "Tamam" ile geri gelir. Reçete kapalıyken 3 şıktan birini seçersin. Günde en çok 3 soru (`dailyPatientQuestions`). Doğruda o teslimin
   parasının %10'u bahşiş (`patientTipPercent`, Tuğrul, 2026-10-30), yanlışta ceza yok, doğrusu gösterilir, hasta 1, 3 ve 7 gün sonra
   yeniden gelir ("… yeniden geldi"; `PatientBook`, kayıt `patient_v1`); ilk seferde bilinen soru
   dönmez. Soru türleri `models/patient_question.dart`, yalnız ikisi (Tuğrul, 2026-10-30, saklama
