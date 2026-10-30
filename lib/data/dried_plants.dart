@@ -17,7 +17,7 @@ enum PlantGroup {
         cay => 'Duvarda $bonus reçete daha birikir',
         bogaz => bonus == 1 ? 'Günün ilk acelesi kaliteyi düşürmez' : 'Günün ilk $bonus acelesi kaliteyi düşürmez',
         cilt => 'Teslimde emek parası %$bonus artar',
-        ferah => 'Teslimlerin %${_accusative(50 + bonus)} tohum getirir',
+        ferah => 'Teslimlerin tohum getirme ihtimali %$bonus artar',
       };
 }
 
@@ -48,13 +48,14 @@ class DriedPlant {
   /// "önerilerle"): çay duvara +1/+1/+2 (az oynayanın teslimini %14-27 artırır;
   /// +3 %34 ile fazla güçlüydü); boğaz günde 1/2/3 acelenin kalite düşürmemesi
   /// (acele hakkı artırmak para kaybettirdiği için değersizdi); cilt emeğe
-  /// %5/10/15; ferah teslimin tohum şansına 5/10/15 puan (Tuğrul, 2026-10-30,
-  /// "okey A"; bahçe hızı boşa gidiyordu, darboğaz parsel değil tohum).
+  /// %5/10/15; ferah teslimin tohum şansını %10/20/30 artırır, yani %50'den
+  /// %55/60/65'e çıkarır (Tuğrul, 2026-10-30, "okey A"; bahçe hızı boşa
+  /// gidiyordu, darboğaz parsel değil tohum).
   int get bonus => switch (group) {
         PlantGroup.cay => tier == 3 ? 2 : 1,
         PlantGroup.bogaz => tier,
         PlantGroup.cilt => tier * 5,
-        PlantGroup.ferah => tier * 5,
+        PlantGroup.ferah => tier * 10,
       };
 
   String get effectText => group.effectText(bonus);
@@ -88,13 +89,6 @@ const driedPlants = <DriedPlant>[
   DriedPlant('Okaliptüs', 'Eucalyptus globulus', 'Nefes açıcı buhar', 'okaliptus', PlantGroup.ferah, 2, 0xFF9DB7B4),
   DriedPlant('Mürver', 'Sambucus nigra', 'Mürver şurubu', 'murver', PlantGroup.cay, 3, 0xFF4A3555),
 ];
-
-/// Sayıya belirtme eki: "55'i", "60'ı". Ek sayının okunuşunun son hecesinden gelir.
-String _accusative(int n) {
-  const ones = ['', "'i", "'yi", "'ü", "'ü", "'i", "'yı", "'yi", "'i", "'u"];
-  const tens = ['', "'u", "'yi", "'u", "'ı", "'yi", "'ı", "'i", "'i", "'ı"];
-  return '$n${n % 10 != 0 ? ones[n % 10] : tens[n ~/ 10 % 10]}';
-}
 
 DriedPlant? driedPlantNamed(String name) {
   for (final p in driedPlants) {

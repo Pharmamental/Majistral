@@ -38,16 +38,16 @@ void main() {
     expect(driedPlantNamed('Adaçayı')!.effectText, 'Günün ilk acelesi kaliteyi düşürmez');
     expect(driedPlantNamed('Gelincik')!.effectText, 'Günün ilk 3 acelesi kaliteyi düşürmez');
     expect(driedPlantNamed('Sarı kantaron')!.effectText, 'Teslimde emek parası %15 artar');
-    expect(driedPlantNamed('Nane')!.effectText, "Teslimlerin %55'i tohum getirir");
-    expect(driedPlantNamed('Biberiye')!.effectText, "Teslimlerin %60'ı tohum getirir");
-    expect(driedPlantNamed('Ekinezya')!.effectText, "Teslimlerin %65'i tohum getirir");
+    expect(driedPlantNamed('Nane')!.effectText, 'Teslimlerin tohum getirme ihtimali %10 artar');
+    expect(driedPlantNamed('Biberiye')!.effectText, 'Teslimlerin tohum getirme ihtimali %20 artar');
+    expect(driedPlantNamed('Ekinezya')!.effectText, 'Teslimlerin tohum getirme ihtimali %30 artar');
   });
 
   // Tuğrul, 2026-10-30, "okey A": ferahlatıcı fanus tohum şansını artırır.
-  test('ferahlatıcı fanusla tohum şansı yükselir', () {
+  test('ferahlatıcı fanusla tohum şansı yükselir: %30 artış %50 yerine %65 eder', () {
     expect(Garden().dropSeed(_Fixed(0.6)), isNull);
-    expect(Garden().dropSeed(_Fixed(0.6), bonusPercent: 15), isNotNull);
-    expect(Garden().dropSeed(_Fixed(0.66), bonusPercent: 15), isNull);
+    expect(Garden().dropSeed(_Fixed(0.6), bonusPercent: 30), isNotNull);
+    expect(Garden().dropSeed(_Fixed(0.66), bonusPercent: 30), isNull);
   });
 
   // Tuğrul, 2026-10-29: teslimlerin %50'si tohum; ağırlıklar tür başına sık 60,

@@ -15,6 +15,7 @@ kalıplarını beğenmiyorum". Oyundaki her yazı, oyuncuyla konuşan düz bir T
   birikir", "2 Papatya", "Elinde 3 tane var" yaz. Yüzde ancak cümlenin içinde ("%30 daha hızlı").
 - Etiket ve iki nokta kalıbı yok: "Oyun etkisi: …", "Büyüme: 2 sa", "Dolu: …", "Sıradaki adım:
   …" yerine cümle kur ("2 sa sonra olgunlaşır", "Sıradaki adım ezme, 1 dk sürer.").
+  Tek istisna (Tuğrul, 2026-10-30): vitrin penceresinde kilitli fanusun çiçek sayacı "1/4" yazar.
 - "·" ile parça dizme, noktalı virgül ve büyük harfle vurgu ("EŞİTİ", "ALT") yok.
 - Oyuncuya "sen" diye, etken çatıyla seslen: "teslim edildi", "kurutuldu", "acele edildi"
   değil "teslim ettin", "kuruttun", "acele ettin".
@@ -225,8 +226,8 @@ lib/
   Kademe adı "sık" değil "sıradan". Gübre, nadir tohum garantisi
   ve tohum satın alma kalktı (eski kayıttaki o alanlar okunmaz). Bahçenin üstündeki kâğıtta
   tohum ve çiçekler "2 Papatya" diye yazar. `unlockAll` vitrini açmaz; bahçeden önce rafa
-  konmuş fanus açık sayılır; seçicide kilitliler soluk, "Elinde 3 çiçek var." ya da "Hiç
-  çiçeğin yok." ve etkisi yazılı. Duvar
+  konmuş fanus açık sayılır; seçicide kilitliler soluk, etkisi yazılı, sağda çiçek
+  sayacı ("1/4") ve kilit. Duvar
   ve acele sınırı vitrine göre (`JobStore.wallLimit`, `protectedRushesLeft`), cilt fanusu
   teslim emeğini artırır.
   Parsel 4-6 parayla açılır (800/1600/3200). Kurutma askısı henüz yok. Vitrindeki fanus küçük oyun etkisi verir, aynı gruptan iki fanus
@@ -234,11 +235,11 @@ lib/
   ekonomi 2. turu, "önerilerle": +3 az oynayanın teslimini %34 artırıyordu), boğaz günde
   1/2/3 acelenin kaliteyi düşürmemesi (Adaçayı, Kekik/Hatmi, Gelincik; acele hakkı artırmak
   para kaybettirdiği için değersizdi), cilt teslim emeği (Aynısefa
-  %5, Lavanta/Defne %10, Kantaron %15), ferahlatıcı teslimin tohum şansı (Nane %55,
-  Biberiye/Okaliptüs %60, Ekinezya %65; Tuğrul, 2026-10-30, "okey A": bahçe hızı boşa
-  gidiyordu, darboğaz parsel değil tohum; bahçe hızı kalktı). Etki ekranda etiketsiz, düz
+  %5, Lavanta/Defne %10, Kantaron %15), ferahlatıcı teslimin tohum şansı (Nane %10,
+  Biberiye/Okaliptüs %20, Ekinezya %30 artırır, yani %50 yerine %55, %60, %65 olur; Tuğrul,
+  2026-10-30, "okey A": bahçe hızı boşa gidiyordu, darboğaz parsel değil tohum; bahçe hızı kalktı). Etki ekranda etiketsiz, düz
   cümleyle yazar ("Duvarda 1 reçete daha birikir", "Günün ilk acelesi kaliteyi düşürmez",
-  "Teslimde emek parası %10 artar", "Teslimlerin %60'ı tohum getirir"); sahte farmakoloji kurulmaz.
+  "Teslimde emek parası %10 artar", "Teslimlerin tohum getirme ihtimali %20 artar"); sahte farmakoloji kurulmaz.
   Market sekmeleri dört (Hızlandırma, İstasyonlar, Kimyasallar, Çiçekler); `PillTabs` yazısı
   yalnız sığmadığında küçülür (`test/market_screen_test.dart`, 360 dp).
   Formüller sekmesi kaldırıldı (ekranı git geçmişinde); formül verisi duruyor

@@ -333,13 +333,6 @@ Future<void> _openShowcasePicker(BuildContext context, int slot, {required Rect 
         for (final p in driedPlants)
           if (garden.canShow(p.name)) p.name,
       };
-      String locked(String name) {
-        final need = driedPlantNamed(name)!.fanusCost;
-        return switch (garden.flowers[name] ?? 0) {
-          0 => 'Hiç çiçeğin yok, fanusu $need çiçekle açılır.',
-          final n => 'Elinde $n çiçek var, fanusu $need çiçekle açılır.',
-        };
-      }
       final plants = [
         ...driedPlants.where((p) => grown.contains(p.name)),
         ...driedPlants.where((p) => !grown.contains(p.name)),
@@ -365,7 +358,7 @@ Future<void> _openShowcasePicker(BuildContext context, int slot, {required Rect 
               child: ListView(
                 shrinkWrap: true,
                 children: [
-                  for (final DriedPlant(:name, :latin, :imagePath, :effectText) in plants)
+                  for (final DriedPlant(:name, :latin, :imagePath, :effectText, :fanusCost) in plants)
                     Padding(
                       padding: const EdgeInsets.only(bottom: AppSpace.sm),
                       child: Opacity(
@@ -399,21 +392,22 @@ Future<void> _openShowcasePicker(BuildContext context, int slot, {required Rect 
                                     children: [
                                       Text(name, style: AppText.body(size: 14, weight: FontWeight.w700)),
                                       Text(latin, style: AppText.label(size: 12)),
-                                      Text(
-                                        grown.contains(name)
-                                            ? effectText
-                                            : '${locked(name)} $effectText.',
-                                        style: AppText.label(size: 12, color: AppColors.ink),
-                                      ),
+                                      Text(effectText, style: AppText.label(size: 12, color: AppColors.ink)),
                                     ],
                                   ),
                                 ),
                                 // Seçili olan yalnız renkle değil, onay işaretiyle de belli;
-                                // kilitli olan kilitle.
+                                // kilitli olan kilitle ve çiçek sayacıyla (Tuğrul, 2026-10-30, "1/4").
                                 if (name == current)
                                   const Icon(Icons.check_circle_rounded, color: AppColors.kobalt)
-                                else if (!grown.contains(name))
+                                else if (!grown.contains(name)) ...[
+                                  Text(
+                                    '${garden.flowers[name] ?? 0}/$fanusCost',
+                                    style: AppText.body(size: 14, weight: FontWeight.w700),
+                                  ),
+                                  const SizedBox(width: AppSpace.xs),
                                   const Icon(Icons.lock_rounded, color: AppColors.inkMuted),
+                                ],
                               ],
                             ),
                           ),

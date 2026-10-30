@@ -69,9 +69,9 @@ class Garden {
   final Set<String> grown;
 
   /// Teslimde zar atar: yarı ihtimalle bir tohum düşer, adı döner; yoksa null.
-  /// Vitrindeki ferahlatıcı fanus şansa [bonusPercent] puan ekler.
+  /// Vitrindeki ferahlatıcı fanus şansı [bonusPercent] kadar artırır (%30 artış %65 eder).
   String? dropSeed(math.Random rnd, {int bonusPercent = 0}) {
-    if (rnd.nextDouble() >= dropChance + bonusPercent / 100) return null;
+    if (rnd.nextDouble() >= dropChance * (1 + bonusPercent / 100)) return null;
     final total = driedPlants.fold(0.0, (sum, p) => sum + tierWeights[p.tier]!);
     var roll = rnd.nextDouble() * total;
     var plant = driedPlants.last.name;
