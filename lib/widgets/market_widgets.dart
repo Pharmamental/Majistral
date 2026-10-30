@@ -166,28 +166,36 @@ class _StarPainter extends CustomPainter {
     final center = size.center(Offset.zero);
     final outer = size.width / 2 - 2;
     final inner = outer * .48;
-    final star = Path();
-    for (var i = 0; i < 10; i++) {
-      final r = i.isEven ? outer : inner;
-      final a = -math.pi / 2 + i * math.pi / 5;
-      final at = center + Offset(math.cos(a), math.sin(a)) * r;
-      i == 0 ? star.moveTo(at.dx, at.dy) : star.lineTo(at.dx, at.dy);
-    }
-    star.close();
+    final points = [
+      for (var i = 0; i < 10; i++)
+        center +
+            Offset(math.cos(-math.pi / 2 + i * math.pi / 5), math.sin(-math.pi / 2 + i * math.pi / 5)) *
+                (i.isEven ? outer : inner),
+    ];
+    final star = Path()..addPolygon(points, true);
     canvas.drawPath(star, Paint()..color = fill);
     final line = Paint()
       ..color = edge
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2.4
+      ..strokeCap = StrokeCap.round
       ..strokeJoin = StrokeJoin.round;
     if (!dashed) {
       canvas.drawPath(star, line);
       return;
     }
-    for (final metric in star.computeMetrics()) {
-      for (var d = 0.0; d < metric.length; d += 7) {
-        canvas.drawPath(metric.extractPath(d, d + 4), line);
-      }
+    // Kesikler kenarın tam ortasında: köşeler hep çizili kalır, yıldız ezik görünmez.
+    for (var i = 0; i < 10; i++) {
+      final at = points[i];
+      final from = Offset.lerp(at, points[(i + 9) % 10], .32)!;
+      final to = Offset.lerp(at, points[(i + 1) % 10], .32)!;
+      canvas.drawPath(
+        Path()
+          ..moveTo(from.dx, from.dy)
+          ..lineTo(at.dx, at.dy)
+          ..lineTo(to.dx, to.dy),
+        line,
+      );
     }
   }
 
