@@ -664,7 +664,11 @@ class JobStore extends ChangeNotifier {
     final order = orderOf(job);
     final fresh = questionIdsFor(order).where((id) => !_patients.asked.containsKey(id)).toList();
     if (fresh.isEmpty) return null;
-    return buildPatientQuestion(fresh[_random.nextInt(fresh.length)], order, _random);
+    // Önce tür seçilir: evet, hayır soruları sayıca çok, öbürlerini boğmasın.
+    final kinds = fresh.map(questionKind).toSet().toList();
+    final kind = kinds[_random.nextInt(kinds.length)];
+    final pick = fresh.where((id) => questionKind(id) == kind).toList();
+    return buildPatientQuestion(pick[_random.nextInt(pick.length)], order, _random);
   }
 
   /// Tezgâhta bekleyen soru ve verilen cevap (Tuğrul, 2026-10-30): pencere

@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:game/data/lab_tools.dart';
+import 'package:game/data/market_items.dart';
 import 'package:game/data/orders.dart';
 import 'package:game/data/patient_uses.dart';
 import 'package:game/logic/job_store.dart';
@@ -39,8 +40,8 @@ void main() {
       for (final id in questionIdsFor(order)) {
         final q = buildPatientQuestion(id, order, rnd)!;
         count++;
-        expect(q.options.toSet(), hasLength(3), reason: id);
-        expect(q.answer, inInclusiveRange(0, 2));
+        expect(q.options.toSet(), hasLength(questionKind(id) == 'has' ? 2 : 3), reason: id);
+        expect(q.answer, lessThan(q.options.length));
         if (id.endsWith('|use')) {
           final mine = {for (final u in orderUses[order.key]!) useAnswers[u]};
           for (final (i, o) in q.options.indexed) {
@@ -51,6 +52,37 @@ void main() {
     }
     expect(count, greaterThan(250));
     expect(prescriptionOrders.expand(questionIdsFor).where((id) => id.endsWith('|shelf')), isEmpty);
+  });
+
+  test('var mı sorusu: cevap reçeteye uyar, adından belli madde sorulmaz, hazır baz maddesi yok denmez', () {
+    final rnd = math.Random(5);
+    final actives = {for (final g in chemicalGroups.skip(5)) for (final i in g.items) i.name};
+    var yes = 0, no = 0;
+    for (final order in prescriptionOrders) {
+      final names = {for (final i in order.ingredients) i.name};
+      for (final id in questionIdsFor(order).where((id) => questionKind(id) == 'has')) {
+        final name = id.substring(id.indexOf('has:') + 4);
+        final q = buildPatientQuestion(id, order, rnd)!;
+        expect(q.answer == 0, names.contains(name), reason: id);
+        if (q.answer == 0) {
+          yes++;
+        } else {
+          no++;
+          expect(actives, contains(name), reason: id);
+        }
+      }
+    }
+    expect(yes, greaterThan(100));
+    expect(no, greaterThan(100));
+
+    final salisilik = prescriptionOrders.firstWhere((o) => o.key == '%5 Salisilik Asitli Vazelin');
+    final ids = questionIdsFor(salisilik);
+    expect(ids, contains('${salisilik.key}|has:Sıvı Parafin'));
+    expect(ids, isNot(contains('${salisilik.key}|has:Salisilik Asit')));
+    expect(ids, isNot(contains('${salisilik.key}|has:Beyaz Vazelin')));
+
+    final kalamin = prescriptionOrders.firstWhere((o) => o.key == 'Kalamin merhemi %15 (BP)');
+    expect(questionIdsFor(kalamin), isNot(contains('${kalamin.key}|has:Çinko Oksit')));
   });
 
   test('kuşkulu reçeteden soru çıkmaz, deri ilacında diş şıkkı olmaz', () {

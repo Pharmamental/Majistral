@@ -357,8 +357,10 @@ lib/
   "Tamam" ile geri gelir. Reçete kapalıyken 3 şıktan birini seçersin. Günde en çok 3 soru (`dailyPatientQuestions`). Doğruda o teslimin
   parasının %10'u bahşiş (`patientTipPercent`, Tuğrul, 2026-10-30), yanlışta ceza yok, doğrusu gösterilir, hasta 1, 3 ve 7 gün sonra
   yeniden gelir ("… yeniden geldi"; `PatientBook`, kayıt `patient_v1`); ilk seferde bilinen soru
-  dönmez. Soru türleri `models/patient_question.dart`, yalnız ikisi (Tuğrul, 2026-10-30, saklama
-  sorusu kalktı): ilacın endikasyonu (`orderUses` + `useAnswers`, `data/patient_uses.dart`; yeni
+  dönmez. Soru türleri `models/patient_question.dart`, üç tane, eşit sıklıkta (Tuğrul, 2026-10-30,
+  saklama sorusu kalktı): "Bu ilaçta X var mı?" (evet ya da hayır, adından belli madde sorulmaz,
+  hayır cevaplısı reçetede olmayan etkin madde, çünkü hazır bazların içinde başka maddeler var),
+  ilacın endikasyonu (`orderUses` + `useAnswers`, `data/patient_uses.dart`; yeni
   tıbbi bilgi yok, `usedFor`'dan kısaltıldı) ve içindeki maddenin işlevi (`chemicalRole`). Yanlış
   şık bu ilaç için doğru olamaz; önce aynı aileden gelir (deri, ağız ve kulak, ağızdan alınan).
   Yeni reçete eklenince `orderUses`'a da yazılır (`test/patient_test.dart` denetler). Kuşkulu

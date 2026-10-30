@@ -17,7 +17,7 @@ class PatientQuestion {
     required this.returning,
   });
 
-  /// Reçetenin adı, "|" ve soru türü: "use" ya da "item:Sıvı Parafin".
+  /// Reçetenin adı, "|" ve soru türü: "use", "item:Sıvı Parafin" ya da "has:Üre".
   final String id;
   final PrescriptionOrder order;
   final String ask;
@@ -40,7 +40,46 @@ List<String> questionIdsFor(PrescriptionOrder order) {
     if (orderUses.containsKey(order.key)) '${order.key}|use',
     for (final i in order.ingredients)
       if (i.name != 'Distile Su' && chemicalRole(i.name) != null) '${order.key}|item:${i.name}',
+    ..._hasIds(order),
   ];
+}
+
+/// Sorunun türü: "use", "item" ya da "has". Türler eşit sıklıkta gelsin diye.
+String questionKind(String id) => id.substring(id.indexOf('|') + 1).split(':').first;
+
+/// "Bu ilaçta X var mı?" soruları (Tuğrul, 2026-10-30). Evet cevaplıları
+/// reçetedeki maddeler; adı ilacın adında geçen madde sorulmaz, cevabı bellidir.
+/// Hayır cevaplıları aynı sayıda, reçetede olmayan etkin madde. Yalnız etkin
+/// madde seçilir: hazır bazların içinde yağ, emülgatör ve koruyucu bulunur,
+/// "Sulu Krem"li ilaçta "Beyaz Vazelin yok" demek yanlış olur.
+List<String> _hasIds(PrescriptionOrder order) {
+  final have = {for (final i in order.ingredients) i.name};
+  final yes = [
+    for (final name in have)
+      if (name != 'Distile Su' && chemicalRole(name) != null && !_namedIn(order, name)) name,
+  ];
+  // Market listesinin son üç grubu etkin maddeler.
+  final actives = chemicalGroups.skip(5).toList();
+  final mine = actives.where((g) => g.items.any((i) => have.contains(i.name))).toList();
+  final pool = [
+    for (final g in mine.isEmpty ? actives : mine)
+      for (final i in g.items)
+        if (!have.contains(i.name) && !have.any((h) => _partOf[h] == i.name)) i.name,
+  ];
+  final start = order.key.codeUnits.fold(0, (a, b) => a + b);
+  final no = [
+    for (var i = 0; i < math.min(math.max(yes.length, 1), pool.length); i++) pool[(start + i) % pool.length],
+  ];
+  return [for (final name in [...yes, ...no]) '${order.key}|has:$name'];
+}
+
+/// Başka maddenin içinde bulunan madde: kalamin çinko oksittir.
+const _partOf = {'Kalamin': 'Çinko Oksit'};
+
+bool _namedIn(PrescriptionOrder order, String name) {
+  String low(String s) => s.replaceAll('İ', 'i').replaceAll('I', 'ı').toLowerCase();
+  final title = low(order.magistralName);
+  return low(name).split(' ').any((w) => w.length >= 4 && !w.contains('%') && title.contains(w));
 }
 
 /// [id]'den soruyu kurar. Şıklar her seferinde karışır; hiçbir yanlış şık bu
@@ -76,6 +115,21 @@ PatientQuestion? buildPatientQuestion(String id, PrescriptionOrder order, math.R
             if (i.name != 'Distile Su') i.description,
     ]..shuffle(rnd);
     wrong = others.take(2).toList();
+  } else if (kind.startsWith('has:')) {
+    final name = kind.substring('has:'.length);
+    final there = order.ingredients.any((i) => i.name == name);
+    final names = [for (final i in order.ingredients) i.name];
+    final list = names.length == 1 ? names.first : '${names.take(names.length - 1).join(', ')} ve ${names.last}';
+    // Evet ve hayır her zaman aynı sırada; karışırsa yanlışlıkla basılır.
+    return PatientQuestion(
+      id: id,
+      order: order,
+      ask: 'Bu ilaçta $name var mı?',
+      options: const ['Evet, var.', 'Hayır, yok.'],
+      answer: there ? 0 : 1,
+      explain: 'Reçetede $list var.',
+      returning: returning,
+    );
   } else {
     return null;
   }
