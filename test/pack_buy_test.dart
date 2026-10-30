@@ -25,7 +25,7 @@ void main() {
     await tester.pumpWidget(MajistralApp(store: store));
     await tester.tap(find.text('Market'));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Kimyasallar'));
+    await tester.tap(find.byTooltip('Kimyasallar'));
     await tester.pumpAndSettle();
 
     // Kilitli maddenin adı görünmez (Tuğrul, 2026-10-29).

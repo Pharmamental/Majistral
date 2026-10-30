@@ -11,6 +11,7 @@ import '../widgets/chunky_button.dart';
 import '../widgets/coin_pill.dart';
 import '../widgets/counter_top.dart';
 import '../widgets/market_widgets.dart';
+import '../widgets/selection_mark.dart';
 
 enum MarketTab { hizlandirma, istasyonlar, kimyasallar, cicekler }
 
@@ -19,6 +20,13 @@ String _label(MarketTab tab) => switch (tab) {
       MarketTab.istasyonlar => 'İstasyonlar',
       MarketTab.kimyasallar => 'Kimyasallar',
       MarketTab.cicekler => 'Çiçekler',
+    };
+
+String _icon(MarketTab tab) => switch (tab) {
+      MarketTab.hizlandirma => 'assets/images/ikon/ikon_kronometre.png',
+      MarketTab.istasyonlar => 'assets/images/ikon/ikon_havan_porselen.png',
+      MarketTab.kimyasallar => 'assets/images/ikon/ikon_vitrin_sise.png',
+      MarketTab.cicekler => 'assets/images/ikon/ikon_fanus_papatya.png',
     };
 
 /// Market sekmesi. Hızlandırma yalnız ödüllü reklamla (tasarım belgesi, bölüm 10).
@@ -49,13 +57,15 @@ class _MarketScreenState extends State<MarketScreen> {
                 trailing: CoinPill(onGlass: TabSign.market.leaf),
               ),
               const SizedBox(height: AppSpace.lg),
+              // Yazılı bar yerine dört ikon (Tuğrul, 2026-10-30): seçili olanın altında kobalt çizgi.
               Padding(
-                padding: const EdgeInsets.fromLTRB(AppSpace.lg, 0, AppSpace.lg, AppSpace.lg),
-                child: PillTabs<MarketTab>(
-                  values: MarketTab.values,
-                  selected: _tab,
-                  labelOf: _label,
-                  onChanged: (t) => setState(() => _tab = t),
+                padding: const EdgeInsets.fromLTRB(AppSpace.lg, 0, AppSpace.lg, AppSpace.md),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    for (final t in MarketTab.values)
+                      _TabIcon(tab: t, selected: t == _tab, onTap: () => setState(() => _tab = t)),
+                  ],
                 ),
               ),
             ],
@@ -140,6 +150,44 @@ class _MarketScreenState extends State<MarketScreen> {
           ],
         );
     }
+  }
+}
+
+/// Market bölümünün ikonu. Adı yazmaz; basılı tutunca ve ekran okuyucuda söylenir.
+class _TabIcon extends StatelessWidget {
+  const _TabIcon({required this.tab, required this.selected, required this.onTap});
+
+  final MarketTab tab;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      button: true,
+      selected: selected,
+      child: Tooltip(
+        message: _label(tab),
+        child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: onTap,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 64,
+                height: 64,
+                alignment: Alignment.center,
+                decoration: const BoxDecoration(color: AppColors.iconWell, shape: BoxShape.circle),
+                child: Image.asset(_icon(tab), width: 54, height: 54),
+              ),
+              const SizedBox(height: AppSpace.xs),
+              SizedBox(height: 4, child: SelectionMark(selected: selected)),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
 

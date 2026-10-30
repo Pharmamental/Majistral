@@ -253,8 +253,10 @@ lib/
   2026-10-30, "okey A": bahçe hızı boşa gidiyordu, darboğaz parsel değil tohum; bahçe hızı kalktı). Etki ekranda etiketsiz, düz
   cümleyle yazar ("Duvarda 1 reçete daha birikir", "Günün ilk acelesi kaliteyi düşürmez",
   "Teslimde emek parası %10 artar", "Teslimlerin tohum getirme ihtimali %20 artar"); sahte farmakoloji kurulmaz.
-  Market sekmeleri dört (Hızlandırma, İstasyonlar, Kimyasallar, Çiçekler); `PillTabs` yazısı
-  yalnız sığmadığında küçülür (`test/market_screen_test.dart`, 360 dp).
+  Market bölümleri dört (Hızlandırma, İstasyonlar, Kimyasallar, Çiçekler); yazılı bar yerine dört
+  ikon (Tuğrul, 2026-10-30, "4 tane ikon koy, barı kaldır"): kronometre, porselen havan, şişe,
+  papatya fanusu; seçili olanın altında kısa kobalt çizgi (`_TabIcon`, `market_screen.dart`). Ad
+  yazmaz, basılı tutunca ve ekran okuyucuda söylenir.
   Formüller sekmesi kaldırıldı (ekranı git geçmişinde); formül verisi duruyor
   (`GameTabBar`). Seçim her yerde aynı: adı kobalt yazı + altında kısa kobalt çizgi (`SelectionMark`); alt çubukta çizgi sekmeden sekmeye kayar, yolda uzayıp yerinde kısalır (`_SlidingMark`, Tuğrul 2026-10-27); daire seçimle renk değiştirmez. İkonlar `uretici.html` "Sekmeler" grubunda.
 - Market hammaddeleri (2026-10-26): `chemicalGroups`, rol gruplarında; liste ve kaynakları

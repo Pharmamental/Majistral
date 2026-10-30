@@ -214,11 +214,11 @@ void main() {
     await tester.tap(find.text('Market'));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Hızlandırma'));
+    await tester.tap(find.byTooltip('Hızlandırma'));
     await tester.pumpAndSettle();
     expect(find.text('Reklam İzle'), findsOneWidget);
 
-    await tester.tap(find.text('Kimyasallar'));
+    await tester.tap(find.byTooltip('Kimyasallar'));
     await tester.pumpAndSettle();
     expect(find.text('Beyaz Vazelin'), findsOneWidget);
   });
