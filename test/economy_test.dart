@@ -164,6 +164,7 @@ void main() {
       expect(await store.buyParcel(), isTrue);
       expect(store.garden.beds, hasLength(Garden.openBeds + 1));
       expect(store.nextParcelPrice, parcelPrices[1]);
+      expect(Garden.openBeds + parcelPrices.length, Garden.allBeds, reason: 'bahçe en çok 4 parsel');
       expect(store.coins, 5000 - 800);
       expect(await store.sellFlower('Mürver'), isTrue);
       expect(await store.sellFlower('Mürver'), isTrue);

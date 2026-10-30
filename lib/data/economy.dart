@@ -25,8 +25,8 @@ const dailyBonusDeliveries = 3;
 /// İlk açılışta kasadaki para; ayrıca her maddeden bir paket rafta.
 const startCoins = 100;
 
-/// Bahçenin 4., 5. ve 6. parseli.
-const parcelPrices = [800, 1600, 3200];
+/// Bahçenin 3. ve 4. parseli.
+const parcelPrices = [800, 1600];
 
 /// Oyuncu kurutulmuş çiçeğini markette tek tek satar: sıradan, orta, nadir
 /// (Tuğrul, 2026-10-29, "marketten çiçeği 1er 1er satabilir"; dükkândan çiçek

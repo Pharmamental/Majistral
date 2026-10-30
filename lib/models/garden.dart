@@ -49,10 +49,10 @@ class Garden {
         beds = beds ?? List<Bed?>.filled(openBeds, null, growable: true),
         grown = grown ?? {};
 
-  /// Başta açık parsel sayısı ve bahçedeki toplam parsel; 4-6 parayla açılır
+  /// Başta açık parsel sayısı ve bahçedeki toplam parsel; 3 ve 4 parayla açılır
   /// (`JobStore.buyParcel`). [beds]'in uzunluğu açık parsel sayısıdır.
-  static const openBeds = 3;
-  static const allBeds = 6;
+  static const openBeds = 2;
+  static const allBeds = 4;
 
   /// Teslimin tohum getirme şansı.
   static const dropChance = 0.5;

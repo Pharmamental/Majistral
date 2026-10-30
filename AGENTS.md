@@ -203,8 +203,8 @@ lib/
   (`FittedBox`).
 - Bahçe (Tuğrul, 2026-10-29): eczanenin arka bahçesi; başlık duvarda, altında badanalı tahta
   çit ve soluk zeytin yeşili çimen (`GardenGround`), ceviz çerçeveli yükseltilmiş toprak
-  parseller (`GardenBed`, `widgets/garden_widgets.dart`): 3 açık, 3 kilitli (çimende kesik
-  çerçeve + kilit + kâğıt etiket). Mekanik kodda (2026-10-29, `models/garden.dart`, kayıt
+  parseller (`GardenBed`, `widgets/garden_widgets.dart`): 2 açık, 2 kilitli (Tuğrul, 2026-10-30,
+  "2 parsel ile başlayalım, max 4"; çimende kesik çerçeve + kilit + kâğıt etiket). Mekanik kodda (2026-10-29, `models/garden.dart`, kayıt
   `garden_v1`). **Tohum, çiçek, fanus** (Tuğrul, 2026-10-29, "her teslimde zar atılır",
   "Yüzdeler tür başına olsun"): teslimlerin %50'si bir tohum getirir (teslim penceresinde
   yazar); türü kademe ağırlığıyla, tür başına seçilir (her sık 60, her orta 27,5, her nadir
@@ -232,7 +232,7 @@ lib/
   ve kilit. Duvar
   ve acele sınırı vitrine göre (`JobStore.wallLimit`, `protectedRushesLeft`), cilt fanusu
   teslim emeğini artırır.
-  Parsel 4-6 parayla açılır (800/1600/3200). Kurutma askısı henüz yok. Vitrindeki fanus küçük oyun etkisi verir, aynı gruptan iki fanus
+  Parsel 3 ve 4 parayla açılır (800/1600). Kurutma askısı henüz yok. Vitrindeki fanus küçük oyun etkisi verir, aynı gruptan iki fanus
   toplanmaz, en güçlüsü sayılır: çaylar duvar (Papatya +1, Ihlamur/Rezene +1, Mürver +2;
   ekonomi 2. turu, "önerilerle": +3 az oynayanın teslimini %34 artırıyordu), boğaz günde
   1/2/3 acelenin kaliteyi düşürmemesi (Adaçayı, Kekik/Hatmi, Gelincik; acele hakkı artırmak
@@ -401,7 +401,7 @@ lib/
   (`stepDuration`; liste yukarıda "Marketin istasyonları"). Cam havan ve tüp doldurma aleti
   marketten çıktı (hiçbir adımı değiştirmiyordu).
   Giderler 14 800 (aletler 9 200 + parsel 5 600); emek 11 bu toplamdan çözüldü. 2026-10-29'da
-  8 yeni alet eklendi (5 900), aletler 15 100, giderler 20 700 oldu; emek yeniden ayarlanmadı. Para göstergesi
+  8 yeni alet eklendi (5 900), aletler 15 100, giderler 20 700 oldu; 2026-10-30'da parsel 2 400'e indi, giderler 17 500 oldu; emek yeniden ayarlanmadı. Para göstergesi
   Market ve Bahçe başlığında (`CoinPill`), teslim penceresinde döküm. Reklam ve bildirim henüz
   yok; acele düğmesi onay penceresiyle çalışıyor.
 - Eski deneme (Temmuz 2026, tek dosya) git geçmişinde: ilk commit `0bd231c`. 2026-10-25'te market
