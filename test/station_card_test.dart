@@ -12,9 +12,9 @@ import 'test_fonts.dart';
 void main() {
   setUpAll(loadAppFonts);
 
-  // Tuğrul, 2026-10-29: istasyon kartı yükseltme yolu; altında süre değil "%30 daha hızlı",
+  // Tuğrul, 2026-10-30: istasyon kartı yeşil artış; süre değil "%30 daha hızlı",
   // "para gerek" yazısı ve sağ üstte yüzde çipi yok.
-  testWidgets('istasyon kartı yükseltme yolu: alınca durak "Elinde" olur', (tester) async {
+  testWidgets('istasyon kartı yeşil artış: alınca kart "Elinde" olur', (tester) async {
     tester.view.physicalSize = const Size(1080, 2400);
     tester.view.devicePixelRatio = 3;
     addTearDown(tester.view.reset);
@@ -26,9 +26,8 @@ void main() {
     await tester.tap(find.text('Market'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Ezme'), findsOneWidget);
-    expect(find.text('Porselen havan'), findsOneWidget);
-    expect(find.text('Bedava'), findsWidgets);
+    expect(find.text('Ezme için Wedgwood havan'), findsOneWidget);
+    expect(find.text('Hazırlama hızı'), findsWidgets);
     expect(find.text('%30 daha hızlı'), findsWidgets);
     expect(find.textContaining('sürer'), findsNothing);
     expect(find.textContaining('para daha gerek'), findsNothing);

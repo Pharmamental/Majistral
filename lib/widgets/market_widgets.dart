@@ -1,9 +1,6 @@
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
 
 import '../logic/job_store.dart';
-import '../models/prescription.dart';
 import '../models/shop_item.dart';
 import '../theme/tokens.dart';
 import 'chunky_button.dart';
@@ -13,11 +10,11 @@ import 'paper_tape.dart';
 // Satın alma (2026-10-29): aletler ve kimyasal paketleri kasadaki parayla
 // alınır (data/economy.dart). Reklam düğmesi henüz bağlı değil.
 
-/// Bir istasyon = bir laboratuvar adımı. Yükseltme yolu (Tuğrul, 2026-10-29, "E"):
-/// kartın başında adımın ikonu ve adı; altında aletler bir yolun durakları gibi.
-/// Elde olanlar yeşil halkalı ve yeşil çizgiyle bağlı, sıradaki kesik kobalt halkalı
-/// ve altında kaç kat hızlandırdığı. En altta sıradaki aletin düğmesi ya da "Elinde".
-/// Süre, kısalma çipi ve "para gerek" yazısı yok (Tuğrul).
+/// Bir istasyon = bir laboratuvar adımı. Yeşil artış (Tuğrul, 2026-10-30, "23";
+/// alternatifler https://claude.ai/artifact/QnoM8EjaAgcKmui6NRuFb8): koyu başlıkta
+/// adım ve sıradaki alet, altında aletin büyük ikonu ve hız çubuğu. Mavi bugünkü hız,
+/// yeşil aletin katacağı hız; alınınca çubuk baştan sona yeşil olur. En altta aletin
+/// düğmesi ya da "Elinde". Süre, kısalma çipi ve "para gerek" yazısı yok (Tuğrul).
 class StationSection extends StatelessWidget {
   const StationSection({super.key, required this.station});
 
@@ -26,95 +23,90 @@ class StationSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final store = JobScope.of(context);
-    final tiers = station.tiers;
-    final next = tiers.where((t) => !store.ownsTool(t)).firstOrNull;
+    final next = station.tiers.where((t) => !store.ownsTool(t)).firstOrNull;
+    final tool = next ?? station.tiers.last;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: AppSpace.lg),
       child: Container(
-        padding: const EdgeInsets.all(AppSpace.lg),
+        clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
           color: AppColors.surface,
           borderRadius: BorderRadius.circular(AppRadius.paper),
-          border: Border.all(color: AppColors.line),
+          boxShadow: const [BoxShadow(color: Color(0x40000000), blurRadius: 4, offset: Offset(0, 2))],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Row(
-              children: [
-                Container(
-                  width: 56,
-                  height: 56,
-                  alignment: Alignment.center,
-                  decoration: const BoxDecoration(color: AppColors.iconWell, shape: BoxShape.circle),
-                  child: Image.asset(stepIconPath(station.name), width: 48, height: 48),
-                ),
-                const SizedBox(width: AppSpace.md),
-                Expanded(child: Text(station.name, style: AppText.title(size: 22))),
-              ],
+            Container(
+              color: AppColors.ink,
+              padding: const EdgeInsets.symmetric(horizontal: AppSpace.lg, vertical: AppSpace.sm),
+              child: Text(
+                '${station.name} için ${tool.name}',
+                style: AppText.title(size: 17, color: Colors.white),
+              ),
             ),
-            const SizedBox(height: AppSpace.lg),
-            LayoutBuilder(
-              builder: (context, constraints) {
-                final n = tiers.length;
-                final width = math.min(112.0, constraints.maxWidth / n);
-                final gap = n == 1 ? 0.0 : (constraints.maxWidth - width * n) / (n - 1);
-                double center(int i) => i * (width + gap) + width / 2;
-                return Stack(
-                  children: [
-                    // Duraklar arası çizgi: iki ucu da eldeyse yeşil. Halkanın
-                    // kenarında başlar ve biter, halkanın içine girmez (Tuğrul, 2026-10-29).
-                    for (var i = 1; i < n; i++)
-                      Positioned(
-                        left: center(i - 1) + _TierNode.ring / 2,
-                        width: math.max(0, center(i) - center(i - 1) - _TierNode.ring),
-                        top: _TierNode.ring / 2 - 2,
-                        height: 4,
-                        child: DecoratedBox(
-                          decoration: BoxDecoration(
-                            color: store.ownsTool(tiers[i]) ? AppColors.success : AppColors.line,
-                            borderRadius: BorderRadius.circular(2),
-                          ),
+            Padding(
+              padding: const EdgeInsets.all(AppSpace.lg),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Row(
+                    children: [
+                      SizedBox.square(
+                        dimension: 104,
+                        child: tool.imagePath != null
+                            ? Image.asset(tool.imagePath!)
+                            : Icon(tool.icon, color: AppColors.inkMuted, size: 56),
+                      ),
+                      const SizedBox(width: AppSpace.md),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Hazırlama hızı', style: AppText.label(size: 14, color: AppColors.ink)),
+                            const SizedBox(height: AppSpace.xs),
+                            _SpeedBar(faster: tool.faster, owned: next == null),
+                            if (tool.faster > 0) ...[
+                              const SizedBox(height: AppSpace.xs),
+                              Text(
+                                '%${tool.faster} daha hızlı',
+                                style: AppText.label(size: 14, color: AppColors.successDark),
+                              ),
+                            ],
+                          ],
                         ),
                       ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        for (final tier in tiers)
-                          SizedBox(width: width, child: _TierNode(tier: tier, owned: store.ownsTool(tier))),
-                      ],
+                    ],
+                  ),
+                  const SizedBox(height: AppSpace.md),
+                  if (next == null)
+                    Container(
+                      height: 44,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: AppColors.successSoft,
+                        borderRadius: BorderRadius.circular(AppRadius.pill),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.check_rounded, size: 18, color: AppColors.successDark),
+                          const SizedBox(width: AppSpace.xs),
+                          Text('Elinde', style: AppText.label(size: 15, color: AppColors.successDark)),
+                        ],
+                      ),
+                    )
+                  else
+                    ChunkyButton(
+                      compact: true,
+                      label: '${next.price} ile al',
+                      icon: Icons.toll_rounded,
+                      // Para yetmiyorsa düğme kapalı (2026-10-29).
+                      onPressed: store.coins >= next.price ? () => store.buyTool(next) : null,
                     ),
-                  ],
-                );
-              },
-            ),
-            const SizedBox(height: AppSpace.lg),
-            if (next == null)
-              Container(
-                height: 44,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: AppColors.successSoft,
-                  borderRadius: BorderRadius.circular(AppRadius.pill),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(Icons.check_rounded, size: 18, color: AppColors.successDark),
-                    const SizedBox(width: AppSpace.xs),
-                    Text('Elinde', style: AppText.label(size: 15, color: AppColors.successDark)),
-                  ],
-                ),
-              )
-            else
-              ChunkyButton(
-                compact: true,
-                label: '${next.price} ile al',
-                icon: Icons.toll_rounded,
-                // Para yetmiyorsa düğme kapalı (2026-10-29).
-                onPressed: store.coins >= next.price ? () => store.buyTool(next) : null,
+                ],
               ),
+            ),
           ],
         ),
       ),
@@ -122,83 +114,46 @@ class StationSection extends StatelessWidget {
   }
 }
 
-/// Yolun bir durağı: halkalı alet ikonu, adı ve altında durumu.
-class _TierNode extends StatelessWidget {
-  const _TierNode({required this.tier, required this.owned});
+/// Hız çubuğu: çubuğun boyu gerçek hız farkını gösterir. %30 kısalan adım 1,43
+/// kat, %50 kısalan 2 kat hızlıdır; en hızlı alet çubuğun çoğunu doldurur.
+class _SpeedBar extends StatelessWidget {
+  const _SpeedBar({required this.faster, required this.owned});
 
-  final ShopItem tier;
+  final int faster;
   final bool owned;
 
-  static const double ring = 64;
+  /// Çubuğun tamamı bugünkü hızın kaç katı.
+  static const double _fullSpeed = 2.2;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        SizedBox.square(
-          dimension: ring,
-          child: CustomPaint(
-            painter: _RingPainter(color: owned ? AppColors.success : AppColors.kobalt, dashed: !owned),
-            child: Center(
-              child: Container(
-                width: ring - 10,
-                height: ring - 10,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: owned ? AppColors.iconWell : AppColors.surface,
-                  shape: BoxShape.circle,
-                ),
-                child: tier.imagePath != null
-                    ? Image.asset(tier.imagePath!, width: 44, height: 44)
-                    : Icon(tier.icon, color: AppColors.inkMuted, size: 28),
-              ),
-            ),
+    final gain = 100 / (100 - faster) - 1;
+    int part(double share) => (share * 1000).round();
+    return Container(
+      height: 24,
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(
+        color: AppColors.iconWell,
+        borderRadius: BorderRadius.circular(AppRadius.paperInner),
+        border: Border.all(color: AppColors.ink, width: 2),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Expanded(
+            flex: part(1 / _fullSpeed),
+            child: ColoredBox(color: owned ? AppColors.success : AppColors.kobalt),
           ),
-        ),
-        const SizedBox(height: AppSpace.sm),
-        Text(tier.name, textAlign: TextAlign.center, style: AppText.label(size: 13, color: AppColors.ink)),
-        Text(
-          !owned
-              ? '%${tier.faster} daha hızlı'
-              : tier.price == 0
-                  ? 'Bedava'
-                  : 'Elinde',
-          textAlign: TextAlign.center,
-          style: AppText.label(size: 12, color: AppColors.inkMuted),
-        ),
-      ],
+          if (gain > 0)
+            Expanded(
+              flex: part(gain / _fullSpeed),
+              child: const ColoredBox(color: AppColors.success),
+            ),
+          Expanded(flex: part((_fullSpeed - 1 - gain) / _fullSpeed), child: const SizedBox()),
+        ],
+      ),
     );
   }
-}
-
-/// Durak halkası: elde olan düz yeşil, sıradaki kesik kobalt.
-class _RingPainter extends CustomPainter {
-  const _RingPainter({required this.color, required this.dashed});
-
-  final Color color;
-  final bool dashed;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    const stroke = 3.0;
-    final paint = Paint()
-      ..color = color
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = stroke;
-    final rect = (Offset.zero & size).deflate(stroke / 2);
-    if (!dashed) {
-      canvas.drawOval(rect, paint);
-      return;
-    }
-    const dashes = 16;
-    const sweep = 2 * math.pi / dashes;
-    for (var i = 0; i < dashes; i++) {
-      canvas.drawArc(rect, i * sweep, sweep * .6, false, paint);
-    }
-  }
-
-  @override
-  bool shouldRepaint(_RingPainter old) => old.color != color || old.dashed != dashed;
 }
 
 class _Thumb extends StatelessWidget {
