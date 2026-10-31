@@ -70,7 +70,7 @@ Future<void> deliverJob(BuildContext context, int id) async {
               ],
             ),
             Text(
-              'Maddeler için ${pay.material}, hazırlaman için ${pay.labor} para aldın',
+              'Bunun ${pay.material} parası maddelerin, ${pay.labor} parası hazırlamanın karşılığı',
               textAlign: TextAlign.center,
               style: AppText.label(size: 12, color: AppColors.ink),
             ),

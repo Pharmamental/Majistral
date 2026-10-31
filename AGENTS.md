@@ -20,8 +20,8 @@ kalıplarını beğenmiyorum". Oyundaki her yazı, oyuncuyla konuşan düz bir T
 - Oyuncuya "sen" diye, etken çatıyla seslen: "teslim edildi", "kurutuldu", "acele edildi"
   değil "teslim ettin", "kuruttun", "acele ettin".
 - Uydurma tabir yok (Tuğrul, 2026-10-31, "emek parası ne kadar boktan bir tabir"): oyuncuya hesap
-  dili değil eczanenin sözü yazılır. Teslim parası "Maddeler için 15, hazırlaman için 66 para aldın"
-  diye yazar, kodda `labor` olan pay oyunda "hazırlama ücreti"dir. "Emek" oyunda geçmez.
+  dili değil eczanenin sözü yazılır. Teslim penceresi büyük "81"in altında "Bunun 15 parası maddelerin, 66 parası hazırlamanın
+  karşılığı" yazar (Tuğrul, 2026-10-31: toplamın parçası olduğu belli olmalı), kodda `labor` olan pay oyunda "hazırlama ücreti"dir. "Emek" oyunda geçmez.
 - Kısa tut; düğmede tek eylem ("Sat", "Teslim et", "Acele et"), açıklama düğmenin üstünde.
 
 ## Önce oku
