@@ -860,7 +860,7 @@ class _MasteryRow extends StatelessWidget {
               children: [
                 Text(name, style: AppText.body(size: 15, weight: FontWeight.w700)),
                 Text(
-                  next == null ? 'En yüksek madalya: ${tiers[tier].title}' : '${next.title} için ${next.from - count} kez daha yap',
+                  next == null ? 'En yüksek madalya olan ${tiers[tier].title} sende' : '${next.title} için ${next.from - count} kez daha yap',
                   style: AppText.label(size: 12),
                 ),
               ],

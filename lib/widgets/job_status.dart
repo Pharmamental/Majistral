@@ -70,13 +70,13 @@ Future<void> deliverJob(BuildContext context, int id) async {
               ],
             ),
             Text(
-              'Malzeme parası ${pay.material}, emek parası ${pay.labor}',
+              'Maddeler için ${pay.material}, hazırlaman için ${pay.labor} para aldın',
               textAlign: TextAlign.center,
               style: AppText.label(size: 12, color: AppColors.ink),
             ),
             if (pay.dailyBonus)
               Text(
-                'Günün ilk $dailyBonusDeliveries teslimi emeği iki kat öder',
+                'Günün ilk $dailyBonusDeliveries tesliminde hazırlama ücretini iki kat alırsın',
                 textAlign: TextAlign.center,
                 style: AppText.label(size: 12, color: AppColors.hazirText),
               ),

@@ -93,7 +93,7 @@ const List<Station> stations = [
       ShopItem(
         name: 'Unguator',
         imagePath: 'assets/images/ikon/ikon_unguator.png',
-        description: 'Elektronik havan: kapalı kavanozda karıştırır, kabarcık bırakmaz. '
+        description: 'Elektronik havan. Kapalı kavanozda karıştırır, kabarcık bırakmaz. '
             'Geometrik seyreltmeyi %30 kısaltır.',
         icon: Icons.autorenew,
         color: AppColors.goodCondition,
@@ -282,7 +282,7 @@ const List<Station> stations = [
       ShopItem(
         name: 'Kapsül doldurma aleti',
         imagePath: 'assets/images/ikon/ikon_kapsul_makinesi.png',
-        description: 'Delikli plaka: tozu aynı anda birçok kapsüle eşit doldurur.',
+        description: 'Delikli plaka. Tozu aynı anda birçok kapsüle eşit doldurur.',
         icon: Icons.medication_outlined,
         color: AppColors.rusty,
       ),

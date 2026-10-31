@@ -613,7 +613,7 @@ class _Seyreltme extends MiniGame {
 /// Çözme: bagetle uygun hızda karıştırınca kristaller erir; çok hızlı taşar.
 class _Cozme extends MiniGame {
   @override
-  String get hint => 'Beherin içinde daire çiz. Yeşil hız aralığında karıştır: yavaşsan erimez, çok hızlıysan taşar.';
+  String get hint => 'Beherin içinde daire çiz. Yeşil hız aralığında karıştır. Yavaşsan erimez, çok hızlıysan taşar.';
   final _spin = _Spin();
   double _p = 0, _spill = 0;
 
@@ -654,7 +654,7 @@ class _Cozme extends MiniGame {
 /// Emülsifikasyon: karıştırdıkça su fazı akar; çok hızlı karıştırınca çok akar, yağ ayrışır.
 class _Emulsifikasyon extends MiniGame {
   @override
-  String get hint => 'Kapsülün içinde daire çiz: çizdikçe su fazı ince akışla dökülür, durunca durur. Çok hızlı çizersen yağ damlaları ayrışır.';
+  String get hint => 'Kapsülün içinde daire çiz. Çizdikçe su fazı ince akışla dökülür, durunca durur. Çok hızlı çizersen yağ damlaları ayrışır.';
   final _spin = _Spin();
   final _rand = Random(3);
   final _drops = <Offset>[];

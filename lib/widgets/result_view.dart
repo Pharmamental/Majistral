@@ -25,7 +25,7 @@ class ResultView extends StatelessWidget {
         ),
         const SizedBox(height: AppSpace.md),
         Text(
-          notes.isEmpty ? 'Kusursuz oldu!' : '$stars yıldızlı ürün',
+          notes.isEmpty ? 'Kusursuz oldu!' : '$stars yıldızlı ilaç',
           textAlign: TextAlign.center,
           style: AppText.title(size: 24),
         ),

@@ -353,7 +353,7 @@ class _PackBuyPanelState extends State<_PackBuyPanel> {
                     Text(item.name, style: AppText.title(size: 20)),
                     const SizedBox(height: AppSpace.xs),
                     Text(
-                      'Sahip olunan: ${store.packsOf(item.name)} adet',
+                      packsLine(store.packsOf(item.name)),
                       style: AppText.label(size: 13, color: AppColors.ink),
                     ),
                   ],
@@ -382,7 +382,7 @@ class _PackBuyPanelState extends State<_PackBuyPanel> {
           ),
           const SizedBox(height: AppSpace.xs),
           Text(
-            enough ? 'Kasada ${store.coins} para var.' : 'Paran yetmiyor: kasada ${store.coins} para var.',
+            enough ? 'Kasada ${store.coins} para var.' : 'Paran yetmiyor, kasada ${store.coins} para var.',
             style: AppText.label(size: 13, color: AppColors.inkMuted),
           ),
           const SizedBox(height: AppSpace.lg),
@@ -495,6 +495,9 @@ class ShopItemTile extends StatelessWidget {
     );
   }
 }
+
+/// Raftaki paket sayısı düz cümleyle.
+String packsLine(int count) => count == 0 ? 'Elinde hiç paket yok.' : 'Elinde $count paket var.';
 
 /// Sekme seçici: tam yuvarlak hap biçiminde, seçili olan kobalt dolgu. Kobalt
 /// hap seçime hızlı ve doğrusal kayar (Tuğrul, 2026-10-27); bundan sonraki

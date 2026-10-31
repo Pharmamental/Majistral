@@ -37,7 +37,7 @@ void main() {
     expect(driedPlantNamed('Mürver')!.effectText, 'Duvarda 2 reçete daha birikir');
     expect(driedPlantNamed('Adaçayı')!.effectText, 'Günün ilk acelesi kaliteyi düşürmez');
     expect(driedPlantNamed('Gelincik')!.effectText, 'Günün ilk 3 acelesi kaliteyi düşürmez');
-    expect(driedPlantNamed('Sarı kantaron')!.effectText, 'Teslimde emek parası %15 artar');
+    expect(driedPlantNamed('Sarı kantaron')!.effectText, 'Hazırlama ücretin %15 artar');
     expect(driedPlantNamed('Nane')!.effectText, 'Teslimlerin tohum getirme ihtimali %10 artar');
     expect(driedPlantNamed('Biberiye')!.effectText, 'Teslimlerin tohum getirme ihtimali %20 artar');
     expect(driedPlantNamed('Ekinezya')!.effectText, 'Teslimlerin tohum getirme ihtimali %30 artar');

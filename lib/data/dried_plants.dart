@@ -16,7 +16,7 @@ enum PlantGroup {
   String effectText(int bonus) => switch (this) {
         cay => 'Duvarda $bonus reçete daha birikir',
         bogaz => bonus == 1 ? 'Günün ilk acelesi kaliteyi düşürmez' : 'Günün ilk $bonus acelesi kaliteyi düşürmez',
-        cilt => 'Teslimde emek parası %$bonus artar',
+        cilt => 'Hazırlama ücretin %$bonus artar',
         ferah => 'Teslimlerin tohum getirme ihtimali %$bonus artar',
       };
 }

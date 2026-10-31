@@ -19,6 +19,9 @@ kalıplarını beğenmiyorum". Oyundaki her yazı, oyuncuyla konuşan düz bir T
 - "·" ile parça dizme, noktalı virgül ve büyük harfle vurgu ("EŞİTİ", "ALT") yok.
 - Oyuncuya "sen" diye, etken çatıyla seslen: "teslim edildi", "kurutuldu", "acele edildi"
   değil "teslim ettin", "kuruttun", "acele ettin".
+- Uydurma tabir yok (Tuğrul, 2026-10-31, "emek parası ne kadar boktan bir tabir"): oyuncuya hesap
+  dili değil eczanenin sözü yazılır. Teslim parası "Maddeler için 15, hazırlaman için 66 para aldın"
+  diye yazar, kodda `labor` olan pay oyunda "hazırlama ücreti"dir. "Emek" oyunda geçmez.
 - Kısa tut; düğmede tek eylem ("Sat", "Teslim et", "Acele et"), açıklama düğmenin üstünde.
 
 ## Önce oku
@@ -254,7 +257,7 @@ lib/
   Biberiye/Okaliptüs %20, Ekinezya %30 artırır, yani %50 yerine %55, %60, %65 olur; Tuğrul,
   2026-10-30, "okey A": bahçe hızı boşa gidiyordu, darboğaz parsel değil tohum; bahçe hızı kalktı). Etki ekranda etiketsiz, düz
   cümleyle yazar ("Duvarda 1 reçete daha birikir", "Günün ilk acelesi kaliteyi düşürmez",
-  "Teslimde emek parası %10 artar", "Teslimlerin tohum getirme ihtimali %20 artar"); sahte farmakoloji kurulmaz.
+  "Hazırlama ücretin %10 artar", "Teslimlerin tohum getirme ihtimali %20 artar"); sahte farmakoloji kurulmaz.
   Market bölümleri dört (Hızlandırma, İstasyonlar, Kimyasallar, Çiçekler); yazılı bar yerine dört
   ikon (Tuğrul, 2026-10-30, "4 tane ikon koy, barı kaldır"): kronometre, porselen havan, şişe,
   papatya fanusu; seçili olanın altında kısa kobalt çizgi (`_TabIcon`, `market_screen.dart`). Ad
@@ -277,7 +280,7 @@ lib/
   o güne dek soluk, renksiz ikonlu ve kilitli durur, adı yazmaz ("Kilitli madde"), alınmaz ("Bu maddeyi isteyen ilk reçete
   gelince açılır."). Açılanlar kayıtta (`wall_v1`, `seen`; `JobStore.chemicalUnlocked`); eski
   kayıtta o güne dek gelmiş reçetelerden türetilir. Grupta açıklar üstte, kilitliler altta.
-  Rafta gram değil paket adedi yazar ("Sahip olunan: 3 adet", açılmış paket bir sayılır;
+  Rafta gram değil paket adedi yazar ("Elinde 3 paket var.", açılmış paket bir sayılır;
   `JobStore.packsOf`); paket gramı da yazmaz. Grup başlığı ortada, eski eczane rafı etiketi
   gibi: çift çizgili beyaz kâğıt, üstünde bant, altında "8 maddeden 5 açık"
   (`ChemicalGroupHeader`). Açıklamalar sade: ne olduğu ve ne işe yaradığı, bir iki kısa
@@ -285,7 +288,7 @@ lib/
   Satırda düğme "Al"; basınca hemen almaz, satırın yerinden pencere büyür: `PillTabs` ile
   1-5-10-20-100 paket, toplam fiyat, kasadaki para, "N paket al" (para yetmezse kapalı ve
   "Paran yetmiyor"), "Vazgeç" (`openPackBuy`, `JobStore.buyPacks`; Tuğrul, 2026-10-29).
-  Paket fiyatı satırın alt yazısında ("Paketi 30 para · Sahip olunan: 3 adet").
+  Paket fiyatı satırın alt yazısında ("Paketi 30 para. Elinde 3 paket var.").
 - **500 reçete, 39 madde** (Tuğrul, 2026-10-28, "30-40 civarı madde, her madde en az 10
   reçetede, 500 civarı reçete"): markette 39 madde, hepsi en az 10 reçetede; reçetede geçmeyen
   madde markette durmaz (benzil benzoat, kafur, LCD, rezorsin, PEG 400/3350, setil alkol, stearik

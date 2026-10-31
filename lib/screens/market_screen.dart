@@ -123,7 +123,7 @@ class _MarketScreenState extends State<MarketScreen> {
                   locked: !store.chemicalUnlocked(item.name),
                   detail: packs[item.name] == null
                       ? 'Eczanenin cihazı üretir, bedava.'
-                      : 'Paketi ${item.price} para. Sahip olunan: ${store.packsOf(item.name)} adet',
+                      : 'Paketi ${item.price} para. ${packsLine(store.packsOf(item.name))}',
                 ),
                 const SizedBox(height: AppSpace.md),
               ],
