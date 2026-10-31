@@ -151,20 +151,15 @@ void main() {
     expect(jobOf(store, order)!.runs, isEmpty);
     await _closeSheet(tester);
 
-    // Ezme kartında reçete vurgulu; basınca ezme başlar.
+    // Ezme kartında reçete vurgulu; tek reçete beklediği için basınca ezme başlar.
     await _pickTool(tester, 'Ezme');
-    expect(find.text('Sıradaki adım ezme, 1 dk sürer.'), findsOneWidget);
-    await tester.tap(_inSheet(order.magistralName));
-    await tester.pumpAndSettle();
     expect(find.text('1 adım çalışıyor'), findsOneWidget);
+    expect(find.text('Sonra Levigasyon'), findsOneWidget);
     clock = clock.add(const Duration(minutes: 1));
     await tester.pump(const Duration(seconds: 1));
 
     // Levigasyon kendi kartında.
     await _pickTool(tester, 'Levigasyon');
-    expect(find.text('Sıradaki adım levigasyon, 3 dk sürer.'), findsOneWidget);
-    await tester.tap(_inSheet(order.magistralName));
-    await tester.pumpAndSettle();
 
     await tester.tap(find.text('Reçeteler'));
     await tester.pump();
@@ -182,21 +177,24 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Elinde 1 reçete var, 1 hazırlanıyor'), findsOneWidget);
 
-    // Levigasyon bitti: geometrik seyreltme kartında çelik spatül uyarısı görünür.
+    // Levigasyon bitti, sıra geometrik seyreltmede.
     clock = clock.add(const Duration(minutes: 3));
     await tester.tap(find.text('Laboratuvar'));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
     await _pickTool(tester, 'Geometrik seyreltme');
-    expect(find.text('Sıradaki adım geometrik seyreltme, 4 dk sürer.'), findsOneWidget);
-    expect(find.textContaining('çelikle tepkimeye girer'), findsOneWidget);
-    await tester.tap(_inSheet(order.magistralName));
-    await tester.pumpAndSettle();
+    expect(find.text('Bitince ilaç hazır'), findsOneWidget);
     clock = clock.add(const Duration(minutes: 4));
 
-    await tester.tap(find.text('Reçeteler'));
-    await tester.pump();
+    // Hazır ilaç laboratuvarda da söylenir, karta basınca teslime yönlendirir.
     await tester.pump(const Duration(seconds: 1));
+    expect(find.text('1 reçete hazır'), findsOneWidget);
+    await _pickTool(tester, 'Ezme');
+    expect(find.text('Laboratuvarda reçete yok. Reçeteler\'de duvardan bir reçete al.'), findsNothing);
+    expect(find.text('İlacın hazır. Reçeteler\'e geçip teslim edebilirsin.'), findsOneWidget);
+    await tester.tap(_inSheet('Reçetelere git'));
+    await tester.pumpAndSettle();
+
     await tester.tap(find.text('Teslim et'));
     await tester.pumpAndSettle();
     expect(find.text('Kusursuz oldu!'), findsOneWidget);
@@ -207,6 +205,26 @@ void main() {
     expect(jobOf(store, order), isNull);
     // Teslim edilen duvara dönmez; yenisi sayaçla gelir (8. dakikadayız, geliş 60 dk).
     expect(find.text('Duvarda 3 reçete var. Yenisi 52:00 sonra gelir.'), findsOneWidget);
+  });
+
+  testWidgets('iki reçete aynı adımı bekliyorsa kart hangisinde yapılacağını sorar', (tester) async {
+    await _tallScreen(tester);
+    final salicylic = prescriptionOrders[0];
+    final store = await _store(now: () => DateTime(2026, 10, 25, 12));
+    await take(store, salicylic);
+    await take(store, prescriptionOrders[3]); // pudra da ezmeyle başlar
+    await tester.pumpWidget(MajistralApp(store: store));
+    await tester.tap(find.text('Laboratuvar'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+
+    await _pickTool(tester, 'Ezme');
+    expect(find.text('Bu adımı hangi reçetede yapacaksın?'), findsOneWidget);
+    expect(find.text('Sıradaki adım ezme, 1 dk sürer.'), findsOneWidget);
+    expect(find.textContaining('çelikle tepkimeye girer'), findsOneWidget);
+    await tester.tap(_inSheet(salicylic.magistralName));
+    await tester.pumpAndSettle();
+    expect(jobOf(store, salicylic)!.runs.single.label, 'Ezme');
   });
 
   testWidgets('market sekmeleri istasyonları, reklamı ve kimyasalları gösterir', (tester) async {
@@ -235,8 +253,7 @@ void main() {
     await tester.tap(find.text('Laboratuvar'));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
-    await _pickTool(tester, 'Eritme');
-    await tester.tap(_inSheet(cream.magistralName));
+    await tester.tap(find.text('Eritme'));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 400));
     expect(find.text('Yağ fazını erit'), findsOneWidget);

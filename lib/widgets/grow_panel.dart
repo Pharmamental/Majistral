@@ -20,10 +20,11 @@ Future<T?> openGrowing<T>(
   required Rect from,
   required WidgetBuilder builder,
   ShapeBorder shape = const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(AppRadius.paper))),
-}) => Navigator.of(context).push(GrowRoute<T>(origin: from, builder: builder, shape: shape));
+  bool dismissible = true,
+}) => Navigator.of(context).push(GrowRoute<T>(origin: from, builder: builder, shape: shape, dismissible: dismissible));
 
 class GrowRoute<T> extends PopupRoute<T> {
-  GrowRoute({required this.origin, required this.builder, required this.shape});
+  GrowRoute({required this.origin, required this.builder, required this.shape, this.dismissible = true});
 
   /// Büyümenin başladığı ve kapanınca dönülen yer. Kapanmadan önce
   /// değiştirilirse pencere oraya gider ("Al": reçete tezgâha iner).
@@ -31,13 +32,17 @@ class GrowRoute<T> extends PopupRoute<T> {
   final WidgetBuilder builder;
   final ShapeBorder shape;
 
+  /// Arkaya dokununca kapanır mı. Mini oyunda parmak kenardan taşınca pencere
+  /// kapanıyor, adım sessizce başlamıyordu (2026-10-31).
+  final bool dismissible;
+
   static const double maxWidth = 480;
 
   @override
   Color? get barrierColor => const Color(0x66000000);
 
   @override
-  bool get barrierDismissible => true;
+  bool get barrierDismissible => dismissible;
 
   @override
   String? get barrierLabel => 'Kapat';

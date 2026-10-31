@@ -7,6 +7,7 @@ import '../theme/tokens.dart';
 import '../widgets/back_pill.dart';
 import '../widgets/counter_top.dart';
 import '../widgets/grow_panel.dart';
+import '../widgets/guide_note.dart';
 import '../widgets/job_status.dart';
 import '../widgets/paper_tape.dart';
 import '../widgets/patient_card.dart';
@@ -75,9 +76,13 @@ class _OrdersScreenState extends State<OrdersScreen> with SecondTick {
     final hand = _hand(store);
     final incoming = store.wall;
     final next = store.untilNextArrival;
-    final wallLine = next == null
+    final wallLine = next != null
+        ? 'Duvarda ${incoming.length} reçete var. Yenisi ${formatRemaining(next)} sonra gelir.'
+        : incoming.length >= store.wallLimit
         ? 'Duvarda ${incoming.length} reçete var, duvar dolu.'
-        : 'Duvarda ${incoming.length} reçete var. Yenisi ${formatRemaining(next)} sonra gelir.';
+        : incoming.isEmpty
+        ? 'Duvar boş.'
+        : 'Duvarda ${incoming.length} reçete var.';
     int count(OrderStatus s) => hand.where((e) => e.status == s).length;
     final parts = [
       hand.isEmpty ? 'Elinde reçete yok' : 'Elinde ${hand.length} reçete var',
@@ -110,6 +115,8 @@ class _OrdersScreenState extends State<OrdersScreen> with SecondTick {
                       if (i > 0) const SizedBox(width: AppSpace.sm),
                       _Slip(
                         order: store.orderKeyed(o.orderKey),
+                        time: store.wallTime(store.orderKeyed(o.orderKey)),
+                        pulse: store.guideNotes && store.guideStage == 0,
                         onTap: (from) => openRecipe(
                           context,
                           store.orderKeyed(o.orderKey),
@@ -158,7 +165,7 @@ class _OrdersScreenState extends State<OrdersScreen> with SecondTick {
     return KeyedSubtree(
       key: const ValueKey('reçeteler'),
       child: hand.isEmpty
-                  ? const _EmptyCounter()
+                  ? _idleCounter(store)
                   // Kartlar raf kenarına bantla asılı: bant raf kenarına taşar, bu
                   // yüzden sayfa kırpılmaz. Kartlar düz durur (Tuğrul, 2026-10-27).
                   : PageView.builder(
@@ -185,6 +192,17 @@ class _OrdersScreenState extends State<OrdersScreen> with SecondTick {
                         ),
                       ),
                     ),
+    );
+  }
+
+  /// Elde reçete yokken tezgâh: öğreticide not, sonra bantlı küçük kâğıt.
+  Widget _idleCounter(JobStore store) {
+    final guide = counterGuide(store);
+    if (guide == null) return const _EmptyCounter();
+    return SingleChildScrollView(
+      clipBehavior: Clip.none,
+      padding: const EdgeInsets.fromLTRB(AppSpace.xl, AppSpace.xl, AppSpace.xl, AppSpace.lg),
+      child: GuideNote(text: guide, onClose: () => store.setGuideNotes(false)),
     );
   }
 }
@@ -242,9 +260,13 @@ class _EmptySlip extends StatelessWidget {
 /// Duvardaki gelen reçete fişi: hekim, ilacın adı ve süresi, üstünde bir parça
 /// bant. Bütün fişler aynı boyda, düz ve yeni reçete renginde çerçeveli.
 class _Slip extends StatelessWidget {
-  const _Slip({required this.order, required this.onTap});
+  const _Slip({required this.order, required this.time, required this.pulse, required this.onTap});
 
   final PrescriptionOrder order;
+
+  /// Fişte yazan süre; öğreticide kısadır.
+  final Duration time;
+  final bool pulse;
   final void Function(Rect from) onTap;
 
   @override
@@ -256,7 +278,9 @@ class _Slip extends StatelessWidget {
       excludeSemantics: true,
       child: GestureDetector(
         onTap: () => onTap(rectOf(context)),
-        child: Stack(
+        child: GuidePulse(
+          active: pulse,
+          child: Stack(
           clipBehavior: Clip.none,
           alignment: Alignment.topCenter,
           children: [
@@ -305,7 +329,7 @@ class _Slip extends StatelessWidget {
                     children: [
                       const Icon(Icons.hourglass_empty_rounded, size: 12, color: AppColors.inkMuted),
                       const SizedBox(width: 2),
-                      Text('${order.prepTime.inMinutes} dk', style: AppText.label(size: 11)),
+                      Text(formatLength(time), style: AppText.label(size: 11)),
                     ],
                   ),
                 ],
@@ -313,6 +337,7 @@ class _Slip extends StatelessWidget {
             ),
             const Positioned(top: -8, child: PaperTape(width: 36, height: 14)),
           ],
+          ),
         ),
       ),
     );

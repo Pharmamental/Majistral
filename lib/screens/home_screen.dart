@@ -12,9 +12,13 @@ import 'profile_screen.dart';
 /// Uygulamanın kabuğu: ana bölümler alt gezinme çubuğunda, başparmak bölgesinde:
 /// Reçeteler, Laboratuvar, Market, Bahçe, Profil, Diğer ([GameTabBar]). Bahçe
 /// 2026-10-29'da altıncı sekme olarak eklendi (Tasarım Rehberi 3–5 öneriyor).
-/// Hazır ya da oyuncuyu bekleyen iş varsa Reçeteler simgesinde rozet görünür.
+/// Rozet işin yapılacağı yerde: teslime hazır iş Reçeteler'de, adımı oyuncuyu
+/// bekleyen iş Laboratuvar'da.
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  /// Reçeteler sekmesinin sırası.
+  static const orders = 0;
 
   /// Laboratuvar sekmesinin sırası.
   static const lab = 1;
@@ -38,8 +42,8 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final store = JobScope.of(context);
-    // Teslim edilecek ya da sıradaki adımı oyuncuyu bekleyen işler.
-    final ready = store.jobs.where((j) => store.isReady(j) || store.needsAction(j)).length;
+    final ready = store.jobs.where(store.isReady).length;
+    final waiting = store.jobs.where(store.needsAction).length;
 
     return Scaffold(
       // İçerik alt çubuğun arkasına uzanır; ortadaki daireyi saran boşlukta
@@ -67,7 +71,7 @@ class _HomeScreenState extends State<HomeScreen> {
         index: _index,
         onSelect: _select,
         big: HomeScreen.lab,
-        badges: {0: ready},
+        badges: {HomeScreen.orders: ready, HomeScreen.lab: waiting},
         tabs: const [
           (label: 'Reçeteler', image: 'assets/images/ikon/ikon_sekme_receteler.png'),
           (label: 'Laboratuvar', image: 'assets/images/ikon/ikon_havan_porselen.png'),

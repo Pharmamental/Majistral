@@ -488,7 +488,8 @@ Future<void> _harvest(BuildContext context, JobStore store, int bed) async {
               label: 'Vitrine git',
               onPressed: () {
                 Navigator.of(sheet).pop();
-                HomeScreen.showTab(navigator.context, HomeScreen.profile);
+                // Gezgin HomeScreen'in üstünde; sekmeyi parselin bağlamı bulur.
+                if (context.mounted) HomeScreen.showTab(context, HomeScreen.profile);
               },
             ),
             const SizedBox(height: AppSpace.sm),

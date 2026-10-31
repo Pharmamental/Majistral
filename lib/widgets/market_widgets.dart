@@ -467,16 +467,12 @@ class ShopItemTile extends StatelessWidget {
               ],
             ),
           ),
+          // Reklam kartında düğme yok: reklam reçete kartındaki "Acele et"e bağlı.
+          if (!highlight) ...[
           const SizedBox(width: AppSpace.md),
           SizedBox(
             width: 104,
-            child: highlight
-                ? ChunkyButton.success(
-                    compact: true,
-                    label: item.buttonLabel,
-                    onPressed: () {},
-                  )
-                : locked
+            child: locked
                     ? Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -493,6 +489,7 @@ class ShopItemTile extends StatelessWidget {
                         onPressed: () => openPackBuy(context, item),
                       ),
           ),
+          ],
         ],
       ),
     );

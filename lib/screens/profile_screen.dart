@@ -77,7 +77,8 @@ class _DrawerChest extends StatelessWidget {
     final store = JobScope.of(context);
     final deliveries = store.deliveries;
     final tried = [for (final t in labTools()) if (stepCount(t.name, deliveries) > 0) t].length;
-    final prepared = (unlockAll ? playableFormulas(prescriptionOrders) : preparedFormulas(deliveries, prescriptionOrders)).length;
+    // Liste şimdilik tam görünür (unlockAll), ama sayı gerçek: yeni oyuncuya "112 hazırladın" demez.
+    final prepared = preparedFormulas(deliveries, prescriptionOrders).length;
     final empty = deliveries.isEmpty;
     return Padding(
       padding: const EdgeInsets.fromLTRB(AppSpace.md, AppSpace.md, AppSpace.md, 0),

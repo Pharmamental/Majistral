@@ -26,6 +26,13 @@ String formatRemaining(Duration d) {
   return '${d.inMinutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
 }
 
+/// "30 sn", "3 dk", "4 dk 30 sn" biçiminde süre uzunluğu.
+String formatLength(Duration d) {
+  if (d.inSeconds < 60) return '${d.inSeconds} sn';
+  final seconds = d.inSeconds % 60;
+  return seconds == 0 ? '${d.inMinutes} dk' : '${d.inMinutes} dk $seconds sn';
+}
+
 /// Hazır işi teslim eder ve sonucu kutlama penceresinde gösterir.
 Future<void> deliverJob(BuildContext context, int id) async {
   // Teslimden sonra düğmenin bulunduğu kart yeniden çizilip kaybolabilir;
@@ -171,8 +178,10 @@ class _JobStatusState extends State<JobStatus> with SecondTick {
                     Text(next == null ? 'sonra hazır' : 'sonra sıra sende', style: AppText.label(size: 13)),
                   ],
                 ),
-                const SizedBox(height: AppSpace.sm),
-                _RushButton(job: job),
+                if (!store.rushHidden(job)) ...[
+                  const SizedBox(height: AppSpace.sm),
+                  _RushButton(job: job),
+                ],
               ] else
                 // Bekleyen adım amber kutuda; altında cümle yok (Tuğrul, 2026-10-28).
                 ChunkyButton(
@@ -263,6 +272,7 @@ class _StepStrip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final store = JobScope.of(context);
     final runs = job.runs;
     final tiles = <Widget>[
       for (final (i, s) in steps.indexed)
@@ -279,7 +289,7 @@ class _StepStrip extends StatelessWidget {
         else if (i == runs.length && job.runningAt(at) == null)
           _StepTile(label: s.label, state: _TileState.player, note: 'Sıra sende')
         else
-          _StepTile(label: s.label, state: _TileState.next, note: '${s.minutes} dk'),
+          _StepTile(label: s.label, state: _TileState.next, note: formatLength(store.stepDurationIn(job, s))),
     ];
     return IntrinsicHeight(
       child: Row(

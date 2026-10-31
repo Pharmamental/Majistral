@@ -40,10 +40,19 @@ class JobStore extends ChangeNotifier {
   static const _gardenKey = 'garden_v1';
   static const _economyKey = 'economy_v1';
   static const _patientKey = 'patient_v1';
+  static const _guideKey = 'guide_v1';
 
   /// Duvarda en fazla birikecek reçete; vitrindeki çay fanusu artırır ([wallLimit]).
   /// 3'ten 4'e çıktı (ekonomi 2. tur, 2026-10-29): "X sonra dön" = 4 × 60 dk.
   static const wallSize = 4;
+
+  /// İlk iki reçetenin toplam süresi (Tuğrul, 2026-10-31; tasarım belgesi "ilk iş
+  /// birkaç saniyede biter"). Yer tutucu; öğrenciyle denenince ayarlanacak.
+  static const guideFirstTotal = Duration(seconds: 30);
+  static const guideSecondTotal = Duration(minutes: 3);
+
+  /// Notlar ilk üç teslimde biter.
+  static const guideDeliveries = 3;
 
   /// Tohum düşmesinin şansı; testler sabit tohumla verir.
   final math.Random _random;
@@ -65,7 +74,14 @@ class JobStore extends ChangeNotifier {
   /// Sayacın dolduğu an: duvarda yer varsa yeni reçete bu anda gelir.
   DateTime _due;
 
-  static Future<JobStore> load({DateTime Function()? now, List<PrescriptionOrder>? orders, math.Random? random}) async {
+  /// [guided]: oyunda ilk açılış ilk reçeteyle öğretir (main.dart açar; testler
+  /// `test/guide_test.dart` dışında kapalı sınar). Eski kayıtlar etkilenmez.
+  static Future<JobStore> load({
+    DateTime Function()? now,
+    List<PrescriptionOrder>? orders,
+    math.Random? random,
+    bool guided = false,
+  }) async {
     final prefs = await SharedPreferences.getInstance();
     final clock = now ?? DateTime.now;
     final known = orders ?? prescriptionOrders;
@@ -124,6 +140,18 @@ class JobStore extends ChangeNotifier {
       store._deliveries.clear();
     }
     try {
+      final raw = prefs.getString(_guideKey);
+      if (raw != null) {
+        final g = jsonDecode(raw) as Map<String, dynamic>;
+        store._guideOn = g['on'] as bool;
+        store._notesClosed = g['closed'] as bool;
+        store._secondId = g['second'] as int?;
+      }
+    } on Object {
+      // Bozuk kayıtta notlar çıkmaz, oyun normal sürer.
+      store._guideOn = false;
+    }
+    try {
       final profile = jsonDecode(prefs.getString(_profileKey) ?? '{}') as Map<String, dynamic>;
       store._playerName = profile['name'] as String? ?? store._playerName;
       store._pharmacyName = profile['pharmacy'] as String? ?? store._pharmacyName;
@@ -168,10 +196,16 @@ class JobStore extends ChangeNotifier {
     } on Object {
       // Bozuk ekonomi kaydı: kasa boş başlar, raf boş; eksikler depodan gelir.
     }
-    // İlk açılış: duvar dolu başlar, sayaç şimdi başlar.
+    // İlk açılış: duvar dolu başlar, sayaç şimdi başlar. Öğreticide duvarda tek reçete.
     if (nextId == null) {
-      while (store._wall.length < store.wallLimit) {
+      if (guided && store._deliveries.isEmpty) {
+        store._guideOn = true;
         store._arrive();
+        await store._saveGuide();
+      } else {
+        while (store._wall.length < store.wallLimit) {
+          store._arrive();
+        }
       }
       await store._save();
     }
@@ -179,6 +213,58 @@ class JobStore extends ChangeNotifier {
   }
 
   List<PrepJob> get jobs => List.unmodifiable(_jobs);
+
+  // ---- Öğretici (Tuğrul, 2026-10-31): ayrı bölüm yok, ilk reçete öğretir.
+  // İlk reçete tam yönlendirmeli ve saniyeler sürer, ikincisi yardımsız ve kısa,
+  // üçüncüsü gerçek süreli. Yazılar widgets/guide_note.dart içinde.
+
+  bool _guideOn = false;
+  bool _notesClosed = false;
+
+  /// İkinci olarak alınan reçetenin kimliği; süresi kısadır.
+  int? _secondId;
+
+  /// Öğreticide kaç teslim yapıldı; öğretici bittiyse null.
+  int? get guideStage => _guideOn ? _deliveries.length : null;
+
+  /// Yardım notları görünsün mü (oyuncu kapatabilir).
+  bool get guideNotes => _guideOn && !_notesClosed;
+
+  /// Oyuncu notları kapattı, öğretici sürüyor (Diğer'de geri açılır).
+  bool get guideClosed => _guideOn && _notesClosed;
+
+  /// İkinci reçete henüz seçilmedi.
+  bool get guideSecondOpen => guideStage == 1 && _secondId == null;
+
+  /// İlk teslime kadar duvarda yalnız ilk reçete durur, yenisi gelmez.
+  bool get _wallHeld => _guideOn && _deliveries.isEmpty;
+
+  /// Notları açar ya da kapatır.
+  Future<void> setGuideNotes(bool on) async {
+    _notesClosed = !on;
+    await _saveGuide();
+  }
+
+  Future<void> _saveGuide() async {
+    await _prefs.setString(_guideKey, jsonEncode({'on': _guideOn, 'closed': _notesClosed, 'second': _secondId}));
+    notifyListeners();
+  }
+
+  /// Bu işin öğreticideki toplam süresi; gerçek süreli işte null.
+  Duration? _guideTotal(int id) {
+    if (!_guideOn) return null;
+    if (id == 0) return guideFirstTotal;
+    return id == _secondId ? guideSecondTotal : null;
+  }
+
+  /// İlk reçetede acele yok: süre zaten saniyeler.
+  bool rushHidden(PrepJob job) => _guideOn && job.id == 0;
+
+  /// Reçetenin duvar fişinde yazan süre.
+  Duration wallTime(PrescriptionOrder order) {
+    final total = _wallHeld ? guideFirstTotal : (guideSecondOpen ? guideSecondTotal : null);
+    return total != null && total < order.prepTime ? total : order.prepTime;
+  }
 
   /// Teslim edilen reçeteler, eskiden yeniye (profil: unvan, ustalık, koleksiyon).
   List<Delivery> get deliveries => List.unmodifiable(_deliveries);
@@ -396,6 +482,17 @@ class JobStore extends ChangeNotifier {
     return Duration(seconds: (step.minutes * 60 * (100 - faster) / 100).round());
   }
 
+  /// Bu işte adımın süresi: öğreticideki kısa işte toplam süre adımlara,
+  /// gerçek süreleriyle orantılı bölünür.
+  Duration stepDurationIn(PrepJob job, PrescriptionStep step) {
+    final normal = stepDuration(step);
+    final total = _guideTotal(job.id);
+    if (total == null) return normal;
+    final share = step.minutes / orderOf(job).prepTime.inMinutes;
+    final short = Duration(seconds: (total.inSeconds * share).round());
+    return short < normal ? short : normal;
+  }
+
   /// [bed]. parsele tohum eker.
   Future<bool> plant(int bed, String plant) => _gardenChange(() => _garden.plant(bed, plant, now()));
 
@@ -441,7 +538,7 @@ class JobStore extends ChangeNotifier {
   /// Bir sonraki reçeteye kalan süre; duvar doluysa null.
   Duration? get untilNextArrival {
     _catchUp();
-    if (_wall.length >= wallLimit) return null;
+    if (_wallHeld || _wall.length >= wallLimit) return null;
     return _due.difference(now());
   }
 
@@ -461,6 +558,7 @@ class JobStore extends ChangeNotifier {
   /// Uygulama kapalıyken dolan sayaçlar da sayılır: her geliş kendi anında
   /// olur ve sayaç o andan başlar. Duvar dolunca geliş bekletilir.
   void _catchUp() {
+    if (_wallHeld) return;
     var changed = false;
     while (_wall.length < wallLimit && !now().isBefore(_due)) {
       _arrive();
@@ -502,8 +600,11 @@ class JobStore extends ChangeNotifier {
     final run = running(job);
     final steps = orderOf(job).steps.skip(job.runs.length);
     return (run == null ? Duration.zero : run.end.difference(now())) +
-        steps.fold(Duration.zero, (sum, s) => sum + stepDuration(s));
+        steps.fold(Duration.zero, (sum, s) => sum + stepDurationIn(job, s));
   }
+
+  /// Reçete oyuncunun bir sonraki hamlesini ne zamandır bekliyor.
+  Duration idleFor(PrepJob job) => now().difference(job.runs.isEmpty ? job.acceptedAt : job.runs.last.end);
 
   /// [tool] adım kartında şu an çalışan işler.
   List<({PrepJob job, StepRun run})> runsOn(LabTool tool) => [
@@ -543,6 +644,10 @@ class JobStore extends ChangeNotifier {
     _wall.removeWhere((o) => o.id == incoming.id);
     _consume(orderKeyed(incoming.orderKey));
     await _saveEconomy();
+    if (guideSecondOpen) {
+      _secondId = incoming.id;
+      await _saveGuide();
+    }
     final job = PrepJob(
       id: incoming.id,
       magistralName: incoming.magistralName,
@@ -567,7 +672,7 @@ class JobStore extends ChangeNotifier {
     final start = now();
     _jobs[_jobs.indexOf(job)] = job.copyWith(runs: [
       ...job.runs,
-      StepRun(label: step.label, tool: tool.name, start: start, end: start.add(stepDuration(step))),
+      StepRun(label: step.label, tool: tool.name, start: start, end: start.add(stepDurationIn(job, step))),
     ]);
     await _save();
     notifyListeners();
@@ -650,9 +755,21 @@ class JobStore extends ChangeNotifier {
       steps: [for (final s in orderOf(job).steps) s.label],
     ));
     await _prefs.setString(_deliveriesKey, jsonEncode([for (final d in _deliveries) d.toJson()]));
-    // Teslimlerin yarısı bahçeye bir tohum getirir.
-    _lastDrop = _garden.dropSeed(_random, bonusPercent: showcaseBonus(PlantGroup.ferah));
+    // Teslimlerin yarısı bahçeye bir tohum getirir; ilk teslim tek işe odaklı kalır.
+    final first = _guideOn && _deliveries.length == 1;
+    _lastDrop = first ? null : _garden.dropSeed(_random, bonusPercent: showcaseBonus(PlantGroup.ferah));
     await _prefs.setString(_gardenKey, jsonEncode(_garden.toJson()));
+    // İlk teslimde duvarın öteki reçeteleri gelir, sayaç o andan başlar.
+    if (first) {
+      for (var i = 1; i < wallLimit; i++) {
+        _arrive();
+      }
+      _due = now().add(arrivalEvery);
+    }
+    if (_guideOn && _deliveries.length >= guideDeliveries) {
+      _guideOn = false;
+      await _saveGuide();
+    }
     await _save();
     notifyListeners();
     return job;
@@ -689,6 +806,8 @@ class JobStore extends ChangeNotifier {
 
   /// Hasta tezgâha gelir; soracak soru yoksa bir şey olmaz.
   void askPatient(PrepJob job) {
+    // İlk teslimde hasta gelmez; soru ikinci teslimde, oyuncu haberliyken gelir.
+    if (_guideOn && _deliveries.length == 1) return;
     _pending = nextPatientQuestion(job);
     _pendingChoice = null;
     notifyListeners();

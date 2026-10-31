@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../data/formulary.dart';
+import '../logic/job_store.dart';
 import '../theme/tokens.dart';
 import '../widgets/back_pill.dart';
 import 'references_screen.dart';
@@ -19,6 +20,7 @@ class _MoreScreenState extends State<MoreScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final store = JobScope.of(context);
     if (_references) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -62,6 +64,15 @@ class _MoreScreenState extends State<MoreScreen> {
                   image: 'assets/images/ikon/ikon_sekme_kaynaklar.png',
                   onTap: () => setState(() => _references = true),
                 ),
+                if (store.guideClosed) ...[
+                  const SizedBox(height: AppSpace.md),
+                  _MoreTile(
+                    title: 'Notları yeniden göster',
+                    subtitle: 'İlk reçetelerdeki yardım notları geri gelir',
+                    image: 'assets/images/ikon/ikon_sekme_diger.png',
+                    onTap: () => store.setGuideNotes(true),
+                  ),
+                ],
               ],
             ),
           ),

@@ -6,7 +6,7 @@ import 'theme/app_theme.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final store = await JobStore.load();
+  final store = await JobStore.load(guided: true);
   runApp(MajistralApp(store: store));
 }
 

@@ -18,10 +18,11 @@ import 'grow_panel.dart';
 /// Testler adım akışını oyunsuz sınamak için bunu false yapar.
 bool miniGamesEnabled = true;
 
-/// Adımın mini oyunu; yoksa null (Eritme termometreyi kullanır).
-MiniGame? miniGameFor(String step) => switch (step) {
+/// Adımın mini oyunu; yoksa null (Eritme termometreyi kullanır). [liquid]
+/// levigasyonda reçetenin sıvısı.
+MiniGame? miniGameFor(String step, {String liquid = 'sıvı'}) => switch (step) {
       'Ezme' => _Ezme(),
-      'Levigasyon' => _Levigasyon(),
+      'Levigasyon' => _Levigasyon(liquid),
       'Geometrik seyreltme' => _Seyreltme(),
       'Çözme' => _Cozme(),
       'Emülsifikasyon' => _Emulsifikasyon(),
@@ -36,7 +37,8 @@ MiniGame? miniGameFor(String step) => switch (step) {
 
 /// Mini oyunu adımın kartının yerinden büyüyen pencerede açar. Oyun bitince
 /// [onDone] çağrılır (adımın süresi başlar), sonuç kısa bir an görünür ve
-/// pencere kapanır.
+/// pencere kapanır. [cautions] alet uyarıları, [comfort] öğreticideki güven
+/// cümlesi.
 Future<void> openMiniGame(
   BuildContext context, {
   required Rect from,
@@ -44,10 +46,13 @@ Future<void> openMiniGame(
   required String step,
   required MiniGame game,
   required VoidCallback onDone,
+  Iterable<String> cautions = const [],
+  String? comfort,
 }) {
   return openGrowing<void>(
     context,
     from: from,
+    dismissible: false,
     builder: (sheetContext) => Padding(
       padding: const EdgeInsets.all(AppSpace.lg),
       child: Column(
@@ -58,15 +63,27 @@ Future<void> openMiniGame(
           Text(step, textAlign: TextAlign.center, style: AppText.title(size: 20)),
           const SizedBox(height: AppSpace.xs),
           Text(game.hint, textAlign: TextAlign.center, style: AppText.body(size: 13, color: AppColors.inkMuted)),
+          for (final caution in cautions)
+            Padding(
+              padding: const EdgeInsets.only(top: AppSpace.xs),
+              child: Text(caution, textAlign: TextAlign.center, style: AppText.label(size: 12, color: AppColors.bekliyorText)),
+            ),
+          if (comfort != null)
+            Padding(
+              padding: const EdgeInsets.only(top: AppSpace.xs),
+              child: Text(comfort, textAlign: TextAlign.center, style: AppText.label(size: 12, color: AppColors.ink)),
+            ),
           const SizedBox(height: AppSpace.sm),
-          MiniGameView(
-            game: game,
-            onDone: (_) {
-              onDone();
-              Future.delayed(const Duration(milliseconds: 1400), () {
-                if (sheetContext.mounted) Navigator.of(sheetContext).pop();
-              });
-            },
+          Flexible(
+            child: MiniGameView(
+              game: game,
+              onDone: (_) {
+                onDone();
+                Future.delayed(const Duration(milliseconds: 1400), () {
+                  if (sheetContext.mounted) Navigator.of(sheetContext).pop();
+                });
+              },
+            ),
           ),
         ],
       ),
@@ -91,6 +108,14 @@ abstract class MiniGame {
   double q = 100;
   bool done = false;
   double flash = 0;
+
+  /// Öğreticide: oyuncu duraksayınca parmak nereye dokunacağını gösterir, kalite
+  /// ve yıldız yazmaz (kalite şimdilik teslimi etkilemiyor, karar açık).
+  bool guided = false;
+  double idle = 3, clock = 0;
+
+  /// Gösterilen parmağın yeri; oyunun o anki hamlesine göre.
+  Offset? fingerAt(Size s) => null;
 
   int get stars => q >= 85 ? 3 : q >= 60 ? 2 : 1;
 
@@ -124,6 +149,9 @@ class _MiniGameViewState extends State<MiniGameView> with SingleTickerProviderSt
   bool _ready = false;
   bool _reported = false;
 
+  /// Düğmeli oyunda düğmenin yeri baştan ayrılır, düğme kalkınca çizim büyümez.
+  late final double _buttonRoom = widget.game.action == null ? 0 : 68;
+
   @override
   void initState() {
     super.initState();
@@ -142,6 +170,8 @@ class _MiniGameViewState extends State<MiniGameView> with SingleTickerProviderSt
     if (!_ready) return;
     final g = widget.game;
     if (!g.done) g.update(dt, _input, _size);
+    g.clock += dt;
+    g.idle = _input.down || _input.taps.isNotEmpty ? 0 : g.idle + dt;
     _input.taps.clear();
     if (g.flash > 0) g.flash -= dt;
     if (g.done && !_reported) {
@@ -154,20 +184,21 @@ class _MiniGameViewState extends State<MiniGameView> with SingleTickerProviderSt
   @override
   Widget build(BuildContext context) {
     final g = widget.game;
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        LayoutBuilder(builder: (context, box) {
-          final w = min(box.maxWidth, 360.0);
-          final size = Size(w, (w * 1.05).roundToDouble());
-          if (!_ready) {
-            _size = size;
-            g.init(size);
-            _ready = true;
-          }
-          _size = size;
-          return Center(
+    return LayoutBuilder(builder: (context, box) {
+      // Dar telefonda uyarılarla birlikte pencereye sığsın (4: çerçeve ve yuvarlama).
+      final w = min(min(box.maxWidth, 360.0), (box.maxHeight - _buttonRoom - 4) / 1.05);
+      final size = Size(w, (w * 1.05).roundToDouble());
+      if (!_ready) {
+        _size = size;
+        g.init(size);
+        _ready = true;
+      }
+      _size = size;
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Center(
             child: Listener(
               onPointerDown: (e) => _input
                 ..down = true
@@ -188,14 +219,14 @@ class _MiniGameViewState extends State<MiniGameView> with SingleTickerProviderSt
                 ),
               ),
             ),
-          );
-        }),
-        if (g.action != null && !g.done) ...[
-          const SizedBox(height: AppSpace.sm),
-          ChunkyButton.secondary(label: g.action!, onPressed: () => setState(() => g.act(_size))),
+          ),
+          if (g.action != null && !g.done) ...[
+            const SizedBox(height: AppSpace.sm),
+            ChunkyButton.secondary(label: g.action!, onPressed: () => setState(() => g.act(_size))),
+          ],
         ],
-      ],
-    );
+      );
+    });
   }
 }
 
@@ -210,12 +241,20 @@ class _GamePainter extends CustomPainter {
     if (game.flash > 0) {
       c.drawRect(Offset.zero & s, Paint()..color = _red.withValues(alpha: game.flash.clamp(0, 1) * .35));
     }
-    _text(c, 'Kaliten şu an %${game.q.round()}.', const Offset(12, 14), size: 13, color: AppColors.inkMuted, align: TextAlign.left);
+    if (!game.guided) {
+      _text(c, 'Kaliten şu an %${game.q.round()}.', const Offset(12, 14), size: 13, color: AppColors.inkMuted, align: TextAlign.left);
+    } else if (!game.done && game.idle >= 3) {
+      if (game.fingerAt(s) case final at?) _finger(c, at, game.clock);
+    }
     if (game.done) {
       c.drawRect(Rect.fromLTWH(0, s.height * .3, s.width, s.height * .34), Paint()..color = AppColors.surface.withValues(alpha: .93));
       _text(c, 'Tamam!', Offset(s.width / 2, s.height * .38), size: 24);
-      _text(c, '★' * game.stars + '☆' * (3 - game.stars), Offset(s.width / 2, s.height * .47), size: 40, color: AppColors.star);
-      _text(c, 'Kaliten %${game.q.round()} oldu. Süre başladı.', Offset(s.width / 2, s.height * .57), size: 14, color: AppColors.inkMuted);
+      if (game.guided) {
+        _text(c, 'Süre başladı.', Offset(s.width / 2, s.height * .5), size: 14, color: AppColors.inkMuted);
+      } else {
+        _text(c, '★' * game.stars + '☆' * (3 - game.stars), Offset(s.width / 2, s.height * .47), size: 40, color: AppColors.star);
+        _text(c, 'Kaliten %${game.q.round()} oldu. Süre başladı.', Offset(s.width / 2, s.height * .57), size: 14, color: AppColors.inkMuted);
+      }
     }
   }
 
@@ -289,6 +328,12 @@ void _line(Canvas c, Offset a, Offset b, Color color, double w) =>
       ..color = color
       ..strokeWidth = w
       ..strokeCap = StrokeCap.round);
+
+/// Öğreticide gösterilen parmak: kobalt daire, çevresinde nabız.
+void _finger(Canvas c, Offset at, double t) {
+  c.drawCircle(at, 26 + (sin(t * 6) + 1) * 4, Paint()..color = AppColors.kobalt.withValues(alpha: .16));
+  _circle(c, at, 16, fill: AppColors.kobalt.withValues(alpha: .55), stroke: Colors.white);
+}
 
 /// Alttaki gösterge: [fill] verilirse dolan çubuk, yoksa iğne; [lo]–[hi] yeşil aralık.
 void _gauge(Canvas c, Size s, double y, String label, double v, {double? lo, double? hi, Color? fill}) {
@@ -366,7 +411,7 @@ class _Spin {
 /// Ezme: önce iri kristaller kırılır, sonra havan eli bastırarak dairesel sürtülür.
 class _Ezme extends MiniGame {
   @override
-  String get hint => 'Önce iri kristallere dokunup kır. Sonra havanın içinde parmağınla daire çiz. Çok hızlı çizersen toz kaçar.';
+  String get hint => 'Önce iri kristallere ikişer kez dokunup kır. Sonra havanın içinde parmağınla daire çiz. Çok hızlı çizersen toz kaçar.';
   final _big = [for (final d in const [Offset(-.35, .1), Offset(.1, -.05), Offset(.38, .12), Offset(-.05, .18)]) [d.dx, d.dy, 2.0]];
   final _spin = _Spin();
   double _p = 0, _spill = 0;
@@ -374,6 +419,15 @@ class _Ezme extends MiniGame {
   Offset _c(Size s) => Offset(s.width / 2, s.height * .52);
   double _r(Size s) => s.width * .36;
   bool get _crystals => _big.any((b) => b[2] > 0);
+
+  @override
+  Offset? fingerAt(Size s) {
+    final c = _c(s), r = _r(s);
+    for (final b in _big) {
+      if (b[2] > 0) return c + Offset(b[0] * r, b[1] * r);
+    }
+    return c + Offset(cos(clock * 2.5) * r * .5, sin(clock * 2.5) * r * .2);
+  }
 
   @override
   void update(double dt, MiniInput i, Size s) {
@@ -429,8 +483,19 @@ class _Ezme extends MiniGame {
 
 /// Levigasyon: toza damla damla az sıvı, kıvam aralıkta; sonra spatülle sürtme.
 class _Levigasyon extends MiniGame {
+  _Levigasyon(this.liquid);
+
+  final String liquid;
+
   @override
-  String get hint => 'Damlalığa dokun: her dokunuş bir damla gliserol. Kıvam yeşil aralığa gelince "Spatülle"ye bas, sonra parmağını sağa sola sürterek taneleri yok et.';
+  String get hint => 'Damlalığa dokun, her dokunuş bir damla $liquid. Kıvam yeşil aralığa gelince "Spatülle" düğmesine bas, sonra parmağını sağa sola sürterek taneleri yok et.';
+
+  @override
+  Offset? fingerAt(Size s) {
+    if (_phase == 1) return Offset(s.width * (.5 + sin(clock * 2.5) * .3), s.height * .52);
+    return _k < .5 ? Offset(s.width / 2, 58) : null;
+  }
+
   @override
   String? get action => _phase == 0 ? 'Spatülle' : null;
   double _k = 0;
@@ -498,6 +563,9 @@ class _Levigasyon extends MiniGame {
 
 /// Geometrik seyreltme: her turda havandakinin eşiti kadar baz eklenir (1 › 2 › 4 › 8).
 class _Seyreltme extends MiniGame {
+  @override
+  Offset? fingerAt(Size s) => Offset(s.width / 2, s.height * .5);
+
   @override
   String get hint => 'Havandaki kadar baz ekle. Basılı tut, sağdaki çubuk havandakiyle eşitlenince bırak. Bunu dört kez yapacaksın.';
   double _m = 1, _add = 0;

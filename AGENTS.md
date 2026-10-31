@@ -155,7 +155,8 @@ lib/
   kalır, seçim değil, adım başlatılırken uyarı ikonuyla düz cümle ("Plastik spatül kullan.").
   Cam havan uyarısı kalktı (Tuğrul, 2026-10-30): oyuncu alet seçmiyor, uyarıyla yapacağı bir şey yoktu.
   Adımın market yükseltmesi alınınca kartın "neyle yapılır" yazısı o aletin adı olur.
-- Laboratuvar (Tuğrul, 2026-10-27): her adımı oyuncu başlatır. Adım kartına basınca kabul edilmiş
+- Laboratuvar (Tuğrul, 2026-10-27): her adımı oyuncu başlatır. Adımı tek reçete başlatabiliyorsa karta
+  basınca doğrudan başlar (`beginStep`, 2026-10-31), alet uyarısı mini oyunda yazar. Yoksa kabul edilmiş
   reçeteler açılır (`widgets/tool_sheet.dart`); o adımı şimdi başlatabilenler kobalt vurgulu,
   başlatamayanların altında nedeni (`JobStore.whyNot`: "bu adım daha sonra", "bu reçetede bu
   adım yok", "bu adım bitti", dolu). Bir kart aynı anda tek reçetede çalışır; farklı kartlar
@@ -188,7 +189,7 @@ lib/
   dolsa da gelmez; reçete alınca süre çoktan dolmuşsa yenisi hemen gelir, sayaç o andan
   başlar. Uygulama kapalıyken de gelir. Reçeteler sırayla döner, aynı reçete yeniden gelebilir
   (her gelişin kimliği `IncomingOrder.id`, iş de bu kimlikle tutulur). Elde tutma sınırı yok,
-  reçete kaybolmaz; ilk açılışta duvar dolu. Tezgâhta kartlar yan
+  reçete kaybolmaz; yeni oyuncuda duvar tek reçeteyle başlar (Öğretici). Tezgâhta kartlar yan
   yana, sağa sola kaydırılır (`PageView`, yanındaki kartın kenarı görünür), raf kenarına iki
   parça kâğıt bantla asılı, düz (eğiklik Tuğrul isteğiyle kalktı, `PaperTape`); durum kartın
   başında çipte. Tezgâh boşken bantlı küçük not. Kartı tezgâhın altına uzatıp düğmeyi alta
@@ -368,9 +369,9 @@ lib/
   Başladın kutucuk çıkarmaz). Vitrin rafında ilaç durmaz ("ilaç koymak çok iyi değil"): fanusta
   kurutulmuş tıbbi bitki, 16 tane (`data/dried_plants.dart`, ikonlar uretici.html "Vitrin";
   `glass:1` parça yan yüzsüz, yarı saydam); nasıl kazanılacakları sonra kararlaştırılacak.
-- Şimdilik her şey açık (Tuğrul, 2026-10-28, "unlocked bir şey olmasın"): `unlockAll`
-  (`data/lab_tools.dart`): market aletleri elde, koleksiyon tam, vitrine her fanus konur.
-  Kazanma ve satın alma kuralları gelince false yapılır; testler iki duruma göre yazıldı.
+- Koleksiyon listesi şimdilik tam görünür (Tuğrul, 2026-10-28, "unlocked bir şey olmasın"): `unlockAll`
+  (`data/lab_tools.dart`) yalnız listeyi açar; aletler satın alınır, vitrin bahçeyle açılır, çekmecedeki
+  "… formül hazırladın" sayısı gerçektir.
 - **Hasta soruyor** (Tuğrul, 2026-10-30, "hasta soruyor mantıklı"; "reçetelerin normal sistemini
   değiştirmeyeceğin"): reçete, adımlar ve teslim aynı kalır; bilgi teslimden sonra sınanır. Teslim
   penceresi kapanınca hasta gelir; yeni sayfa ya da pencere açılmaz (Tuğrul, 2026-10-30, "sayfa
@@ -396,6 +397,19 @@ lib/
   hacimde menisküsün alt kenarı, kapsülde tozu yayıp bastırma. Eritme kendi termometre oyunu.
   Hata kaliteyi düşürür, oyun hep biter; kalite şimdilik yıldızı etkilemez (karar açık).
   Görseller yer tutucu çizim. Testler adım akışını `miniGamesEnabled = false` ile sınar.
+- **Öğretici** (Tuğrul, 2026-10-31, "okey yap"; rapor `C:\YZ\800-Arsenal 🛠️\Oyunlastirma\Mobil-Oyun-Arastirmasi\reports\`):
+  ayrı bölüm ya da pencere yok, ilk reçete öğretir. Yalnız yeni oyuncuda (`JobStore.load(guided: true)`,
+  main.dart açar, kayıt `guide_v1`; eski kayıtta çalışmaz; testler `test/guide_test.dart` dışında kapalı).
+  İlk reçete tam yönlendirmeli ve 30 sn (`guideFirstTotal`): duvarda tek fiş, öteki reçeteler ve sayaç ilk
+  teslimle gelir, acele düğmesi yok, tohum ve hasta yok, mini oyunda kalite ve yıldız yazmaz, oyuncu
+  duraksayınca parmak nereye dokunacağını gösterir (`MiniGame.fingerAt`). İkinci reçete yardımsız ve
+  3 dk (`guideSecondTotal`, oyuncu hangisini seçerse), not ancak 8 sn takılınca çıkar, hasta burada başlar.
+  Üçüncü reçete gerçek süreli, üç teslimde öğretici biter. Süreler yer tutucu, adımlara gerçek süreleriyle
+  orantılı bölünür (`stepDurationIn`). Notlar `widgets/guide_note.dart`: tezgâhta ya da laboratuvar
+  listesinin başında bantlı kâğıt (`GuideNote`), akışı durdurmaz, hedefte nabız (`GuidePulse`). "Notları
+  kapat" notları kapatır, süreler kısa kalır; Diğer'de "Notları yeniden göster" çıkar. Karakter yok,
+  sekmeler açık (ikisi de Tuğrul'a soruldu, öneri raporda). Not yazılarındaki eczacılık cümleleri hoca
+  onayından geçecek.
 - Avatarlar (Tuğrul, 2026-10-28): hayvan eczacılar bırakıldı ("hayvanlar olmadı"); avatar önlüklü
   genç eczacı (kız ve erkek), kâğıt kesik tarzında (her parça ayrı kâğıt, altında yumuşak gölge).
   Yüz canlı ve karizmatik olur ("gözler ve ağız hiç canlı durmuyor"): badem göz, renkli iris,

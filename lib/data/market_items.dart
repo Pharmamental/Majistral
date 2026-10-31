@@ -10,7 +10,6 @@ const ShopItem adSpeedUp = ShopItem(
   description: 'Bir işin kalan süresini yarıya indirir, kalite de yarıya iner',
   icon: Icons.play_circle_outline,
   color: Color(0xFF2E7D32),
-  buttonLabel: 'İzle 0/5',
   cardColor: Color(0xFF2E7D32),
 );
 

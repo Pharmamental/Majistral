@@ -6,9 +6,11 @@ import '../theme/tokens.dart';
 import '../widgets/back_pill.dart';
 import '../widgets/counter_top.dart';
 import '../widgets/grow_panel.dart';
+import '../widgets/guide_note.dart';
 import '../widgets/job_status.dart';
 import '../widgets/second_tick.dart';
 import '../widgets/tool_sheet.dart';
+import 'home_screen.dart';
 
 /// Laboratuvar: her adımın bir kartı (Tuğrul, 2026-10-28: reçetedeki her adım =
 /// laboratuvardaki bir kart). Kartta adımın adı ve neyle yapıldığı yazar.
@@ -31,10 +33,13 @@ class _LabScreenState extends State<LabScreen> with SecondTick {
     final tools = labTools(owns: store.ownsTool);
     final busy = tools.where((t) => store.busyWith(t) != null).length;
     final waiting = store.jobs.where(store.needsAction).length;
+    final finished = store.jobs.where(store.isReady).length;
     final status = [
       if (busy > 0) '$busy adım çalışıyor',
       if (waiting > 0) '$waiting reçete seni bekliyor',
+      if (finished > 0) '$finished reçete hazır',
     ].join(', ');
+    final guide = labGuide(store);
 
     // Başlık duvarda, adım kartları gri laboratuvar tezgâhında (Tuğrul, 2026-10-27); liste tezgâhın
     // içinde kayar, tezgâh çizgisi yerinde kalır.
@@ -59,6 +64,14 @@ class _LabScreenState extends State<LabScreen> with SecondTick {
                 AppSpace.x3 + MediaQuery.paddingOf(context).bottom,
               ),
               children: [
+                if (guide != null) ...[
+                  GuideNote(
+                    text: guide.text,
+                    action: guide.toOrders ? 'Reçetelere git' : null,
+                    onAction: () => HomeScreen.showTab(context, HomeScreen.orders),
+                  ),
+                  const SizedBox(height: AppSpace.lg),
+                ],
                 LayoutBuilder(
                   builder: (context, c) {
                     final columns = c.maxWidth >= 520 ? 3 : 2;
@@ -127,6 +140,7 @@ class _ToolCard extends StatelessWidget {
     final ready = [for (final j in store.jobs) if (!store.isReady(j) && store.whyNot(tool, j) == null) j];
     final highlight = busy != null || ready.isNotEmpty;
     final run = busy?.run;
+    final after = busy == null ? null : store.nextStep(busy.job);
     final total = run == null ? 1 : run.end.difference(run.start).inMilliseconds;
     final done = run == null ? 0 : store.now().difference(run.start).inMilliseconds;
     final card = Container(
@@ -180,6 +194,16 @@ class _ToolCard extends StatelessWidget {
                 valueColor: const AlwaysStoppedAnimation(AppColors.kobalt),
               ),
             ),
+            const SizedBox(height: AppSpace.sm),
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: Alignment.centerLeft,
+              child: Text(
+                after == null ? 'Bitince ilaç hazır' : 'Sonra ${after.label}',
+                maxLines: 1,
+                style: AppText.label(size: 12, color: AppColors.ink),
+              ),
+            ),
           ] else if (ready.isNotEmpty)
             Row(
               children: [
@@ -207,7 +231,21 @@ class _ToolCard extends StatelessWidget {
     return Semantics(
       button: true,
       label: tool.name,
-      child: GestureDetector(onTap: () => openToolSheet(context, tool, from: rectOf(context)), child: card),
+      child: GestureDetector(
+        onTap: () {
+          // Tek reçete başlatabiliyorsa soracak bir şey yok, adım doğrudan başlar.
+          if (ready.length == 1) {
+            beginStep(Navigator.of(context).context, store, tool, ready.single, rectOf(context));
+          } else {
+            openToolSheet(context, tool, from: rectOf(context));
+          }
+        },
+        child: GuidePulse(
+          active: store.guideNotes && store.guideStage == 0 && ready.isNotEmpty,
+          color: AppColors.kobaltSoft,
+          child: card,
+        ),
+      ),
     );
   }
 }

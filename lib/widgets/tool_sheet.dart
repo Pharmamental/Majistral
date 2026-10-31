@@ -3,20 +3,63 @@ import 'package:flutter/material.dart';
 import '../data/lab_tools.dart';
 import '../logic/job_store.dart';
 import '../models/prep_job.dart';
+import '../models/prescription.dart';
+import '../screens/home_screen.dart';
 import '../theme/tokens.dart';
+import 'chunky_button.dart';
 import 'grow_panel.dart';
 import 'heating_sheet.dart';
 import 'job_status.dart';
 import 'mini_games.dart';
+
+/// Reçetedeki levigasyon sıvısının adı; tek aday yoksa genel söz.
+String _liquidOf(PrescriptionOrder order) {
+  const liquids = {'Sıvı Parafin': 'sıvı parafin', 'Gliserin': 'gliserin', 'Propilen Glikol': 'propilen glikol'};
+  final found = [for (final i in order.ingredients) ?liquids[i.name]];
+  return found.length == 1 ? found.single : 'sıvı';
+}
+
+/// Adımı [job] reçetesinde başlatır; mini oyunlu adımda önce oyun açılır.
+/// [navigatorContext] gezginin bağlamı: pencere kapansa da yaşar.
+void beginStep(BuildContext navigatorContext, JobStore store, LabTool tool, PrepJob job, Rect from) {
+  final step = store.nextStep(job)!;
+  final order = store.orderOf(job);
+  final lesson = store.guideStage == 0;
+  final game = miniGamesEnabled ? miniGameFor(step.label, liquid: _liquidOf(order)) : null;
+  if (step.interactive) {
+    openHeating(
+      navigatorContext,
+      from: from,
+      magistralName: job.magistralName,
+      onDone: () => store.startStep(job.id, tool),
+    );
+  } else if (game != null) {
+    game.guided = lesson;
+    openMiniGame(
+      navigatorContext,
+      from: from,
+      magistralName: job.magistralName,
+      step: step.label,
+      game: game,
+      cautions: step.notWith.values.toSet(),
+      comfort: lesson && job.runs.isEmpty ? 'Yanlış yapsan da ilacın satılır.' : null,
+      onDone: () => store.startStep(job.id, tool),
+    );
+  } else {
+    store.startStep(job.id, tool);
+  }
+}
 
 /// Laboratuvarda bir adım kartına basınca açılan pencere (Tuğrul, 2026-10-27,
 /// 2026-10-28): kabul edilmiş reçeteler listelenir. Bu adımı şimdi
 /// başlatabilenler vurgulu ve basılabilir; başlatamayanların altında nedeni
 /// yazar; adımın alet uyarısı (çelik spatül, cam havan) satırda görünür.
 /// Seçilen reçetede adım başlar; mini oyunlu adımda önce oyun açılır. Pencere
-/// kartın yerinden ([from]) büyür; mini oyun da oradan açılır.
+/// kartın yerinden ([from]) büyür; mini oyun da oradan açılır. Adımı tek reçete
+/// başlatabiliyorsa pencere açılmaz, kart doğrudan [beginStep] çağırır.
 Future<void> openToolSheet(BuildContext context, LabTool tool, {required Rect from}) {
   final store = JobScope.of(context);
+  final screenContext = context;
   return openGrowing<void>(
     context,
     from: from,
@@ -28,6 +71,7 @@ Future<void> openToolSheet(BuildContext context, LabTool tool, {required Rect fr
             if (!store.isReady(j)) j,
         ];
         final busy = store.busyWith(tool);
+        final finished = store.jobs.any(store.isReady);
         return Padding(
           padding: const EdgeInsets.all(AppSpace.lg),
           child: Column(
@@ -52,11 +96,23 @@ Future<void> openToolSheet(BuildContext context, LabTool tool, {required Rect fr
                 busy != null
                     ? 'Şu an ${busy.job.magistralName} için ${busy.run.label.toLowerCase()} sürüyor, '
                           '${formatRemaining(busy.run.end.difference(store.now()))} kaldı.'
+                    : jobs.isEmpty && finished
+                    ? 'İlacın hazır. Reçeteler\'e geçip teslim edebilirsin.'
                     : jobs.isEmpty
                     ? 'Laboratuvarda reçete yok. Reçeteler\'de duvardan bir reçete al.'
                     : 'Bu adımı hangi reçetede yapacaksın?',
                 style: AppText.body(size: 14, color: AppColors.inkMuted),
               ),
+              if (jobs.isEmpty && finished) ...[
+                const SizedBox(height: AppSpace.md),
+                ChunkyButton(
+                  label: 'Reçetelere git',
+                  onPressed: () {
+                    Navigator.of(sheetContext).pop();
+                    HomeScreen.showTab(screenContext, HomeScreen.orders);
+                  },
+                ),
+              ],
               const SizedBox(height: AppSpace.md),
               ConstrainedBox(
                 constraints: BoxConstraints(maxHeight: MediaQuery.sizeOf(context).height * 0.6),
@@ -88,31 +144,11 @@ class _JobRow extends StatelessWidget {
 
   void _pick(BuildContext context) {
     final store = JobScope.of(context);
-    final step = store.nextStep(job)!;
     // Pencere kapanınca bu satırın bağlamı gider; mini oyun gezginin
     // bağlamında açılır.
     final navigatorContext = Navigator.of(sheetContext).context;
     Navigator.of(sheetContext).pop();
-    final game = miniGamesEnabled ? miniGameFor(step.label) : null;
-    if (step.interactive) {
-      openHeating(
-        navigatorContext,
-        from: from,
-        magistralName: job.magistralName,
-        onDone: () => store.startStep(job.id, tool),
-      );
-    } else if (game != null) {
-      openMiniGame(
-        navigatorContext,
-        from: from,
-        magistralName: job.magistralName,
-        step: step.label,
-        game: game,
-        onDone: () => store.startStep(job.id, tool),
-      );
-    } else {
-      store.startStep(job.id, tool);
-    }
+    beginStep(navigatorContext, store, tool, job, from);
   }
 
   @override
@@ -145,7 +181,7 @@ class _JobRow extends StatelessWidget {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  ok ? 'Sıradaki adım ${step!.label.toLowerCase()}, ${step.minutes} dk sürer.' : reason,
+                  ok ? 'Sıradaki adım ${step!.label.toLowerCase()}, ${formatLength(store.stepDurationIn(job, step))} sürer.' : reason,
                   style: AppText.label(size: 12, color: ok ? AppColors.accentText : AppColors.inkMuted),
                 ),
                 // Alet uyarısı (ASHP): adım kartına geçince seçim değil, uyarı.

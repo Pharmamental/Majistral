@@ -88,8 +88,8 @@ class _MarketScreenState extends State<MarketScreen> {
             const ShopItemTile(item: adSpeedUp, highlight: true),
             const SizedBox(height: AppSpace.md),
             Text(
-              'Günde 5 kez kullanabilirsin. Reklam yalnız bekleme süresini kısaltır, '
-              'adımları senin yerine yapmaz. Her acele kaliteyi de yarıya indirir.',
+              'Reçete kartındaki Acele et düğmesiyle günde 5 kez kullanabilirsin. Reklam yalnız bekleme '
+              'süresini kısaltır, adımları senin yerine yapmaz. Her acele kaliteyi de yarıya indirir.',
               style: AppText.body(size: 13),
             ),
           ],

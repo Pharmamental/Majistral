@@ -17,6 +17,7 @@ Future<void> openHeating(
   return openGrowing<void>(
     context,
     from: from,
+    dismissible: false,
     builder: (sheetContext) => Padding(
       padding: const EdgeInsets.all(AppSpace.lg),
       child: Column(

@@ -26,6 +26,12 @@ Future<void> openRecipe(
   // depo veresiye verir (2026-10-29).
   final store = JobScope.of(context);
   final missing = onTake == null ? 0 : store.missingCost(order);
+  final firstRecipe = onTake != null && store.guideNotes && store.guideStage == 0;
+  final guideLine = firstRecipe
+      ? 'Bu ilacı ${order.steps.length} adımda hazırlarsın. Maddeleri senin için tarttık, gerçek laboratuvarda sen tartarsın.'
+      : onTake != null && store.guideNotes && store.guideSecondOpen
+      ? 'Bu ilacı teslim edince hasta sana bir soru sorar. Reçeteyi okumak işine yarar.'
+      : null;
   return openGrowing<void>(
     context,
     from: from,
@@ -87,6 +93,7 @@ Future<void> openRecipe(
                   const SizedBox(height: AppSpace.md),
                   _Section(
                     title: 'Hazırlık',
+                    marked: firstRecipe,
                     child: Wrap(
                       // İki satırlı ad olsa da ikonlar ve oklar aynı hizada kalır.
                       runSpacing: AppSpace.sm,
@@ -125,6 +132,10 @@ Future<void> openRecipe(
           ),
           const SizedBox(height: AppSpace.lg),
           if (onTake != null) ...[
+            if (guideLine != null) ...[
+              Text(guideLine, textAlign: TextAlign.center, style: AppText.body(size: 14, weight: FontWeight.w600)),
+              const SizedBox(height: AppSpace.sm),
+            ],
             if (missing > 0) ...[
               Text(
                 store.coins >= missing
@@ -159,10 +170,13 @@ String? _shelfLife(PrescriptionOrder order) =>
     formulary.where((f) => f.name == order.formula).firstOrNull?.shelfLife;
 
 class _Section extends StatelessWidget {
-  const _Section({required this.title, required this.child});
+  const _Section({required this.title, required this.child, this.marked = false});
 
   final String title;
   final Widget child;
+
+  /// Öğreticide oyuncunun bakacağı bölüm kobalt çerçeveli.
+  final bool marked;
 
   @override
   Widget build(BuildContext context) {
@@ -172,7 +186,7 @@ class _Section extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(AppRadius.paper),
-        border: Border.all(color: AppColors.line),
+        border: Border.all(color: marked ? AppColors.kobalt : AppColors.line, width: marked ? 2 : 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
