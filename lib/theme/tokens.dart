@@ -49,6 +49,8 @@ class AppColors {
   static const Color counterEdge = Color(0xFF4A2F1E); // raf kenarının ön yüzü
   static const Color counterSeam = Color(0x66301C10); // tahta arası derz
   static const Color tape = Color(0xE6F2E4C2); // kâğıt bant, hafif saydam
+  static const Color ledgerRule = Color(0xFFB9CBE6); // defter çizgisi
+  static const Color ledgerMargin = Color(0xFFD98C8C); // defterin kırmızı kenar çizgisi
   static const Color counterGrain = Color(0xFF3E2716); // koyu damar
   static const Color counterGrainLight = Color(0xFF8C6446); // açık damar
 

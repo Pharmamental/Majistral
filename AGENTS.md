@@ -409,7 +409,11 @@ lib/
   3 dk (`guideSecondTotal`, oyuncu hangisini seçerse), not ancak 8 sn takılınca çıkar, hasta burada başlar.
   Üçüncü reçete gerçek süreli, üç teslimde öğretici biter. Süreler yer tutucu, adımlara gerçek süreleriyle
   orantılı bölünür (`stepDurationIn`). Notlar `widgets/guide_note.dart`: tezgâhta ya da laboratuvar
-  listesinin başında bantlı kâğıt (`GuideNote`), akışı durdurmaz, hedefte nabız (`GuidePulse`). "Notları
+  listesinin başında hazırlık defteri sayfası (`GuideNote`; Tuğrul, 2026-11-01, "7"; alternatifler
+  https://claude.ai/artifact/KzvHVRNAvL3mebxXePpPLf): çizgili kâğıt, solda kırmızı kenar çizgisi,
+  adımlar alt alta, biten tikli ve son bitenin altında öğrettiği şey, sıradaki kobalt, sonraki soluk.
+  Açılışta üç satır oyunun döngüsünü anlatır (al, hazırla, teslim et). Kısa notlar da aynı kâğıtta tek
+  satırdır. Sayfa boyu adım değişirken sabit, kartlar oynamaz (`steady`). Akışı durdurmaz, hedefte nabız (`GuidePulse`). "Notları
   kapat" notları kapatır, süreler kısa kalır; Diğer'de "Notları yeniden göster" çıkar. Karakter yok,
   sekmeler açık (ikisi de Tuğrul'a soruldu, öneri raporda). Not yazılarındaki eczacılık cümleleri hoca
   onayından geçecek.

@@ -202,7 +202,7 @@ class _OrdersScreenState extends State<OrdersScreen> with SecondTick {
     return SingleChildScrollView(
       clipBehavior: Clip.none,
       padding: const EdgeInsets.fromLTRB(AppSpace.xl, AppSpace.xl, AppSpace.xl, AppSpace.lg),
-      child: GuideNote(text: guide, onClose: () => store.setGuideNotes(false)),
+      child: GuideNote(page: guide, onClose: () => store.setGuideNotes(false)),
     );
   }
 }

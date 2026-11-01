@@ -146,28 +146,38 @@ void main() {
   test('laboratuvar notu adımı izler, öğrettiğini saklar', () async {
     final store = await guided();
     expect(labGuide(store)!.toOrders, isTrue);
+    expect(labGuide(store)!.rows.first.title, 'Reçeteni al');
 
     var job = (await store.accept(store.wall.single))!;
-    expect(labGuide(store)!.text, 'Sıradaki adım Ezme. Ezme kartına dokun.');
+    expect(labGuide(store)!.rows.map((r) => r.mark), [GuideMark.now, GuideMark.later, GuideMark.later]);
+    expect(labGuide(store)!.rows.first.note, 'Ezme kartına dokun.');
 
     await store.startStep(job.id, tools['Ezme']!);
     job = store.job(job.id)!;
-    expect(labGuide(store)!.text, 'Ezme sürüyor. Bitince sıra Levigasyon adımında.');
+    expect(labGuide(store)!.rows.first.note, 'Sürüyor. Bitince sıra Levigasyon adımında.');
 
     clock = store.running(job)!.end;
-    expect(labGuide(store)!.text, 'Taneleri incelttin, merhem kumlu olmaz. Şimdi Levigasyon kartına dokun.');
+    var rows = labGuide(store)!.rows;
+    expect(rows[0].mark, GuideMark.done);
+    expect(rows[0].note, 'Taneleri incelttin, merhem kumlu olmaz.');
+    expect(rows[1].mark, GuideMark.now);
+    expect(rows[1].note, 'Levigasyon kartına dokun.');
 
     await store.startStep(job.id, tools['Levigasyon']!);
     job = store.job(job.id)!;
     clock = store.running(job)!.end;
     await store.startStep(job.id, tools['Geometrik seyreltme']!);
     job = store.job(job.id)!;
-    expect(labGuide(store)!.text, 'Geometrik seyreltme sürüyor. Bitince ilacın hazır.');
+    rows = labGuide(store)!.rows;
+    expect(rows[0].note, isNull); // yalnız son bitenin öğrettiği yazar
+    expect(rows[1].note, 'Tozu azıcık sıvıyla macun yaptın. Buna levigasyon denir.');
+    expect(rows[2].note, 'Sürüyor. Bitince ilacın hazır.');
 
     clock = store.running(job)!.end;
     final ready = labGuide(store)!;
     expect(ready.toOrders, isTrue);
-    expect(ready.text, endsWith('İlacın hazır, şimdi hastaya teslim edebilirsin.'));
+    expect(ready.rows.every((r) => r.mark == GuideMark.done), isTrue);
+    expect(ready.footer, 'İlacın hazır, şimdi hastaya teslim edebilirsin.');
   });
 
   test('ikinci reçetede not ancak takılınca çıkar', () async {
@@ -175,15 +185,15 @@ void main() {
     final first = (await store.accept(store.wall.single))!;
     await finish(store, first);
     await store.deliver(first.id);
-    expect(counterGuide(store), startsWith('Duvara üç reçete geldi.'));
+    expect(counterGuide(store)!.rows.single.title, 'Duvara üç reçete geldi.');
 
     var job = (await store.accept(store.wall.first))!;
     expect(labGuide(store), isNull);
     clock = clock.add(guideIdle);
-    expect(labGuide(store)!.text, 'Reçeten seni bekliyor. Levigasyon kartına dokun.');
+    expect(labGuide(store)!.rows.single.note, 'Levigasyon kartına dokun.');
 
     await store.startStep(job.id, tools['Levigasyon']!);
-    expect(labGuide(store)!.text, 'Adım sürerken duvardan bir reçete daha alabilirsin.');
+    expect(labGuide(store)!.rows.single.title, 'Adım sürerken duvardan bir reçete daha alabilirsin.');
     job = store.job(job.id)!;
   });
 
@@ -207,7 +217,8 @@ void main() {
     await tester.pumpWidget(MajistralApp(store: store));
 
     expect(find.text('Duvarda 1 reçete var.'), findsOneWidget);
-    expect(find.text('Bu eczane artık senin. İlk reçeten duvarda.'), findsOneWidget);
+    expect(find.text('Reçeteni al'), findsOneWidget);
+    expect(find.text('Hastaya teslim et'), findsOneWidget);
     expect(find.text('30 sn'), findsOneWidget);
 
     await tester.tap(find.text(prescriptionOrders.first.magistralName));
@@ -218,13 +229,39 @@ void main() {
     await _settle(tester);
     await tester.tap(find.text('Laboratuvara git'));
     await _settle(tester);
-    expect(find.text('Sıradaki adım Ezme. Ezme kartına dokun.'), findsOneWidget);
+    expect(find.text('Ezme kartına dokun.'), findsOneWidget);
 
-    await tester.tap(find.text('Ezme'));
+    await tester.tap(find.text('Ezme').last);
     await _settle(tester);
     expect(find.byType(GrowPanel), findsNothing); // tek reçete: pencere açılmaz
     expect(store.jobs.single.runs.single.label, 'Ezme');
     expect(find.text('Acele et'), findsNothing);
+  });
+
+  testWidgets('defter sayfası adım değişirken boyunu korur', (tester) async {
+    tester.view.physicalSize = const Size(1170, 2532);
+    tester.view.devicePixelRatio = 3;
+    addTearDown(tester.view.reset);
+    final store = await guided();
+    var job = (await store.accept(store.wall.single))!;
+    await tester.pumpWidget(MajistralApp(store: store));
+    await _tab(tester, 'Laboratuvar');
+
+    final heights = <double>[];
+    Future<void> measure() async {
+      await tester.pump(const Duration(seconds: 1));
+      heights.add(tester.getSize(find.byType(GuideNote)).height);
+    }
+
+    await measure();
+    for (final step in store.orderOf(job).steps) {
+      await store.startStep(job.id, tools[step.label]!);
+      job = store.job(job.id)!;
+      await measure();
+      clock = store.running(job)!.end;
+      if (step != store.orderOf(job).steps.last) await measure();
+    }
+    expect(heights.toSet(), hasLength(1), reason: '$heights');
   });
 
   testWidgets('notları kapatınca Diğer\'de geri açma düğmesi çıkar', (tester) async {
@@ -255,7 +292,7 @@ void main() {
     await tester.pumpWidget(MajistralApp(store: store));
     await _tab(tester, 'Laboratuvar');
 
-    await tester.tap(find.text('Ezme'));
+    await tester.tap(find.text('Ezme').last);
     await _settle(tester);
     expect(find.textContaining('çelikle tepkimeye girer'), findsOneWidget);
     expect(find.text('Yanlış yapsan da ilacın satılır.'), findsOneWidget);
@@ -270,7 +307,7 @@ void main() {
     await _settle(tester);
     clock = store.running(store.job(job.id)!)!.end;
     await tester.pump(const Duration(seconds: 1));
-    await tester.tap(find.text('Levigasyon'));
+    await tester.tap(find.text('Levigasyon').last);
     await _settle(tester);
     expect(find.textContaining('bir damla sıvı parafin'), findsOneWidget);
     expect(find.text('Yanlış yapsan da ilacın satılır.'), findsNothing);
@@ -286,7 +323,7 @@ void main() {
     await tester.pumpWidget(MajistralApp(store: store));
     await _tab(tester, 'Laboratuvar');
 
-    await tester.tap(find.text('Ezme'));
+    await tester.tap(find.text('Ezme').last);
     await _settle(tester);
     expect(find.byType(MiniGameView), findsOneWidget);
     await store.startStep(job.id, tools['Ezme']!);
@@ -296,7 +333,7 @@ void main() {
     await tester.pump(const Duration(seconds: 1));
 
     // Levigasyonda bir de düğme var, en uzun pencere bu.
-    await tester.tap(find.text('Levigasyon'));
+    await tester.tap(find.text('Levigasyon').last);
     await _settle(tester);
     expect(find.text('Spatülle'), findsOneWidget);
     expect(tester.takeException(), isNull);

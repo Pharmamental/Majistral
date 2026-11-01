@@ -66,8 +66,8 @@ class _LabScreenState extends State<LabScreen> with SecondTick {
               children: [
                 if (guide != null) ...[
                   GuideNote(
-                    text: guide.text,
-                    action: guide.toOrders ? 'Reçetelere git' : null,
+                    page: guide,
+                    steady: guide.numbered,
                     onAction: () => HomeScreen.showTab(context, HomeScreen.orders),
                   ),
                   const SizedBox(height: AppSpace.lg),
